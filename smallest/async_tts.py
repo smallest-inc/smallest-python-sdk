@@ -3,14 +3,12 @@ from typing import Optional, Union, List, AsyncGenerator
 import io
 import os
 import aiofiles
-from dotenv import load_dotenv
 
 from .models import TTSModels, TTSLanguages, TTSVoices
 from .exceptions import TTSError, APIError
 from .utils import (TTSOptions, validate_input, preprocess_text, add_wav_header,
                     waves_streaming, get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX)
 
-load_dotenv()
 
 class AsyncSmallest:
     def __init__(
