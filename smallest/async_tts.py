@@ -3,11 +3,14 @@ from typing import Optional, Union, List, AsyncGenerator
 import io
 import os
 import aiofiles
+from dotenv import load_dotenv
 
 from .models import TTSModels, TTSLanguages, TTSVoices
 from .exceptions import TTSError, APIError
 from .utils import (TTSOptions, validate_input, preprocess_text, add_wav_header,
                     waves_streaming, get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX)
+
+load_dotenv()
 
 class AsyncSmallest:
     def __init__(
@@ -47,7 +50,7 @@ class AsyncSmallest:
         - stream: Asynchronously streams the synthesized audio in chunks using websocket.
         - stream_tts_input: Asynchronously streams text-to-speech input from an async generator or iterable of strings.
         """
-        self.api_key = api_key or os.environ.get("SMALLESTAI_API_KEY")
+        self.api_key = api_key or os.environ.get("SMALLEST_API_KEY")
         if not self.api_key:
             raise TTSError("API key is required")
         
@@ -75,15 +78,15 @@ class AsyncSmallest:
 
     def get_languages(self) -> List[str]:
         """Returns a list of available languages."""
-        get_smallest_languages()
+        return get_smallest_languages()
     
     def get_voices(self) -> List[str]:
         """Returns a list of available voices."""
-        get_smallest_voices()
+        return get_smallest_voices()
 
     def get_models(self) -> List[str]:
         """Returns a list of available models."""
-        get_smallest_models()
+        return get_smallest_models()
     
     async def synthesize(
             self,
@@ -140,6 +143,10 @@ class AsyncSmallest:
             async with aiofiles.open(save_as, mode='wb') as f:
                 await f.write(add_wav_header(audio_content))
             return None
+        
+        if self.opts.add_wav_header:
+            audio_content = add_wav_header(audio_content, self.opts.sample_rate)
+
         return audio_content
         
     async def stream(

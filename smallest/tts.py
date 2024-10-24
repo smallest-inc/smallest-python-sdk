@@ -8,7 +8,6 @@ from .models import TTSModels, TTSLanguages, TTSVoices
 from .exceptions import TTSError, APIError
 from .utils import TTSOptions, validate_input, preprocess_text, add_wav_header, calculate_chunk_size, get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX
 
-
 class Smallest:
     def __init__(
             self,
@@ -45,7 +44,7 @@ class Smallest:
         - stream: Streams the synthesized audio synchronously in chunks.
         - stream_tts_input: Streams text-to-speech input from a generator or iterable of strings.
         """
-        self.api_key = api_key or os.environ.get("SMALLESTAI_API_KEY")
+        self.api_key = api_key or os.environ.get("SMALLEST_API_KEY")
         if not self.api_key:
             raise TTSError("API key is required")
         
@@ -63,15 +62,15 @@ class Smallest:
         
     def get_languages(self) -> List[str]:
         """Returns a list of available languages."""
-        get_smallest_languages()
+        return get_smallest_languages()
     
     def get_voices(self) -> List[str]:
         """Returns a list of available voices."""
-        get_smallest_voices()
+        return get_smallest_voices()
 
     def get_models(self) -> List[str]:
         """Returns a list of available models."""
-        get_smallest_models()
+        return get_smallest_models()
     
     def synthesize(
             self,
@@ -117,7 +116,7 @@ class Smallest:
         if res.status_code != 200:
             raise APIError(f"Failed to synthesize speech: {res.text}")
         
-        audio_content = add_wav_header(res.content)
+        audio_content = res.content
 
         if save_as:
             if not save_as.endswith(".wav"):
@@ -128,6 +127,10 @@ class Smallest:
                 wf.setframerate(self.opts.sample_rate)
                 wf.writeframes(audio_content)
             return None
+        
+        if self.opts.add_wav_header:
+            audio_content = add_wav_header(audio_content, self.opts.sample_rate)
+            
         return audio_content
         
 
