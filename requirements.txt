@@ -1,0 +1,13 @@
+aiohttp
+aiofiles
+requests
+num2words
+sacremoses
+pydub
+websockets
+jiwer
+httpx
+pytest
+pytest-asyncio
+deepgram
+python-dotenv

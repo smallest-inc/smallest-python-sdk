@@ -1,0 +1,54 @@
+[project]
+name = "smallest-python"
+version = "1.0.0"
+description = "Official Python client for the Smallest AI API"
+authors = [
+    {name = "Hamees Sayed", email = "hamees@smallest.ai"},
+]
+dependencies = [
+    # Core dependencies needed for the package to function
+    "aiohttp",
+    "aiofiles",
+    "requests",
+    "num2words",
+    "sacremoses",
+    "pydub",
+    "websockets"
+]
+
+[project.optional-dependencies]
+test = [
+    # Test-specific dependencies
+    "pytest",
+    "pytest-asyncio",
+    "httpx",
+    "jiwer",
+    "deepgram",
+    "python-dotenv"
+]
+
+dev = [
+    # Development dependencies
+    "black",
+    "isort",
+    "flake8",
+    "mypy",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3

@@ -1,6 +1,6 @@
 import pytest
 
-from smallest_ai.utils import (
+from smallest.utils import (
     preprocess_text,
     calculate_chunk_size,
     get_smallest_languages,

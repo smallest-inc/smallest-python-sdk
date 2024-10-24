@@ -2,10 +2,10 @@ import os
 import jiwer
 import httpx
 import pytest
-import logging
+import wave
 from deepgram import DeepgramClient, DeepgramClientOptions, PrerecordedOptions, FileSource
 
-from smallest_ai.tts import Smallest
+from smallest.async_tts import AsyncSmallest
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -24,9 +24,10 @@ transforms = jiwer.Compose(
     ]
 )
 
-tts = Smallest(api_key=os.environ.get("SMALLESTAI_API_KEY"))
+def get_tts_client():
+    return AsyncSmallest(api_key=os.environ.get("SMALLESTAI_API_KEY"))
 
-config: DeepgramClientOptions = DeepgramClientOptions(api_key=os.environ.get("DEEPGRAM_API_KEY"))
+config: DeepgramClientOptions = DeepgramClientOptions(api_key=os.environ.get("DEEPGRAM_API_KEY"),)
 
 deepgram: DeepgramClient = DeepgramClient("", config)
 
@@ -47,11 +48,14 @@ def transcribe(buffer_data):
     
     return response["results"]["channels"][0]["alternatives"][0]["transcript"]
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize("reference_text", [REFERENCE])
-def test_synthesize_save(reference_text):
-    file_path = "test_sync_save.wav"
+async def test_synthesize_save(reference_text):
+    file_path = "test_async_save.wav"
     try:
-        tts.synthesize(reference_text, save_as=file_path)
+        tts = get_tts_client()
+        async with tts as client:
+            await client.synthesize(reference_text, save_as=file_path)
         with open(file_path, "rb") as file:
             buffer_data = file.read()
 
@@ -62,20 +66,27 @@ def test_synthesize_save(reference_text):
             truth_transform=transforms,
             hypothesis_transform=transforms,
         )
-        logging.info(f"Word Error Rate: {wer}")
         assert wer <= 0.2
     finally:
         if os.path.exists(file_path):
             os.remove(file_path)
 
-# Test synthesize function without saving directly
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("reference_text", [REFERENCE])
-def test_synthesize(reference_text):
-    file_path = "test_sync.wav"
+async def test_synthesize(reference_text):
+    file_path = "test_async.wav"
     try:
-        audio = tts.synthesize(reference_text)
-        with open(file_path, "wb") as file:
-            file.write(audio)
+        tts = get_tts_client()
+        async with tts as client:
+            audio_bytes = await client.synthesize(reference_text)
+
+            with wave.open(file_path, "wb") as file:
+                file.setnchannels(1)
+                file.setsampwidth(2)
+                file.setframerate(24000)
+                file.writeframes(audio_bytes)
+
         with open(file_path, "rb") as file:
             buffer_data = file.read()
 
@@ -86,22 +97,23 @@ def test_synthesize(reference_text):
             truth_transform=transforms,
             hypothesis_transform=transforms,
         )
-        logging.info(f"Word Error Rate: {wer}")
         assert wer <= 0.2
     finally:
         if os.path.exists(file_path):
             os.remove(file_path)
 
-# Test streaming synthesis
+@pytest.mark.asyncio
 @pytest.mark.parametrize("reference_text", [REFERENCE])
-def test_stream(reference_text):
-    file_path = "test_sync_stream.wav"
+async def test_stream(reference_text):
+    file_path = "test_async_stream.wav"
     try:
-        with open(file_path, "ab") as file:
-            for chunk in tts.stream(reference_text):
-                file.write(chunk)
+        tts = get_tts_client()
 
-        # Read the audio data
+        async with tts as client:
+            async for chunk in client.stream(reference_text):
+                with open(file_path, "ab") as file:
+                    file.write(chunk)
+
         with open(file_path, "rb") as file:
             buffer_data = file.read()
 
@@ -112,13 +124,7 @@ def test_stream(reference_text):
             truth_transform=transforms,
             hypothesis_transform=transforms,
         )
-        logging.info(f"Word Error Rate: {wer}")
         assert wer <= 0.2
     finally:
         if os.path.exists(file_path):
             os.remove(file_path)
-     
-
-
-
-    
