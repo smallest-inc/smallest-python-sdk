@@ -7,6 +7,7 @@ from pydub import AudioSegment
 import time
 import asyncio
 import websockets
+import websocket as sync_websocket
 import json
 from typing import List
 from dataclasses import dataclass
@@ -107,20 +108,19 @@ async def waves_streaming(url: str, payloads: list, headers: dict, timeout: int 
         Returns:
             bytes: Audio bytes generated for the sentences concatenated together.
         """
-        first = False
         wav_audio_bytes = b""
         start_time = time.time()
 
         try:
-            async with websockets.connect(url, extra_headers=headers) as websocket:
+            async with websockets.connect(url, extra_headers=headers) as ws:
                  for payload in payloads:
                     data = json.dumps(payload)
-                    await websocket.send(data)
+                    await ws.send(data)
 
                     # Collect responses until no more data or timeout
                     response = b""
                     while True:
-                        response_part = await asyncio.wait_for(websocket.recv(),
+                        response_part = await asyncio.wait_for(ws.recv(),
                                                                timeout=timeout)
                         if response_part == "<START>":
                             break
@@ -128,8 +128,6 @@ async def waves_streaming(url: str, payloads: list, headers: dict, timeout: int 
                             break
                         else:
                             response += response_part
-                            if not first:
-                                first = True
 
                     # Handle the accumulated response if needed
                     wav_audio_bytes += response
@@ -137,7 +135,7 @@ async def waves_streaming(url: str, payloads: list, headers: dict, timeout: int 
 
                     # Optionally close the connection if needed
                     if (time.time() - start_time) > close_connection_timeout:
-                        await websocket.close()
+                        await ws.close()
                         break 
 
         except websockets.exceptions.ConnectionClosed as e:
@@ -151,6 +149,52 @@ async def waves_streaming(url: str, payloads: list, headers: dict, timeout: int 
         finally:
             return wav_audio_bytes
         
+
+def sync_waves_streaming(url: str, payloads: list, headers: dict, timeout: int = 2, close_connection_timeout: int = 500) -> bytes:
+    """waves streaming demo function.
+    Args:
+        url (str): URL
+        payload (list): A dictionary representing the payload to send to the API.
+    Returns:
+        bytes: Audio bytes generated for the sentences concatenated together.
+    """
+    wav_audio_bytes = b""
+    start_time = time.time()
+
+    try:
+        ws = sync_websocket.create_connection(url, header=[f"{k}: {v}" for k, v in headers.items()])
+
+        for payload in payloads:
+            data = json.dumps(payload)
+            ws.send(data)
+
+            response = b""
+            while True:
+                response_part = ws.recv()
+                if response_part == "<START>":
+                    break
+                elif response_part == "<END>":
+                    break
+                else:
+                    response += response_part
+
+            wav_audio_bytes += response
+
+            if (time.time() - start_time) > close_connection_timeout:
+                ws.close()
+                print("Connection closed due to timeout.")
+                return wav_audio_bytes
+
+        ws.close()
+
+    except sync_websocket.WebSocketConnectionClosedException as e:
+        print(f"Connection closed: {e}")
+        return None
+    except Exception as e:
+        print(f"Exception occurred: {e}")
+
+    return wav_audio_bytes
+
 
 def get_smallest_languages() -> List[str]:
     return list(TTSLanguages.__args__)

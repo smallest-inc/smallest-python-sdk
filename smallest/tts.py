@@ -6,7 +6,7 @@ import wave
 
 from .models import TTSModels, TTSLanguages, TTSVoices
 from .exceptions import TTSError, APIError
-from .utils import TTSOptions, validate_input, preprocess_text, add_wav_header, calculate_chunk_size, get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX
+from .utils import TTSOptions, validate_input, preprocess_text, add_wav_header, calculate_chunk_size, sync_waves_streaming, get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX
 
 class Smallest:
     def __init__(
@@ -137,7 +137,8 @@ class Smallest:
     def stream(
             self,
             text: str,
-            chunk_size: int = 1024,
+            keep_ws_open: Optional[bool] = True,
+            get_end_of_response_token: Optional[bool] = True
         ) -> Generator[bytes, None, None]:
         """
         Stream synthesized audio in chunks.
@@ -152,11 +153,36 @@ class Smallest:
         Raises:
         - APIError: If the synthesis process fails or returns an error.
         """
-        audio_content = self.synthesize(text=text)
+        validate_input(text, self.opts.voice, self.opts.model, self.opts.language, self.opts.sample_rate, self.opts.speed)
+
+        websocket_url = f"wss://waves-api.smallest.ai/api/v1/{self.opts.model}/get_streaming_speech?token={self.api_key}"
+
+        payload = [{
+            "text": preprocess_text(text),
+            "sample_rate": self.opts.sample_rate,
+            "voice_id": self.opts.voice,
+            "language": self.opts.language,
+            "add_wav_header": self.opts.add_wav_header,
+            "speed": self.opts.speed,
+            "keep_ws_open": keep_ws_open,
+            "remove_extra_silence": self.opts.remove_extra_silence,
+            "transliterate": self.opts.transliterate,
+            "get_end_of_response_token": get_end_of_response_token
+        }]
+
+        headers = {
+            "origin": "https://smallest.ai",
+        }
+
+        wav_audio_bytes = sync_waves_streaming(url=websocket_url, payloads=payload, headers=headers)
+    
+        if wav_audio_bytes is None:
+            raise APIError("Failed to stream audio. Please check your API token and connection.")
+            
+        if self.opts.add_wav_header:
+            wav_audio_bytes = add_wav_header(frame_input=wav_audio_bytes, sample_rate=self.opts.sample_rate)
         
-        if audio_content:
-            for i in range(0, len(audio_content), chunk_size):
-                yield audio_content[i:i + chunk_size]
+        yield wav_audio_bytes
 
 
     def stream_tts_input(

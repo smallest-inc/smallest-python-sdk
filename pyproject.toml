@@ -14,7 +14,7 @@ dependencies = [
     "sacremoses",
     "pydub",
     "websockets",
-    "python-dotenv"
+    "websocket-client"
 ]
 
 [project.optional-dependencies]
@@ -23,14 +23,15 @@ test = [
     "httpx",
     "pytest",
     "pytest-asyncio",
-    "deepgram"
+    "deepgram-sdk",
+    "python-dotenv"
 ]
 
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
-# You can also add this section to make the package importable
+# Add this section to make the package importable
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["smallest*"]

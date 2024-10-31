@@ -5,9 +5,10 @@ num2words
 sacremoses
 pydub
 websockets
+websocket-client
 jiwer
 httpx
 pytest
 pytest-asyncio
-deepgram
+deepgram-sdk
 python-dotenv
