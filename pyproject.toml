@@ -4,7 +4,7 @@ name = "smallest-python"
 version = "1.0.0"
 description = "Official Python client for the Smallest AI API"
 authors = [
-    {name = "Hamees Sayed", email = "hamees@smallest.ai"},
+    {name = "Smallest", email = "info@smallest.ai"},
 ]
 dependencies = [
     "aiohttp",
