@@ -27,14 +27,14 @@ setup(
     license="MIT",
     packages=find_packages(exclude=["tests"]),
     install_requires=[
-        "httpx>=0.25.2",
-        "websockets>=12.0",
-        "dataclasses-json>=0.6.3",
-        "typing_extensions>=4.9.0",
-        "aiohttp>=3.9.1",
-        "aiofiles>=23.2.1",
-        "aenum>=3.1.0",
-        "deprecation>=2.1.0",
+        "aiohttp",
+        "aiofiles",
+        "requests",
+        "num2words",
+        "sacremoses",
+        "pydub",
+        "websockets",
+        "websocket-client"
     ],
     keywords=["smallest", "smallest.ai", "tts", "text-to-speech"],
     classifiers=[
