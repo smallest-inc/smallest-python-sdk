@@ -24,7 +24,6 @@ Currently, the library supports direct synthesis, real-time streaming, and the a
 ## Table of Contents
 
 - [Installation](#installation)
-- [Getting Started](#getting-started)
 - [Examples](#examples)
   - [Sync](#sync)
   - [Async](#async)
