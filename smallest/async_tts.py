@@ -31,7 +31,7 @@ class AsyncSmallest:
         that require async processing.
 
         Parameters:
-        - api_key (str): The API key for authentication.
+        - api_key (str): The API key for authentication, export it as 'SMALLEST_API_KEY' in your environment variables.  
         - model (TTSModels): The model to be used for synthesis.
         - sample_rate (int): The sample rate for the audio output.
         - voice (TTSVoices): The voice to be used for synthesis.
@@ -138,15 +138,18 @@ class AsyncSmallest:
         if save_as:
             if not save_as.endswith(".wav"):
                 raise TTSError("Invalid file name. Extension must be .wav")
-            async with aiofiles.open(save_as, mode='wb') as f:
-                await f.write(add_wav_header(audio_content))
+            
+            if self.opts.add_wav_header:
+                async with aiofiles.open(save_as, mode='wb') as f:
+                    await f.write(audio_content)
+            else:
+                async with aiofiles.open(save_as, mode='wb') as f:
+                    await f.write(add_wav_header(audio_content))
             return None
-        
-        if self.opts.add_wav_header:
-            audio_content = add_wav_header(audio_content, self.opts.sample_rate)
 
         return audio_content
         
+
     async def stream(
         self,
         text: str,
@@ -189,15 +192,9 @@ class AsyncSmallest:
             "origin": "https://smallest.ai",
         }
 
-        wav_audio_bytes = await waves_streaming(url=websocket_url, payloads=payload, headers=headers)
-    
-        if wav_audio_bytes is None:
-            raise APIError("Failed to stream audio. Please check your API token and connection.")
-            
-        if self.opts.add_wav_header:
-            wav_audio_bytes = add_wav_header(frame_input=wav_audio_bytes, sample_rate=self.opts.sample_rate)
-        
-        yield wav_audio_bytes
+        async for chunk in waves_streaming(url=websocket_url, payloads=payload, headers=headers):
+            yield chunk
+
 
     async def stream_tts_input(
             self,

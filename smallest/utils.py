@@ -98,102 +98,88 @@ def add_wav_header(frame_input, sample_rate=24000, sample_width=2, channels=1):
         wav_buf.seek(0)
         return wav_buf.read()
 
-async def waves_streaming(url: str, payloads: list, headers: dict, timeout: int = 2, close_connection_timeout: int = 500) -> bytes:
-        """Awaaz streaming demo function.
+async def waves_streaming(url: str, payloads: list, headers: dict, timeout: int = 2):
+    """Awaaz streaming function that yields audio chunks.
 
-        Args:
-            url (str): URL
-            payloads (list): List of dictionaries of payloads that are sent to API.
-
-        Returns:
-            bytes: Audio bytes generated for the sentences concatenated together.
-        """
-        wav_audio_bytes = b""
-        start_time = time.time()
-
-        try:
-            async with websockets.connect(url, extra_headers=headers) as ws:
-                 for payload in payloads:
-                    data = json.dumps(payload)
-                    await ws.send(data)
-
-                    # Collect responses until no more data or timeout
-                    response = b""
-                    while True:
-                        response_part = await asyncio.wait_for(ws.recv(),
-                                                               timeout=timeout)
-                        if response_part == "<START>":
-                            break
-                        elif response_part == "<END>":
-                            break
-                        else:
-                            response += response_part
-
-                    # Handle the accumulated response if needed
-                    wav_audio_bytes += response
-                    time.sleep(1)
-
-                    # Optionally close the connection if needed
-                    if (time.time() - start_time) > close_connection_timeout:
-                        await ws.close()
-                        break 
-
-        except websockets.exceptions.ConnectionClosed as e:
-            if e.code == 1000:
-                print("Connection closed normally (code 1000).")
-            else:
-                print(f"Connection closed with code {e.code}: {e.reason}")
-            return None
-        except Exception as e:
-            print(f"Exception occurred: {e}")
-        finally:
-            return wav_audio_bytes
-        
-
-def sync_waves_streaming(url: str, payloads: list, headers: dict, timeout: int = 2, close_connection_timeout: int = 500) -> bytes:
-    """waves streaming demo function.
     Args:
         url (str): URL
-        payload (list): A dictionary representing the payload to send to the API.
-    Returns:
-        bytes: Audio bytes generated for the sentences concatenated together.
-    """
-    wav_audio_bytes = b""
-    start_time = time.time()
+        payloads (list): List of dictionaries of payloads that are sent to API.
+        headers (dict): Headers for the websocket connection
+        timeout (int): Timeout for receiving each chunk
 
+    Yields:
+        bytes: Audio chunks as they are received
+    """
     try:
-        ws = sync_websocket.create_connection(url, header=[f"{k}: {v}" for k, v in headers.items()])
+        async with websockets.connect(url, extra_headers=headers) as ws:
+            for payload in payloads:
+                data = json.dumps(payload)
+                await ws.send(data)
+
+                while True:
+                    try:
+                        response_part = await asyncio.wait_for(ws.recv(), timeout=timeout)
+                        
+                        if response_part == "<START>":
+                            continue
+                        elif response_part == "<END>":
+                            break
+                        elif isinstance(response_part, bytes):
+                            yield response_part
+                            
+                    except asyncio.TimeoutError:
+                        break
+
+    except websockets.exceptions.ConnectionClosed as e:
+        if e.code == 1000:
+            print("Connection closed normally (code 1000).")
+        else:
+            print(f"Connection closed with code {e.code}: {e.reason}")
+    except Exception as e:
+        print(f"Exception occurred: {e}")
+        
+
+def sync_waves_streaming(url: str, payloads: list, headers: dict, timeout: int = 2):
+    """Waves streaming function that yields audio chunks.
+    
+    Args:
+        url (str): WebSocket URL
+        payloads (list): List of payloads to send
+        headers (dict): Headers for the connection
+        timeout (int): Connection timeout in seconds
+        
+    Yields:
+        bytes: Audio chunks as they are received
+    """
+    try:
+        # Convert headers to the format expected by websocket-client
+        header_list = [f"{k}: {v}" for k, v in headers.items()]
+        ws = sync_websocket.create_connection(url, header=header_list, timeout=timeout)
 
         for payload in payloads:
             data = json.dumps(payload)
             ws.send(data)
 
-            response = b""
             while True:
-                response_part = ws.recv()
-                if response_part == "<START>":
+                try:
+                    response_part = ws.recv()
+                    if response_part == "<START>":
+                        continue
+                    elif response_part == "<END>":
+                        break
+                    elif isinstance(response_part, bytes):
+                        yield response_part
+                except sync_websocket.WebSocketTimeoutException:
                     break
-                elif response_part == "<END>":
-                    break
-                else:
-                    response += response_part
-
-            wav_audio_bytes += response
-
-            if (time.time() - start_time) > close_connection_timeout:
-                ws.close()
-                print("Connection closed due to timeout.")
-                return wav_audio_bytes
 
         ws.close()
 
     except sync_websocket.WebSocketConnectionClosedException as e:
         print(f"Connection closed: {e}")
-        return None
+        return
     except Exception as e:
         print(f"Exception occurred: {e}")
-
-    return wav_audio_bytes
+        return
 
 
 def get_smallest_languages() -> List[str]:

@@ -26,10 +26,9 @@ Currently, the library supports direct synthesis, real-time streaming, and the a
 - [Installation](#installation)
 - [Getting Started](#getting-started)
 - [Examples](#examples)
-  - [get_languages](#get_languages)
-  - [get_voices](#get_voices)
-  - [get_models](#get_models)
-  - [Additional Methods](#additional-methods)
+  - [Sync](#sync)
+  - [Async](#async)
+  - [Common Methods](#common-methods)
 
 ## Installation
 
@@ -46,28 +45,88 @@ To install the package, follow these steps:
    pip install .
    ```
 
-### Usage Example (Sync)
+## Examples
+
+### Sync
+
+**Synthesize**
+
+```python
+import os
+from smallest.tts import Smallest
+
+tts = Smallest(api_key=os.environ["SMALLEST_API_KEY"])
+
+audio_data = tts.synthesize("Hello, this is a test for sync synthesis function.")
+
+with open("sync_synthesize.wav", "wb") as f:
+    f.write(audio_data)
+```  
+
+**Stream**  
+
+```python
+import os
+from smallest.tts import Smallest
+
+tts = Smallest(api_key=os.environ.get("SMALLESTAI_API_KEY"))
+
+with open("sync_astream.wav", "ab") as f:
+    for audio_chunk in tts.stream("Hello, this is a test for Sync Streaming function."):
+        f.write(audio_chunk)
+        print("Received chunk...")
+```  
+
+### Async
+
+**Synthesize**
+
+```python
+import os
+import asyncio
+import aiofiles
+from smallest.async_tts import AsyncSmallest
+
+client = AsyncSmallest(api_key=os.environ.get("SMALLESTAI_API_KEY"))
+
+async def main():
+    async with client as tts:
+        audio_bytes = await tts.synthesize("Hello, this is a test of the async synthesis function.")
+        async with aiofiles.open("async_synthesize.wav", "wb") as f:
+            await f.write(audio_bytes)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+**Stream**
+
+```python
+import os
+import asyncio
+import aiofiles
+from smallest.async_tts import AsyncSmallest
+
+client = AsyncSmallest(api_key=os.environ.get("SMALLESTAI_API_KEY"))
+
+async def main():
+    async with aiofiles.open("async_stream.wav", "wb") as f:
+        async for chunk in client.stream("Hello, this is a test of the async streaming function."):
+            await f.write(chunk)
+            print("Received chunk...")
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+### Common Methods
 
 ```python
 from smallest.tts import Smallest
 
-tts = Smallest(api_key="your_api_key")
+tts = Smallest()
 
-audio_data = tts.synthesize("Hello, this is a test.")
-```
-
-### Usage Example (Async)
-
-```python
-import asyncio
-from smallest.async_tts import AsyncSmallest
-
-async def main():
-    async with AsyncSmallest(api_key="your_api_key") as tts:
-        text = "This is a test of the streaming speech synthesis function."
-        async for audio_chunk in tts.stream(text):
-            with open("output_streamed_audio.wav", "ab") as f:
-                f.write(audio_chunk)
-
-asyncio.run(main())
+print(f"Avalaible Languages: {tts.get_languages()}")
+print(f"Available Voices: {tts.get_voices()}")
+print(f"Available Models: {tts.get_models()}")
 ```

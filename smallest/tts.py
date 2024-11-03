@@ -6,7 +6,7 @@ import wave
 
 from .models import TTSModels, TTSLanguages, TTSVoices
 from .exceptions import TTSError, APIError
-from .utils import TTSOptions, validate_input, preprocess_text, add_wav_header, calculate_chunk_size, sync_waves_streaming, get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX
+from .utils import TTSOptions, validate_input, preprocess_text, calculate_chunk_size, sync_waves_streaming, get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX
 
 class Smallest:
     def __init__(
@@ -28,7 +28,7 @@ class Smallest:
         For an asynchronous version, please refer to the AsyncSmallest Instance.
 
         Parameters:
-        - api_key (str): The API key for authentication.
+        - api_key (str): The API key for authentication, export it as 'SMALLEST_API_KEY' in your environment variables.
         - model (TTSModels): The model to be used for synthesis.
         - sample_rate (int): The sample rate for the audio output.
         - voice (TTSVoices): The voice to be used for synthesis.
@@ -121,15 +121,17 @@ class Smallest:
         if save_as:
             if not save_as.endswith(".wav"):
                 raise TTSError("Invalid file name. Extension must be .wav")
-            with wave.open(save_as, "wb") as wf:
-                wf.setnchannels(1)
-                wf.setsampwidth(2)
-                wf.setframerate(self.opts.sample_rate)
-                wf.writeframes(audio_content)
+            
+            if self.opts.add_wav_header:
+                with open(save_as, "wb") as wf:
+                    wf.write(audio_content)
+            else:
+                with wave.open(save_as, "wb") as wf:
+                    wf.setnchannels(1)
+                    wf.setsampwidth(2)
+                    wf.setframerate(self.opts.sample_rate)
+                    wf.writeframes(audio_content)
             return None
-        
-        if self.opts.add_wav_header:
-            audio_content = add_wav_header(audio_content, self.opts.sample_rate)
             
         return audio_content
         
@@ -173,17 +175,9 @@ class Smallest:
         headers = {
             "origin": "https://smallest.ai",
         }
-
-        wav_audio_bytes = sync_waves_streaming(url=websocket_url, payloads=payload, headers=headers)
     
-        if wav_audio_bytes is None:
-            raise APIError("Failed to stream audio. Please check your API token and connection.")
-            
-        if self.opts.add_wav_header:
-            wav_audio_bytes = add_wav_header(frame_input=wav_audio_bytes, sample_rate=self.opts.sample_rate)
-        
-        yield wav_audio_bytes
-
+        for chunk in sync_waves_streaming(url=websocket_url, payloads=payload, headers=headers):
+            yield chunk
 
     def stream_tts_input(
             self,

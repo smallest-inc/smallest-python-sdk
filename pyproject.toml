@@ -1,4 +1,3 @@
-# pyproject.toml
 [project]
 name = "smallest-python"
 version = "1.0.0"
@@ -6,6 +5,15 @@ description = "Official Python client for the Smallest AI API"
 authors = [
     {name = "Smallest", email = "info@smallest.ai"},
 ]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+keywords = ["smallest", "smallest.ai", "tts", "text-to-speech"]
 dependencies = [
     "aiohttp",
     "aiofiles",
@@ -27,11 +35,13 @@ test = [
     "python-dotenv"
 ]
 
+[project.urls]
+Homepage = "https://github.com/smallest-inc/smallest-python"
+
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
-# Add this section to make the package importable
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["smallest*"]
