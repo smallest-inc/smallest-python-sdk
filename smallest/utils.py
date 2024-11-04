@@ -1,7 +1,6 @@
 import io
 import re
 import unicodedata
-from num2words import num2words
 from sacremoses import MosesPunctNormalizer
 from pydub import AudioSegment
 import time
@@ -51,28 +50,10 @@ def validate_input(text: str, voice: TTSVoices, model: TTSModels, language: TTSL
 def preprocess_text(text: str) -> str:
     # Replace special characters with their normal form
     text = unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('ASCII')
-    
-    # Remove new lines, tabs, multiple spaces, etc
-    text = re.sub(r'\s+', ' ', text)
-    
-    # Turn digits into words
-    def replace_numbers(match):
-        num = match.group()
-        # Handle numbers with commas like '10,000'
-        num = num.replace(",", "")
-        return num2words(num)
-    text = re.sub(r'\b\d{1,3}(,\d{3})*(\.\d{1,2})?\b', replace_numbers, text)
-    
-    # lower case all the text
     text = text.lower()
-    
     # Normalize punctuation using Moses punct normalizer
     mpn = MosesPunctNormalizer()
     text = mpn.normalize(text)
-    
-    # Replace dots in URLs with 'dot'
-    text = re.sub(r'(\w+)\.(\w+)', r'\1 dot \2', text)
-    
     return text.strip()
 
 
