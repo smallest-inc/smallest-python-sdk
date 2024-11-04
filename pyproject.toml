@@ -18,7 +18,6 @@ dependencies = [
     "aiohttp",
     "aiofiles",
     "requests",
-    "num2words",
     "sacremoses",
     "pydub",
     "websockets",
