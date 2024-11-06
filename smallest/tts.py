@@ -6,7 +6,8 @@ import wave
 
 from .models import TTSModels, TTSLanguages, TTSVoices
 from .exceptions import TTSError, APIError
-from .utils import TTSOptions, validate_input, preprocess_text, calculate_chunk_size, sync_waves_streaming, get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX
+from .utils import (TTSOptions, validate_input, preprocess_text, calculate_chunk_size, sync_waves_streaming, 
+get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX)
 
 class Smallest:
     def __init__(
