@@ -184,6 +184,7 @@ class Smallest:
             text_stream: Generator[str, None, None] | Iterable[str],
         ) -> Generator[bytes, None, None]:
         """
+        Experimental ⚠️
         Stream text-to-speech input from a generator or iterable of strings.
 
         This method processes a stream of text, synthesizing speech for complete sentences 
