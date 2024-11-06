@@ -54,9 +54,9 @@ To install the package, follow these steps:
 import os
 from smallest.tts import Smallest
 
-tts = Smallest(api_key=os.environ["SMALLEST_API_KEY"])
+client = Smallest(api_key=os.environ["SMALLEST_API_KEY"])
 
-audio_data = tts.synthesize("Hello, this is a test for sync synthesis function.")
+audio_data = client.synthesize("Hello, this is a test for sync synthesis function.")
 
 with open("sync_synthesize.wav", "wb") as f:
     f.write(audio_data)
@@ -68,10 +68,10 @@ with open("sync_synthesize.wav", "wb") as f:
 import os
 from smallest.tts import Smallest
 
-tts = Smallest(api_key=os.environ.get("SMALLESTAI_API_KEY"))
+client = Smallest(api_key=os.environ.get("SMALLESTAI_API_KEY"))
 
 with open("sync_astream.wav", "ab") as f:
-    for audio_chunk in tts.stream("Hello, this is a test for Sync Streaming function."):
+    for audio_chunk in client.stream("Hello, this is a test for Sync Streaming function."):
         f.write(audio_chunk)
         print("Received chunk...")
 ```  
@@ -123,9 +123,9 @@ if __name__ == "__main__":
 ```python
 from smallest.tts import Smallest
 
-tts = Smallest()
+client = Smallest()
 
-print(f"Avalaible Languages: {tts.get_languages()}")
-print(f"Available Voices: {tts.get_voices()}")
-print(f"Available Models: {tts.get_models()}")
+print(f"Avalaible Languages: {client.get_languages()}")
+print(f"Available Voices: {client.get_voices()}")
+print(f"Available Models: {client.get_models()}")
 ```
