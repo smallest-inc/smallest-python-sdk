@@ -197,44 +197,45 @@ class AsyncSmallest:
 
 
     async def stream_tts_input(
-            self,
-            text_stream
-        ):
-        """
-        Asynchronously stream text-to-speech input from an async generator or iterable of strings.
+        self,
+        text_stream: AsyncGenerator[str, None, None] | Iterable[str],
+    ) -> AsyncGenerator[bytes, None, None]:
+      """
+      Experimental ⚠️
+      Asynchronously stream text-to-speech input from an async generator or iterable of strings.
 
-        This method processes a stream of text, synthesizing speech for complete sentences 
-        and yielding audio chunks for each synthesized segment. It handles text input 
-        until it encounters sentence-ending punctuation, at which point it synthesizes 
-        the accumulated text into audio.
+      This method processes a stream of text, synthesizing speech for complete sentences 
+      and yielding audio chunks for each synthesized segment. It handles text input 
+      until it encounters sentence-ending punctuation, at which point it synthesizes 
+      the accumulated text into audio.
 
-        Parameters:
-        - text_stream (AsyncGenerator[str, None] | Iterable[str]): An async generator or iterable 
-          containing strings of text to be converted to speech.
+      Parameters:
+      - text_stream (AsyncGenerator[str, None] | Iterable[str]): An async generator or iterable 
+        containing strings of text to be converted to speech.
 
-        Yields:
-        - bytes: Audio chunks in bytes.
+      Yields:
+      - bytes: Audio chunks in bytes.
 
-        Raises:
-        - APIError: If the synthesis process fails or returns an error.
-        """
-        buffer = io.StringIO()
-        async for text in self._aiter(text_stream):
-            text = preprocess_text(text)
-            if text:
-                buffer.write(text + " ")
-                if SENTENCE_END_REGEX.search(text):
-                    full_text = buffer.getvalue().strip()
-                    audio_chunk = await self.synthesize(full_text)
-                    yield audio_chunk
-                    buffer = io.StringIO()
-        
-        # If there's remaining text in the buffer after streaming ends
-        if buffer.tell() > 0:
-            full_text = buffer.getvalue()
-            full_text = preprocess_text(full_text)
-            audio_chunk = await self.synthesize(buffer)
-            yield audio_chunk
+      Raises:
+      - APIError: If the synthesis process fails or returns an error.
+      """
+      buffer = io.StringIO()
+      async for text in self._aiter(text_stream):
+          text = preprocess_text(text)
+          if text:
+              buffer.write(text + " ")
+              if SENTENCE_END_REGEX.search(text):
+                  full_text = buffer.getvalue().strip()
+                  audio_chunk = await self.synthesize(full_text)
+                  yield audio_chunk
+                  buffer = io.StringIO()
+    
+      # If there's remaining text in the buffer after streaming ends
+      if buffer.tell() > 0:
+          full_text = buffer.getvalue().strip()
+          audio_chunk = await self.synthesize(full_text)
+          yield audio_chunk
+
 
 
     async def _aiter(self, iterable):
