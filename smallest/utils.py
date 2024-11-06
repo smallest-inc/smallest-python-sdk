@@ -8,7 +8,7 @@ import asyncio
 import websockets
 import websocket as sync_websocket
 import json
-from typing import List
+from typing import List, Generator, AsyncGenerator
 from dataclasses import dataclass
 
 from .models import TTSModels, TTSLanguages, TTSVoices
@@ -57,13 +57,7 @@ def preprocess_text(text: str) -> str:
     return text.strip()
 
 
-def calculate_chunk_size(
-        text: str,
-        speed: float = 1.0,
-        sample_rate: int = 24000,
-        default_wpm: int = 130,
-        chunks_count: int = 50
-    ) -> int:
+def calculate_chunk_size(text: str, speed: float = 1.0, sample_rate: int = 24000, default_wpm: int = 130, chunks_count: int = 50) -> int:
         word_count = len(preprocess_text(text).split())
         adjusted_wpm = default_wpm * speed
         duration_seconds = (word_count / adjusted_wpm) * 60
@@ -72,25 +66,15 @@ def calculate_chunk_size(
         return max(1024, total_audio_size // chunks_count)
 
 
-def add_wav_header(frame_input, sample_rate=24000, sample_width=2, channels=1):
+def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: int = 2, channels: int = 1) -> bytes:
         audio = AudioSegment(data=frame_input, sample_width=sample_width, frame_rate=sample_rate, channels=channels)
         wav_buf = io.BytesIO()
         audio.export(wav_buf, format="wav")
         wav_buf.seek(0)
         return wav_buf.read()
 
-async def waves_streaming(url: str, payloads: list, headers: dict, timeout: int = 2):
-    """Awaaz streaming function that yields audio chunks.
 
-    Args:
-        url (str): URL
-        payloads (list): List of dictionaries of payloads that are sent to API.
-        headers (dict): Headers for the websocket connection
-        timeout (int): Timeout for receiving each chunk
-
-    Yields:
-        bytes: Audio chunks as they are received
-    """
+async def waves_streaming(url: str, payloads: list, headers: dict, timeout: int = 2) -> AsyncGenerator[bytes, None]:
     try:
         async with websockets.connect(url, extra_headers=headers) as ws:
             for payload in payloads:
@@ -120,18 +104,7 @@ async def waves_streaming(url: str, payloads: list, headers: dict, timeout: int 
         print(f"Exception occurred: {e}")
         
 
-def sync_waves_streaming(url: str, payloads: list, headers: dict, timeout: int = 2):
-    """Waves streaming function that yields audio chunks.
-    
-    Args:
-        url (str): WebSocket URL
-        payloads (list): List of payloads to send
-        headers (dict): Headers for the connection
-        timeout (int): Connection timeout in seconds
-        
-    Yields:
-        bytes: Audio chunks as they are received
-    """
+def sync_waves_streaming(url: str, payloads: list, headers: dict, timeout: int = 2) -> Generator[bytes, None]:
     try:
         # Convert headers to the format expected by websocket-client
         header_list = [f"{k}: {v}" for k, v in headers.items()]
