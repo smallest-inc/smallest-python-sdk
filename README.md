@@ -68,7 +68,7 @@ with open("sync_synthesize.wav", "wb") as f:
 import os
 from smallest.tts import Smallest
 
-client = Smallest(api_key=os.environ.get("SMALLESTAI_API_KEY"))
+client = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
 
 with open("sync_astream.wav", "ab") as f:
     for audio_chunk in client.stream("Hello, this is a test for Sync Streaming function."):
@@ -86,7 +86,7 @@ import asyncio
 import aiofiles
 from smallest.async_tts import AsyncSmallest
 
-client = AsyncSmallest(api_key=os.environ.get("SMALLESTAI_API_KEY"))
+client = AsyncSmallest(api_key=os.environ.get("SMALLEST_API_KEY"))
 
 async def main():
     async with client as tts:
@@ -106,7 +106,7 @@ import asyncio
 import aiofiles
 from smallest.async_tts import AsyncSmallest
 
-client = AsyncSmallest(api_key=os.environ.get("SMALLESTAI_API_KEY"))
+client = AsyncSmallest(api_key=os.environ.get("SMALLEST_API_KEY"))
 
 async def main():
     async with aiofiles.open("async_stream.wav", "wb") as f:
