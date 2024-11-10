@@ -143,7 +143,7 @@ class AsyncSmallest:
                     await f.write(audio_content)
             else:
                 async with aiofiles.open(save_as, mode='wb') as f:
-                    await f.write(add_wav_header(audio_content))
+                    await f.write(add_wav_header(audio_content, self.opts.sample_rate))
             return None
 
         return audio_content
