@@ -68,25 +68,6 @@ if __name__ == "__main__":
     main()
 ```  
 
-**Stream**  
-
-```python
-import os
-from smallest.tts import Smallest
-
-def main():
-    client = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
-    text = "Hello, this is a test for Sync Streaming function."
-    
-    with open("sync_astream.wav", "ab") as f:
-        for audio_chunk in client.stream(text):
-            f.write(audio_chunk)
-            print("Received chunk...")
-
-if __name__ == "__main__":
-    main()
-```  
-
 **Synthesize streamed LLM Output**
 
 ```python
@@ -156,26 +137,6 @@ async def main():
         audio_bytes = await tts.synthesize("Hello, this is a test of the async synthesis function.")
         async with aiofiles.open("async_synthesize.wav", "wb") as f:
             await f.write(audio_bytes)
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-**Stream**
-
-```python
-import os
-import asyncio
-import aiofiles
-from smallest.async_tts import AsyncSmallest
-
-client = AsyncSmallest(api_key=os.environ.get("SMALLEST_API_KEY"))
-
-async def main():
-    async with aiofiles.open("async_stream.wav", "wb") as f:
-        async for chunk in client.stream("Hello, this is a test of the async streaming function."):
-            await f.write(chunk)
-            print("Received chunk...")
 
 if __name__ == "__main__":
     asyncio.run(main())

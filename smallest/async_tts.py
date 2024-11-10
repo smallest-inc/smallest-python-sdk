@@ -6,7 +6,7 @@ import aiofiles
 from .models import TTSModels, TTSLanguages, TTSVoices
 from .exceptions import TTSError, APIError
 from .utils import (TTSOptions, validate_input, preprocess_text, add_wav_header,
-                    waves_streaming, get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX)
+                     get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX)
 
 
 class AsyncSmallest:
@@ -147,52 +147,6 @@ class AsyncSmallest:
             return None
 
         return audio_content
-        
-
-    async def stream(
-        self,
-        text: str,
-        keep_ws_open: Optional[bool] = True,
-        get_end_of_response_token: bool = True,
-    ) -> AsyncGenerator[bytes, None]:
-        """
-        Asynchronously stream synthesized audio using websockets.
-
-        Parameters:
-        - text (str): The text to be converted to speech.
-        - keep_ws_open (bool): If True, the websocket connection will be kept open after the synthesis process.
-        - get_end_of_response_token (bool): If True, the generator will yield a token indicating the end of the response.
-
-        Yields:
-        - bytes: Audio chunks in bytes with WAV header included.
-
-        Raises:
-        - APIError: If the synthesis process fails or returns an error.
-        - TTSError: If the input validation fails.
-        """
-        validate_input(text, self.opts.voice, self.opts.model, self.opts.language, self.opts.sample_rate, self.opts.speed)
-
-        websocket_url = f"wss://waves-api.smallest.ai/api/v1/{self.opts.model}/get_streaming_speech?token={self.api_key}"
-
-        payload = [{
-            "text": preprocess_text(text),
-            "sample_rate": self.opts.sample_rate,
-            "voice_id": self.opts.voice,
-            "language": self.opts.language,
-            "add_wav_header": self.opts.add_wav_header,
-            "speed": self.opts.speed,
-            "keep_ws_open": keep_ws_open,
-            "remove_extra_silence": self.opts.remove_extra_silence,
-            "transliterate": self.opts.transliterate,
-            "get_end_of_response_token": get_end_of_response_token
-        }]
-
-        headers = {
-            "origin": "https://smallest.ai",
-        }
-
-        async for chunk in waves_streaming(url=websocket_url, payloads=payload, headers=headers):
-            yield chunk
 
 
     async def stream_llm_output(

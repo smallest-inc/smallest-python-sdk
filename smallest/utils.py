@@ -3,12 +3,7 @@ import re
 import unicodedata
 from sacremoses import MosesPunctNormalizer
 from pydub import AudioSegment
-import time
-import asyncio
-import websockets
-import websocket as sync_websocket
-import json
-from typing import List, Generator, AsyncGenerator
+from typing import List
 from dataclasses import dataclass
 
 from .models import TTSModels, TTSLanguages, TTSVoices
@@ -63,68 +58,6 @@ def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: i
         audio.export(wav_buf, format="wav")
         wav_buf.seek(0)
         return wav_buf.read()
-
-
-async def waves_streaming(url: str, payloads: list, headers: dict, timeout: int = 2) -> AsyncGenerator[bytes, None]:
-    try:
-        async with websockets.connect(url, extra_headers=headers) as ws:
-            for payload in payloads:
-                data = json.dumps(payload)
-                await ws.send(data)
-
-                while True:
-                    try:
-                        response_part = await asyncio.wait_for(ws.recv(), timeout=timeout)
-                        
-                        if response_part == "<START>":
-                            continue
-                        elif response_part == "<END>":
-                            break
-                        elif isinstance(response_part, bytes):
-                            yield response_part
-                            
-                    except asyncio.TimeoutError:
-                        break
-
-    except websockets.exceptions.ConnectionClosed as e:
-        if e.code == 1000:
-            print("Connection closed normally (code 1000).")
-        else:
-            print(f"Connection closed with code {e.code}: {e.reason}")
-    except Exception as e:
-        print(f"Exception occurred: {e}")
-        
-
-def sync_waves_streaming(url: str, payloads: list, headers: dict, timeout: int = 2) -> Generator[bytes, None, None]:
-    try:
-        # Convert headers to the format expected by websocket-client
-        header_list = [f"{k}: {v}" for k, v in headers.items()]
-        ws = sync_websocket.create_connection(url, header=header_list, timeout=timeout)
-
-        for payload in payloads:
-            data = json.dumps(payload)
-            ws.send(data)
-
-            while True:
-                try:
-                    response_part = ws.recv()
-                    if response_part == "<START>":
-                        continue
-                    elif response_part == "<END>":
-                        break
-                    elif isinstance(response_part, bytes):
-                        yield response_part
-                except sync_websocket.WebSocketTimeoutException:
-                    break
-
-        ws.close()
-
-    except sync_websocket.WebSocketConnectionClosedException as e:
-        print(f"Connection closed: {e}")
-        return
-    except Exception as e:
-        print(f"Exception occurred: {e}")
-        return
 
 
 def get_smallest_languages() -> List[str]:

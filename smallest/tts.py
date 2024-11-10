@@ -5,7 +5,7 @@ import wave
 
 from .models import TTSModels, TTSLanguages, TTSVoices
 from .exceptions import TTSError, APIError
-from .utils import (TTSOptions, validate_input, preprocess_text, sync_waves_streaming, 
+from .utils import (TTSOptions, validate_input, preprocess_text, 
 get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX)
 
 class Smallest:
@@ -136,49 +136,6 @@ class Smallest:
         return audio_content
         
 
-    def stream(
-            self,
-            text: str,
-            keep_ws_open: Optional[bool] = True,
-            get_end_of_response_token: Optional[bool] = True
-        ) -> Generator[bytes, None, None]:
-        """
-        Stream synthesized audio in chunks.
-
-        Parameters:
-        - text (str): The text to be converted to speech.
-        - chunk_size (int): The size of each audio chunk to be streamed. Default is 1024 bytes.
-
-        Returns:
-        - Generator[bytes, None, None]: A generator that yields audio chunks in bytes.
-
-        Raises:
-        - APIError: If the synthesis process fails or returns an error.
-        """
-        validate_input(text, self.opts.voice, self.opts.model, self.opts.language, self.opts.sample_rate, self.opts.speed)
-
-        websocket_url = f"wss://waves-api.smallest.ai/api/v1/{self.opts.model}/get_streaming_speech?token={self.api_key}"
-
-        payload = [{
-            "text": preprocess_text(text),
-            "sample_rate": self.opts.sample_rate,
-            "voice_id": self.opts.voice,
-            "language": self.opts.language,
-            "add_wav_header": self.opts.add_wav_header,
-            "speed": self.opts.speed,
-            "keep_ws_open": keep_ws_open,
-            "remove_extra_silence": self.opts.remove_extra_silence,
-            "transliterate": self.opts.transliterate,
-            "get_end_of_response_token": get_end_of_response_token
-        }]
-
-        headers = {
-            "origin": "https://smallest.ai",
-        }
-    
-        for chunk in sync_waves_streaming(url=websocket_url, payloads=payload, headers=headers):
-            yield chunk
-
     def stream_llm_output(
             self,
             text_stream: Union[Generator[str, None, None], Iterable[str]]
@@ -205,7 +162,7 @@ class Smallest:
         
         if self.opts.add_wav_header:
             self.opts.add_wav_header = False
-            
+
         for text_chunk in text_stream:
             buffer += text_chunk
 
