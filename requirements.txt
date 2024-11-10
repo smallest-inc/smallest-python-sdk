@@ -4,8 +4,6 @@ requests
 num2words
 sacremoses
 pydub
-websockets
-websocket-client
 jiwer
 httpx
 pytest
