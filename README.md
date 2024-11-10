@@ -45,7 +45,7 @@ To install the package, follow these steps:
    ```   
   
 
-> Note ⚠️: The stream_llm_output function can only save audio using the wave package. This is because the WAV header must be added while writing to the file, not beforehand. Therefore, in this function, add_wav_header is set to False by default.
+> Note ⚠️: The `stream_llm_output` function can only save audio using the wave package. This is because the WAV header must be added while writing to the file, not beforehand. Therefore, in this function, `add_wav_header` is set to `False` by default.
 
 
 ## Examples
@@ -81,6 +81,7 @@ client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 tts = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
 
 def generate_text(prompt: str = "Tell me a very short story about a wise owl."):
+    """Async generator for streaming text from Groq, you can use any other provider."""
     completion = client.chat.completions.create(
         messages=[
             {
@@ -142,7 +143,7 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-**Synthesize Stream LLM Output**
+**Synthesize streamed LLM Output**
 ```python
 import os
 from groq import Groq
@@ -154,7 +155,7 @@ groq_client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 tts_client = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
 
 async def generate_text(prompt: str = "Tell me a very short story about a wise owl."):
-    """Async generator for streaming text from Groq"""
+    """Async generator for streaming text from Groq, you can use any other provider."""
     completion = groq_client.chat.completions.create(
         messages=[
             {
