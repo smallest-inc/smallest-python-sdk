@@ -91,32 +91,6 @@ def test_synthesize(reference_text):
     finally:
         if os.path.exists(file_path):
             os.remove(file_path)
-
-# Test streaming synthesis
-@pytest.mark.parametrize("reference_text", [REFERENCE])
-def test_stream(reference_text):
-    file_path = "test_sync_stream.wav"
-    try:
-        with open(file_path, "ab") as file:
-            for chunk in tts.stream(reference_text):
-                file.write(chunk)
-
-        # Read the audio data
-        with open(file_path, "rb") as file:
-            buffer_data = file.read()
-
-        hypothesis = transcribe(buffer_data)
-        wer = jiwer.wer(
-            reference_text,
-            hypothesis,
-            truth_transform=transforms,
-            hypothesis_transform=transforms,
-        )
-        logging.info(f"Word Error Rate: {wer}")
-        assert wer <= 0.2
-    finally:
-        if os.path.exists(file_path):
-            os.remove(file_path)
      
 
 

@@ -2,7 +2,6 @@ import pytest
 
 from smallest.utils import (
     preprocess_text,
-    calculate_chunk_size,
     get_smallest_languages,
     get_smallest_voices,
     get_smallest_models
@@ -18,17 +17,6 @@ from smallest.utils import (
 ])
 def test_preprocess_text(input_text, expected_output):
     assert preprocess_text(input_text) == expected_output
-
-
-@pytest.mark.parametrize("input_text,expected_sizes", [
-    (
-        "Check out this amazing website: example.com! It has 10,000 unique visitors per day.\n\nAlso, the price is $99.99",
-        {1024, 10633}
-    )
-])
-def test_calculate_chunk_size(input_text, expected_sizes):
-    result = calculate_chunk_size(input_text)
-    assert result in expected_sizes
 
 
 @pytest.mark.parametrize("expected_languages", [

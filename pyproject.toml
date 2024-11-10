@@ -19,9 +19,7 @@ dependencies = [
     "aiofiles",
     "requests",
     "sacremoses",
-    "pydub",
-    "websockets",
-    "websocket-client"
+    "pydub"
 ]
 
 [project.optional-dependencies]

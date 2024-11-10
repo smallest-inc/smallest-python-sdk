@@ -101,30 +101,3 @@ async def test_synthesize(reference_text):
     finally:
         if os.path.exists(file_path):
             os.remove(file_path)
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("reference_text", [REFERENCE])
-async def test_stream(reference_text):
-    file_path = "test_async_stream.wav"
-    try:
-        tts = get_tts_client()
-
-        async with tts as client:
-            async for chunk in client.stream(reference_text):
-                with open(file_path, "ab") as file:
-                    file.write(chunk)
-
-        with open(file_path, "rb") as file:
-            buffer_data = file.read()
-
-        hypothesis = transcribe(buffer_data)
-        wer = jiwer.wer(
-            reference_text,
-            hypothesis,
-            truth_transform=transforms,
-            hypothesis_transform=transforms,
-        )
-        assert wer <= 0.2
-    finally:
-        if os.path.exists(file_path):
-            os.remove(file_path)
