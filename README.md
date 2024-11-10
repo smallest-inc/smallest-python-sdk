@@ -45,7 +45,7 @@ To install the package, follow these steps:
    ```   
   
 
-> Note ⚠️: The stream_llm_output function can only save audio using the wave package. This is because the WAV header must be added while writing to the file, not beforehand. Therefore, in this function, add_wav_header is set to False by default.
+> Note ⚠️: The `stream_llm_output` function can only save audio using the wave package. This is because the WAV header must be added while writing to the file, not beforehand. Therefore, in this function, `add_wav_header` is set to `False` by default.
 
 
 ## Examples
