@@ -16,7 +16,7 @@ from .exceptions import ValidationError
 
 
 API_BASE_URL = "https://waves-api.smallest.ai/api/v1"
-SENTENCE_END_REGEX = re.compile(r'.*[-.!?;:…]$')
+SENTENCE_END_REGEX = re.compile(r'.*[-.!?;:…\n]$')
 SAMPLE_WIDTH = 2
 CHANNELS = 1
 
@@ -57,15 +57,6 @@ def preprocess_text(text: str) -> str:
     return text.strip()
 
 
-def calculate_chunk_size(text: str, speed: float = 1.0, sample_rate: int = 24000, default_wpm: int = 130, chunks_count: int = 50) -> int:
-        word_count = len(preprocess_text(text).split())
-        adjusted_wpm = default_wpm * speed
-        duration_seconds = (word_count / adjusted_wpm) * 60
-        bytes_per_second = sample_rate * 2  
-        total_audio_size = int(bytes_per_second * duration_seconds)
-        return max(1024, total_audio_size // chunks_count)
-
-
 def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: int = 2, channels: int = 1) -> bytes:
         audio = AudioSegment(data=frame_input, sample_width=sample_width, frame_rate=sample_rate, channels=channels)
         wav_buf = io.BytesIO()
@@ -104,7 +95,7 @@ async def waves_streaming(url: str, payloads: list, headers: dict, timeout: int 
         print(f"Exception occurred: {e}")
         
 
-def sync_waves_streaming(url: str, payloads: list, headers: dict, timeout: int = 2) -> Generator[bytes, None]:
+def sync_waves_streaming(url: str, payloads: list, headers: dict, timeout: int = 2) -> Generator[bytes, None, None]:
     try:
         # Convert headers to the format expected by websocket-client
         header_list = [f"{k}: {v}" for k, v in headers.items()]

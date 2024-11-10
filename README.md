@@ -42,7 +42,11 @@ To install the package, follow these steps:
    ```bash
    cd smallest-python
    pip install .
-   ```
+   ```   
+  
+
+> Note ⚠️: The stream_llm_output function can only save audio using the wave package. This is because the WAV header must be added while writing to the file, not beforehand. Therefore, in this function, add_wav_header is set to False by default.
+
 
 ## Examples
 
@@ -54,12 +58,14 @@ To install the package, follow these steps:
 import os
 from smallest.tts import Smallest
 
-client = Smallest(api_key=os.environ["SMALLEST_API_KEY"])
+def main():
+    client = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
+    audio_data = client.synthesize("Hello, this is a test for sync synthesis function.")
+    with open("sync_synthesize.wav", "wb") as f:
+        f.write(audio_data)
 
-audio_data = client.synthesize("Hello, this is a test for sync synthesis function.")
-
-with open("sync_synthesize.wav", "wb") as f:
-    f.write(audio_data)
+if __name__ == "__main__":
+    main()
 ```  
 
 **Stream**  
@@ -68,13 +74,70 @@ with open("sync_synthesize.wav", "wb") as f:
 import os
 from smallest.tts import Smallest
 
-client = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
+def main():
+    client = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
+    text = "Hello, this is a test for Sync Streaming function."
+    
+    with open("sync_astream.wav", "ab") as f:
+        for audio_chunk in client.stream(text):
+            f.write(audio_chunk)
+            print("Received chunk...")
 
-with open("sync_astream.wav", "ab") as f:
-    for audio_chunk in client.stream("Hello, this is a test for Sync Streaming function."):
-        f.write(audio_chunk)
-        print("Received chunk...")
+if __name__ == "__main__":
+    main()
 ```  
+
+**Synthesize streamed LLM Output**
+
+```python
+import os
+from groq import Groq
+from smallest import Smallest
+import wave
+
+# Initialize any LLM client and TTS system
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+tts = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
+
+def generate_text(prompt: str = "Tell me a very short story about a wise owl."):
+    completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        ],
+        model="llama3-8b-8192",
+        stream=True,
+    )
+
+    for chunk in completion:
+        text = chunk.choices[0].delta.content
+        if text is not None:
+            yield text
+
+def save_audio_stream(audio_chunks, filename: str, sample_rate: int = 24000):
+    with wave.open(filename, 'wb') as wf:
+        wf.setnchannels(1)  
+        wf.setsampwidth(2) 
+        wf.setframerate(sample_rate)
+        for chunk in audio_chunks:
+            wf.writeframes(chunk)
+
+def main():
+    # Get text stream from LLM
+    text_generator = generate_text()
+
+    # Get audio chunks from the streaming TTS
+    audio_chunks = tts.stream_llm_output(text_stream=text_generator)
+
+    # Save the audio chunks to a WAV file
+    save_audio_stream(audio_chunks, "output_llm_stream.wav")
+
+
+if __name__ == "__main__":
+    main()
+```
 
 ### Async
 
@@ -113,6 +176,58 @@ async def main():
         async for chunk in client.stream("Hello, this is a test of the async streaming function."):
             await f.write(chunk)
             print("Received chunk...")
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+**Synthesize Stream LLM Output**
+```python
+import os
+from groq import Groq
+from smallest import AsyncSmallest
+import wave
+import asyncio
+
+groq_client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+tts_client = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
+
+async def generate_text(prompt: str = "Tell me a very short story about a wise owl."):
+    """Async generator for streaming text from Groq"""
+    completion = groq_client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        ],
+        model="llama3-8b-8192",
+        stream=True,
+    )
+
+    for chunk in completion:
+        text = chunk.choices[0].delta.content
+        if text is not None:
+            yield text
+
+async def save_audio_stream(audio_chunks, filename: str, sample_rate: int = 24000):
+    with wave.open(filename, 'wb') as wf:
+        wf.setnchannels(1)
+        wf.setsampwidth(2)
+        wf.setframerate(sample_rate)
+        async for chunk in audio_chunks:
+            wf.writeframes(chunk)
+
+async def main():
+    async with tts_client as tts:
+        # Get text stream from LLM
+        text_generator = generate_text()
+
+        # Get audio chunks from the streaming TTS
+        audio_chunks = tts.stream_llm_output(text_stream=text_generator)
+
+        # Save the audio chunks to a WAV file
+        await save_audio_stream(audio_chunks, "output_llm_stream_async.wav")
 
 if __name__ == "__main__":
     asyncio.run(main())

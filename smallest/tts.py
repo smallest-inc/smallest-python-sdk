@@ -1,12 +1,11 @@
 import requests
 from typing import Optional, Union, List, Generator, Iterable
-import io
 import os
 import wave
 
 from .models import TTSModels, TTSLanguages, TTSVoices
 from .exceptions import TTSError, APIError
-from .utils import (TTSOptions, validate_input, preprocess_text, calculate_chunk_size, sync_waves_streaming, 
+from .utils import (TTSOptions, validate_input, preprocess_text, sync_waves_streaming, 
 get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX)
 
 class Smallest:
@@ -180,12 +179,11 @@ class Smallest:
         for chunk in sync_waves_streaming(url=websocket_url, payloads=payload, headers=headers):
             yield chunk
 
-    def stream_tts_input(
+    def stream_llm_output(
             self,
-            text_stream: Generator[str, None, None] | Iterable[str],
+            text_stream: Union[Generator[str, None, None], Iterable[str]]
         ) -> Generator[bytes, None, None]:
         """
-        Experimental ⚠️
         Stream text-to-speech input from a generator or iterable of strings.
 
         This method processes a stream of text, synthesizing speech for complete sentences 
@@ -203,21 +201,20 @@ class Smallest:
         Raises:
         - APIError: If the synthesis process fails or returns an error.
         """
-        buffer = io.StringIO()
-        for text in text_stream:
-            text = preprocess_text(text)
-            if text:
-                buffer.write(text + " ")
-                if SENTENCE_END_REGEX.match(text):
-                    full_text = buffer.getvalue().strip()
-                    chunk_size = calculate_chunk_size(text=full_text, speed=self.opts.speed, sample_rate=self.opts.sample_rate)
-                    audio_chunks = self.stream(text=full_text, chunk_size=chunk_size)
-                    yield from audio_chunks
-                    buffer = io.StringIO()
+        buffer = ""
+        
+        if self.opts.add_wav_header:
+            self.opts.add_wav_header = False
+            
+        for text_chunk in text_stream:
+            buffer += text_chunk
 
-        if buffer.tell() > 0:
-            full_text = buffer.getvalue().strip()
-            full_text = preprocess_text(full_text)
-            chunk_size = calculate_chunk_size(text=full_text, speed=self.opts.speed, sample_rate=self.opts.sample_rate)
-            audio_chunks = self.stream(text=full_text, chunk_size=chunk_size)
-            yield from audio_chunks
+            if SENTENCE_END_REGEX.match(buffer):
+                if buffer.strip():
+                    audio_chunk = self.synthesize(buffer.strip())
+                    yield audio_chunk
+                buffer = ""
+
+        if buffer.strip():
+            audio_chunk = self.synthesize(buffer.strip())
+            yield audio_chunk

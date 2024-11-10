@@ -1,6 +1,5 @@
 import aiohttp
-from typing import Optional, Union, List, AsyncGenerator
-import io
+from typing import Optional, Union, AsyncGenerator, Iterable, List
 import os
 import aiofiles
 
@@ -196,46 +195,41 @@ class AsyncSmallest:
             yield chunk
 
 
-    async def stream_tts_input(
+    async def stream_llm_output(
         self,
-        text_stream: AsyncGenerator[str, None, None] | Iterable[str],
-    ) -> AsyncGenerator[bytes, None, None]:
-      """
-      Experimental ⚠️
-      Asynchronously stream text-to-speech input from an async generator or iterable of strings.
-
-      This method processes a stream of text, synthesizing speech for complete sentences 
-      and yielding audio chunks for each synthesized segment. It handles text input 
-      until it encounters sentence-ending punctuation, at which point it synthesizes 
-      the accumulated text into audio.
-
-      Parameters:
-      - text_stream (AsyncGenerator[str, None] | Iterable[str]): An async generator or iterable 
-        containing strings of text to be converted to speech.
-
-      Yields:
-      - bytes: Audio chunks in bytes.
-
-      Raises:
-      - APIError: If the synthesis process fails or returns an error.
-      """
-      buffer = io.StringIO()
-      async for text in self._aiter(text_stream):
-          text = preprocess_text(text)
-          if text:
-              buffer.write(text + " ")
-              if SENTENCE_END_REGEX.search(text):
-                  full_text = buffer.getvalue().strip()
-                  audio_chunk = await self.synthesize(full_text)
-                  yield audio_chunk
-                  buffer = io.StringIO()
+        text_stream: AsyncGenerator[str, None] | Iterable[str],
+    ) -> AsyncGenerator[bytes, None]:
+        """
+        Asynchronously stream text-to-speech input from an async generator or iterable of strings.  
+        This method processes a stream of text, synthesizing speech for complete sentences 
+        and yielding audio chunks for each synthesized segment. It handles text input 
+        until it encounters sentence-ending punctuation, at which point it synthesizes 
+        the accumulated text into audio.    
+        Parameters:
+        - text_stream (AsyncGenerator[str, None] | Iterable[str]): An async generator or iterable 
+          containing strings of text to be converted to speech. 
+        Yields:
+        - bytes: Audio chunks in bytes. 
+        Raises:
+        - APIError: If the synthesis process fails or returns an error.
+        """
+        buffer = ""
     
-      # If there's remaining text in the buffer after streaming ends
-      if buffer.tell() > 0:
-          full_text = buffer.getvalue().strip()
-          audio_chunk = await self.synthesize(full_text)
-          yield audio_chunk
-
+        if self.opts.add_wav_header:
+            self.opts.add_wav_header = False
+            
+        async for text_chunk in self._aiter(text_stream):
+            buffer += text_chunk
+    
+            if SENTENCE_END_REGEX.match(buffer):
+                if buffer.strip():
+                    audio_chunk = await self.synthesize(buffer.strip())
+                    yield audio_chunk
+                buffer = ""
+    
+        if buffer.strip():
+            audio_chunk = await self.synthesize(buffer.strip())
+            yield audio_chunk
 
 
     async def _aiter(self, iterable):
