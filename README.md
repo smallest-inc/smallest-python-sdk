@@ -1,4 +1,5 @@
-![linkedin 1 2-100](https://github.com/user-attachments/assets/973cf19f-25bc-4357-8243-1a34967613f4)
+![image](https://github.com/user-attachments/assets/53a1fb40-28be-452d-a8e7-3cd23d4bdc02)   
+
 
 <div align="center">
   <a href="https://twitter.com/smallest_AI">
