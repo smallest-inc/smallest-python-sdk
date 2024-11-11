@@ -82,7 +82,7 @@ client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 tts = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
 
 def generate_text(prompt: str = "Tell me a very short story about a wise owl."):
-    """Async generator for streaming text from Groq, you can use any other provider."""
+    """Sync generator for streaming text from Groq, you can use any other provider."""
     completion = client.chat.completions.create(
         messages=[
             {
