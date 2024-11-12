@@ -36,7 +36,7 @@ To install the package, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/smallest-inc/smallest-python.git
+   git clone https://github.com/smallest-inc/smallest-python-sdk.git
    ```
 
 2. Navigate to the cloned directory and install the package:
