@@ -33,7 +33,7 @@ test = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/smallest-inc/smallest-python"
+Homepage = "https://github.com/smallest-inc/smallestai"
 
 [build-system]
 requires = ["setuptools>=61.0"]

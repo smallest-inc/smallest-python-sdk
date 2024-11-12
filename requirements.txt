@@ -1,7 +1,6 @@
 aiohttp
 aiofiles
 requests
-num2words
 sacremoses
 pydub
 jiwer
