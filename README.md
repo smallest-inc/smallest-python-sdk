@@ -97,7 +97,7 @@ from smallest.stream_tts import TextToAudioStream
 llm = Groq()
 tts = Smallest()
 
-async def generate_text(prompt: str = "explain text to speech like i am five in 5 sentences"):
+async def generate_text(prompt):
     """Async generator for streaming text from Groq. You can use any LLM"""
     completion = llm.chat.completions.create(
         messages=[
@@ -129,7 +129,7 @@ async def main():
     processor = TextToAudioStream(tts_instance=tts)
     
     # Generate text asynchronously and process it
-    llm_output = generate_text("explain text to speech like i am five in 5 sentences in fun way")
+    llm_output = generate_text("Explain text to speech like I am five in 5 sentences.")
     
     # As an example, save the generated audio to a WAV file.
     await save_audio_to_wav("llm_to_speech.wav", processor, llm_output)
