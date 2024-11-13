@@ -27,7 +27,7 @@ class Smallest:
         This is a synchronous implementation of the text-to-speech functionality. 
         For an asynchronous version, please refer to the AsyncSmallest Instance.
 
-        Parameters:
+        Args:
         - api_key (str): The API key for authentication, export it as 'SMALLEST_API_KEY' in your environment variables.
         - model (TTSModels): The model to be used for synthesis.
         - sample_rate (int): The sample rate for the audio output.
@@ -80,7 +80,7 @@ class Smallest:
         """
         Synthesize speech from the provided text.
 
-        Parameters:
+        Args:
         - text (str): The text to be converted to speech.
         - save_as (Optional[str]): If provided, the synthesized audio will be saved to this file path. 
                                    The file must have a .wav extension.
@@ -114,7 +114,7 @@ class Smallest:
 
         res = requests.post(f"{API_BASE_URL}/{self.opts.model}/get_speech", json=payload, headers=headers)
         if res.status_code != 200:
-            raise APIError(f"Failed to synthesize speech: {res.text}")
+            raise APIError(f"Failed to synthesize speech: {res.text}. For more information, visit https://waves.smallest.ai/")
         
         audio_content = res.content
 
@@ -134,44 +134,3 @@ class Smallest:
             return None
             
         return audio_content
-        
-
-    def stream_llm_output(
-            self,
-            text_stream: Union[Generator[str, None, None], Iterable[str]]
-        ) -> Generator[bytes, None, None]:
-        """
-        Stream text-to-speech input from a generator or iterable of strings.
-
-        This method processes a stream of text, synthesizing speech for complete sentences 
-        and yielding audio chunks for each synthesized segment. It handles text input 
-        until it encounters sentence-ending punctuation, at which point it synthesizes 
-        the accumulated text into audio.
-
-        Parameters:
-        - text_stream (Generator[str, None, None] | Iterable[str]): A generator or iterable 
-          containing strings of text to be converted to speech.
-
-        Returns:
-        - Generator[bytes, None, None]: A generator that yields audio chunks in bytes.
-
-        Raises:
-        - APIError: If the synthesis process fails or returns an error.
-        """
-        buffer = ""
-        
-        if self.opts.add_wav_header:
-            self.opts.add_wav_header = False
-
-        for text_chunk in text_stream:
-            buffer += text_chunk
-
-            if SENTENCE_END_REGEX.match(buffer):
-                if buffer.strip():
-                    audio_chunk = self.synthesize(buffer.strip())
-                    yield audio_chunk
-                buffer = ""
-
-        if buffer.strip():
-            audio_chunk = self.synthesize(buffer.strip())
-            yield audio_chunk

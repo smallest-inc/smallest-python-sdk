@@ -29,7 +29,7 @@ class AsyncSmallest:
         It allows for non-blocking synthesis of speech from text, making it suitable for applications 
         that require async processing.
 
-        Parameters:
+        Args:
         - api_key (str): The API key for authentication, export it as 'SMALLEST_API_KEY' in your environment variables.  
         - model (TTSModels): The model to be used for synthesis.
         - sample_rate (int): The sample rate for the audio output.
@@ -93,7 +93,7 @@ class AsyncSmallest:
         """
         Asynchronously synthesize speech from the provided text.
 
-        Parameters:
+        Args:
         - text (str): The text to be converted to speech.
         - save_as (Optional[str]): If provided, the synthesized audio will be saved to this file path. 
                                    The file must have a .wav extension.
@@ -130,7 +130,7 @@ class AsyncSmallest:
         
         async with self.session.post(f"{API_BASE_URL}/{self.opts.model}/get_speech", json=payload, headers=headers) as res:
             if res.status != 200:
-                raise APIError(f"Failed to synthesize speech: {await res.text()}")
+                raise APIError(f"Failed to synthesize speech: {await res.text()}. For more information, visit https://waves.smallest.ai/")
             
             audio_content = await res.read()
 
@@ -147,49 +147,3 @@ class AsyncSmallest:
             return None
 
         return audio_content
-
-
-    async def stream_llm_output(
-        self,
-        text_stream: AsyncGenerator[str, None] | Iterable[str],
-    ) -> AsyncGenerator[bytes, None]:
-        """
-        Asynchronously stream text-to-speech input from an async generator or iterable of strings.  
-        This method processes a stream of text, synthesizing speech for complete sentences 
-        and yielding audio chunks for each synthesized segment. It handles text input 
-        until it encounters sentence-ending punctuation, at which point it synthesizes 
-        the accumulated text into audio.    
-        Parameters:
-        - text_stream (AsyncGenerator[str, None] | Iterable[str]): An async generator or iterable 
-          containing strings of text to be converted to speech. 
-        Yields:
-        - bytes: Audio chunks in bytes. 
-        Raises:
-        - APIError: If the synthesis process fails or returns an error.
-        """
-        buffer = ""
-    
-        if self.opts.add_wav_header:
-            self.opts.add_wav_header = False
-            
-        async for text_chunk in self._aiter(text_stream):
-            buffer += text_chunk
-    
-            if SENTENCE_END_REGEX.match(buffer):
-                if buffer.strip():
-                    audio_chunk = await self.synthesize(buffer.strip())
-                    yield audio_chunk
-                buffer = ""
-    
-        if buffer.strip():
-            audio_chunk = await self.synthesize(buffer.strip())
-            yield audio_chunk
-
-
-    async def _aiter(self, iterable):
-        if hasattr(iterable, '__aiter__'):
-            async for item in iterable:
-                yield item
-        else:
-            for item in iterable:
-                yield item

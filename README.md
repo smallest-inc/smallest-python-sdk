@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/53a1fb40-28be-452d-a8e7-3cd23d4bdc02)   
+![image](https://i.imgur.com/TJ2tT4g.png)   
 
 
 <div align="center">
@@ -28,7 +28,9 @@ Currently, the library supports direct synthesis and the ability to synthesize s
 - [Examples](#examples)
   - [Sync](#sync)
   - [Async](#async)
+  - [LLM to Speech](#llm-to-speech)
   - [Common Methods](#common-methods)
+  - [Technical Note: WAV Headers in Streaming Audio](#technical-note-wav-headers-in-streaming-audio)
 
 ## Installation
 
@@ -43,17 +45,11 @@ To install the package, follow these steps:
    ```bash
    cd smallest-python
    pip install .
-   ```   
-  
-
-> Note ⚠️: The `stream_llm_output` function can only save audio using the wave package. This is because the WAV header must be added while writing to the file, not beforehand. Therefore, in this function, `add_wav_header` is set to `False` by default.
-
+   ```    
 
 ## Examples
 
-### Sync
-
-**Synthesize**
+### Sync  
 
 ```python
 import os
@@ -69,62 +65,7 @@ if __name__ == "__main__":
     main()
 ```  
 
-**Synthesize streamed LLM Output**
-
-```python
-import os
-from groq import Groq
-from smallest import Smallest
-import wave
-
-# Initialize any LLM client and TTS system
-client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
-tts = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
-
-def generate_text(prompt: str = "Tell me a very short story about a wise owl."):
-    """Sync generator for streaming text from Groq, you can use any other provider."""
-    completion = client.chat.completions.create(
-        messages=[
-            {
-                "role": "user",
-                "content": prompt,
-            }
-        ],
-        model="llama3-8b-8192",
-        stream=True,
-    )
-
-    for chunk in completion:
-        text = chunk.choices[0].delta.content
-        if text is not None:
-            yield text
-
-def save_audio_stream(audio_chunks, filename: str, sample_rate: int = 24000):
-    with wave.open(filename, 'wb') as wf:
-        wf.setnchannels(1)  
-        wf.setsampwidth(2) 
-        wf.setframerate(sample_rate)
-        for chunk in audio_chunks:
-            wf.writeframes(chunk)
-
-def main():
-    # Get text stream from LLM
-    text_generator = generate_text()
-
-    # Get audio chunks from the streaming TTS
-    audio_chunks = tts.stream_llm_output(text_stream=text_generator)
-
-    # Save the audio chunks to a WAV file
-    save_audio_stream(audio_chunks, "output_llm_stream.wav")
-
-
-if __name__ == "__main__":
-    main()
-```
-
-### Async
-
-**Synthesize**
+### Async  
 
 ```python
 import os
@@ -144,20 +85,21 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-**Synthesize streamed LLM Output**
+### LLM to Speech  
+
 ```python
-import os
-from groq import Groq
-from smallest import AsyncSmallest
 import wave
 import asyncio
+from groq import Groq
+from smallest.tts import Smallest
+from smallest.stream_tts import TextToAudioStream
 
-groq_client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
-tts_client = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
+llm = Groq()
+tts = Smallest()
 
-async def generate_text(prompt: str = "Tell me a very short story about a wise owl."):
-    """Async generator for streaming text from Groq, you can use any other provider."""
-    completion = groq_client.chat.completions.create(
+async def generate_text(prompt: str = "explain text to speech like i am five in 5 sentences"):
+    """Async generator for streaming text from Groq. You can use any LLM"""
+    completion = llm.chat.completions.create(
         messages=[
             {
                 "role": "user",
@@ -173,24 +115,24 @@ async def generate_text(prompt: str = "Tell me a very short story about a wise o
         if text is not None:
             yield text
 
-async def save_audio_stream(audio_chunks, filename: str, sample_rate: int = 24000):
-    with wave.open(filename, 'wb') as wf:
-        wf.setnchannels(1)
-        wf.setsampwidth(2)
-        wf.setframerate(sample_rate)
-        async for chunk in audio_chunks:
-            wf.writeframes(chunk)
+async def save_audio_to_wav(file_path, processor, llm_output):
+    with wave.open(file_path, "wb") as wav_file:
+        wav_file.setnchannels(1)
+        wav_file.setsampwidth(2) 
+        wav_file.setframerate(24000)
+        
+        async for audio_chunk in processor.process(llm_output):
+            wav_file.writeframes(audio_chunk)
 
 async def main():
-    async with tts_client as tts:
-        # Get text stream from LLM
-        text_generator = generate_text()
-
-        # Get audio chunks from the streaming TTS
-        audio_chunks = tts.stream_llm_output(text_stream=text_generator)
-
-        # Save the audio chunks to a WAV file
-        await save_audio_stream(audio_chunks, "output_llm_stream_async.wav")
+    # Initialize the TTS processor with the TTS instance
+    processor = TextToAudioStream(tts_instance=tts)
+    
+    # Generate text asynchronously and process it
+    llm_output = generate_text("explain text to speech like i am five in 5 sentences in fun way")
+    
+    # As an example, save the generated audio to a WAV file.
+    await save_audio_to_wav("llm_to_speech.wav", processor, llm_output)
 
 if __name__ == "__main__":
     asyncio.run(main())
@@ -207,3 +149,21 @@ print(f"Avalaible Languages: {client.get_languages()}")
 print(f"Available Voices: {client.get_voices()}")
 print(f"Available Models: {client.get_models()}")
 ```
+
+### Technical Note: WAV Headers in Streaming Audio
+
+When implementing audio streaming with chunks of synthesized speech, WAV headers are omitted from individual chunks because:
+
+#### Technical Issues
+- Each WAV header (44 bytes) contains metadata about the entire audio file.
+- Multiple headers would make chunks appear as separate audio files and add redundancy.
+- Headers contain file-specific data (like total size) that's invalid for chunks.
+- Sequential playback of chunks with headers causes audio artifacts (pop sounds) when concatenating or playing audio sequentially.
+- Audio players would try to reinitialize audio settings for each chunk.
+
+### Best Practices
+1. Stream raw PCM audio data without headers
+2. Add a single WAV header only when:
+   - Saving the complete stream to a file
+   - Initializing the audio playback system
+   - Converting the stream to a standard audio format
