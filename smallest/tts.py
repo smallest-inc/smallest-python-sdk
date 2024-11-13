@@ -1,12 +1,11 @@
-import requests
-from typing import Optional, Union, List, Generator, Iterable
 import os
-import wave
+import requests
+from typing import Optional, Union, List
 
 from .models import TTSModels, TTSLanguages, TTSVoices
 from .exceptions import TTSError, APIError
 from .utils import (TTSOptions, validate_input, preprocess_text, 
-get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX)
+get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL)
 
 class Smallest:
     def __init__(
@@ -126,11 +125,7 @@ class Smallest:
                 with open(save_as, "wb") as wf:
                     wf.write(audio_content)
             else:
-                with wave.open(save_as, "wb") as wf:
-                    wf.setnchannels(1)
-                    wf.setsampwidth(2)
-                    wf.setframerate(self.opts.sample_rate)
-                    wf.writeframes(audio_content)
+                raise TTSError("WAV header is required for saving audio. Set 'add_wav_header=True' to add a WAV header.")
             return None
             
         return audio_content

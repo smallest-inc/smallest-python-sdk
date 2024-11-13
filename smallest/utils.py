@@ -1,19 +1,18 @@
-import io
 import re
 import unicodedata
-from sacremoses import MosesPunctNormalizer
-from pydub import AudioSegment
 from typing import List
 from dataclasses import dataclass
+from sacremoses import MosesPunctNormalizer
 
-from .models import TTSModels, TTSLanguages, TTSVoices
 from .exceptions import ValidationError
+from .models import TTSModels, TTSLanguages, TTSVoices
 
 
 API_BASE_URL = "https://waves-api.smallest.ai/api/v1"
 SENTENCE_END_REGEX = re.compile(r'.*[-.!?;:…\n]$')
 SAMPLE_WIDTH = 2
 CHANNELS = 1
+
 
 @dataclass
 class TTSOptions:
@@ -26,6 +25,7 @@ class TTSOptions:
     speed: float
     transliterate: bool
     remove_extra_silence: bool
+
 
 def validate_input(text: str, voice: TTSVoices, model: TTSModels, language: TTSLanguages, sample_rate: int, speed: float):
     if not text:
@@ -50,14 +50,6 @@ def preprocess_text(text: str) -> str:
     mpn = MosesPunctNormalizer()
     text = mpn.normalize(text)
     return text.strip()
-
-
-def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: int = 2, channels: int = 1) -> bytes:
-        audio = AudioSegment(data=frame_input, sample_width=sample_width, frame_rate=sample_rate, channels=channels)
-        wav_buf = io.BytesIO()
-        audio.export(wav_buf, format="wav")
-        wav_buf.seek(0)
-        return wav_buf.read()
 
 
 def get_smallest_languages() -> List[str]:

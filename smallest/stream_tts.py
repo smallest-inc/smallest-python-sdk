@@ -1,11 +1,11 @@
 import asyncio
-from typing import AsyncGenerator, Optional, Union
-from queue import Queue, Empty
 from threading import Thread
+from queue import Queue, Empty
+from typing import AsyncGenerator, Optional, Union
 
 from .tts import Smallest
-from .async_tts import AsyncSmallest
 from .exceptions import APIError
+from .async_tts import AsyncSmallest
 from .utils import SENTENCE_END_REGEX
 
 class TextToAudioStream:
@@ -18,15 +18,15 @@ class TextToAudioStream:
         """
         A real-time text-to-speech processor that converts streaming text into audio output.
         Useful for applications requiring immediate audio feedback from text generation,
-        such as voice assistants, live captioning, or interactive chatbots.
+        such as voice assistants, live captioning, or interactive chatbots.  
 
-        ⚠️ `add_wav_header` is disabled by default for streaming efficiency. Refer to the README for more information.
+        ⚠️ `add_wav_header` is disabled by default for streaming efficiency. Refer to the README for more information.  
 
-        Features:
-        - Streams audio chunks as soon as text is available
-        - Handles both sync and async text-to-speech engines
-        - Automatically retries failed synthesis attempts
-        - Low latency between text generation and speech output
+        Features:  
+        - Streams audio chunks as soon as text is available.
+        - Handles both sync and async text-to-speech engines.
+        - Automatically retries failed synthesis attempts.
+        - Low latency between text generation and speech output.
 
         Args:
             tts_instance: The text-to-speech engine to use (Smallest or AsyncSmallest)
@@ -114,10 +114,10 @@ class TextToAudioStream:
         Convert streaming text into audio in real-time.
 
         Handles the entire pipeline from receiving text to producing audio,
-        yielding audio chunks as soon as they're ready
+        yielding audio chunks as soon as they're ready.
 
         Args:
-            llm_output: An async generator that yields text chunks
+            llm_output: An async generator that yields text chunks.
 
         Yields:
             Raw audio data chunks (without WAV headers) that can be:

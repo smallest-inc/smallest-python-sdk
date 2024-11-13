@@ -19,7 +19,6 @@ dependencies = [
     "aiofiles",
     "requests",
     "sacremoses",
-    "pydub"
 ]
 
 [project.optional-dependencies]

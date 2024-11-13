@@ -1,12 +1,12 @@
-import aiohttp
-from typing import Optional, Union, AsyncGenerator, Iterable, List
 import os
+import aiohttp
 import aiofiles
+from typing import Optional, Union, List
 
 from .models import TTSModels, TTSLanguages, TTSVoices
 from .exceptions import TTSError, APIError
-from .utils import (TTSOptions, validate_input, preprocess_text, add_wav_header,
-                     get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL, SENTENCE_END_REGEX)
+from .utils import (TTSOptions, validate_input, preprocess_text,
+                     get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL)
 
 
 class AsyncSmallest:
@@ -142,8 +142,7 @@ class AsyncSmallest:
                 async with aiofiles.open(save_as, mode='wb') as f:
                     await f.write(audio_content)
             else:
-                async with aiofiles.open(save_as, mode='wb') as f:
-                    await f.write(add_wav_header(audio_content, self.opts.sample_rate))
+                raise TTSError("WAV header is required for saving audio. Set 'add_wav_header=True' to add a WAV header.")
             return None
 
         return audio_content
