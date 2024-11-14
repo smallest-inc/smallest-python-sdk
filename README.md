@@ -25,6 +25,7 @@ Currently, the library supports direct synthesis and the ability to synthesize s
 ## Table of Contents
 
 - [Installation](#installation)
+- [Get the API Key](#get-the-api-key)
 - [Examples](#examples)
   - [Sync](#sync)
   - [Async](#async)
@@ -46,6 +47,13 @@ To install the package, follow these steps:
    cd smallest-python
    pip install .
    ```    
+
+## Get the API Key  
+
+1. Visit [waves.smallest.ai](https://waves.smallest.ai/) and sign up for an account or log in if you already have ana ccount.  
+2. Navigate to `API Key` tab in your account dashboard.
+3. Create a new API Key and copy it.
+4. Export the API Key in your environment with the name `SMALLEST_API_KEY`, ensuring that your application can access it securely for authentication.
 
 ## Examples
 
@@ -138,7 +146,7 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-### Common Methods
+## Common Methods
 
 ```python
 from smallest.tts import Smallest
@@ -150,7 +158,7 @@ print(f"Available Voices: {client.get_voices()}")
 print(f"Available Models: {client.get_models()}")
 ```
 
-### Technical Note: WAV Headers in Streaming Audio
+## Technical Note: WAV Headers in Streaming Audio
 
 When implementing audio streaming with chunks of synthesized speech, WAV headers are omitted from individual chunks because:
 

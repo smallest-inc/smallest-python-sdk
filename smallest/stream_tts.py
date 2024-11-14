@@ -71,7 +71,7 @@ class TextToAudioStream:
             if retries < self.max_retries:
                 return await self._synthesize_async(sentence, retries + 1)
             else:
-                print(f"Synthesis failed for sentence: {sentence} - Error: {e}. For more information, visit https://waves.smallest.ai/")
+                print(f"Synthesis failed for sentence: {sentence} - Error: {e}. Retries Exhausted, for more information, visit https://waves.smallest.ai/")
                 return None
 
 
@@ -83,7 +83,7 @@ class TextToAudioStream:
             if retries < self.max_retries:
                 return self._synthesize_sync(sentence, retries + 1)
             else:
-                print(f"Synthesis failed for sentence: {sentence} - Error: {e}. For more information, visit https://waves.smallest.ai/")
+                print(f"Synthesis failed for sentence: {sentence} - Error: {e}. Retries Exhausted, for more information, visit https://waves.smallest.ai/")
                 return None
 
 
