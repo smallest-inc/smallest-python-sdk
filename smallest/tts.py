@@ -2,8 +2,8 @@ import os
 import requests
 from typing import Optional, Union, List
 
-from .models import TTSModels, TTSLanguages, TTSVoices
 from .exceptions import TTSError, APIError
+from .models import TTSModels, TTSLanguages, TTSVoices
 from .utils import (TTSOptions, validate_input, preprocess_text, 
 get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL)
 

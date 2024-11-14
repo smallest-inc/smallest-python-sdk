@@ -1,6 +1,8 @@
 import re
+import io
 import unicodedata
 from typing import List
+from pydub import AudioSegment
 from dataclasses import dataclass
 from sacremoses import MosesPunctNormalizer
 
@@ -40,6 +42,14 @@ def validate_input(text: str, voice: TTSVoices, model: TTSModels, language: TTSL
         raise ValidationError(f"Invalid sample rate: {sample_rate}. Must be between 8000 and 48000")
     if not 0.5 <= speed <= 2.0:
         raise ValidationError(f"Invalid speed: {speed}. Must be between 0.5 and 2.0")
+
+
+def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: int = 2, channels: int = 1) -> bytes:
+        audio = AudioSegment(data=frame_input, sample_width=sample_width, frame_rate=sample_rate, channels=channels)
+        wav_buf = io.BytesIO()
+        audio.export(wav_buf, format="wav")
+        wav_buf.seek(0)
+        return wav_buf.read()
 
 
 def preprocess_text(text: str) -> str:
