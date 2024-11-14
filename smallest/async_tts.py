@@ -1,10 +1,11 @@
 import os
+import copy
 import aiohttp
 import aiofiles
 from typing import Optional, Union, List
 
 from .exceptions import TTSError, APIError
-from .models import TTSModels, TTSLanguages, TTSVoices
+from .models import TTSModels, TTSVoices
 from .utils import (TTSOptions, validate_input, preprocess_text, add_wav_header,
                      get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL)
 
@@ -16,7 +17,6 @@ class AsyncSmallest:
             model: TTSModels = "lightning",
             sample_rate: int = 24000,
             voice: TTSVoices = "emily",
-            language: TTSLanguages = "en",
             speed: Optional[float] = 1.0,
             add_wav_header: Optional[bool] = True,
             transliterate: Optional[bool] = False,
@@ -34,7 +34,6 @@ class AsyncSmallest:
         - model (TTSModels): The model to be used for synthesis.
         - sample_rate (int): The sample rate for the audio output.
         - voice (TTSVoices): The voice to be used for synthesis.
-        - language (TTSLanguages): The language for the synthesized speech.
         - add_wav_header (bool): Whether to add a WAV header to the output audio.
         - speed (float): The speed of the speech synthesis, range is [0.5, 2.0].
         - transliterate (bool): Whether to transliterate the text.
@@ -56,7 +55,6 @@ class AsyncSmallest:
             sample_rate=sample_rate,
             voice=voice,
             api_key=self.api_key,
-            language=language,
             add_wav_header=add_wav_header,
             speed=speed,
             transliterate=transliterate,
@@ -89,6 +87,7 @@ class AsyncSmallest:
             self,
             text: str,
             save_as: Optional[str] = None,
+            **kwargs
         ) -> Union[bytes, None]:
         """
         Asynchronously synthesize speech from the provided text.
@@ -97,6 +96,7 @@ class AsyncSmallest:
         - text (str): The text to be converted to speech.
         - save_as (Optional[str]): If provided, the synthesized audio will be saved to this file path. 
                                    The file must have a .wav extension.
+        - kwargs: Additional optional parameters to override `__init__` options for this call.
 
         Returns:
         - Union[bytes, None]: The synthesized audio content in bytes if `save_as` is not specified; 
@@ -106,18 +106,21 @@ class AsyncSmallest:
         - TTSError: If the provided file name does not have a .wav extension when `save_as` is specified.
         - APIError: If the API request fails or returns an error.
         """
-        validate_input(text, self.opts.voice, self.opts.model, self.opts.language, self.opts.sample_rate, self.opts.speed)
+        opts = copy.deepcopy(self.opts)
+        for key, value in kwargs.items():
+            setattr(opts, key, value)
+
+        validate_input(text, opts.voice, opts.model, opts.language, opts.sample_rate, opts.speed)
 
         payload = {
             "text": preprocess_text(text),
-            "sample_rate": self.opts.sample_rate,
-            "voice_id": self.opts.voice,
-            "language": self.opts.language,
-            "add_wav_header": self.opts.add_wav_header,
-            "speed": self.opts.speed,
-            "model": self.opts.model,
-            "transliterate": self.opts.transliterate,
-            "remove_extra_silence": self.opts.remove_extra_silence
+            "sample_rate": opts.sample_rate,
+            "voice_id": opts.voice,
+            "add_wav_header": opts.add_wav_header,
+            "speed": opts.speed,
+            "model": opts.model,
+            "transliterate": opts.transliterate,
+            "remove_extra_silence": opts.remove_extra_silence
         }
 
         headers = {
@@ -128,7 +131,7 @@ class AsyncSmallest:
         if not self.session:
             self.session = aiohttp.ClientSession()
         
-        async with self.session.post(f"{API_BASE_URL}/{self.opts.model}/get_speech", json=payload, headers=headers) as res:
+        async with self.session.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers) as res:
             if res.status != 200:
                 raise APIError(f"Failed to synthesize speech: {await res.text()}. For more information, visit https://waves.smallest.ai/")
             
