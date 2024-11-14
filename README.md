@@ -61,7 +61,7 @@ To install the package, follow these steps:
 
 ```python
 import os
-from smallest.tts import Smallest
+from smallest import Smallest
 
 def main():
     client = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
@@ -79,7 +79,7 @@ if __name__ == "__main__":
 import os
 import asyncio
 import aiofiles
-from smallest.async_tts import AsyncSmallest
+from smallest import AsyncSmallest
 
 client = AsyncSmallest(api_key=os.environ.get("SMALLEST_API_KEY"))
 
@@ -99,11 +99,11 @@ if __name__ == "__main__":
 import wave
 import asyncio
 from groq import Groq
-from smallest.tts import Smallest
-from smallest.stream_tts import TextToAudioStream
+from smallest import Smallest
+from smallest import TextToAudioStream
 
-llm = Groq()
-tts = Smallest()
+llm = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+tts = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
 
 async def generate_text(prompt):
     """Async generator for streaming text from Groq. You can use any LLM"""

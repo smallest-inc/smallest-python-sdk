@@ -31,7 +31,6 @@ class Smallest:
         - model (TTSModels): The model to be used for synthesis.
         - sample_rate (int): The sample rate for the audio output.
         - voice (TTSVoices): The voice to be used for synthesis.
-        - language (TTSLanguages): The language for the synthesized speech.
         - add_wav_header (bool): Whether to add a WAV header to the output audio.
         - speed (float): The speed of the speech synthesis.
         - transliterate (bool): Whether to transliterate the text.
@@ -97,7 +96,7 @@ class Smallest:
         for key, value in kwargs.items():
             setattr(opts, key, value)
 
-        validate_input(text, opts.voice, opts.model, opts.language, opts.sample_rate, opts.speed)
+        validate_input(text, opts.voice, opts.model, opts.sample_rate, opts.speed)
 
         payload = {
             "text": preprocess_text(text),

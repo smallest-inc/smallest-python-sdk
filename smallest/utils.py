@@ -22,22 +22,19 @@ class TTSOptions:
     sample_rate: int
     voice: TTSVoices
     api_key: str
-    language: TTSLanguages
     add_wav_header: bool
     speed: float
     transliterate: bool
     remove_extra_silence: bool
 
 
-def validate_input(text: str, voice: TTSVoices, model: TTSModels, language: TTSLanguages, sample_rate: int, speed: float):
+def validate_input(text: str, voice: TTSVoices, model: TTSModels, sample_rate: int, speed: float):
     if not text:
         raise ValidationError("Text cannot be empty")
     if voice not in TTSVoices.__args__:
         raise ValidationError(f"Invalid voice: {voice}")
-    if model not in TTSModels.__args__:
+    if model not in ['lightning']:
         raise ValidationError(f"Invalid model: {model}")
-    if language not in TTSLanguages.__args__:
-        raise ValidationError(f"Invalid language: {language}")
     if not 8000 <= sample_rate <= 48000:
         raise ValidationError(f"Invalid sample rate: {sample_rate}. Must be between 8000 and 48000")
     if not 0.5 <= speed <= 2.0:

@@ -110,7 +110,7 @@ class AsyncSmallest:
         for key, value in kwargs.items():
             setattr(opts, key, value)
 
-        validate_input(text, opts.voice, opts.model, opts.language, opts.sample_rate, opts.speed)
+        validate_input(text, opts.voice, opts.model, opts.sample_rate, opts.speed)
 
         payload = {
             "text": preprocess_text(text),
