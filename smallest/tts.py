@@ -18,7 +18,7 @@ class Smallest:
             speed: Optional[float] = 1.0,
             add_wav_header: Optional[bool] = True,
             transliterate: Optional[bool] = False,
-            remove_extra_silence: Optional[bool] = False
+            remove_extra_silence: Optional[bool] = True
     ) -> None:
         """
         Smallest Instance for text-to-speech synthesis.
@@ -31,16 +31,16 @@ class Smallest:
         - model (TTSModels): The model to be used for synthesis.
         - sample_rate (int): The sample rate for the audio output.
         - voice (TTSVoices): The voice to be used for synthesis.
-        - add_wav_header (bool): Whether to add a WAV header to the output audio.
         - speed (float): The speed of the speech synthesis.
+        - add_wav_header (bool): Whether to add a WAV header to the output audio.
         - transliterate (bool): Whether to transliterate the text.
+        - remove_extra_silence (bool): Whether to remove extra silence from the synthesized audio.
 
         Methods:
         - get_languages: Returns a list of available languages for synthesis.
         - get_voices: Returns a list of available voices for synthesis.
+        - get_models: Returns a list of available models for synthesis.
         - synthesize: Converts the provided text into speech and returns the audio content.
-        - stream: Streams the synthesized audio synchronously in chunks.
-        - stream_tts_input: Streams text-to-speech input from a generator or iterable of strings.
         """
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY")
         if not self.api_key:
