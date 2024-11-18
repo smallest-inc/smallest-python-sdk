@@ -12,7 +12,7 @@ class TextToAudioStream:
     def __init__(
         self,
         tts_instance: Union[Smallest, AsyncSmallest],
-        queue_timeout: float = 1.0,
+        queue_timeout: float = 5.0,
         max_retries: int = 3
     ):
         """
