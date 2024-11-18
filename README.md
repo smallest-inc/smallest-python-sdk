@@ -30,8 +30,8 @@ Currently, the library supports direct synthesis and the ability to synthesize s
   - [Sync](#sync)
   - [Async](#async)
   - [LLM to Speech](#llm-to-speech)
-  - [Available Methods](#available-methods)
-  - [Technical Note: WAV Headers in Streaming Audio](#technical-note-wav-headers-in-streaming-audio)
+- [Available Methods](#available-methods)
+- [Technical Note: WAV Headers in Streaming Audio](#technical-note-wav-headers-in-streaming-audio)
 
 ## Installation
 
@@ -57,7 +57,7 @@ To install the package, follow these steps:
 
 ## Examples
 
-## Sync  
+### Sync  
 A synchronous text-to-speech synthesis client. 
 
 **Basic Usage:**   
@@ -85,7 +85,7 @@ if __name__ == "__main__":
 - `transliterate`: Enable text transliteration (default: False)
 - `remove_extra_silence`: Remove additional silence (default: False)
 
-## Async   
+### Async   
 A synchronous text-to-speech synthesis client.    
 
 **Basic Usage:**   
@@ -117,7 +117,7 @@ if __name__ == "__main__":
 - `transliterate`: Enable text transliteration (default: False)
 - `remove_extra_silence`: Remove additional silence (default: False)
 
-## LLM to Speech    
+### LLM to Speech    
 
 The `TextToAudioStream` class provides real-time text-to-speech processing, converting streaming text into audio output with minimal latency. It's particularly useful for applications like voice assistants, live captioning, or interactive chatbots that require immediate audio feedback from text generation. Supports both synchronous and asynchronous TTS instance.
 
