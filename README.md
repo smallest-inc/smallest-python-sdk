@@ -83,7 +83,7 @@ if __name__ == "__main__":
 - `speed`: Speech speed multiplier (default: 1.0)
 - `add_wav_header`: Include WAV header in output (default: True)
 - `transliterate`: Enable text transliteration (default: False)
-- `remove_extra_silence`: Remove additional silence (default: False)
+- `remove_extra_silence`: Remove additional silence (default: True)
 
 ### Async   
 A synchronous text-to-speech synthesis client.    
@@ -115,7 +115,7 @@ if __name__ == "__main__":
 - `speed`: Speech speed multiplier (default: 1.0)
 - `add_wav_header`: Include WAV header in output (default: True)
 - `transliterate`: Enable text transliteration (default: False)
-- `remove_extra_silence`: Remove additional silence (default: False)
+- `remove_extra_silence`: Remove additional silence (default: True)
 
 ### LLM to Speech    
 
