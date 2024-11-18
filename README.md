@@ -30,7 +30,7 @@ Currently, the library supports direct synthesis and the ability to synthesize s
   - [Sync](#sync)
   - [Async](#async)
   - [LLM to Speech](#llm-to-speech)
-  - [Common Methods](#common-methods)
+  - [Available Methods](#available-methods)
   - [Technical Note: WAV Headers in Streaming Audio](#technical-note-wav-headers-in-streaming-audio)
 
 ## Installation
@@ -50,15 +50,17 @@ To install the package, follow these steps:
 
 ## Get the API Key  
 
-1. Visit [waves.smallest.ai](https://waves.smallest.ai/) and sign up for an account or log in if you already have ana ccount.  
+1. Visit [waves.smallest.ai](https://waves.smallest.ai/) and sign up for an account or log in if you already have an account.  
 2. Navigate to `API Key` tab in your account dashboard.
 3. Create a new API Key and copy it.
 4. Export the API Key in your environment with the name `SMALLEST_API_KEY`, ensuring that your application can access it securely for authentication.
 
 ## Examples
 
-### Sync  
+## Sync  
+A synchronous text-to-speech synthesis client. 
 
+**Basic Usage:**   
 ```python
 import os
 from smallest import Smallest
@@ -71,10 +73,22 @@ def main():
 
 if __name__ == "__main__":
     main()
-```  
+```
 
-### Async  
+**Parameters:**   
+- `api_key`: Your API key (can be set via SMALLEST_API_KEY environment variable)
+- `model`: TTS model to use (default: "lightning")
+- `sample_rate`: Audio sample rate (default: 24000)
+- `voice`: Voice ID (default: "emily")
+- `speed`: Speech speed multiplier (default: 1.0)
+- `add_wav_header`: Include WAV header in output (default: True)
+- `transliterate`: Enable text transliteration (default: False)
+- `remove_extra_silence`: Remove additional silence (default: False)
 
+## Async   
+A synchronous text-to-speech synthesis client.    
+
+**Basic Usage:**   
 ```python
 import os
 import asyncio
@@ -93,9 +107,22 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-### LLM to Speech  
+**Parameters:**    
+- `api_key`: Your API key (can be set via SMALLEST_API_KEY environment variable)
+- `model`: TTS model to use (default: "lightning")
+- `sample_rate`: Audio sample rate (default: 24000)
+- `voice`: Voice ID (default: "emily")
+- `speed`: Speech speed multiplier (default: 1.0)
+- `add_wav_header`: Include WAV header in output (default: True)
+- `transliterate`: Enable text transliteration (default: False)
+- `remove_extra_silence`: Remove additional silence (default: False)
+
+## LLM to Speech    
+
+The `TextToAudioStream` class provides real-time text-to-speech processing, converting streaming text into audio output with minimal latency. It's particularly useful for applications like voice assistants, live captioning, or interactive chatbots that require immediate audio feedback from text generation. Supports both synchronous and asynchronous TTS instance.
 
 ```python
+import os
 import wave
 import asyncio
 from groq import Groq
@@ -146,7 +173,22 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-## Common Methods
+**Parameters:**   
+
+- `tts_instance`: Text-to-speech engine (Smallest or AsyncSmallest)
+- `queue_timeout`: Wait time for new text (seconds, default: 5.0)
+- `max_retries`: Number of retry attempts for failed synthesis (default: 3)
+
+**Output Format:**   
+The processor yields raw audio data chunks without WAV headers for streaming efficiency. These chunks can be:
+
+- Played directly through an audio device
+- Saved to a file
+- Streamed over a network
+- Further processed as needed
+
+
+## Available Methods
 
 ```python
 from smallest.tts import Smallest
@@ -163,7 +205,7 @@ print(f"Available Models: {client.get_models()}")
 When implementing audio streaming with chunks of synthesized speech, WAV headers are omitted from individual chunks because:
 
 #### Technical Issues
-- Each WAV header (44 bytes) contains metadata about the entire audio file.
+- Each WAV header contains metadata about the entire audio file.
 - Multiple headers would make chunks appear as separate audio files and add redundancy.
 - Headers contain file-specific data (like total size) that's invalid for chunks.
 - Sequential playback of chunks with headers causes audio artifacts (pop sounds) when concatenating or playing audio sequentially.
