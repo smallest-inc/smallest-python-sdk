@@ -1,6 +1,6 @@
 [project]
 name = "smallestai"
-version = "1.0.0"
+version = "0.1.0"
 description = "Official Python client for the Smallest AI API"
 authors = [
     {name = "Smallest", email = "info@smallest.ai"},
@@ -19,6 +19,7 @@ dependencies = [
     "aiofiles",
     "requests",
     "sacremoses",
+    "pydub"
 ]
 
 [project.optional-dependencies]

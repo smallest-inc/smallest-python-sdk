@@ -2,6 +2,7 @@ aiohttp
 aiofiles
 requests
 sacremoses
+pydub
 jiwer
 httpx
 pytest
