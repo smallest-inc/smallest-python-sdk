@@ -35,18 +35,12 @@ Currently, the library supports direct synthesis and the ability to synthesize s
 
 ## Installation
 
-To install the package, follow these steps:
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/smallest-inc/smallest-python-sdk.git
-   ```
-
-2. Navigate to the cloned directory and install the package:
-   ```bash
-   cd smallest-python
-   pip install .
-   ```    
+To install the latest version available   
+```bash
+pip install smallestai
+```  
+When using an SDK in your application, make sure to pin to at least the major version (e.g., ==1.*). This helps ensure your application remains stable and avoids potential issues from breaking changes in future updates.   
+   
 
 ## Get the API Key  
 
