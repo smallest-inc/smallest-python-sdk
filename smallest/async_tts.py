@@ -30,21 +30,20 @@ class AsyncSmallest:
         that require async processing.
 
         Args:
-        - api_key (str): The API key for authentication, export it as 'SMALLEST_API_KEY' in your environment variables.  
+        - api_key (str): The API key for authentication, export it as 'SMALLEST_API_KEY' in your environment variables.
         - model (TTSModels): The model to be used for synthesis.
         - sample_rate (int): The sample rate for the audio output.
         - voice (TTSVoices): The voice to be used for synthesis.
+        - speed (float): The speed of the speech synthesis.
         - add_wav_header (bool): Whether to add a WAV header to the output audio.
-        - speed (float): The speed of the speech synthesis, range is [0.5, 2.0].
         - transliterate (bool): Whether to transliterate the text.
         - remove_extra_silence (bool): Whether to remove extra silence from the synthesized audio.
 
         Methods:
         - get_languages: Returns a list of available languages for synthesis.
         - get_voices: Returns a list of available voices for synthesis.
+        - get_models: Returns a list of available models for synthesis.
         - synthesize: Asynchronously converts the provided text into speech and returns the audio content.
-        - stream: Asynchronously streams the synthesized audio in chunks using websocket.
-        - stream_tts_input: Asynchronously streams text-to-speech input from an async generator or iterable of strings.
         """
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY")
         if not self.api_key:
