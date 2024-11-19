@@ -61,9 +61,7 @@ from smallest import Smallest
 
 def main():
     client = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
-    audio_data = client.synthesize("Hello, this is a test for sync synthesis function.")
-    with open("sync_synthesize.wav", "wb") as f:
-        f.write(audio_data)
+    client.synthesize("Hello, this is a test for sync synthesis function.", save_as="sync_synthesize.wav")
 
 if __name__ == "__main__":
     main()
@@ -80,7 +78,7 @@ if __name__ == "__main__":
 - `remove_extra_silence`: Remove additional silence (default: True)
 
 ### Async   
-A synchronous text-to-speech synthesis client.    
+Asynchronous text-to-speech synthesis client.    
 
 **Basic Usage:**   
 ```python
@@ -93,9 +91,9 @@ client = AsyncSmallest(api_key=os.environ.get("SMALLEST_API_KEY"))
 
 async def main():
     async with client as tts:
-        audio_bytes = await tts.synthesize("Hello, this is a test of the async synthesis function.")
+        await tts.synthesize("Hello, this is a test of the async synthesis function.") 
         async with aiofiles.open("async_synthesize.wav", "wb") as f:
-            await f.write(audio_bytes)
+            await f.write(audio_bytes) # alternatively you can use the `save_as` parameter.
 
 if __name__ == "__main__":
     asyncio.run(main())

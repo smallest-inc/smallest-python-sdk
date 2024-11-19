@@ -1,4 +1,5 @@
 import os
+import wave
 import copy
 import requests
 from typing import Optional, Union, List
@@ -128,7 +129,11 @@ class Smallest:
                 with open(save_as, "wb") as wf:
                     wf.write(audio_content)
             else:
-                raise TTSError("WAV header is required for saving audio. Set 'add_wav_header=True' to add a WAV header.")
+                with wave.open(save_as, "wb") as wf:
+                    wf.setnchannels(1)
+                    wf.setsampwidth(2)
+                    wf.setframerate(self.opts.sample_rate)
+                    wf.writeframes(audio_content)
             return None
             
         return audio_content
