@@ -91,7 +91,7 @@ client = AsyncSmallest(api_key=os.environ.get("SMALLEST_API_KEY"))
 
 async def main():
     async with client as tts:
-        await tts.synthesize("Hello, this is a test of the async synthesis function.") 
+        audio_bytes = await tts.synthesize("Hello, this is a test of the async synthesis function.") 
         async with aiofiles.open("async_synthesize.wav", "wb") as f:
             await f.write(audio_bytes) # alternatively you can use the `save_as` parameter.
 
