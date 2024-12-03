@@ -7,20 +7,20 @@ from typing import Optional, Union, List
 from .models import TTSModels, TTSVoices
 from .exceptions import TTSError, APIError
 from .utils import (TTSOptions, validate_input, preprocess_text, add_wav_header,
-                     get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL)
+                     get_smallest_languages, get_smallest_voices, get_smallest_models, SENTENCE_END_REGEX, API_BASE_URL)
 
 
 class AsyncSmallest:
     def __init__(
-            self,
-            api_key: Optional[str] = None,
-            model: TTSModels = "lightning",
-            sample_rate: int = 24000,
-            voice: TTSVoices = "emily",
-            speed: Optional[float] = 1.0,
-            add_wav_header: Optional[bool] = True,
-            transliterate: Optional[bool] = False,
-            remove_extra_silence: Optional[bool] = False
+        self,
+        api_key: Optional[str] = None,
+        model: TTSModels = "lightning",
+        sample_rate: int = 24000,
+        voice: TTSVoices = "emily",
+        speed: Optional[float] = 1.0,
+        add_wav_header: Optional[bool] = True,
+        transliterate: Optional[bool] = False,
+        remove_extra_silence: Optional[bool] = False
     ) -> None:
         """
         AsyncSmallest Instance for asynchronous text-to-speech synthesis.
@@ -48,6 +48,7 @@ class AsyncSmallest:
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY")
         if not self.api_key:
             raise TTSError("API key is required")
+        self.chunk_size = 250
         
         self.opts = TTSOptions(
             model=model,
@@ -69,6 +70,48 @@ class AsyncSmallest:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         if self.session:
             await self.session.close()
+
+    def _split_into_chunks(self, text: str) -> List[str]:
+        """
+        Splits the input text into chunks based on sentence boundaries and the maximum chunk size.
+        """
+        chunks = []
+        current_chunk = ""
+        last_break_index = 0
+
+        i = 0
+        while i < len(text):
+            current_chunk += text[i]
+
+            if text[i] in ".,":
+                last_break_index = i
+
+            if len(current_chunk) >= self.chunk_size:
+                if last_break_index > 0:
+                    chunk = text[:last_break_index + 1].strip()
+                    chunk = chunk.replace("—", " ")
+                    chunks.append(chunk)
+                
+                    text = text[last_break_index + 1:]
+                    i = -1
+                    current_chunk = ""
+                    last_break_index = 0
+                else:
+                    # No break point found, split at max length
+                    current_chunk = current_chunk.replace("—", " ")
+                    chunks.append(current_chunk.strip())
+                    text = text[self.chunk_size:]
+                    i = -1
+                    current_chunk = ""
+
+            i += 1
+
+        if text:
+            text = text.replace("—", " ")
+            chunks.append(text.strip())
+
+        return chunks
+
 
     def get_languages(self) -> List[str]:
         """Returns a list of available languages."""
@@ -110,42 +153,45 @@ class AsyncSmallest:
             setattr(opts, key, value)
 
         validate_input(text, opts.voice, opts.model, opts.sample_rate, opts.speed)
+        chunks = self._split_into_chunks(text)
+        audio_content = b""
 
-        payload = {
-            "text": preprocess_text(text),
-            "sample_rate": opts.sample_rate,
-            "voice_id": opts.voice,
-            "add_wav_header": opts.add_wav_header,
-            "speed": opts.speed,
-            "model": opts.model,
-            "transliterate": opts.transliterate,
-            "remove_extra_silence": opts.remove_extra_silence
-        }
+        for chunk in chunks:
+            payload = {
+                "text": preprocess_text(chunk),
+                "sample_rate": opts.sample_rate,
+                "voice_id": opts.voice,
+                "add_wav_header": False,
+                "speed": opts.speed,
+                "model": opts.model,
+                "transliterate": opts.transliterate,
+                "remove_extra_silence": opts.remove_extra_silence
+            }
 
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
-        }
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+            }
 
-        if not self.session:
-            self.session = aiohttp.ClientSession()
+            if not self.session:
+                self.session = aiohttp.ClientSession()
         
-        async with self.session.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers) as res:
-            if res.status != 200:
-                raise APIError(f"Failed to synthesize speech: {await res.text()}. For more information, visit https://waves.smallest.ai/")
+            async with self.session.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers) as res:
+                if res.status != 200:
+                    raise APIError(f"Failed to synthesize speech: {await res.text()}. For more information, visit https://waves.smallest.ai/")
             
-            audio_content = await res.read()
+                audio_content += await res.read()
 
         if save_as:
             if not save_as.endswith(".wav"):
                 raise TTSError("Invalid file name. Extension must be .wav")
             
-            if self.opts.add_wav_header:
-                async with aiofiles.open(save_as, mode='wb') as f:
-                    await f.write(audio_content)
-            else:
-                async with aiofiles.open(save_as, mode='wb') as f:
-                    await f.write(add_wav_header(audio_content, self.opts.sample_rate))
+            async with aiofiles.open(save_as, mode='wb') as f:
+                await f.write(add_wav_header(audio_content, self.opts.sample_rate))
+
             return None
 
+        if opts.add_wav_header:
+            return add_wav_header(audio_content, self.opts.sample_rate)
+        
         return audio_content
