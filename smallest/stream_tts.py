@@ -34,13 +34,14 @@ class TextToAudioStream:
             max_retries: Number of retry attempts for failed synthesis (default: 3)
         """
         self.tts_instance = tts_instance
+        self.tts_instance.opts.add_wav_header = False
+
         self.sentence_end_regex = SENTENCE_END_REGEX
         self.queue_timeout = queue_timeout
         self.max_retries = max_retries
         self.queue = Queue()
         self.buffer_size = 250
         self.stop_flag = False
-        self.tts_instance.opts.add_wav_header = False
 
 
     async def _stream_llm_output(self, llm_output: AsyncGenerator[str, None]) -> None:
@@ -53,7 +54,7 @@ class TextToAudioStream:
         buffer = ""
         async for chunk in llm_output:
             buffer += chunk
-            if self.sentence_end_regex.match(buffer) or self.buffer_size > 600:
+            if self.sentence_end_regex.match(buffer) or len(buffer) > self.buffer_size:
                 self.queue.put(buffer)
                 buffer = ""
 

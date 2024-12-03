@@ -6,20 +6,20 @@ from typing import Optional, Union, List
 
 from .models import TTSModels, TTSVoices
 from .exceptions import TTSError, APIError
-from .utils import (TTSOptions, validate_input, preprocess_text, 
-get_smallest_languages, get_smallest_voices, get_smallest_models, API_BASE_URL)
+from .utils import (TTSOptions, validate_input, preprocess_text, add_wav_header, 
+get_smallest_languages, get_smallest_voices, get_smallest_models, SENTENCE_END_REGEX, API_BASE_URL)
 
 class Smallest:
     def __init__(
-            self,
-            api_key: Optional[str] = None,
-            model: TTSModels = "lightning",
-            sample_rate: int = 24000,
-            voice: TTSVoices = "emily",
-            speed: Optional[float] = 1.0,
-            add_wav_header: Optional[bool] = True,
-            transliterate: Optional[bool] = False,
-            remove_extra_silence: Optional[bool] = True
+        self,
+        api_key: Optional[str] = None,
+        model: TTSModels = "lightning",
+        sample_rate: int = 24000,
+        voice: TTSVoices = "emily",
+        speed: Optional[float] = 1.0,
+        add_wav_header: Optional[bool] = True,
+        transliterate: Optional[bool] = False,
+        remove_extra_silence: Optional[bool] = True
     ) -> None:
         """
         Smallest Instance for text-to-speech synthesis.
@@ -47,6 +47,8 @@ class Smallest:
         if not self.api_key:
             raise TTSError("API key is required")
         
+        self.chunk_size = 250
+        
         self.opts = TTSOptions(
             model=model,
             sample_rate=sample_rate,
@@ -57,6 +59,48 @@ class Smallest:
             transliterate=transliterate,
             remove_extra_silence=remove_extra_silence
         )
+
+    def _split_into_chunks(self, text: str) -> List[str]:
+        """
+        Splits the input text into chunks based on sentence boundaries and the maximum chunk size.
+        """
+        chunks = []
+        current_chunk = ""
+        last_break_index = 0
+
+        i = 0
+        while i < len(text):
+            current_chunk += text[i]
+
+            if text[i] in ".,":
+                last_break_index = i
+
+            if len(current_chunk) >= self.chunk_size:
+                if last_break_index > 0:
+                    chunk = text[:last_break_index + 1].strip()
+                    chunk = chunk.replace("—", " ")
+                    chunks.append(chunk)
+                
+                    text = text[last_break_index + 1:]
+                    i = -1
+                    current_chunk = ""
+                    last_break_index = 0
+                else:
+                    # No break point found, split at max length
+                    current_chunk = current_chunk.replace("—", " ")
+                    chunks.append(current_chunk.strip())
+                    text = text[self.chunk_size:]
+                    i = -1
+                    current_chunk = ""
+
+            i += 1
+
+        if text:
+            text = text.replace("—", " ")
+            chunks.append(text.strip())
+
+        return chunks
+    
         
     def get_languages(self) -> List[str]:
         """Returns a list of available languages."""
@@ -99,41 +143,49 @@ class Smallest:
 
         validate_input(text, opts.voice, opts.model, opts.sample_rate, opts.speed)
 
-        payload = {
-            "text": preprocess_text(text),
-            "sample_rate": opts.sample_rate,
-            "voice_id": opts.voice,
-            "add_wav_header": opts.add_wav_header,
-            "speed": opts.speed,
-            "model": opts.model,
-            "transliterate": opts.transliterate,
-            "remove_extra_silence": opts.remove_extra_silence,
-        }
+        chunks = self._split_into_chunks(text)
+        audio_content = b""
 
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
-        }
+        for chunk in chunks:
+            payload = {
+                "text": preprocess_text(chunk),
+                "sample_rate": opts.sample_rate,
+                "voice_id": opts.voice,
+                "add_wav_header": False,
+                "speed": opts.speed,
+                "model": opts.model,
+                "transliterate": opts.transliterate,
+                "remove_extra_silence": opts.remove_extra_silence,
+            }
+
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+            }
+
+            res = requests.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers)
+            if res.status_code != 200:
+                raise APIError(f"Failed to synthesize speech: {res.text}. Please check if you have set the correct API key. For more information, visit https://waves.smallest.ai/")
+            
+            audio_content += res.content
+
 
         res = requests.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers)
         if res.status_code != 200:
             raise APIError(f"Failed to synthesize speech: {res.text}. Please check if you have set the correct API key. For more information, visit https://waves.smallest.ai/")
-        
-        audio_content = res.content
 
         if save_as:
             if not save_as.endswith(".wav"):
                 raise TTSError("Invalid file name. Extension must be .wav")
             
-            if self.opts.add_wav_header:
-                with open(save_as, "wb") as wf:
-                    wf.write(audio_content)
-            else:
-                with wave.open(save_as, "wb") as wf:
-                    wf.setnchannels(1)
-                    wf.setsampwidth(2)
-                    wf.setframerate(self.opts.sample_rate)
-                    wf.writeframes(audio_content)
+            with wave.open(save_as, "wb") as wf:
+                wf.setnchannels(1)
+                wf.setsampwidth(2)
+                wf.setframerate(self.opts.sample_rate)
+                wf.writeframes(audio_content)
             return None
-            
+        
+        if self.opts.add_wav_header:
+            return add_wav_header(audio_content, self.opts.sample_rate)
+    
         return audio_content

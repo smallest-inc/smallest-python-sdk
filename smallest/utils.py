@@ -11,7 +11,7 @@ from .models import TTSModels, TTSLanguages, TTSVoices
 
 
 API_BASE_URL = "https://waves-api.smallest.ai/api/v1"
-SENTENCE_END_REGEX = re.compile(r'.*[-.!?;:…\n]$')
+SENTENCE_END_REGEX = re.compile(r'.*[-.—!?;:…\n]$')
 SAMPLE_WIDTH = 2
 CHANNELS = 1
 
@@ -53,6 +53,7 @@ def preprocess_text(text: str) -> str:
     # Replace special characters with their normal form
     text = unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('ASCII')
     text = text.lower()
+    text = text.replace("—", " ")
     # Normalize punctuation using Moses punct normalizer
     mpn = MosesPunctNormalizer()
     text = mpn.normalize(text)
