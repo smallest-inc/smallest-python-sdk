@@ -6,7 +6,7 @@ from typing import Optional, Union, List
 
 from .models import TTSModels, TTSVoices
 from .exceptions import TTSError, APIError
-from .utils import (TTSOptions, validate_input, preprocess_text, add_wav_header,
+from .utils import (TTSOptions, validate_input, preprocess_text, add_wav_header, split_into_chunks,
                      get_smallest_languages, get_smallest_voices, get_smallest_models, SENTENCE_END_REGEX, API_BASE_URL)
 
 
@@ -71,50 +71,6 @@ class AsyncSmallest:
         if self.session:
             await self.session.close()
 
-    async def _split_into_chunks(self, text: str) -> List[str]:
-        """
-        Splits the input text into chunks based on sentence boundaries 
-        defined by SENTENCE_END_REGEX and the maximum chunk size.
-        """
-        chunks = []
-        current_chunk = ""
-        last_break_index = 0
-
-        i = 0
-        while i < len(text):
-            current_chunk += text[i]
-
-            # Check for sentence boundary using regex
-            if SENTENCE_END_REGEX.match(current_chunk):
-                last_break_index = i
-
-            if len(current_chunk) >= self.chunk_size:
-                if last_break_index > 0:
-                    # Split at the last valid sentence boundary
-                    chunk = text[:last_break_index + 1].strip()
-                    chunk = chunk.replace("—", " ")
-                    chunks.append(chunk)
-
-                    text = text[last_break_index + 1:]
-                    i = -1  # Reset index to process the remaining text
-                    current_chunk = ""
-                    last_break_index = 0
-                else:
-                    # No sentence boundary found, split at max length
-                    current_chunk = current_chunk.replace("—", " ")
-                    chunks.append(current_chunk.strip())
-                    text = text[self.chunk_size:]
-                    i = -1  # Reset index to process the remaining text
-                    current_chunk = ""
-
-            i += 1
-
-        if text:
-            text = text.replace("—", " ")
-            chunks.append(text.strip())
-
-        return chunks
-
 
     def get_languages(self) -> List[str]:
         """Returns a list of available languages."""
@@ -156,7 +112,7 @@ class AsyncSmallest:
             setattr(opts, key, value)
 
         validate_input(text, opts.voice, opts.model, opts.sample_rate, opts.speed)
-        chunks = await self._split_into_chunks(text)
+        chunks = split_into_chunks(text)
         audio_content = b""
 
         for chunk in chunks:
