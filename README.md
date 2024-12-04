@@ -77,7 +77,7 @@ if __name__ == "__main__":
 - `transliterate`: Enable text transliteration (default: False)
 - `remove_extra_silence`: Remove additional silence (default: True)  
 
-These parameters are part of the `Smallest` instance. They can be set when creating the instance (as shown above). However, the `synthesize` function also accepts kwargs, allowing you to override these parameters for a specific synthesis request.
+These parameters are part of the `Smallest` instance. They can be set when creating the instance (as shown above). However, the `synthesize` function also accepts `kwargs`, allowing you to override these parameters for a specific synthesis request.
 
 For example, you can modify the speech speed and sample rate just for a particular synthesis call:  
 ```py
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 - `transliterate`: Enable text transliteration (default: False)
 - `remove_extra_silence`: Remove additional silence (default: True)  
 
-These parameters are part of the AsyncSmallest instance. They can be set when creating the instance (as shown above). However, the synthesize function also accepts kwargs, allowing you to override any of these parameters on a per-request basis.
+These parameters are part of the `AsyncSmallest` instance. They can be set when creating the instance (as shown above). However, the `synthesize` function also accepts `kwargs`, allowing you to override any of these parameters on a per-request basis.
 
 For example, you can modify the speech speed and sample rate just for a particular synthesis request:  
 ```py

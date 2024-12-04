@@ -45,7 +45,7 @@ class Smallest:
         """
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY")
         if not self.api_key:
-            raise TTSError("API key is required")
+            raise TTSError()
         
         self.chunk_size = 250
         
