@@ -62,7 +62,8 @@ class Smallest:
 
     def _split_into_chunks(self, text: str) -> List[str]:
         """
-        Splits the input text into chunks based on sentence boundaries and the maximum chunk size.
+        Splits the input text into chunks based on sentence boundaries 
+        defined by SENTENCE_END_REGEX and the maximum chunk size.
         """
         chunks = []
         current_chunk = ""
@@ -72,25 +73,27 @@ class Smallest:
         while i < len(text):
             current_chunk += text[i]
 
-            if text[i] in ".,":
+            # Check for sentence boundary using regex
+            if SENTENCE_END_REGEX.match(current_chunk):
                 last_break_index = i
 
             if len(current_chunk) >= self.chunk_size:
                 if last_break_index > 0:
+                    # Split at the last valid sentence boundary
                     chunk = text[:last_break_index + 1].strip()
                     chunk = chunk.replace("—", " ")
                     chunks.append(chunk)
-                
+
                     text = text[last_break_index + 1:]
-                    i = -1
+                    i = -1  # Reset index to process the remaining text
                     current_chunk = ""
                     last_break_index = 0
                 else:
-                    # No break point found, split at max length
+                    # No sentence boundary found, split at max length
                     current_chunk = current_chunk.replace("—", " ")
                     chunks.append(current_chunk.strip())
                     text = text[self.chunk_size:]
-                    i = -1
+                    i = -1  # Reset index to process the remaining text
                     current_chunk = ""
 
             i += 1
