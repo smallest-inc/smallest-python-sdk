@@ -6,7 +6,7 @@ from typing import Optional, Union, List
 
 from .models import TTSModels, TTSVoices
 from .exceptions import TTSError, APIError
-from .utils import (TTSOptions, validate_input, preprocess_text, add_wav_header, 
+from .utils import (TTSOptions, validate_input, preprocess_text, add_wav_header, split_into_chunks,
 get_smallest_languages, get_smallest_voices, get_smallest_models, SENTENCE_END_REGEX, API_BASE_URL)
 
 class Smallest:
@@ -45,7 +45,7 @@ class Smallest:
         """
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY")
         if not self.api_key:
-            raise TTSError("API key is required")
+            raise TTSError()
         
         self.chunk_size = 250
         
@@ -59,47 +59,6 @@ class Smallest:
             transliterate=transliterate,
             remove_extra_silence=remove_extra_silence
         )
-
-    def _split_into_chunks(self, text: str) -> List[str]:
-        """
-        Splits the input text into chunks based on sentence boundaries and the maximum chunk size.
-        """
-        chunks = []
-        current_chunk = ""
-        last_break_index = 0
-
-        i = 0
-        while i < len(text):
-            current_chunk += text[i]
-
-            if text[i] in ".,":
-                last_break_index = i
-
-            if len(current_chunk) >= self.chunk_size:
-                if last_break_index > 0:
-                    chunk = text[:last_break_index + 1].strip()
-                    chunk = chunk.replace("—", " ")
-                    chunks.append(chunk)
-                
-                    text = text[last_break_index + 1:]
-                    i = -1
-                    current_chunk = ""
-                    last_break_index = 0
-                else:
-                    # No break point found, split at max length
-                    current_chunk = current_chunk.replace("—", " ")
-                    chunks.append(current_chunk.strip())
-                    text = text[self.chunk_size:]
-                    i = -1
-                    current_chunk = ""
-
-            i += 1
-
-        if text:
-            text = text.replace("—", " ")
-            chunks.append(text.strip())
-
-        return chunks
     
         
     def get_languages(self) -> List[str]:
@@ -143,7 +102,7 @@ class Smallest:
 
         validate_input(text, opts.voice, opts.model, opts.sample_rate, opts.speed)
 
-        chunks = self._split_into_chunks(text)
+        chunks = split_into_chunks(text)
         audio_content = b""
 
         for chunk in chunks:

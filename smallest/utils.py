@@ -12,6 +12,7 @@ from .models import TTSModels, TTSLanguages, TTSVoices
 
 API_BASE_URL = "https://waves-api.smallest.ai/api/v1"
 SENTENCE_END_REGEX = re.compile(r'.*[-.—!?;:…\n]$')
+CHUNK_SIZE = 250
 SAMPLE_WIDTH = 2
 CHANNELS = 1
 
@@ -58,6 +59,50 @@ def preprocess_text(text: str) -> str:
     mpn = MosesPunctNormalizer()
     text = mpn.normalize(text)
     return text.strip()
+
+def split_into_chunks(text: str) -> List[str]:
+        """
+        Splits the input text into chunks based on sentence boundaries 
+        defined by SENTENCE_END_REGEX and the maximum chunk size.
+        """
+        chunks = []
+        current_chunk = ""
+        last_break_index = 0
+
+        i = 0
+        while i < len(text):
+            current_chunk += text[i]
+
+            # Check for sentence boundary using regex
+            if SENTENCE_END_REGEX.match(current_chunk):
+                last_break_index = i
+
+            if len(current_chunk) >= CHUNK_SIZE:
+                if last_break_index > 0:
+                    # Split at the last valid sentence boundary
+                    chunk = text[:last_break_index + 1].strip()
+                    chunk = chunk.replace("—", " ")
+                    chunks.append(chunk)
+
+                    text = text[last_break_index + 1:]
+                    i = -1  # Reset index to process the remaining text
+                    current_chunk = ""
+                    last_break_index = 0
+                else:
+                    # No sentence boundary found, split at max length
+                    current_chunk = current_chunk.replace("—", " ")
+                    chunks.append(current_chunk.strip())
+                    text = text[CHUNK_SIZE:]
+                    i = -1  # Reset index to process the remaining text
+                    current_chunk = ""
+
+            i += 1
+
+        if text:
+            text = text.replace("—", " ")
+            chunks.append(text.strip())
+
+        return chunks
 
 
 def get_smallest_languages() -> List[str]:

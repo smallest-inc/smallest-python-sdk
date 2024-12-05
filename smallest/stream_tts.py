@@ -46,20 +46,40 @@ class TextToAudioStream:
 
     async def _stream_llm_output(self, llm_output: AsyncGenerator[str, None]) -> None:
         """
-        Streams the LLM output, splitting it into sentences and adding each to the queue.
+        Streams the LLM output, splitting it into sentences based on the regex 
+        and chunk size, and adding each chunk to the queue.
 
         Parameters:
         - llm_output (AsyncGenerator[str, None]): An async generator yielding LLM output.
         """
         buffer = ""
+        last_break_index = 0
+
         async for chunk in llm_output:
             buffer += chunk
-            if self.sentence_end_regex.match(buffer) or len(buffer) > self.buffer_size:
-                self.queue.put(buffer)
-                buffer = ""
+            i = 0
+
+            while i < len(buffer):
+                current_chunk = buffer[:i + 1]
+                if self.sentence_end_regex.match(current_chunk):
+                    last_break_index = i
+
+                if len(current_chunk) >= self.buffer_size:
+                    if last_break_index > 0:
+                        self.queue.put(buffer[:last_break_index + 1].replace("—", " ").strip())
+                        buffer = buffer[last_break_index + 1:] 
+                    else:
+                        # No sentence boundary, split at max chunk size
+                        self.queue.put(buffer[:self.buffer_size].replace("—", " ").strip())
+                        buffer = buffer[self.buffer_size:] 
+
+                    last_break_index = 0
+                    i = -1 
+
+                i += 1
 
         if buffer:
-            self.queue.put(buffer)
+            self.queue.put(buffer.replace("—", " ").strip())
 
         self.stop_flag = True  # completion flag when LLM output ends
 
