@@ -12,6 +12,7 @@ from .models import TTSModels, TTSLanguages, TTSVoices
 
 API_BASE_URL = "https://waves-api.smallest.ai/api/v1"
 SENTENCE_END_REGEX = re.compile(r'.*[-.—!?;:…\n]$')
+CHUNK_SIZE = 250
 SAMPLE_WIDTH = 2
 CHANNELS = 1
 
@@ -59,7 +60,7 @@ def preprocess_text(text: str) -> str:
     text = mpn.normalize(text)
     return text.strip()
 
-def split_into_chunks(self, text: str) -> List[str]:
+def split_into_chunks(text: str) -> List[str]:
         """
         Splits the input text into chunks based on sentence boundaries 
         defined by SENTENCE_END_REGEX and the maximum chunk size.
@@ -76,7 +77,7 @@ def split_into_chunks(self, text: str) -> List[str]:
             if SENTENCE_END_REGEX.match(current_chunk):
                 last_break_index = i
 
-            if len(current_chunk) >= self.chunk_size:
+            if len(current_chunk) >= CHUNK_SIZE:
                 if last_break_index > 0:
                     # Split at the last valid sentence boundary
                     chunk = text[:last_break_index + 1].strip()
@@ -91,7 +92,7 @@ def split_into_chunks(self, text: str) -> List[str]:
                     # No sentence boundary found, split at max length
                     current_chunk = current_chunk.replace("—", " ")
                     chunks.append(current_chunk.strip())
-                    text = text[self.chunk_size:]
+                    text = text[CHUNK_SIZE:]
                     i = -1  # Reset index to process the remaining text
                     current_chunk = ""
 
