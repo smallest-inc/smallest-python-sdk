@@ -51,16 +51,8 @@ def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: i
 
 
 def preprocess_text(text: str) -> str:
-    # Replace special characters with their normal form
-    text = unicodedata.normalize('NFKD', text)
-    text = text.replace("\n", " ").replace("\r", " ").replace("\t", " ")
+    text = text.replace("\n", " ").replace("\r", " ").replace("\t", " ").replace("—", " ")
     text = re.sub(r'\s+', ' ', text)
-
-    # Remove diacritics but retain non-ASCII characters
-    text = ''.join([c for c in text if not unicodedata.combining(c)])
-    text = text.replace("—", " ")
-
-    # Normalize punctuation using Moses punct normalizer
     mpn = MosesPunctNormalizer()
     text = mpn.normalize(text)
     return text.strip()
