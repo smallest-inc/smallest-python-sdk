@@ -1,20 +1,23 @@
-from typing import Literal
-from typing import List
-import requests
+from typing import Literal, List, Tuple, cast
+import aiohttp
+import asyncio
 
 API_BASE_URL = "https://waves-api.smallest.ai/api/v1"
 
-def get_voice_and_model() -> List[str]:
-    api_response = requests.get(f"{API_BASE_URL}/voice/get-all-models").json()
-    voices = []
-    for model in api_response:
-        for voice in model['voiceIds']:
-            voices.append(voice['voiceId'])
-    models = [model['modelName'] for model in api_response]
-    return models, voices
+async def _fetch_voice_and_model() -> Tuple[List[str], List[str]]:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{API_BASE_URL}/voice/get-all-models") as response:
+            api_response = await response.json()
 
-models, voices = get_voice_and_model()
+            voices = []
+            for model in api_response:
+                for voice in model['voiceIds']:
+                    voices.append(voice['voiceId'])
+            models = [model['modelName'] for model in api_response]
+            return models, voices
 
-TTSModels = Literal[*models]
+models, voices = await _fetch_voice_and_model()
+
 TTSLanguages = Literal["en", "hi"]
+TTSModels = Literal[*models]
 TTSVoices = Literal[*voices]
