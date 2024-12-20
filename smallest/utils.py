@@ -51,7 +51,7 @@ def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: i
 
 
 def preprocess_text(text: str) -> str:
-    text = text.replace("\n", " ").replace("\r", " ").replace("\t", " ").replace("—", " ")
+    text = text.replace("\n", " ").replace("\t", " ").replace("—", " ")
     text = re.sub(r'\s+', ' ', text)
     mpn = MosesPunctNormalizer()
     text = mpn.normalize(text)
