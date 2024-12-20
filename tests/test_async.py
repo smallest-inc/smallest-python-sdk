@@ -3,6 +3,7 @@ import jiwer
 import httpx
 import pytest
 import wave
+import re
 from deepgram import DeepgramClient, DeepgramClientOptions, PrerecordedOptions, FileSource
 
 from smallest.async_tts import AsyncSmallest
@@ -10,7 +11,8 @@ from smallest.async_tts import AsyncSmallest
 from dotenv import load_dotenv
 load_dotenv()
 
-REFERENCE = "Wow! The jubilant child, bursting with glee, exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky—truly a spectacle of joy."
+REFERENCE = "Wow! The jubilant child, bursting with glee, exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky."
+
 
 transforms = jiwer.Compose(
     [
@@ -32,7 +34,7 @@ config: DeepgramClientOptions = DeepgramClientOptions(api_key=os.environ.get("DE
 deepgram: DeepgramClient = DeepgramClient("", config)
 
 options: PrerecordedOptions = PrerecordedOptions(
-            model="nova-2",
+            model="nova-2-general",
             smart_format=True,
             utterances=True,
             punctuate=True,
@@ -63,7 +65,7 @@ async def test_synthesize_save(reference_text):
         wer = jiwer.wer(
             reference_text,
             hypothesis,
-            truth_transform=transforms,
+            reference_transform=transforms,
             hypothesis_transform=transforms,
         )
         assert wer <= 0.2
@@ -94,7 +96,7 @@ async def test_synthesize(reference_text):
         wer = jiwer.wer(
             reference_text,
             hypothesis,
-            truth_transform=transforms,
+            reference_transform=transforms,
             hypothesis_transform=transforms,
         )
         assert wer <= 0.2

@@ -3,10 +3,10 @@ from threading import Thread
 from queue import Queue, Empty
 from typing import AsyncGenerator, Optional, Union
 
-from .tts import Smallest
-from .exceptions import APIError
-from .async_tts import AsyncSmallest
-from .utils import SENTENCE_END_REGEX
+from smallest.tts import Smallest
+from smallest.exceptions import APIError
+from smallest.async_tts import AsyncSmallest
+from smallest.utils import SENTENCE_END_REGEX
 
 class TextToAudioStream:
     def __init__(

@@ -26,6 +26,7 @@ Currently, the library supports direct synthesis and the ability to synthesize s
 
 - [Installation](#installation)
 - [Get the API Key](#get-the-api-key)
+- [Best Practices for Input Text](#best-practices-for-input-text)
 - [Examples](#examples)
   - [Sync](#sync)
   - [Async](#async)
@@ -48,6 +49,15 @@ When using an SDK in your application, make sure to pin to at least the major ve
 2. Navigate to `API Key` tab in your account dashboard.
 3. Create a new API Key and copy it.
 4. Export the API Key in your environment with the name `SMALLEST_API_KEY`, ensuring that your application can access it securely for authentication.
+
+## Best Practices for Input Text
+While the `transliterate` parameter is provided, please note that it is not fully supported and may not perform consistently across all cases. It is recommended to use the model without relying on this parameter.
+
+For optimal voice generation results:
+
+1. For English, provide the input in Latin script (e.g., "Hello, how are you?").
+2. For Hindi, provide the input in Devanagari script (e.g., "नमस्ते, आप कैसे हैं?").
+3. For code-mixed input, use Latin script for English and Devanagari script for Hindi (e.g., "Hello, आप कैसे हैं?").
 
 ## Examples
 
@@ -135,7 +145,7 @@ audio_bytes = await tts.synthesize(
 
 ### LLM to Speech    
 
-The `TextToAudioStream` class provides real-time text-to-speech processing, converting streaming text into audio output with minimal latency. It's particularly useful for applications like voice assistants, live captioning, or interactive chatbots that require immediate audio feedback from text generation. Supports both synchronous and asynchronous TTS instance.
+The `TextToAudioStream` class provides real-time text-to-speech processing, converting streaming text into audio output. It's particularly useful for applications like voice assistants, live captioning, or interactive chatbots that require immediate audio feedback from text generation. Supports both synchronous and asynchronous TTS instance.
 
 ```python
 import os
@@ -209,7 +219,7 @@ The processor yields raw audio data chunks without WAV headers for streaming eff
 ```python
 from smallest.tts import Smallest
 
-client = Smallest()
+client = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
 
 print(f"Avalaible Languages: {client.get_languages()}")
 print(f"Available Voices: {client.get_voices()}")
@@ -227,7 +237,7 @@ When implementing audio streaming with chunks of synthesized speech, WAV headers
 - Sequential playback of chunks with headers causes audio artifacts (pop sounds) when concatenating or playing audio sequentially.
 - Audio players would try to reinitialize audio settings for each chunk.
 
-### Best Practices
+### Best Practices for Audio Streaming
 1. Stream raw PCM audio data without headers
 2. Add a single WAV header only when:
    - Saving the complete stream to a file
