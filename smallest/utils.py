@@ -37,7 +37,7 @@ def validate_input(text: str, voice: TTSVoices, model: TTSModels, sample_rate: i
     if model not in TTSModels:
         raise ValidationError(f"Invalid model: {model}")
     if not 8000 <= sample_rate <= 24000:
-        raise ValidationError(f"Invalid sample rate: {sample_rate}. Must be between 8000 and 48000")
+        raise ValidationError(f"Invalid sample rate: {sample_rate}. Must be between 8000 and 24000")
     if not 0.5 <= speed <= 2.0:
         raise ValidationError(f"Invalid speed: {speed}. Must be between 0.5 and 2.0")
 
