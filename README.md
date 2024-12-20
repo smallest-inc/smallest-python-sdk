@@ -135,7 +135,7 @@ audio_bytes = await tts.synthesize(
 
 ### LLM to Speech    
 
-The `TextToAudioStream` class provides real-time text-to-speech processing, converting streaming text into audio output with minimal latency. It's particularly useful for applications like voice assistants, live captioning, or interactive chatbots that require immediate audio feedback from text generation. Supports both synchronous and asynchronous TTS instance.
+The `TextToAudioStream` class provides real-time text-to-speech processing, converting streaming text into audio output. It's particularly useful for applications like voice assistants, live captioning, or interactive chatbots that require immediate audio feedback from text generation. Supports both synchronous and asynchronous TTS instance.
 
 ```python
 import os

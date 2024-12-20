@@ -6,8 +6,8 @@ from pydub import AudioSegment
 from dataclasses import dataclass
 from sacremoses import MosesPunctNormalizer
 
-from .exceptions import ValidationError
-from .models import TTSModels, TTSLanguages, TTSVoices
+from smallest.exceptions import ValidationError
+from smallest.models import TTSModels, TTSLanguages, TTSVoices
 
 
 API_BASE_URL = "https://waves-api.smallest.ai/api/v1"
@@ -32,9 +32,9 @@ class TTSOptions:
 def validate_input(text: str, voice: TTSVoices, model: TTSModels, sample_rate: int, speed: float):
     if not text:
         raise ValidationError("Text cannot be empty")
-    if voice not in TTSVoices.__args__:
+    if voice not in TTSVoices:
         raise ValidationError(f"Invalid voice: {voice}")
-    if model not in ['lightning']:
+    if model not in TTSModels:
         raise ValidationError(f"Invalid model: {model}")
     if not 8000 <= sample_rate <= 48000:
         raise ValidationError(f"Invalid sample rate: {sample_rate}. Must be between 8000 and 48000")
@@ -108,10 +108,10 @@ def split_into_chunks(text: str) -> List[str]:
 
 
 def get_smallest_languages() -> List[str]:
-    return list(TTSLanguages.__args__)
+    return list(TTSLanguages)
 
 def get_smallest_voices() -> List[str]:
-    return list(TTSVoices.__args__)
+    return list(TTSVoices)
 
 def get_smallest_models() -> List[str]:
     return ["lightning"]

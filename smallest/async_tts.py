@@ -4,9 +4,9 @@ import aiohttp
 import aiofiles
 from typing import Optional, Union, List
 
-from .models import TTSModels, TTSVoices
-from .exceptions import TTSError, APIError
-from .utils import (TTSOptions, validate_input, preprocess_text, add_wav_header, split_into_chunks,
+from smallest.models import TTSModels, TTSVoices
+from smallest.exceptions import TTSError, APIError
+from smallest.utils import (TTSOptions, validate_input, preprocess_text, add_wav_header, split_into_chunks,
                      get_smallest_languages, get_smallest_voices, get_smallest_models, SENTENCE_END_REGEX, API_BASE_URL)
 
 
@@ -25,8 +25,8 @@ class AsyncSmallest:
         """
         AsyncSmallest Instance for asynchronous text-to-speech synthesis.
 
-        This class provides an asynchronous implementation of the text-to-speech functionality. 
-        It allows for non-blocking synthesis of speech from text, making it suitable for applications 
+        This class provides an asynchronous implementation of the text-to-speech functionality.
+        It allows for non-blocking synthesis of speech from text, making it suitable for applications
         that require async processing.
 
         Args:
@@ -49,7 +49,7 @@ class AsyncSmallest:
         if not self.api_key:
             raise TTSError()
         self.chunk_size = 250
-        
+
         self.opts = TTSOptions(
             model=model,
             sample_rate=sample_rate,
@@ -61,7 +61,7 @@ class AsyncSmallest:
             remove_extra_silence=remove_extra_silence,
         )
         self.session = None
-        
+
     async def __aenter__(self):
         if self.session is None:
             self.session = aiohttp.ClientSession()
@@ -75,7 +75,7 @@ class AsyncSmallest:
     def get_languages(self) -> List[str]:
         """Returns a list of available languages."""
         return get_smallest_languages()
-    
+
     def get_voices(self) -> List[str]:
         """Returns a list of available voices."""
         return get_smallest_voices()
@@ -83,7 +83,7 @@ class AsyncSmallest:
     def get_models(self) -> List[str]:
         """Returns a list of available models."""
         return get_smallest_models()
-    
+
     async def synthesize(
             self,
             text: str,
@@ -95,12 +95,12 @@ class AsyncSmallest:
 
         Args:
         - text (str): The text to be converted to speech.
-        - save_as (Optional[str]): If provided, the synthesized audio will be saved to this file path. 
+        - save_as (Optional[str]): If provided, the synthesized audio will be saved to this file path.
                                    The file must have a .wav extension.
         - kwargs: Additional optional parameters to override `__init__` options for this call.
 
         Returns:
-        - Union[bytes, None]: The synthesized audio content in bytes if `save_as` is not specified; 
+        - Union[bytes, None]: The synthesized audio content in bytes if `save_as` is not specified;
                               otherwise, returns None after saving the audio to the specified file.
 
         Raises:
@@ -134,17 +134,17 @@ class AsyncSmallest:
 
             if not self.session:
                 self.session = aiohttp.ClientSession()
-        
+
             async with self.session.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers) as res:
                 if res.status != 200:
                     raise APIError(f"Failed to synthesize speech: {await res.text()}. For more information, visit https://waves.smallest.ai/")
-            
+
                 audio_content += await res.read()
 
         if save_as:
             if not save_as.endswith(".wav"):
                 raise TTSError("Invalid file name. Extension must be .wav")
-            
+
             async with aiofiles.open(save_as, mode='wb') as f:
                 await f.write(add_wav_header(audio_content, self.opts.sample_rate))
 
@@ -152,5 +152,5 @@ class AsyncSmallest:
 
         if opts.add_wav_header:
             return add_wav_header(audio_content, self.opts.sample_rate)
-        
+
         return audio_content

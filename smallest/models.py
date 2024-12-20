@@ -16,8 +16,8 @@ async def _fetch_voice_and_model() -> Tuple[List[str], List[str]]:
             models = [model['modelName'] for model in api_response]
             return models, voices
 
-models, voices = await _fetch_voice_and_model()
+models, voices = asyncio.run(_fetch_voice_and_model())
 
-TTSLanguages = Literal["en", "hi"]
-TTSModels = Literal[*models]
-TTSVoices = Literal[*voices]
+TTSLanguages = ["en", "hi"]
+TTSModels = models
+TTSVoices = voices
