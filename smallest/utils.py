@@ -106,4 +106,4 @@ def get_smallest_voices() -> List[str]:
     return list(TTSVoices)
 
 def get_smallest_models() -> List[str]:
-    return ["lightning"]
+    return list(TTSModels)
