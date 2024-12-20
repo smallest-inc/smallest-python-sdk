@@ -10,7 +10,7 @@ from smallest.tts import Smallest
 from dotenv import load_dotenv
 load_dotenv()
 
-REFERENCE = "Wow! The jubilant child, bursting with glee, exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky—truly a spectacle of joy."
+REFERENCE = "Wow! The jubilant child, bursting with glee, exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky."
 
 transforms = jiwer.Compose(
     [
@@ -59,7 +59,7 @@ def test_synthesize_save(reference_text):
         wer = jiwer.wer(
             reference_text,
             hypothesis,
-            truth_transform=transforms,
+            reference_transform=transforms,
             hypothesis_transform=transforms,
         )
         logging.info(f"Word Error Rate: {wer}")
@@ -83,7 +83,7 @@ def test_synthesize(reference_text):
         wer = jiwer.wer(
             reference_text,
             hypothesis,
-            truth_transform=transforms,
+            reference_transform=transforms,
             hypothesis_transform=transforms,
         )
         logging.info(f"Word Error Rate: {wer}")

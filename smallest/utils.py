@@ -52,57 +52,59 @@ def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: i
 
 def preprocess_text(text: str) -> str:
     # Replace special characters with their normal form
-    text = unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('ASCII')
-    text = text.lower()
+    text = unicodedata.normalize('NFKD', text)
+    text = text.replace("\n", " ").replace("\r", " ").replace("\t", " ")
+    text = re.sub(r'\s+', ' ', text)
+
+    # Remove diacritics but retain non-ASCII characters
+    text = ''.join([c for c in text if not unicodedata.combining(c)])
     text = text.replace("—", " ")
+
     # Normalize punctuation using Moses punct normalizer
     mpn = MosesPunctNormalizer()
     text = mpn.normalize(text)
     return text.strip()
 
+
 def split_into_chunks(text: str) -> List[str]:
-        """
-        Splits the input text into chunks based on sentence boundaries 
-        defined by SENTENCE_END_REGEX and the maximum chunk size.
-        """
-        chunks = []
-        current_chunk = ""
-        last_break_index = 0
-
-        i = 0
-        while i < len(text):
-            current_chunk += text[i]
-
-            # Check for sentence boundary using regex
-            if SENTENCE_END_REGEX.match(current_chunk):
-                last_break_index = i
-
-            if len(current_chunk) >= CHUNK_SIZE:
-                if last_break_index > 0:
-                    # Split at the last valid sentence boundary
-                    chunk = text[:last_break_index + 1].strip()
-                    chunk = chunk.replace("—", " ")
-                    chunks.append(chunk)
-
-                    text = text[last_break_index + 1:]
-                    i = -1  # Reset index to process the remaining text
-                    current_chunk = ""
-                    last_break_index = 0
-                else:
-                    # No sentence boundary found, split at max length
-                    current_chunk = current_chunk.replace("—", " ")
-                    chunks.append(current_chunk.strip())
-                    text = text[CHUNK_SIZE:]
-                    i = -1  # Reset index to process the remaining text
-                    current_chunk = ""
-
-            i += 1
-
-        if text:
-            text = text.replace("—", " ")
+    """
+    Splits the input text into chunks based on sentence boundaries
+    defined by SENTENCE_END_REGEX and the maximum chunk size.
+    Only splits at valid sentence boundaries to avoid breaking words.
+    """
+    chunks = []
+    while text:
+        # If the remaining text is shorter than chunk size, add it as final chunk
+        if len(text) <= CHUNK_SIZE:
             chunks.append(text.strip())
+            break
 
-        return chunks
+        # Find the last sentence boundary within CHUNK_SIZE
+        chunk_text = text[:CHUNK_SIZE]
+        last_break_index = -1
+
+        # Check each character in reverse order to find last punctuation
+        for i in range(len(chunk_text) - 1, -1, -1):
+            if chunk_text[i] in '-.—!?;:…\n':
+                last_break_index = i
+                break
+
+        if last_break_index == -1:
+            # If no punctuation found in chunk, look for the last space
+            # to avoid breaking words
+            last_space = chunk_text.rfind(' ')
+            if last_space != -1:
+                last_break_index = last_space
+            else:
+                # If no space found, use the full chunk size
+                last_break_index = CHUNK_SIZE - 1
+
+        # Add the chunk up to the break point
+        chunks.append(text[:last_break_index + 1].strip())
+        # Continue with remaining text
+        text = text[last_break_index + 1:].strip()
+
+    return chunks
 
 
 def get_smallest_languages() -> List[str]:
