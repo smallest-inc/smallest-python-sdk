@@ -13,7 +13,7 @@ from smallest.utils import (TTSOptions, validate_input, preprocess_text, add_wav
 class AsyncSmallest:
     def __init__(
         self,
-        api_key: Optional[str] = None,
+        api_key: str = None,
         model: TTSModels = "lightning",
         sample_rate: int = 24000,
         voice: TTSVoices = "emily",
@@ -111,7 +111,8 @@ class AsyncSmallest:
         for key, value in kwargs.items():
             setattr(opts, key, value)
 
-        validate_input(text, opts.voice, opts.model, opts.sample_rate, opts.speed)
+        validate_input(preprocess_text(text), opts.voice, opts.model, opts.sample_rate, opts.speed)
+
         chunks = split_into_chunks(text)
         audio_content = b""
 

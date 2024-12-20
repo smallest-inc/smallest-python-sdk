@@ -12,7 +12,7 @@ get_smallest_languages, get_smallest_voices, get_smallest_models, SENTENCE_END_R
 class Smallest:
     def __init__(
         self,
-        api_key: Optional[str] = None,
+        api_key: str = None,
         model: TTSModels = "lightning",
         sample_rate: int = 24000,
         voice: TTSVoices = "emily",
@@ -100,7 +100,7 @@ class Smallest:
         for key, value in kwargs.items():
             setattr(opts, key, value)
 
-        validate_input(text, opts.voice, opts.model, opts.sample_rate, opts.speed)
+        validate_input(preprocess_text(text), opts.voice, opts.model, opts.sample_rate, opts.speed)
 
         chunks = split_into_chunks(text)
         audio_content = b""
