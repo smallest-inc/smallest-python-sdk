@@ -224,7 +224,7 @@ from smallest import Smallest
 
 def main():
     client = Smallest(api_key="YOUR_API_KEY")
-    res = client.add_voice("My Voice", "my_voice.wav")
+    res = client.add_voice(display_name="My Voice", file_path="my_voice.wav")
     print(res)
 
 if __name__ == "__main__":
@@ -238,7 +238,7 @@ from smallest import AsyncSmallest
 
 async def main():
     client = AsyncSmallest(api_key="YOUR_API_KEY")
-    res = await client.add_voice("My Voice", "my_voice.wav")
+    res = await client.add_voice(display_name="My Voice", file_path="my_voice.wav")
     print(res)
 
 if __name__ == "__main__":
@@ -253,7 +253,7 @@ from smallest import Smallest
 client = Smallest(api_key="SMALLEST_API_KEY")
 
 print(f"Available Languages: {client.get_languages()}")
-print(f"Available Voices: {client.get_voices()}")
+print(f"Available Voices: {client.get_voices(model="lightning)}")
 print(f"Available Voices: {client.get_cloned_voices()}")
 print(f"Available Models: {client.get_models()}")
 ```
