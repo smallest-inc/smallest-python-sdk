@@ -12,8 +12,8 @@ class TextToAudioStream:
     def __init__(
         self,
         tts_instance: Union[Smallest, AsyncSmallest],
-        queue_timeout: float = 5.0,
-        max_retries: int = 3
+        queue_timeout: Optional[float] = 5.0,
+        max_retries: Optional[int] = 3
     ):
         """
         A real-time text-to-speech processor that converts streaming text into audio output.
@@ -35,13 +35,15 @@ class TextToAudioStream:
         """
         self.tts_instance = tts_instance
         self.tts_instance.opts.add_wav_header = False
-
         self.sentence_end_regex = SENTENCE_END_REGEX
         self.queue_timeout = queue_timeout
         self.max_retries = max_retries
         self.queue = Queue()
         self.buffer_size = 250
         self.stop_flag = False
+
+        if self.tts_instance.opts.model == 'lightning-large':
+            self.buffer_size = 140
 
 
     async def _stream_llm_output(self, llm_output: AsyncGenerator[str, None]) -> None:
@@ -58,42 +60,25 @@ class TextToAudioStream:
         async for chunk in llm_output:
             buffer += chunk
             i = 0
-
             while i < len(buffer):
                 current_chunk = buffer[:i + 1]
                 if self.sentence_end_regex.match(current_chunk):
                     last_break_index = i
-
                 if len(current_chunk) >= self.buffer_size:
                     if last_break_index > 0:
-                        self.queue.put(buffer[:last_break_index + 1].replace("—", " ").strip())
+                        self.queue.put(f'{buffer[:last_break_index + 1].replace("—", " ").strip()} ')
                         buffer = buffer[last_break_index + 1:] 
                     else:
                         # No sentence boundary, split at max chunk size
-                        self.queue.put(buffer[:self.buffer_size].replace("—", " ").strip())
+                        self.queue.put(f'{buffer[:self.buffer_size].replace("—", " ").strip()} ')
                         buffer = buffer[self.buffer_size:] 
-
                     last_break_index = 0
                     i = -1 
-
                 i += 1
-
+                
         if buffer:
-            self.queue.put(buffer.replace("—", " ").strip())
-
-        self.stop_flag = True  # completion flag when LLM output ends
-
-
-    async def _synthesize_async(self, sentence: str, retries: int = 0) -> Optional[bytes]:
-        """Asynchronously synthesizes a given sentence."""
-        try:
-            return await self.tts_instance.synthesize(sentence)
-        except APIError as e:
-            if retries < self.max_retries:
-                return await self._synthesize_async(sentence, retries + 1)
-            else:
-                print(f"Synthesis failed for sentence: {sentence} - Error: {e}. Retries Exhausted, for more information, visit https://waves.smallest.ai/")
-                return None
+            self.queue.put(f'{buffer.replace("—", " ").strip()} ')
+        self.stop_flag = True
 
 
     def _synthesize_sync(self, sentence: str, retries: int = 0) -> Optional[bytes]:
@@ -103,6 +88,18 @@ class TextToAudioStream:
         except APIError as e:
             if retries < self.max_retries:
                 return self._synthesize_sync(sentence, retries + 1)
+            else:
+                print(f"Synthesis failed for sentence: {sentence} - Error: {e}. Retries Exhausted, for more information, visit https://waves.smallest.ai/")
+                return None
+            
+
+    async def _synthesize_async(self, sentence: str, retries: int = 0) -> Optional[bytes]:
+        """Asynchronously synthesizes a given sentence."""
+        try:
+            return await self.tts_instance.synthesize(sentence)
+        except APIError as e:
+            if retries < self.max_retries:
+                return await self._synthesize_async(sentence, retries + 1)
             else:
                 print(f"Synthesis failed for sentence: {sentence} - Error: {e}. Retries Exhausted, for more information, visit https://waves.smallest.ai/")
                 return None
