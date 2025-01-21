@@ -95,7 +95,7 @@ class AsyncSmallest:
 
         res = requests.request("GET", f"{API_BASE_URL}/lightning-large/get_cloned_voices", headers=headers)
         if res.status_code != 200:
-            raise APIError(f"Failed to get cloned voices: {res.text}. Please check if you have set the correct API key. For more information, visit https://waves.smallest.ai/")
+            raise APIError(f"Failed to get cloned voices: {res.text}. For more information, visit https://waves.smallest.ai/")
         
         return json.dumps(res.json(), indent=4, ensure_ascii=False)
     
@@ -111,7 +111,7 @@ class AsyncSmallest:
 
         res = requests.request("GET", f"{API_BASE_URL}/{model}/get_voices", headers=headers)
         if res.status_code != 200:
-            raise APIError(f"Failed to get voices: {res.text}. Please check if you have set the correct API key. For more information, visit https://waves.smallest.ai/")
+            raise APIError(f"Failed to get voices: {res.text}. For more information, visit https://waves.smallest.ai/")
         
         return json.dumps(res.json(), indent=4, ensure_ascii=False)
 
