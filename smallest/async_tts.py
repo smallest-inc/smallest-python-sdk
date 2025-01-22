@@ -212,7 +212,7 @@ class AsyncSmallest:
 
         Args:
         - display_name (str): The display name for the new voice.
-        - file_path (str): The path to the audio file to be uploaded.
+        - file_path (str): The path to the reference audio file to be cloned.
 
         Returns:
         - str: The response from the API as a formatted JSON string.
