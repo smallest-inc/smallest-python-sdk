@@ -1,27 +1,26 @@
 import re
 import io
-import unicodedata
 from typing import List
 from pydub import AudioSegment
 from dataclasses import dataclass
 from sacremoses import MosesPunctNormalizer
 
 from smallest.exceptions import ValidationError
-from smallest.models import TTSModels, TTSLanguages, TTSVoices
+from smallest.models import TTSModels, TTSLanguages
 
 
 API_BASE_URL = "https://waves-api.smallest.ai/api/v1"
-SENTENCE_END_REGEX = re.compile(r'.*[-.—!?;:…\n]$')
-CHUNK_SIZE = 250
+SENTENCE_END_REGEX = re.compile(r'.*[-.—!?,;:…।|]$')
+mpn = MosesPunctNormalizer()
 SAMPLE_WIDTH = 2
 CHANNELS = 1
 
 
 @dataclass
 class TTSOptions:
-    model: TTSModels
+    model: str
     sample_rate: int
-    voice: TTSVoices
+    voice_id: str
     api_key: str
     add_wav_header: bool
     speed: float
@@ -29,13 +28,11 @@ class TTSOptions:
     remove_extra_silence: bool
 
 
-def validate_input(text: str, voice: TTSVoices, model: TTSModels, sample_rate: int, speed: float):
+def validate_input(text: str, model: str, sample_rate: int, speed: float):
     if not text:
-        raise ValidationError("Text cannot be empty")
-    if voice not in TTSVoices:
-        raise ValidationError(f"Invalid voice: {voice}")
+        raise ValidationError("Text cannot be empty.")
     if model not in TTSModels:
-        raise ValidationError(f"Invalid model: {model}")
+        raise ValidationError(f"Invalid model: {model}. Must be one of {TTSModels}")
     if not 8000 <= sample_rate <= 24000:
         raise ValidationError(f"Invalid sample rate: {sample_rate}. Must be between 8000 and 24000")
     if not 0.5 <= speed <= 2.0:
@@ -51,14 +48,13 @@ def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: i
 
 
 def preprocess_text(text: str) -> str:
-    text = text.replace("\n", " ").replace("\t", " ").replace("—", " ")
+    text = text.replace("\n", " ").replace("\t", " ").replace("—", " ").replace("-", " ").replace("–", " ")
     text = re.sub(r'\s+', ' ', text)
-    mpn = MosesPunctNormalizer()
     text = mpn.normalize(text)
     return text.strip()
 
 
-def split_into_chunks(text: str) -> List[str]:
+def chunk_text(text: str, chunk_size: int = 250) -> List[str]:
     """
     Splits the input text into chunks based on sentence boundaries
     defined by SENTENCE_END_REGEX and the maximum chunk size.
@@ -66,44 +62,35 @@ def split_into_chunks(text: str) -> List[str]:
     """
     chunks = []
     while text:
-        # If the remaining text is shorter than chunk size, add it as final chunk
-        if len(text) <= CHUNK_SIZE:
+        if len(text) <= chunk_size:
             chunks.append(text.strip())
             break
 
-        # Find the last sentence boundary within CHUNK_SIZE
-        chunk_text = text[:CHUNK_SIZE]
+        chunk_text = text[:chunk_size]
         last_break_index = -1
 
-        # Check each character in reverse order to find last punctuation
+        # Find last sentence boundary using regex
         for i in range(len(chunk_text) - 1, -1, -1):
-            if chunk_text[i] in '-.—!?;:…\n':
+            if SENTENCE_END_REGEX.match(chunk_text[:i + 1]):
                 last_break_index = i
                 break
 
         if last_break_index == -1:
-            # If no punctuation found in chunk, look for the last space
-            # to avoid breaking words
+            # Fallback to space if no sentence boundary found
             last_space = chunk_text.rfind(' ')
             if last_space != -1:
-                last_break_index = last_space
+                last_break_index = last_space 
             else:
-                # If no space found, use the full chunk size
-                last_break_index = CHUNK_SIZE - 1
+                last_break_index = chunk_size - 1
 
-        # Add the chunk up to the break point
         chunks.append(text[:last_break_index + 1].strip())
-        # Continue with remaining text
         text = text[last_break_index + 1:].strip()
 
     return chunks
 
 
 def get_smallest_languages() -> List[str]:
-    return list(TTSLanguages)
-
-def get_smallest_voices() -> List[str]:
-    return list(TTSVoices)
+    return TTSLanguages
 
 def get_smallest_models() -> List[str]:
-    return list(TTSModels)
+    return TTSModels

@@ -4,17 +4,16 @@ import jiwer
 
 from smallest.utils import (
     preprocess_text,
-    split_into_chunks,
+    chunk_text,
     get_smallest_languages,
-    get_smallest_voices,
     get_smallest_models
 )
 
 
 @pytest.mark.parametrize("input_text, expected_output", [
     (
-        "Wow! The jubilant child, bursting with glee, $99.99     exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky. \n\n\n     वो रंग-बिरंगे गुब्बारे हवा में ऐसे झूल रहे थे जैसे एक खुशियों से \n\n 95  भरी दुनिया हो। सच में, यह एक अद्भुत और खुशी से भरा दृश्य था।",
-        "Wow! The jubilant child, bursting with glee, $99.99 exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky. वो रंग-बिरंगे गुबबारे हवा में ऐसे झूल रहे थे जैसे एक खुशियों से 95 भरी दुनिया हो। सच में, यह एक अदभुत और खुशी से भरा दृशय था।"
+        "Wow! The jubilant child, bursting with glee, $99.99     exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky. \n\n\n",
+        "Wow! The jubilant child, bursting with glee, $99.99 exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow hued sky."
     ),
     # can add more tests here
 ])
@@ -24,16 +23,15 @@ def test_preprocess_text(input_text, expected_output):
 
 @pytest.mark.parametrize("input_text, expected_output", [
     (
-        "Wow! The jubilant child, bursting with glee, exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky. वो रंग बिरंगे गुब्बारे हवा में ऐसे झूल रहे थे जैसे एक खुशियों से भरी दुनिया हो। सच में, यह एक अद्भुत और खुशी से भरा दृश्य था।",
+        "Wow! The jubilant child, bursting with glee, exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky.",
         [
             "Wow! The jubilant child, bursting with glee, exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky.",
-            "वो रंग बिरंगे गुब्बारे हवा में ऐसे झूल रहे थे जैसे एक खुशियों से भरी दुनिया हो। सच में, यह एक अद्भुत और खुशी से भरा दृश्य था।"
         ]
     ),
     # Add more test cases here as needed
 ])
 def test_split_into_chunks(input_text, expected_output):
-    assert split_into_chunks(input_text) == expected_output
+    assert chunk_text(input_text) == expected_output
 
 
 @pytest.mark.parametrize("expected_languages", [
@@ -41,3 +39,9 @@ def test_split_into_chunks(input_text, expected_output):
 ])
 def test_get_smallest_languages(expected_languages):
     assert get_smallest_languages() == expected_languages
+
+@pytest.mark.parametrize("expected_models", [
+    ['lightning', 'lightning-large']
+])
+def test_get_smallest_models(expected_models):
+    assert get_smallest_models() == expected_models

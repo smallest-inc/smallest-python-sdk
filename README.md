@@ -28,9 +28,12 @@ Currently, the library supports direct synthesis and the ability to synthesize s
 - [Get the API Key](#get-the-api-key)
 - [Best Practices for Input Text](#best-practices-for-input-text)
 - [Examples](#examples)
-  - [Sync](#sync)
-  - [Async](#async)
+  - [Synchronous](#Synchronous)
+  - [Aynchronous](#Synchronous)
   - [LLM to Speech](#llm-to-speech)
+  - [Add your Voice](#add-your-voice)
+    - [Synchronously](#synchronously)
+    - [Asynchronously](#asynchronously)
 - [Available Methods](#available-methods)
 - [Technical Note: WAV Headers in Streaming Audio](#technical-note-wav-headers-in-streaming-audio)
 
@@ -61,17 +64,19 @@ For optimal voice generation results:
 
 ## Examples
 
-### Sync  
+### Synchronous  
 A synchronous text-to-speech synthesis client. 
 
 **Basic Usage:**   
 ```python
-import os
 from smallest import Smallest
 
 def main():
-    client = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
-    client.synthesize("Hello, this is a test for sync synthesis function.", save_as="sync_synthesize.wav")
+    client = Smallest(api_key="SMALLEST_API_KEY")
+    client.synthesize(
+        text="Hello, this is a test for sync synthesis function.",
+        save_as="sync_synthesize.wav"
+    )
 
 if __name__ == "__main__":
     main()
@@ -81,7 +86,7 @@ if __name__ == "__main__":
 - `api_key`: Your API key (can be set via SMALLEST_API_KEY environment variable)
 - `model`: TTS model to use (default: "lightning")
 - `sample_rate`: Audio sample rate (default: 24000)
-- `voice`: Voice ID (default: "emily")
+- `voice_id`: Voice ID (default: "emily")
 - `speed`: Speech speed multiplier (default: 1.0)
 - `add_wav_header`: Include WAV header in output (default: True)
 - `transliterate`: Enable text transliteration (default: False)
@@ -100,17 +105,16 @@ client.synthesize(
 ```
 
 
-### Async   
+### Asynchronous   
 Asynchronous text-to-speech synthesis client.    
 
 **Basic Usage:**   
 ```python
-import os
 import asyncio
 import aiofiles
 from smallest import AsyncSmallest
 
-client = AsyncSmallest(api_key=os.environ.get("SMALLEST_API_KEY"))
+client = AsyncSmallest(api_key="SMALLEST_API_KEY")
 
 async def main():
     async with client as tts:
@@ -126,7 +130,7 @@ if __name__ == "__main__":
 - `api_key`: Your API key (can be set via SMALLEST_API_KEY environment variable)
 - `model`: TTS model to use (default: "lightning")
 - `sample_rate`: Audio sample rate (default: 24000)
-- `voice`: Voice ID (default: "emily")
+- `voice_id`: Voice ID (default: "emily")
 - `speed`: Speech speed multiplier (default: 1.0)
 - `add_wav_header`: Include WAV header in output (default: True)
 - `transliterate`: Enable text transliteration (default: False)
@@ -148,15 +152,13 @@ audio_bytes = await tts.synthesize(
 The `TextToAudioStream` class provides real-time text-to-speech processing, converting streaming text into audio output. It's particularly useful for applications like voice assistants, live captioning, or interactive chatbots that require immediate audio feedback from text generation. Supports both synchronous and asynchronous TTS instance.
 
 ```python
-import os
 import wave
 import asyncio
 from groq import Groq
-from smallest import Smallest
-from smallest import TextToAudioStream
+from smallest import Smallest, TextToAudioStream
 
-llm = Groq(api_key=os.environ.get("GROQ_API_KEY"))
-tts = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
+llm = Groq(api_key="GROQ_API_KEY")
+tts = Smallest(api_key="SMALLEST_API_KEY")
 
 async def generate_text(prompt):
     """Async generator for streaming text from Groq. You can use any LLM"""
@@ -213,16 +215,46 @@ The processor yields raw audio data chunks without WAV headers for streaming eff
 - Streamed over a network
 - Further processed as needed
 
+## Add your Voice   
+The Smallest AI SDK allows you to clone your voice by uploading an audio file. This feature is available both synchronously and asynchronously, making it flexible for different use cases. Below are examples of how to use this functionality.  
+
+### Synchronously
+```python
+from smallest import Smallest
+
+def main():
+    client = Smallest(api_key="YOUR_API_KEY")
+    res = client.add_voice(display_name="My Voice", file_path="my_voice.wav")
+    print(res)
+
+if __name__ == "__main__":
+    main()
+```  
+
+### Asynchronously
+```python
+import asyncio
+from smallest import AsyncSmallest
+
+async def main():
+    client = AsyncSmallest(api_key="YOUR_API_KEY")
+    res = await client.add_voice(display_name="My Voice", file_path="my_voice.wav")
+    print(res)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
 
 ## Available Methods
 
 ```python
-from smallest.tts import Smallest
+from smallest import Smallest
 
-client = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
+client = Smallest(api_key="SMALLEST_API_KEY")
 
-print(f"Avalaible Languages: {client.get_languages()}")
-print(f"Available Voices: {client.get_voices()}")
+print(f"Available Languages: {client.get_languages()}")
+print(f"Available Voices: {client.get_voices(model='lightning')}")
+print(f"Available Voices: {client.get_cloned_voices()}")
 print(f"Available Models: {client.get_models()}")
 ```
 

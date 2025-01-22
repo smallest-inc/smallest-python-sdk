@@ -1,6 +1,6 @@
 [project]
 name = "smallestai"
-version = "1.3.4"
+version = "2.0.0"
 description = "Official Python client for the Smallest AI API"
 authors = [
     {name = "Smallest", email = "support@smallest.ai"},
