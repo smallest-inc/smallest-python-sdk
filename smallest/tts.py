@@ -165,12 +165,12 @@ class Smallest:
             with wave.open(save_as, "wb") as wf:
                 wf.setnchannels(1)
                 wf.setsampwidth(2)
-                wf.setframerate(self.opts.sample_rate)
+                wf.setframerate(opts.sample_rate)
                 wf.writeframes(audio_content)
             return None
         
-        if self.opts.add_wav_header:
-            return add_wav_header(audio_content, self.opts.sample_rate)
+        if opts.add_wav_header:
+            return add_wav_header(audio_content, opts.sample_rate)
     
         return audio_content
     

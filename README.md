@@ -86,7 +86,7 @@ if __name__ == "__main__":
 - `api_key`: Your API key (can be set via SMALLEST_API_KEY environment variable)
 - `model`: TTS model to use (default: "lightning")
 - `sample_rate`: Audio sample rate (default: 24000)
-- `voice`: Voice ID (default: "emily")
+- `voice_id`: Voice ID (default: "emily")
 - `speed`: Speech speed multiplier (default: 1.0)
 - `add_wav_header`: Include WAV header in output (default: True)
 - `transliterate`: Enable text transliteration (default: False)
@@ -130,7 +130,7 @@ if __name__ == "__main__":
 - `api_key`: Your API key (can be set via SMALLEST_API_KEY environment variable)
 - `model`: TTS model to use (default: "lightning")
 - `sample_rate`: Audio sample rate (default: 24000)
-- `voice`: Voice ID (default: "emily")
+- `voice_id`: Voice ID (default: "emily")
 - `speed`: Speech speed multiplier (default: 1.0)
 - `add_wav_header`: Include WAV header in output (default: True)
 - `transliterate`: Enable text transliteration (default: False)
@@ -253,7 +253,7 @@ from smallest import Smallest
 client = Smallest(api_key="SMALLEST_API_KEY")
 
 print(f"Available Languages: {client.get_languages()}")
-print(f"Available Voices: {client.get_voices(model="lightning)}")
+print(f"Available Voices: {client.get_voices(model='lightning')}")
 print(f"Available Voices: {client.get_cloned_voices()}")
 print(f"Available Models: {client.get_models()}")
 ```
