@@ -121,8 +121,17 @@ class Smallest:
         Raises:
         - TTSError: If the provided file name does not have a .wav extension when `save_as` is specified.
         - APIError: If the API request fails or returns an error.
+        - ValueError: If an unexpected parameter is passed in `kwargs`.
         """
         opts = copy.deepcopy(self.opts)
+        valid_keys = set(vars(opts).keys())
+
+        invalid_keys = [key for key in kwargs if key not in valid_keys]
+
+        if invalid_keys:
+            raise ValueError(f"Invalid parameter(s) in kwargs: {', '.join(invalid_keys)}. "
+                            f"Allowed parameters are: {', '.join(valid_keys)}")
+        
         for key, value in kwargs.items():
             setattr(opts, key, value)
 
