@@ -169,6 +169,58 @@ audio_bytes = await tts.synthesize(
 
 The `TextToAudioStream` class provides real-time text-to-speech processing, converting streaming text into audio output. It's particularly useful for applications like voice assistants, live captioning, or interactive chatbots that require immediate audio feedback from text generation. Supports both synchronous and asynchronous TTS instance.
 
+#### Stream through a WebSocket
+
+```python
+import asyncio
+import websockets
+from groq import Groq
+from smallest import Smallest, TextToAudioStream  
+
+# Initialize Groq (LLM) and Smallest (TTS) instances
+llm = Groq(api_key="GROQ_API_KEY")
+tts = Smallest(api_key="SMALLEST_API_KEY")
+WEBSOCKET_URL = "wss://echo.websocket.events" # Mock WebSocket server
+
+# Async function to stream text generation from LLM
+async def generate_text(prompt):
+    completion = llm.chat.completions.create(
+        messages=[{"role": "user", "content": prompt}],
+        model="llama3-8b-8192",
+        stream=True,
+    )
+
+    # Yield text as it is generated
+    for chunk in completion:
+        text = chunk.choices[0].delta.content
+        if text:
+            yield text
+
+# Main function to run the process
+async def main():
+    # Initialize the TTS processor
+    processor = TextToAudioStream(tts_instance=tts)
+
+    # Generate text from LLM
+    llm_output = generate_text("Explain text to speech like I am five in 5 sentences.")
+
+    # Stream the generated speech throught a websocket
+    async with websockets.connect(WEBSOCKET_URL) as ws:
+        print("Connected to WebSocket server.")
+
+        # Stream the generated speech
+        async for audio_chunk in processor.process(llm_output):
+            await ws.send(audio_chunk)  # Send audio chunk
+            echoed_data = await ws.recv()  # Receive the echoed message
+            print("Received from server:", echoed_data[:20], "...")  # Print first 20 bytes
+
+        print("WebSocket connection closed.")
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+#### Save to a File
 ```python
 import wave
 import asyncio
