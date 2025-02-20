@@ -27,7 +27,7 @@ transforms = jiwer.Compose(
 )
 
 def get_tts_client():
-    return AsyncSmallest(api_key=os.environ.get("SMALLESTAI_API_KEY"))
+    return AsyncSmallest(api_key=os.environ.get("SMALLEST_API_KEY"))
 
 config: DeepgramClientOptions = DeepgramClientOptions(api_key=os.environ.get("DEEPGRAM_API_KEY"),)
 

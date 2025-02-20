@@ -30,7 +30,7 @@ class TextToAudioStream:
 
         Args:
             tts_instance: The text-to-speech engine to use (Smallest or AsyncSmallest)
-            queue_timeout: How long to wait for new text (seconds, default: 1.0)
+            queue_timeout: How long to wait for new text (seconds, default: 5.0)
             max_retries: Number of retry attempts for failed synthesis (default: 3)
         """
         self.tts_instance = tts_instance

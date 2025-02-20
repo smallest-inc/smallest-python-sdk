@@ -24,7 +24,7 @@ transforms = jiwer.Compose(
     ]
 )
 
-tts = Smallest(api_key=os.environ.get("SMALLESTAI_API_KEY"))
+tts = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
 
 config: DeepgramClientOptions = DeepgramClientOptions(api_key=os.environ.get("DEEPGRAM_API_KEY"))
 
