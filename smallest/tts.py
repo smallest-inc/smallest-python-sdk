@@ -7,7 +7,7 @@ from typing import Optional, Union, List
 
 from smallest.exceptions import TTSError, APIError
 from smallest.utils import (TTSOptions, validate_input, preprocess_text, add_wav_header, chunk_text,
-get_smallest_languages, get_smallest_models, ALLOWED_AUDIO_EXTENSIONS, API_BASE_URL)
+get_smallest_languages, get_smallest_models, API_BASE_URL)
 
 class Smallest:
     def __init__(
@@ -103,8 +103,6 @@ class Smallest:
             self,
             text: str,
             save_as: Optional[str] = None,
-            seed: Optional[int] = None,
-            consistency: Optional[float] = 0.5,
             **kwargs
         ) -> Union[bytes, None]:
         """
@@ -114,8 +112,6 @@ class Smallest:
         - text (str): The text to be converted to speech.
         - save_as (Optional[str]): If provided, the synthesized audio will be saved to this file path. 
                                    The file must have a .wav extension.
-        - seed (Optional[int]): Optional random seed for controlling the deterministic behavior of speech generation. Only supported in `lightning` model.
-        - consistency (Optional[float]): This parameter controls word repetition and skipping. Decrease it to prevent skipped words, and increase it to prevent repetition. Only supported in `lightning-large` model.
         - kwargs: Additional optional parameters to override `__init__` options for this call.
 
         Returns:
@@ -125,21 +121,12 @@ class Smallest:
         Raises:
         - TTSError: If the provided file name does not have a .wav extension when `save_as` is specified.
         - APIError: If the API request fails or returns an error.
-        - ValueError: If an unexpected parameter is passed in `kwargs`.
         """
         opts = copy.deepcopy(self.opts)
-        valid_keys = set(vars(opts).keys())
-
-        invalid_keys = [key for key in kwargs if key not in valid_keys]
-
-        if invalid_keys:
-            raise ValueError(f"Invalid parameter(s) in kwargs: {', '.join(invalid_keys)}. "
-                            f"Allowed parameters are: {', '.join(valid_keys)}")
-        
         for key, value in kwargs.items():
             setattr(opts, key, value)
 
-        validate_input(preprocess_text(text), opts.model, opts.sample_rate, opts.speed, seed, consistency)
+        validate_input(preprocess_text(text), opts.model, opts.sample_rate, opts.speed)
 
         self.chunk_size = 250
         if opts.model == "lightning-large":
@@ -159,12 +146,6 @@ class Smallest:
                 "transliterate": opts.transliterate,
                 "remove_extra_silence": opts.remove_extra_silence,
             }
-            
-            if opts.model == "lightning" and seed:
-                payload["seed"] = seed
-            
-            if opts.model == "lightning-large" and consistency:
-                payload["consistency"] = consistency
 
             headers = {
                 "Authorization": f"Bearer {self.api_key}",
@@ -212,6 +193,7 @@ class Smallest:
         if not os.path.isfile(file_path):
             raise TTSError("Invalid file path. File does not exist.")
         
+        ALLOWED_AUDIO_EXTENSIONS = ['.mp3', '.wav']
         file_extension = os.path.splitext(file_path)[1].lower()
         if file_extension not in ALLOWED_AUDIO_EXTENSIONS:
             raise TTSError(f"Invalid file type. Supported formats are: {ALLOWED_AUDIO_EXTENSIONS}")
@@ -230,8 +212,8 @@ class Smallest:
             raise APIError(f"Failed to add voice: {response.text}. For more information, visit https://waves.smallest.ai/")
         
         return json.dumps(response.json(), indent=4, ensure_ascii=False)
-        
-        
+
+
     def delete_voice(self, voice_id: str) -> str:
         """
         Delete a cloned voice synchronously.
