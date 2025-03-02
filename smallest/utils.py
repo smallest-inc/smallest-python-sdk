@@ -30,7 +30,7 @@ class TTSOptions:
     remove_extra_silence: bool
 
 
-def validate_input(text: str, model: str, sample_rate: int, speed: float, seed: Optional[int] = None, consistency: Optional[float] = None):
+def validate_input(text: str, model: str, sample_rate: int, speed: float):
     if not text:
         raise ValidationError("Text cannot be empty.")
     if model not in TTSModels:
@@ -39,10 +39,6 @@ def validate_input(text: str, model: str, sample_rate: int, speed: float, seed: 
         raise ValidationError(f"Invalid sample rate: {sample_rate}. Must be between 8000 and 24000")
     if not 0.5 <= speed <= 2.0:
         raise ValidationError(f"Invalid speed: {speed}. Must be between 0.5 and 2.0")
-    if seed is not None and not 0 <= seed <= 4294967295:
-        raise ValidationError(f"Invalid seed: {seed}. Must be between 0 and 4294967295")
-    if consistency is not None and not 0 <= consistency <= 1:
-        raise ValidationError(f"Invalid consistency: {consistency}. Must be between 0 and 1")
 
 
 def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: int = 2, channels: int = 1) -> bytes:
