@@ -154,7 +154,7 @@ class Smallest:
 
             res = requests.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers)
             if res.status_code != 200:
-                raise APIError(f"Failed to synthesize speech: {res.text}. Please check if you have set the correct API key. For more information, visit https://waves.smallest.ai/")
+                raise APIError(f"Failed to synthesize speech: {res.text}. Please check if you have set the correct API key. This error may also occur if your voice_id is not supported with the selected model. For more information, visit https://waves.smallest.ai/")
             
             audio_content += res.content
 
