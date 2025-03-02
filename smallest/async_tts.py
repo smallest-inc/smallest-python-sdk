@@ -125,8 +125,6 @@ class AsyncSmallest:
             self,
             text: str,
             save_as: Optional[str] = None,
-            seed: Optional[int] = None,
-            consistency: Optional[float] = None,
             **kwargs
         ) -> Union[bytes, None]:
         """
@@ -136,8 +134,6 @@ class AsyncSmallest:
         - text (str): The text to be converted to speech.
         - save_as (Optional[str]): If provided, the synthesized audio will be saved to this file path.
                                    The file must have a .wav extension.
-        - seed (Optional[int]): Optional random seed for controlling the deterministic behavior of speech generation. Only supported in `lightning` model.
-        - consistency (Optional[float]): This parameter controls word repetition and skipping. Decrease it to prevent skipped words, and increase it to prevent repetition. Only supported in `lightning-large` model.
         - kwargs: Additional optional parameters to override `__init__` options for this call.
 
         Returns:
@@ -167,7 +163,7 @@ class AsyncSmallest:
             for key, value in kwargs.items():
                 setattr(opts, key, value)
 
-            validate_input(preprocess_text(text), opts.model, opts.sample_rate, opts.speed, seed, consistency)
+            validate_input(preprocess_text(text), opts.model, opts.sample_rate, opts.speed)
 
             self.chunk_size = 250
             if opts.model == 'lightning-large':
@@ -188,11 +184,6 @@ class AsyncSmallest:
                     "remove_extra_silence": opts.remove_extra_silence
                 }
                 
-                if opts.model == 'lightning' and seed:
-                    payload['seed'] = seed
-                
-                if opts.model == 'lightning-large' and consistency:
-                    payload['consistency'] = consistency
 
                 headers = {
                     "Authorization": f"Bearer {self.api_key}",
@@ -201,7 +192,7 @@ class AsyncSmallest:
 
                 async with self.session.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers) as res:
                     if res.status != 200:
-                        raise APIError(f"Failed to synthesize speech: {await res.text()}. For more information, visit https://waves.smallest.ai/")
+                        raise APIError(f"Failed to synthesize speech: {await res.text()}. This error may occur if your voice_id is not compatible with the selected model. For more information, visit https://waves.smallest.ai/")
 
                     audio_content += await res.read()
 
