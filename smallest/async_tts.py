@@ -192,7 +192,7 @@ class AsyncSmallest:
 
                 async with self.session.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers) as res:
                     if res.status != 200:
-                        raise APIError(f"Failed to synthesize speech: {await res.text()}. This error may occur if your voice_id is not supported with the selected model. For more information, visit https://waves.smallest.ai/")
+                        raise APIError(f"Failed to synthesize speech: {await res.text()}. This error may also occur if your voice_id is not supported with the selected model. For more information, visit https://waves.smallest.ai/")
 
                     audio_content += await res.read()
 
