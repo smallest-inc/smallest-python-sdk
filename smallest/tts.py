@@ -154,7 +154,7 @@ class Smallest:
 
             res = requests.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers)
             if res.status_code != 200:
-                raise APIError(f"Failed to synthesize speech: {res.text}. Please check if you have set the correct API key. For more information, visit https://waves.smallest.ai/")
+                raise APIError(f"Failed to synthesize speech: {res.text}. This error may also occur if your voice_id is not supported with the selected model. For more information, visit https://waves.smallest.ai/")
             
             audio_content += res.content
 
@@ -210,5 +210,32 @@ class Smallest:
         response = requests.post(url, headers=headers, data=payload, files=files)
         if response.status_code != 200:
             raise APIError(f"Failed to add voice: {response.text}. For more information, visit https://waves.smallest.ai/")
+        
+        return json.dumps(response.json(), indent=4, ensure_ascii=False)
+
+
+    def delete_voice(self, voice_id: str) -> str:
+        """
+        Delete a cloned voice synchronously.
+
+        Args:
+        - voice_id (str): The ID of the voice to be deleted.
+
+        Returns:
+        - str: The response from the API.
+
+        Raises:
+        - APIError: If the API request fails or returns an error.
+        """
+        url = f"{API_BASE_URL}/lightning-large/delete"
+        payload = {'voiceId': voice_id}
+
+        headers = {
+            'Authorization': f"Bearer {self.api_key}",
+        }
+
+        response = requests.post(url, headers=headers, data=payload)
+        if response.status_code != 200:
+            raise APIError(f"Failed to delete voice: {response.text}. For more information, visit https://waves.smallest.ai/")
         
         return json.dumps(response.json(), indent=4, ensure_ascii=False)

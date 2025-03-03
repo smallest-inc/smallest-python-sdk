@@ -1,6 +1,7 @@
 import re
 import io
 from typing import List
+from typing import Optional
 from pydub import AudioSegment
 from dataclasses import dataclass
 from sacremoses import MosesPunctNormalizer
@@ -14,6 +15,7 @@ SENTENCE_END_REGEX = re.compile(r'.*[-.—!?,;:…।|]$')
 mpn = MosesPunctNormalizer()
 SAMPLE_WIDTH = 2
 CHANNELS = 1
+ALLOWED_AUDIO_EXTENSIONS = ['.mp3', '.wav']
 
 
 @dataclass
@@ -40,11 +42,11 @@ def validate_input(text: str, model: str, sample_rate: int, speed: float):
 
 
 def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: int = 2, channels: int = 1) -> bytes:
-        audio = AudioSegment(data=frame_input, sample_width=sample_width, frame_rate=sample_rate, channels=channels)
-        wav_buf = io.BytesIO()
-        audio.export(wav_buf, format="wav")
-        wav_buf.seek(0)
-        return wav_buf.read()
+    audio = AudioSegment(data=frame_input, sample_width=sample_width, frame_rate=sample_rate, channels=channels)
+    wav_buf = io.BytesIO()
+    audio.export(wav_buf, format="wav")
+    wav_buf.seek(0)
+    return wav_buf.read()
 
 
 def preprocess_text(text: str) -> str:
@@ -55,11 +57,6 @@ def preprocess_text(text: str) -> str:
 
 
 def chunk_text(text: str, chunk_size: int = 250) -> List[str]:
-    """
-    Splits the input text into chunks based on sentence boundaries
-    defined by SENTENCE_END_REGEX and the maximum chunk size.
-    Only splits at valid sentence boundaries to avoid breaking words.
-    """
     chunks = []
     while text:
         if len(text) <= chunk_size:

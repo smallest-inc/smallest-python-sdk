@@ -30,7 +30,7 @@ class TextToAudioStream:
 
         Args:
             tts_instance: The text-to-speech engine to use (Smallest or AsyncSmallest)
-            queue_timeout: How long to wait for new text (seconds, default: 1.0)
+            queue_timeout: How long to wait for new text (seconds, default: 5.0)
             max_retries: Number of retry attempts for failed synthesis (default: 3)
         """
         self.tts_instance = tts_instance
@@ -48,36 +48,43 @@ class TextToAudioStream:
 
     async def _stream_llm_output(self, llm_output: AsyncGenerator[str, None]) -> None:
         """
-        Streams the LLM output, splitting it into sentences based on the regex 
-        and chunk size, and adding each chunk to the queue.
+        Streams the LLM output, splitting it into chunks based on sentence boundaries
+        or space characters if no sentence boundary is found before reaching buffer_size.
 
         Parameters:
         - llm_output (AsyncGenerator[str, None]): An async generator yielding LLM output.
         """
         buffer = ""
-        last_break_index = 0
 
         async for chunk in llm_output:
             buffer += chunk
-            i = 0
-            while i < len(buffer):
-                current_chunk = buffer[:i + 1]
-                if self.sentence_end_regex.match(current_chunk):
-                    last_break_index = i
-                if len(current_chunk) >= self.buffer_size:
-                    if last_break_index > 0:
-                        self.queue.put(f'{buffer[:last_break_index + 1].replace("—", " ").strip()} ')
-                        buffer = buffer[last_break_index + 1:] 
+
+            while len(buffer) > self.buffer_size:
+                chunk_text = buffer[:self.buffer_size]
+                last_break_index = -1
+
+                # Find last sentence boundary using regex
+                for i in range(len(chunk_text) - 1, -1, -1):
+                    if self.sentence_end_regex.match(chunk_text[:i + 1]):
+                        last_break_index = i
+                        break
+
+                if last_break_index == -1:
+                    # Fallback to space if no sentence boundary found
+                    last_space = chunk_text.rfind(' ')
+                    if last_space != -1:
+                        last_break_index = last_space
                     else:
-                        # No sentence boundary, split at max chunk size
-                        self.queue.put(f'{buffer[:self.buffer_size].replace("—", " ").strip()} ')
-                        buffer = buffer[self.buffer_size:] 
-                    last_break_index = 0
-                    i = -1 
-                i += 1
-                
+                        last_break_index = self.buffer_size - 1
+
+                # Add chunk to queue and update buffer
+                self.queue.put(f'{buffer[:last_break_index + 1].replace("—", " ").strip()} ')
+                buffer = buffer[last_break_index + 1:].strip()
+
+        # Don't forget the remaining text
         if buffer:
             self.queue.put(f'{buffer.replace("—", " ").strip()} ')
+
         self.stop_flag = True
 
 
@@ -144,10 +151,14 @@ class TextToAudioStream:
             - Streamed over a network
             - Further processed as needed
         """
-        llm_thread = Thread(target=asyncio.run, args=(self._stream_llm_output(llm_output),))
-        llm_thread.start()
+        stream_task = asyncio.create_task(self._stream_llm_output(llm_output))
 
-        async for audio_content in self._run_synthesis():
-            yield audio_content
+        try:
+            async for audio_content in self._run_synthesis():
+                yield audio_content
+        except Exception as e:
+            print(f"Error during synthesis processing: {e}")
+            raise
 
-        llm_thread.join()
+        finally:
+            await stream_task
