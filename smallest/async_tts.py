@@ -19,9 +19,7 @@ class AsyncSmallest:
         sample_rate: Optional[int] = 24000,
         voice_id: Optional[str] = "emily",
         speed: Optional[float] = 1.0,
-        add_wav_header: Optional[bool] = True,
-        transliterate: Optional[bool] = False,
-        remove_extra_silence: Optional[bool] = False
+        add_wav_header: Optional[bool] = True
     ) -> None:
         """
         AsyncSmallest Instance for asynchronous text-to-speech synthesis.
@@ -37,8 +35,6 @@ class AsyncSmallest:
         - voice_id (TTSVoices): The voice to be used for synthesis.
         - speed (float): The speed of the speech synthesis.
         - add_wav_header (bool): Whether to add a WAV header to the output audio.
-        - transliterate (bool): Whether to transliterate the text.
-        - remove_extra_silence (bool): Whether to remove extra silence from the synthesized audio.
 
         Methods:
         - get_languages: Returns a list of available languages for synthesis.
@@ -57,9 +53,7 @@ class AsyncSmallest:
             voice_id=voice_id,
             api_key=self.api_key,
             add_wav_header=add_wav_header,
-            speed=speed,
-            transliterate=transliterate,
-            remove_extra_silence=remove_extra_silence,
+            speed=speed
         )
         self.session = None
 
@@ -125,6 +119,9 @@ class AsyncSmallest:
             self,
             text: str,
             save_as: Optional[str] = None,
+            consistency: Optional[float] = None,
+            similarity: Optional[float] = None,
+            enhancement: Optional[bool] = None,
             **kwargs
         ) -> Union[bytes, None]:
         """
@@ -134,6 +131,9 @@ class AsyncSmallest:
         - text (str): The text to be converted to speech.
         - save_as (Optional[str]): If provided, the synthesized audio will be saved to this file path.
                                    The file must have a .wav extension.
+        - consistency (Optional[float]): This parameter controls word repetition and skipping. Decrease it to prevent skipped words, and increase it to prevent repetition. Only supported in `lightning-large` model.
+        - similarity (Optional[float]): This parameter controls the similarity between the synthesized audio and the reference audio. Increase it to make the speech more similar to the reference audio. Only supported in `lightning-large` model.
+        - enhancement (Optional[bool]): Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model.
         - kwargs: Additional optional parameters to override `__init__` options for this call.
 
         Returns:
@@ -157,13 +157,12 @@ class AsyncSmallest:
 
             invalid_keys = [key for key in kwargs if key not in valid_keys]
             if invalid_keys:
-                raise ValueError(f"Invalid parameter(s) in kwargs: {', '.join(invalid_keys)}. "
-                                f"Allowed parameters are: {', '.join(valid_keys)}")
+                raise ValueError(f"Invalid parameter(s) in kwargs: {', '.join(invalid_keys)}. Allowed parameters are: {', '.join(valid_keys)}")
 
             for key, value in kwargs.items():
                 setattr(opts, key, value)
 
-            validate_input(preprocess_text(text), opts.model, opts.sample_rate, opts.speed)
+            validate_input(preprocess_text(text), opts.model, opts.sample_rate, opts.speed, consistency, similarity, enhancement)
 
             self.chunk_size = 250
             if opts.model == 'lightning-large':
@@ -179,11 +178,17 @@ class AsyncSmallest:
                     "voice_id": opts.voice_id,
                     "add_wav_header": False,
                     "speed": opts.speed,
-                    "model": opts.model,
-                    "transliterate": opts.transliterate,
-                    "remove_extra_silence": opts.remove_extra_silence
+                    "model": opts.model
                 }
                 
+                if opts.model == "lightning-large":
+                    if consistency:
+                        payload["consistency"] = consistency
+                    if similarity:
+                        payload["similarity"] = similarity
+                    if enhancement:
+                        payload["enhancement"] = enhancement
+
 
                 headers = {
                     "Authorization": f"Bearer {self.api_key}",
@@ -192,7 +197,7 @@ class AsyncSmallest:
 
                 async with self.session.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers) as res:
                     if res.status != 200:
-                        raise APIError(f"Failed to synthesize speech: {await res.text()}. This error may also occur if your voice_id is not supported with the selected model. For more information, visit https://waves.smallest.ai/")
+                        raise APIError(f"Failed to synthesize speech: {await res.text()}. For more information, visit https://waves.smallest.ai/")
 
                     audio_content += await res.read()
 
@@ -281,7 +286,7 @@ class AsyncSmallest:
         Raises:
         - APIError: If the API request fails or returns an error.
         """
-        url = f"{API_BASE_URL}/lightning-large/delete"
+        url = f"{API_BASE_URL}/lightning-large"
         payload = {'voiceId': voice_id}
 
         headers = {
@@ -291,7 +296,7 @@ class AsyncSmallest:
         should_cleanup = await self._ensure_session()
 
         try:
-            async with self.session.post(url, headers=headers, data=payload) as res:
+            async with self.session.delete(url, headers=headers, json=payload) as res:
                 if res.status != 200:
                     raise APIError(f"Failed to delete voice: {await res.text()}. For more information, visit https://waves.smallest.ai/")
 

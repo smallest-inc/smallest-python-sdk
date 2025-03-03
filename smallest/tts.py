@@ -7,7 +7,7 @@ from typing import Optional, Union, List
 
 from smallest.exceptions import TTSError, APIError
 from smallest.utils import (TTSOptions, validate_input, preprocess_text, add_wav_header, chunk_text,
-get_smallest_languages, get_smallest_models, API_BASE_URL)
+get_smallest_languages, get_smallest_models, ALLOWED_AUDIO_EXTENSIONS, API_BASE_URL)
 
 class Smallest:
     def __init__(
@@ -17,9 +17,7 @@ class Smallest:
         sample_rate: Optional[int] = 24000,
         voice_id: Optional[str] = "emily",
         speed: Optional[float] = 1.0,
-        add_wav_header: Optional[bool] = True,
-        transliterate: Optional[bool] = False,
-        remove_extra_silence: Optional[bool] = True
+        add_wav_header: Optional[bool] = True
     ) -> None:
         """
         Smallest Instance for text-to-speech synthesis.
@@ -34,8 +32,6 @@ class Smallest:
         - voice_id (TTSVoices): The voice to be used for synthesis.
         - speed (float): The speed of the speech synthesis.
         - add_wav_header (bool): Whether to add a WAV header to the output audio.
-        - transliterate (bool): Whether to transliterate the text.
-        - remove_extra_silence (bool): Whether to remove extra silence from the synthesized audio.
 
         Methods:
         - get_languages: Returns a list of available languages for synthesis.
@@ -50,14 +46,12 @@ class Smallest:
         self.chunk_size = 250
         
         self.opts = TTSOptions(
+            api_key=self.api_key,
             model=model,
             sample_rate=sample_rate,
             voice_id=voice_id,
-            api_key=self.api_key,
-            add_wav_header=add_wav_header,
             speed=speed,
-            transliterate=transliterate,
-            remove_extra_silence=remove_extra_silence
+            add_wav_header=add_wav_header
         )
     
         
@@ -103,6 +97,9 @@ class Smallest:
             self,
             text: str,
             save_as: Optional[str] = None,
+            consistency: Optional[float] = None,
+            similarity: Optional[float] = None,
+            enhancement: Optional[bool] = None,
             **kwargs
         ) -> Union[bytes, None]:
         """
@@ -112,6 +109,9 @@ class Smallest:
         - text (str): The text to be converted to speech.
         - save_as (Optional[str]): If provided, the synthesized audio will be saved to this file path. 
                                    The file must have a .wav extension.
+        - consistency (Optional[float]): This parameter controls word repetition and skipping. Decrease it to prevent skipped words, and increase it to prevent repetition. Only supported in `lightning-large` model.
+        - similarity (Optional[float]): This parameter controls the similarity between the synthesized audio and the reference audio. Increase it to make the speech more similar to the reference audio. Only supported in `lightning-large` model.
+        - enhancement (Optional[bool]): Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model.
         - kwargs: Additional optional parameters to override `__init__` options for this call.
 
         Returns:
@@ -123,10 +123,16 @@ class Smallest:
         - APIError: If the API request fails or returns an error.
         """
         opts = copy.deepcopy(self.opts)
+        valid_keys = set(vars(opts).keys())
+
+        invalid_keys = [key for key in kwargs if key not in valid_keys]
+        if invalid_keys:
+            raise ValueError(f"Invalid parameter(s) in kwargs: {', '.join(invalid_keys)}. Allowed parameters are: {', '.join(valid_keys)}")
+                                
         for key, value in kwargs.items():
             setattr(opts, key, value)
 
-        validate_input(preprocess_text(text), opts.model, opts.sample_rate, opts.speed)
+        validate_input(preprocess_text(text), opts.model, opts.sample_rate, opts.speed, consistency, similarity, enhancement)
 
         self.chunk_size = 250
         if opts.model == "lightning-large":
@@ -142,10 +148,16 @@ class Smallest:
                 "voice_id": opts.voice_id,
                 "add_wav_header": False,
                 "speed": opts.speed,
-                "model": opts.model,
-                "transliterate": opts.transliterate,
-                "remove_extra_silence": opts.remove_extra_silence,
+                "model": opts.model
             }
+
+            if opts.model == "lightning-large":
+                if consistency:
+                    payload["consistency"] = consistency
+                if similarity:
+                    payload["similarity"] = similarity
+                if enhancement:
+                    payload["enhancement"] = enhancement
 
             headers = {
                 "Authorization": f"Bearer {self.api_key}",
@@ -154,7 +166,7 @@ class Smallest:
 
             res = requests.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers)
             if res.status_code != 200:
-                raise APIError(f"Failed to synthesize speech: {res.text}. This error may also occur if your voice_id is not supported with the selected model. For more information, visit https://waves.smallest.ai/")
+                raise APIError(f"Failed to synthesize speech: {res.text}. For more information, visit https://waves.smallest.ai/")
             
             audio_content += res.content
 
@@ -193,7 +205,6 @@ class Smallest:
         if not os.path.isfile(file_path):
             raise TTSError("Invalid file path. File does not exist.")
         
-        ALLOWED_AUDIO_EXTENSIONS = ['.mp3', '.wav']
         file_extension = os.path.splitext(file_path)[1].lower()
         if file_extension not in ALLOWED_AUDIO_EXTENSIONS:
             raise TTSError(f"Invalid file type. Supported formats are: {ALLOWED_AUDIO_EXTENSIONS}")
@@ -227,14 +238,14 @@ class Smallest:
         Raises:
         - APIError: If the API request fails or returns an error.
         """
-        url = f"{API_BASE_URL}/lightning-large/delete"
+        url = f"{API_BASE_URL}/lightning-large"
         payload = {'voiceId': voice_id}
 
         headers = {
             'Authorization': f"Bearer {self.api_key}",
         }
 
-        response = requests.post(url, headers=headers, data=payload)
+        response = requests.delete(url, headers=headers, json=payload)
         if response.status_code != 200:
             raise APIError(f"Failed to delete voice: {response.text}. For more information, visit https://waves.smallest.ai/")
         
