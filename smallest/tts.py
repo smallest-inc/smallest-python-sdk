@@ -42,16 +42,18 @@ class Smallest:
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY")
         if not self.api_key:
             raise TTSError()
-        
+        if model == "lightning-large":
+            voice_id = "lakshya"
+
         self.chunk_size = 250
         
         self.opts = TTSOptions(
-            api_key=self.api_key,
             model=model,
             sample_rate=sample_rate,
             voice_id=voice_id,
-            speed=speed,
-            add_wav_header=add_wav_header
+            api_key=self.api_key,
+            add_wav_header=add_wav_header,
+            speed=speed
         )
     
         
@@ -96,10 +98,10 @@ class Smallest:
     def synthesize(
             self,
             text: str,
+            consistency: Optional[float] = 0.5,
+            similarity: Optional[float] = 0,
+            enhancement: Optional[bool] = False,
             save_as: Optional[str] = None,
-            consistency: Optional[float] = None,
-            similarity: Optional[float] = None,
-            enhancement: Optional[bool] = None,
             **kwargs
         ) -> Union[bytes, None]:
         """
@@ -148,7 +150,6 @@ class Smallest:
                 "voice_id": opts.voice_id,
                 "add_wav_header": False,
                 "speed": opts.speed,
-                "model": opts.model
             }
 
             if opts.model == "lightning-large":

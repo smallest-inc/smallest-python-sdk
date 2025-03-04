@@ -83,9 +83,9 @@ if __name__ == "__main__":
 - `sample_rate`: Audio sample rate (default: 24000)
 - `voice_id`: Voice ID (default: "emily")
 - `speed`: Speech speed multiplier (default: 1.0)
-- `consistency`: Controls word repetition and skipping. Decrease it to prevent skipped words, and increase it to prevent repetition. Only supported in `lightning-large` model.
-- `similarity`: Controls the similarity between the synthesized audio and the reference audio. Increase it to make the speech more similar to the reference audio. Only supported in `lightning-large` model.
-- `enhancement`: Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model.
+- `consistency`: Controls word repetition and skipping. Decrease it to prevent skipped words, and increase it to prevent repetition. Only supported in `lightning-large` model. (default: 0.5)
+- `similarity`: Controls the similarity between the synthesized audio and the reference audio. Increase it to make the speech more similar to the reference audio. Only supported in `lightning-large` model. (default: 0)
+- `enhancement`: Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model. (default: False)
 - `add_wav_header`: Whether to add a WAV header to the output audio.
 
 These parameters are part of the `Smallest` instance. They can be set when creating the instance (as shown above). However, the `synthesize` function also accepts `kwargs`, allowing you to override these parameters for a specific synthesis request.
