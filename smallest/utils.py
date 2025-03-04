@@ -26,11 +26,9 @@ class TTSOptions:
     api_key: str
     add_wav_header: bool
     speed: float
-    transliterate: bool
-    remove_extra_silence: bool
 
 
-def validate_input(text: str, model: str, sample_rate: int, speed: float):
+def validate_input(text: str, model: str, sample_rate: int, speed: float, consistency: Optional[float] = None, similarity: Optional[float] = None, enhancement: Optional[bool] = None):
     if not text:
         raise ValidationError("Text cannot be empty.")
     if model not in TTSModels:
@@ -39,6 +37,12 @@ def validate_input(text: str, model: str, sample_rate: int, speed: float):
         raise ValidationError(f"Invalid sample rate: {sample_rate}. Must be between 8000 and 24000")
     if not 0.5 <= speed <= 2.0:
         raise ValidationError(f"Invalid speed: {speed}. Must be between 0.5 and 2.0")
+    if consistency is not None and not 0.0 <= consistency <= 1.0:
+        raise ValidationError(f"Invalid consistency: {consistency}. Must be between 0.0 and 1.0")
+    if similarity is not None and not 0.0 <= similarity <= 1.0:
+        raise ValidationError(f"Invalid similarity: {similarity}. Must be between 0.0 and 1.0")
+    if enhancement is not None and not isinstance(enhancement, bool):
+        raise ValidationError(f"Invalid enhancement: {enhancement}. Must be a boolean value.")
 
 
 def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: int = 2, channels: int = 1) -> bytes:

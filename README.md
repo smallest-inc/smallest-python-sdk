@@ -32,8 +32,11 @@ Currently, the library supports direct synthesis and the ability to synthesize s
   - [Aynchronous](#Synchronous)
   - [LLM to Speech](#llm-to-speech)
   - [Add your Voice](#add-your-voice)
-    - [Synchronously](#synchronously)
-    - [Asynchronously](#asynchronously)
+    - [Synchronously](#add-synchronously)
+    - [Asynchronously](#add-asynchronously)
+  - [Delete your Voice](#delete-your-voice)
+    - [Synchronously](#delete-synchronously)
+    - [Asynchronously](#delete-asynchronously)
 - [Available Methods](#available-methods)
 - [Technical Note: WAV Headers in Streaming Audio](#technical-note-wav-headers-in-streaming-audio)
 
@@ -53,14 +56,6 @@ When using an SDK in your application, make sure to pin to at least the major ve
 3. Create a new API Key and copy it.
 4. Export the API Key in your environment with the name `SMALLEST_API_KEY`, ensuring that your application can access it securely for authentication.
 
-## Best Practices for Input Text
-While the `transliterate` parameter is provided, please note that it is not fully supported and may not perform consistently across all cases. It is recommended to use the model without relying on this parameter.
-
-For optimal voice generation results:
-
-1. For English, provide the input in Latin script (e.g., "Hello, how are you?").
-2. For Hindi, provide the input in Devanagari script (e.g., "नमस्ते, आप कैसे हैं?").
-3. For code-mixed input, use Latin script for English and Devanagari script for Hindi (e.g., "Hello, आप कैसे हैं?").
 
 ## Examples
 
@@ -88,9 +83,10 @@ if __name__ == "__main__":
 - `sample_rate`: Audio sample rate (default: 24000)
 - `voice_id`: Voice ID (default: "emily")
 - `speed`: Speech speed multiplier (default: 1.0)
-- `add_wav_header`: Include WAV header in output (default: True)
-- `transliterate`: Enable text transliteration (default: False)
-- `remove_extra_silence`: Remove additional silence (default: True)  
+- `consistency`: Controls word repetition and skipping. Decrease it to prevent skipped words, and increase it to prevent repetition. Only supported in `lightning-large` model. (default: 0.5)
+- `similarity`: Controls the similarity between the synthesized audio and the reference audio. Increase it to make the speech more similar to the reference audio. Only supported in `lightning-large` model. (default: 0)
+- `enhancement`: Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model. (default: False)
+- `add_wav_header`: Whether to add a WAV header to the output audio.
 
 These parameters are part of the `Smallest` instance. They can be set when creating the instance (as shown above). However, the `synthesize` function also accepts `kwargs`, allowing you to override these parameters for a specific synthesis request.
 
@@ -114,9 +110,8 @@ import asyncio
 import aiofiles
 from smallest import AsyncSmallest
 
-client = AsyncSmallest(api_key="SMALLEST_API_KEY")
-
 async def main():
+    client = AsyncSmallest(api_key="SMALLEST_API_KEY")
     async with client as tts:
         audio_bytes = await tts.synthesize("Hello, this is a test of the async synthesis function.") 
         async with aiofiles.open("async_synthesize.wav", "wb") as f:
@@ -133,9 +128,8 @@ import asyncio
 import aiofiles
 from smallest import AsyncSmallest
 
-client = AsyncSmallest(api_key="SMALLEST_API_KEY")
-
 async def main():
+    client = AsyncSmallest(api_key="SMALLEST_API_KEY")
     async with client as tts:
         audio_bytes = await tts.synthesize("Hello, this is a test of the async synthesis function.") 
         async with aiofiles.open("async_synthesize.wav", "wb") as f:
@@ -150,9 +144,10 @@ await main()
 - `sample_rate`: Audio sample rate (default: 24000)
 - `voice_id`: Voice ID (default: "emily")
 - `speed`: Speech speed multiplier (default: 1.0)
-- `add_wav_header`: Include WAV header in output (default: True)
-- `transliterate`: Enable text transliteration (default: False)
-- `remove_extra_silence`: Remove additional silence (default: True)   
+- `consistency`: Controls word repetition and skipping. Decrease it to prevent skipped words, and increase it to prevent repetition. Only supported in `lightning-large` model.
+- `similarity`: Controls the similarity between the synthesized audio and the reference audio. Increase it to make the speech more similar to the reference audio. Only supported in `lightning-large` model.
+- `enhancement`: Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model.
+- `add_wav_header`: Whether to add a WAV header to the output audio.
 
 These parameters are part of the `AsyncSmallest` instance. They can be set when creating the instance (as shown above). However, the `synthesize` function also accepts `kwargs`, allowing you to override any of these parameters on a per-request basis.  
 
@@ -288,12 +283,12 @@ The processor yields raw audio data chunks without WAV headers for streaming eff
 ## Add your Voice   
 The Smallest AI SDK allows you to clone your voice by uploading an audio file. This feature is available both synchronously and asynchronously, making it flexible for different use cases. Below are examples of how to use this functionality.  
 
-### Synchronously
+### Add Synchronously
 ```python
 from smallest import Smallest
 
 def main():
-    client = Smallest(api_key="YOUR_API_KEY")
+    client = Smallest(api_key="SMALLEST_API_KEY")
     res = client.add_voice(display_name="My Voice", file_path="my_voice.wav")
     print(res)
 
@@ -301,14 +296,44 @@ if __name__ == "__main__":
     main()
 ```  
 
-### Asynchronously
+### Add Asynchronously
 ```python
 import asyncio
 from smallest import AsyncSmallest
 
 async def main():
-    client = AsyncSmallest(api_key="YOUR_API_KEY")
+    client = AsyncSmallest(api_key="SMALLEST_API_KEY")
     res = await client.add_voice(display_name="My Voice", file_path="my_voice.wav")
+    print(res)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+## Delete your Voice
+The Smallest AI SDK allows you to delete your cloned voice. This feature is available both synchronously and asynchronously, making it flexible for different use cases. Below are examples of how to use this functionality.
+
+### Delete Synchronously
+```python
+from smallest import Smallest
+
+def main():
+    client = Smallest(api_key="SMALLEST_API_KEY")
+    res = client.delete_voice(voice_id="voice_id")
+    print(res)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Delete Asynchronously
+```python
+import asyncio
+from smallest import AsyncSmallest
+
+async def main():
+    client = AsyncSmallest(api_key="SMALLEST_API_KEY")
+    res = await client.delete_voice(voice_id="voice_id")
     print(res)
 
 if __name__ == "__main__":

@@ -96,8 +96,7 @@ class TextToAudioStream:
             if retries < self.max_retries:
                 return self._synthesize_sync(sentence, retries + 1)
             else:
-                print(f"Synthesis failed for sentence: {sentence} - Error: {e}. Retries Exhausted, for more information, visit https://waves.smallest.ai/")
-                return None
+                raise APIError(f"Error: {e}. Retries Exhausted, for more information, visit https://waves.smallest.ai/")
             
 
     async def _synthesize_async(self, sentence: str, retries: int = 0) -> Optional[bytes]:
@@ -108,8 +107,7 @@ class TextToAudioStream:
             if retries < self.max_retries:
                 return await self._synthesize_async(sentence, retries + 1)
             else:
-                print(f"Synthesis failed for sentence: {sentence} - Error: {e}. Retries Exhausted, for more information, visit https://waves.smallest.ai/")
-                return None
+                raise APIError(f"Error: {e}. Retries Exhausted, for more information, visit https://waves.smallest.ai/")
 
 
     async def _run_synthesis(self) -> AsyncGenerator[bytes, None]:
@@ -157,8 +155,7 @@ class TextToAudioStream:
             async for audio_content in self._run_synthesis():
                 yield audio_content
         except Exception as e:
-            print(f"Error during synthesis processing: {e}")
-            raise
+            raise APIError(f"Error during synthesis processing: {e}")
 
         finally:
             await stream_task
