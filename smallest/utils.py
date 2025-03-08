@@ -4,7 +4,6 @@ from typing import List
 from typing import Optional
 from pydub import AudioSegment
 from dataclasses import dataclass
-from sacremoses import MosesPunctNormalizer
 
 from smallest.exceptions import ValidationError
 from smallest.models import TTSModels, TTSLanguages
@@ -12,7 +11,6 @@ from smallest.models import TTSModels, TTSLanguages
 
 API_BASE_URL = "https://waves-api.smallest.ai/api/v1"
 SENTENCE_END_REGEX = re.compile(r'.*[-.—!?,;:…।|]$')
-mpn = MosesPunctNormalizer()
 SAMPLE_WIDTH = 2
 CHANNELS = 1
 ALLOWED_AUDIO_EXTENSIONS = ['.mp3', '.wav']
@@ -26,9 +24,12 @@ class TTSOptions:
     api_key: str
     add_wav_header: bool
     speed: float
+    consistency: float
+    similarity: float
+    enhancement: int
 
 
-def validate_input(text: str, model: str, sample_rate: int, speed: float, consistency: Optional[float] = None, similarity: Optional[float] = None, enhancement: Optional[bool] = None):
+def validate_input(text: str, model: str, sample_rate: int, speed: float, consistency: Optional[float] = None, similarity: Optional[float] = None, enhancement: Optional[int] = None):
     if not text:
         raise ValidationError("Text cannot be empty.")
     if model not in TTSModels:
@@ -41,7 +42,7 @@ def validate_input(text: str, model: str, sample_rate: int, speed: float, consis
         raise ValidationError(f"Invalid consistency: {consistency}. Must be between 0.0 and 1.0")
     if similarity is not None and not 0.0 <= similarity <= 1.0:
         raise ValidationError(f"Invalid similarity: {similarity}. Must be between 0.0 and 1.0")
-    if enhancement is not None and not isinstance(enhancement, bool):
+    if enhancement is not None and not 0 <= enhancement <= 2:
         raise ValidationError(f"Invalid enhancement: {enhancement}. Must be a boolean value.")
 
 
@@ -56,7 +57,6 @@ def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: i
 def preprocess_text(text: str) -> str:
     text = text.replace("\n", " ").replace("\t", " ").replace("—", " ").replace("-", " ").replace("–", " ")
     text = re.sub(r'\s+', ' ', text)
-    text = mpn.normalize(text)
     return text.strip()
 
 

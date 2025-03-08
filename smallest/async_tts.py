@@ -4,7 +4,7 @@ import json
 import aiohttp
 import aiofiles
 import requests
-from typing import Optional, Union, List
+from typing import Optional, Union, List, AsyncIterator
 
 from smallest.exceptions import TTSError, APIError
 from smallest.utils import (TTSOptions, validate_input, preprocess_text, add_wav_header, chunk_text,
@@ -19,6 +19,9 @@ class AsyncSmallest:
         sample_rate: Optional[int] = 24000,
         voice_id: Optional[str] = "emily",
         speed: Optional[float] = 1.0,
+        consistency: Optional[float] = 0.5,
+        similarity: Optional[float] = 0.0,
+        enhancement: Optional[int] = 1,
         add_wav_header: Optional[bool] = True
     ) -> None:
         """
@@ -34,6 +37,9 @@ class AsyncSmallest:
         - sample_rate (int): The sample rate for the audio output.
         - voice_id (TTSVoices): The voice to be used for synthesis.
         - speed (float): The speed of the speech synthesis.
+        - consistency (float): This parameter controls word repetition and skipping. Decrease it to prevent skipped words, and increase it to prevent repetition. Only supported in `lightning-large` model. Range - [0, 1]
+        - similarity (float): This parameter controls the similarity between the synthesized audio and the reference audio. Increase it to make the speech more similar to the reference audio. Only supported in `lightning-large` model. Range - [0, 1]
+        - enhancement (int): Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model. Range - [0, 2].
         - add_wav_header (bool): Whether to add a WAV header to the output audio.
 
         Methods:
@@ -45,7 +51,7 @@ class AsyncSmallest:
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY")
         if not self.api_key:
             raise TTSError()
-        if model == "lightning-large":
+        if model == "lightning-large" and voice_id is None:
             voice_id = "lakshya"
 
         self.chunk_size = 250
@@ -56,7 +62,10 @@ class AsyncSmallest:
             voice_id=voice_id,
             api_key=self.api_key,
             add_wav_header=add_wav_header,
-            speed=speed
+            speed=speed,
+            consistency=consistency,
+            similarity=similarity,
+            enhancement=enhancement
         )
         self.session = None
 
@@ -121,27 +130,25 @@ class AsyncSmallest:
     async def synthesize(
             self,
             text: str,
-            consistency: Optional[float] = 0.5,
-            similarity: Optional[float] = 0,
-            enhancement: Optional[bool] = False,
+            stream: Optional[bool] = False,
             save_as: Optional[str] = None,
             **kwargs
-        ) -> Union[bytes, None]:
+        ) -> Union[bytes, None, AsyncIterator[bytes]]:
         """
         Asynchronously synthesize speech from the provided text.
 
         Args:
         - text (str): The text to be converted to speech.
+        - stream (Optional[bool]): If True, returns an iterator yielding audio chunks instead of a full byte array.
         - save_as (Optional[str]): If provided, the synthesized audio will be saved to this file path.
                                    The file must have a .wav extension.
-        - consistency (Optional[float]): This parameter controls word repetition and skipping. Decrease it to prevent skipped words, and increase it to prevent repetition. Only supported in `lightning-large` model.
-        - similarity (Optional[float]): This parameter controls the similarity between the synthesized audio and the reference audio. Increase it to make the speech more similar to the reference audio. Only supported in `lightning-large` model.
-        - enhancement (Optional[bool]): Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model.
         - kwargs: Additional optional parameters to override `__init__` options for this call.
 
         Returns:
-        - Union[bytes, None]: The synthesized audio content in bytes if `save_as` is not specified;
-                              otherwise, returns None after saving the audio to the specified file.
+        - Union[bytes, None, Iterator[bytes]]: 
+            - If `stream=True`, returns an iterator yielding audio chunks.
+            - If `save_as` is provided, saves the file and returns None.
+            - Otherwise, returns the synthesized audio content as bytes.
 
         Raises:
         - TTSError: If the provided file name does not have a .wav extension when `save_as` is specified.
@@ -165,44 +172,50 @@ class AsyncSmallest:
             for key, value in kwargs.items():
                 setattr(opts, key, value)
 
-            validate_input(preprocess_text(text), opts.model, opts.sample_rate, opts.speed, consistency, similarity, enhancement)
+            text = preprocess_text(text)
+            validate_input(text, opts.model, opts.sample_rate, opts.speed, opts.consistency, opts.similarity, opts.enhancement)
 
             self.chunk_size = 250
             if opts.model == 'lightning-large':
                 self.chunk_size = 140
 
             chunks = chunk_text(text, self.chunk_size)
-            audio_content = b""
 
-            for chunk in chunks:
-                payload = {
-                    "text": preprocess_text(chunk),
-                    "sample_rate": opts.sample_rate,
-                    "voice_id": opts.voice_id,
-                    "add_wav_header": False,
-                    "speed": opts.speed,
-                    "model": opts.model
-                }
-                
-                if opts.model == "lightning-large":
-                    if consistency:
-                        payload["consistency"] = consistency
-                    if similarity:
-                        payload["similarity"] = similarity
-                    if enhancement:
-                        payload["enhancement"] = enhancement
+            async def audio_stream():
+                for chunk in chunks:
+                    payload = {
+                        "text": chunk,
+                        "sample_rate": opts.sample_rate,
+                        "voice_id": opts.voice_id,
+                        "add_wav_header": False,
+                        "speed": opts.speed,
+                        "model": opts.model
+                    }
+                    
+                    if opts.model == "lightning-large":
+                        if opts.consistency is not None:
+                            payload["consistency"] = opts.consistency
+                        if opts.similarity is not None:
+                            payload["similarity"] = opts.similarity
+                        if opts.enhancement is not None:
+                            payload["enhancement"] = opts.enhancement
 
 
-                headers = {
-                    "Authorization": f"Bearer {self.api_key}",
-                    "Content-Type": "application/json",
-                }
+                    headers = {
+                        "Authorization": f"Bearer {self.api_key}",
+                        "Content-Type": "application/json",
+                    }
 
-                async with self.session.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers) as res:
-                    if res.status != 200:
-                        raise APIError(f"Failed to synthesize speech: {await res.text()}. For more information, visit https://waves.smallest.ai/")
+                    async with self.session.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers) as res:
+                        if res.status != 200:
+                            raise APIError(f"Failed to synthesize speech: {await res.text()}. For more information, visit https://waves.smallest.ai/")
 
-                    audio_content += await res.read()
+                        yield await res.read()
+            
+            if stream:
+                return audio_stream()
+
+            audio_content = b"".join([chunk async for chunk in audio_stream()])
 
             if save_as:
                 if not save_as.endswith(".wav"):
