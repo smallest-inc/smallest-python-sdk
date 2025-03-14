@@ -43,7 +43,7 @@ def validate_input(text: str, model: str, sample_rate: int, speed: float, consis
     if similarity is not None and not 0.0 <= similarity <= 1.0:
         raise ValidationError(f"Invalid similarity: {similarity}. Must be between 0.0 and 1.0")
     if enhancement is not None and not 0 <= enhancement <= 2:
-        raise ValidationError(f"Invalid enhancement: {enhancement}. Must be a boolean value.")
+        raise ValidationError(f"Invalid enhancement: {enhancement}. Must be between 0 and 2.")
 
 
 def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: int = 2, channels: int = 1) -> bytes:
