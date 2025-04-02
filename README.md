@@ -4,7 +4,7 @@
 <div align="center">
   <a href="https://twitter.com/smallest_AI">
     <img src="https://img.shields.io/twitter/url/https/twitter.com/smallest_AI.svg?style=social&label=Follow%20smallest_AI" alt="Twitter">
-  </a>
+  </a>API_BASE_URL
   <a href="https://discord.gg/ywShEyXHBW">
     <img src="https://dcbadge.vercel.app/api/server/ywShEyXHBW?style=flat" alt="Discord">
   </a>
@@ -64,11 +64,12 @@ A synchronous text-to-speech synthesis client.
 
 **Basic Usage:**   
 ```python
-from smallest import Smallest
+
+from smallestai.waves import WavesClient
 
 def main():
-    client = Smallest(api_key="SMALLEST_API_KEY")
-    client.synthesize(
+    waves_client = WavesClient(api_key="SMALLEST_API_KEY")
+    waves_client.synthesize(
         text="Hello, this is a test for sync synthesis function.",
         save_as="sync_synthesize.wav"
     )
@@ -108,10 +109,10 @@ Asynchronous text-to-speech synthesis client.
 ```python
 import asyncio
 import aiofiles
-from smallest import AsyncSmallest
+import smallestai
 
 async def main():
-    client = AsyncSmallest(api_key="SMALLEST_API_KEY")
+    client = smallestai.waves.AsyncWavesClient(api_key="SMALLEST_API_KEY")
     async with client as tts:
         audio_bytes = await tts.synthesize("Hello, this is a test of the async synthesis function.") 
         async with aiofiles.open("async_synthesize.wav", "wb") as f:
