@@ -3,7 +3,7 @@ import os
 import time
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
-import atoms
+import smallestai.atoms
 
 # Configuration
 API_KEY = os.environ.get("API_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2U1MjFjOGZlZTk3MzY2NjcwMDM3MmQiLCJpYXQiOjE3NDMwNjk2NDB9.EPizbqQLuxrx4HirxyouldzoD6ggnYSS_h0H38m0F8M")
