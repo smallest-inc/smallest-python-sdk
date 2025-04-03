@@ -6,7 +6,7 @@ from typing import AsyncGenerator, Optional, Union, List, Dict, Any
 
 from smallestai.waves.waves_client import WavesClient
 from smallestai.waves.exceptions import APIError
-from smallestai.waves.async_tts import AsyncWavesClient
+from smallestai.waves.async_waves_client import AsyncWavesClient
 from smallestai.waves.utils import SENTENCE_END_REGEX
 
 class TextToAudioStream:

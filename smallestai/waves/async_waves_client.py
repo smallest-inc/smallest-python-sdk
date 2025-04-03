@@ -11,7 +11,7 @@ from smallestai.waves.utils import (TTSOptions, validate_input, preprocess_text,
                      get_smallest_languages, get_smallest_models, ALLOWED_AUDIO_EXTENSIONS, API_BASE_URL)
 
 
-class Async:
+class AsyncWavesClient:
     def __init__(
         self,
         api_key: str = None,

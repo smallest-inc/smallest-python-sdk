@@ -1,6 +1,6 @@
 [project]
 name = "smallestai"
-version = "2.2.0"
+version = "3.0.0"
 description = "Official Python client for the Smallest AI API"
 authors = [
     {name = "Smallest", email = "support@smallest.ai"},
@@ -13,7 +13,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
 ]
-keywords = ["smallest", "smallest.ai", "tts", "text-to-speech"]
+keywords = ["smallest", "smallest.ai", "tts", "text-to-speech", "waves", "atoms"]
 dependencies = [
     "aiohttp",
     "aiofiles",
