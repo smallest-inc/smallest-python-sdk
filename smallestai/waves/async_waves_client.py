@@ -6,12 +6,12 @@ import aiofiles
 import requests
 from typing import Optional, Union, List, AsyncIterator
 
-from waves.exceptions import TTSError, APIError
-from waves.utils import (TTSOptions, validate_input, preprocess_text, add_wav_header, chunk_text,
+from smallestai.waves.exceptions import TTSError, APIError
+from smallestai.waves.utils import (TTSOptions, validate_input, preprocess_text, add_wav_header, chunk_text,
                      get_smallest_languages, get_smallest_models, ALLOWED_AUDIO_EXTENSIONS, API_BASE_URL)
 
 
-class AsyncSmallest:
+class Async:
     def __init__(
         self,
         api_key: str = None,

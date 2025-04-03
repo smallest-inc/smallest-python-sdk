@@ -53,6 +53,6 @@ def test_update_agent(atoms_client, global_state):
     )
     assert isinstance(response, UpdateAgent200Response)
 
-# def test_delete_agent(atoms_client, global_state):
-#     response = atoms_client.delete_agent(id=global_state["temp_agent"]["id"])
-#     assert isinstance(response, DeleteAgent200Response)
+def test_delete_agent(atoms_client, global_state):
+    response = atoms_client.delete_agent(id=global_state["temp_agent"]["id"])
+    assert isinstance(response, DeleteAgent200Response)

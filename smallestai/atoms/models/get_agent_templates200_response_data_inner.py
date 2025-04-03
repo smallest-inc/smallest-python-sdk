@@ -26,8 +26,8 @@ class GetAgentTemplates200ResponseDataInner(BaseModel):
     """
     GetAgentTemplates200ResponseDataInner
     """ # noqa: E501
-    id: Optional[StrictStr] = Field(default=None, description="The ID of the agent template")
-    name: Optional[StrictStr] = Field(default=None, description="The name of the agent template")
+    id: StrictStr = Field(description="The ID of the agent template")
+    name: StrictStr = Field(description="The name of the agent template")
     description: Optional[StrictStr] = Field(default=None, description="The description of the agent template")
     avatar_url: Optional[StrictStr] = Field(default=None, description="The avatar URL of the agent template", alias="avatarUrl")
     reference_url: Optional[StrictStr] = Field(default=None, description="The docs url of the agent template", alias="referenceUrl")

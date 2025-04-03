@@ -5,8 +5,8 @@ from typing import Optional
 from pydub import AudioSegment
 from dataclasses import dataclass
 
-from waves.exceptions import ValidationError
-from waves.models import TTSModels, TTSLanguages
+from smallestai.waves.exceptions import ValidationError
+from smallestai.waves.models import TTSModels, TTSLanguages
 
 
 API_BASE_URL = "https://waves-api.smallest.ai/api/v1"

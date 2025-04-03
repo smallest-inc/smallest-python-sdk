@@ -1473,7 +1473,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
+            '201': "DeleteAgent200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1543,7 +1543,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
+            '201': "DeleteAgent200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1613,7 +1613,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
+            '201': "DeleteAgent200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",

@@ -26,8 +26,8 @@ class StartOutboundCall200ResponseData(BaseModel):
     """
     StartOutboundCall200ResponseData
     """ # noqa: E501
-    call_id: Optional[StrictStr] = Field(default=None, description="The ID of the initiated call", alias="callId")
-    __properties: ClassVar[List[str]] = ["callId"]
+    conversation_id: Optional[StrictStr] = Field(default=None, description="The ID of the initiated call", alias="conversationId")
+    __properties: ClassVar[List[str]] = ["conversationId"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -80,7 +80,7 @@ class StartOutboundCall200ResponseData(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "callId": obj.get("callId")
+            "conversationId": obj.get("conversationId")
         })
         return _obj
 

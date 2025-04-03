@@ -27,13 +27,13 @@ class GetCampaigns200ResponseDataInner(BaseModel):
     """
     GetCampaigns200ResponseDataInner
     """ # noqa: E501
-    id: Optional[StrictStr] = Field(default=None, description="The unique identifier for the campaign", alias="_id")
-    name: Optional[StrictStr] = Field(default=None, description="The name of the campaign")
+    id: StrictStr = Field(description="The unique identifier for the campaign", alias="_id")
+    name: StrictStr = Field(description="The name of the campaign")
     description: Optional[StrictStr] = Field(default=None, description="The description of the campaign")
     organization: Optional[StrictStr] = Field(default=None, description="The ID of the organization")
-    agent_id: Optional[StrictStr] = Field(default=None, description="The ID of the agent", alias="agentId")
+    agent_id: StrictStr = Field(description="The ID of the agent", alias="agentId")
     created_by: Optional[StrictStr] = Field(default=None, description="The ID of the user who created the campaign", alias="createdBy")
-    audience_id: Optional[StrictStr] = Field(default=None, description="The ID of the audience", alias="audienceId")
+    audience_id: StrictStr = Field(description="The ID of the audience", alias="audienceId")
     participants_count: Optional[StrictInt] = Field(default=None, description="The number of participants in the campaign", alias="participantsCount")
     created_at: Optional[datetime] = Field(default=None, description="The date and time when the campaign was created", alias="createdAt")
     updated_at: Optional[datetime] = Field(default=None, description="The date and time when the campaign was last updated", alias="updatedAt")

@@ -2,7 +2,7 @@ import pytest
 import re
 import jiwer
 
-from waves.utils import (
+from smallestai.waves.utils import (
     preprocess_text,
     chunk_text,
     get_smallest_languages,

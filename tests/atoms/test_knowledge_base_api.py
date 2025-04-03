@@ -23,9 +23,9 @@ def test_get_knowledge_bases(atoms_client):
     response = atoms_client.get_knowledge_bases()
     assert isinstance(response, GetKnowledgeBases200Response)
 
-# def test_delete_knowledge_base(atoms_client, global_state):
-#     response = atoms_client.delete_knowledge_base(id=global_state["temp_knowledge_base"]["id"])
-#     assert isinstance(response, DeleteAgent200Response)
+def test_delete_knowledge_base(atoms_client, global_state):
+    response = atoms_client.delete_knowledge_base(id=global_state["temp_knowledge_base"]["id"])
+    assert isinstance(response, DeleteAgent200Response)
 
 def test_get_knowledge_base_items(atoms_client, global_state):
     response = atoms_client.get_knowledge_base_items(
@@ -44,33 +44,19 @@ def test_upload_text_to_knowledge_base(atoms_client, global_state):
     )
     assert isinstance(response, DeleteAgent200Response)
 
-# def test_upload_media_to_knowledge_base(atoms_client, global_state):
-#     test_content = b"Test media content"
-#     filename = "test.txt"
+def test_upload_media_to_knowledge_base(atoms_client, global_state):
+    test_content = b"Test media content"
     
-#     response = atoms_client.upload_media_to_knowledge_base(
-#         id=global_state["base_knowledge_base"]["id"],
-#         media=(filename, test_content)
-#     )
-#     assert isinstance(response, DeleteAgent200Response)
+    response = atoms_client.upload_media_to_knowledge_base(
+        id=global_state["base_knowledge_base"]["id"],
+        media=test_content
+    )
+    assert isinstance(response, DeleteAgent200Response)
 
-# def test_delete_knowledge_base_item(atoms_client, global_state):
-#     # First upload an item to delete
-#     request = UploadTextToKnowledgeBaseRequest(
-#         text="This item will be deleted",
-#         metadata={
-#             "source": "test",
-#             "type": "temporary"
-#         }
-#     )
-#     upload_response = atoms_client.upload_text_to_knowledge_base(
-#         id=global_state["base_knowledge_base"]["id"],
-#         upload_text_to_knowledge_base_request=request
-#     )
-    
-#     # Now delete the item
-#     response = atoms_client.delete_knowledge_base_item(
-#         knowledge_base_id=global_state["base_knowledge_base"]["id"],
-#         knowledge_base_item_id=upload_response.data.id
-#     )
-#     assert isinstance(response, DeleteAgent200Response) 
+def test_delete_knowledge_base_item(atoms_client, global_state):
+   
+    response = atoms_client.delete_knowledge_base_item(
+        knowledge_base_id=global_state["base_knowledge_base"]["id"],
+        knowledge_base_item_id=global_state["temp_knowledge_base_item_id"]
+    )
+    assert isinstance(response, DeleteAgent200Response) 

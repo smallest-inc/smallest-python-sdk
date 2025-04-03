@@ -19,7 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, StrictBool
 from typing import Any, ClassVar, Dict, List, Optional
-from smallestai.atoms.models.get_campaigns200_response_data_inner import GetCampaigns200ResponseDataInner
+from smallestai.atoms.models.get_campaign_by_id200_response_data import GetCampaignById200ResponseData
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -28,7 +28,7 @@ class GetCampaignById200Response(BaseModel):
     GetCampaignById200Response
     """ # noqa: E501
     status: Optional[StrictBool] = None
-    data: Optional[GetCampaigns200ResponseDataInner] = None
+    data: Optional[GetCampaignById200ResponseData] = None
     __properties: ClassVar[List[str]] = ["status", "data"]
 
     model_config = ConfigDict(
@@ -86,7 +86,7 @@ class GetCampaignById200Response(BaseModel):
 
         _obj = cls.model_validate({
             "status": obj.get("status"),
-            "data": GetCampaigns200ResponseDataInner.from_dict(obj["data"]) if obj.get("data") is not None else None
+            "data": GetCampaignById200ResponseData.from_dict(obj["data"]) if obj.get("data") is not None else None
         })
         return _obj
 

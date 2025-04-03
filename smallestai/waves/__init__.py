@@ -1,5 +1,5 @@
-from waves.tts import Smallest
-from waves.async_tts import AsyncSmallest
-from waves.stream_tts import TextToAudioStream
+from smallestai.waves.waves_client import WavesClient
+from smallestai.waves.async_waves_client import AsyncWavesClient
+from smallestai.waves.stream_tts import TextToAudioStream
 
-__all__ = ["Smallest", "AsyncSmallest", "TextToAudioStream"]
+__all__ = ["WavesClient", "AsyncWavesClient", "TextToAudioStream"]

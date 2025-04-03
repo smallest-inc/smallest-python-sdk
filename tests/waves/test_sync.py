@@ -5,7 +5,7 @@ import pytest
 import logging
 from deepgram import DeepgramClient, DeepgramClientOptions, PrerecordedOptions, FileSource
 
-from waves.tts import Smallest
+from smallestai.waves.waves_client import WavesClient
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -24,7 +24,7 @@ transforms = jiwer.Compose(
     ]
 )
 
-tts = Smallest(api_key=os.environ.get("SMALLEST_API_KEY"))
+tts = WavesClient(api_key=os.environ.get("SMALLEST_API_KEY"))
 
 config: DeepgramClientOptions = DeepgramClientOptions(api_key=os.environ.get("DEEPGRAM_API_KEY"))
 

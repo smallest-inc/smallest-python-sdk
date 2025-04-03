@@ -18,6 +18,10 @@ from smallestai.atoms.models.get_organization200_response import GetOrganization
 from smallestai.atoms.api.campaigns_api import CampaignsApi
 from smallestai.atoms.models.create_campaign_request import CreateCampaignRequest
 from smallestai.atoms.models.get_campaigns_request import GetCampaignsRequest
+from smallestai.atoms.api.agent_templates_api import AgentTemplatesApi
+from smallestai.atoms.models.create_agent_from_template_request import CreateAgentFromTemplateRequest
+from smallestai.atoms.api.logs_api import LogsApi
+from smallestai.atoms.models.get_conversation_logs200_response import GetConversationLogs200Response
 
 class AtomsClient:
     def __init__(self, api_client=None) -> None:
@@ -30,6 +34,8 @@ class AtomsClient:
         self.user_api = UserApi(api_client)
         self.organization_api = OrganizationApi(api_client)
         self.campaigns_api = CampaignsApi(api_client)
+        self.agent_templates_api = AgentTemplatesApi(api_client)
+        self.logs_api = LogsApi(api_client)
 
     @validate_call
     def create_agent(
@@ -477,7 +483,7 @@ class AtomsClient:
         )
 
     @validate_call
-    def stop_campaign(
+    def pause_campaign(
         self,
         id: StrictStr,
         _request_timeout: Union[None, Annotated[StrictFloat, Field(gt=0)], Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]]] = None,
@@ -486,7 +492,63 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.campaigns_api.stop_campaign(
+        return self.campaigns_api.pause_campaign(
+            id=id,
+            _request_timeout=_request_timeout,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+    # Agent Template Methods
+    @validate_call
+    def get_agent_templates(
+        self,
+        _request_timeout: Union[None, Annotated[StrictFloat, Field(gt=0)], Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]]] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ):
+        return self.agent_templates_api.get_agent_templates(
+            _request_timeout=_request_timeout,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+    @validate_call
+    def create_agent_from_template(
+        self,
+        create_agent_from_template_request: CreateAgentFromTemplateRequest,
+        _request_timeout: Union[None, Annotated[StrictFloat, Field(gt=0)], Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]]] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ):
+        return self.agent_templates_api.create_agent_from_template(
+            create_agent_from_template_request=create_agent_from_template_request,
+            _request_timeout=_request_timeout,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+    @validate_call
+    def get_conversation_logs(
+        self,
+        id: StrictStr,
+        _request_timeout: Union[None, Annotated[StrictFloat, Field(gt=0)], Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]]] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> GetConversationLogs200Response:
+        return self.logs_api.get_conversation_logs(
             id=id,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,

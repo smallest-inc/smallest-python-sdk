@@ -29,8 +29,8 @@ class AgentDTO(BaseModel):
     """
     AgentDTO
     """ # noqa: E501
-    id: Optional[StrictStr] = Field(default=None, description="The ID of the agent", alias="_id")
-    name: Optional[StrictStr] = Field(default=None, description="The name of the agent")
+    id: StrictStr = Field(description="The ID of the agent", alias="_id")
+    name: StrictStr = Field(description="The name of the agent")
     description: Optional[StrictStr] = Field(default=None, description="The description of the agent")
     organization: Optional[StrictStr] = Field(default=None, description="The organization ID of the agent")
     workflow_id: Optional[StrictStr] = Field(default=None, description="The workflow ID of the agent", alias="workflowId")

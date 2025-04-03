@@ -20,28 +20,26 @@ import json
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
-from smallestai.atoms.models.get_campaigns200_response_data_inner_agent import GetCampaigns200ResponseDataInnerAgent
-from smallestai.atoms.models.get_campaigns200_response_data_inner_audience import GetCampaigns200ResponseDataInnerAudience
 from typing import Optional, Set
 from typing_extensions import Self
 
-class GetCampaigns200ResponseDataInner(BaseModel):
+class GetCampaignById200ResponseData(BaseModel):
     """
-    GetCampaigns200ResponseDataInner
+    GetCampaignById200ResponseData
     """ # noqa: E501
-    id: StrictStr = Field(description="The unique identifier for the campaign", alias="_id")
-    name: StrictStr = Field(description="The name of the campaign")
+    id: Optional[StrictStr] = Field(default=None, description="The unique identifier for the campaign", alias="_id")
+    name: Optional[StrictStr] = Field(default=None, description="The name of the campaign")
     description: Optional[StrictStr] = Field(default=None, description="The description of the campaign")
     organization: Optional[StrictStr] = Field(default=None, description="The ID of the organization")
-    agent: Optional[GetCampaigns200ResponseDataInnerAgent] = None
+    agent_id: Optional[StrictStr] = Field(default=None, description="The ID of the agent", alias="agentId")
     created_by: Optional[StrictStr] = Field(default=None, description="The ID of the user who created the campaign", alias="createdBy")
-    audience: Optional[GetCampaigns200ResponseDataInnerAudience] = None
+    audience_id: Optional[StrictStr] = Field(default=None, description="The ID of the audience", alias="audienceId")
     participants_count: Optional[StrictInt] = Field(default=None, description="The number of participants in the campaign", alias="participantsCount")
     created_at: Optional[datetime] = Field(default=None, description="The date and time when the campaign was created", alias="createdAt")
     updated_at: Optional[datetime] = Field(default=None, description="The date and time when the campaign was last updated", alias="updatedAt")
     is_campaign_in_progress: Optional[StrictBool] = Field(default=None, description="Whether the campaign is in progress", alias="isCampaignInProgress")
     is_campaign_completed: Optional[StrictBool] = Field(default=None, description="Whether the campaign is completed", alias="isCampaignCompleted")
-    __properties: ClassVar[List[str]] = ["_id", "name", "description", "organization", "agent", "createdBy", "audience", "participantsCount", "createdAt", "updatedAt", "isCampaignInProgress", "isCampaignCompleted"]
+    __properties: ClassVar[List[str]] = ["_id", "name", "description", "organization", "agentId", "createdBy", "audienceId", "participantsCount", "createdAt", "updatedAt", "isCampaignInProgress", "isCampaignCompleted"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -61,7 +59,7 @@ class GetCampaigns200ResponseDataInner(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of GetCampaigns200ResponseDataInner from a JSON string"""
+        """Create an instance of GetCampaignById200ResponseData from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -82,17 +80,11 @@ class GetCampaigns200ResponseDataInner(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of agent
-        if self.agent:
-            _dict['agent'] = self.agent.to_dict()
-        # override the default output from pydantic by calling `to_dict()` of audience
-        if self.audience:
-            _dict['audience'] = self.audience.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of GetCampaigns200ResponseDataInner from a dict"""
+        """Create an instance of GetCampaignById200ResponseData from a dict"""
         if obj is None:
             return None
 
@@ -104,9 +96,9 @@ class GetCampaigns200ResponseDataInner(BaseModel):
             "name": obj.get("name"),
             "description": obj.get("description"),
             "organization": obj.get("organization"),
-            "agent": GetCampaigns200ResponseDataInnerAgent.from_dict(obj["agent"]) if obj.get("agent") is not None else None,
+            "agentId": obj.get("agentId"),
             "createdBy": obj.get("createdBy"),
-            "audience": GetCampaigns200ResponseDataInnerAudience.from_dict(obj["audience"]) if obj.get("audience") is not None else None,
+            "audienceId": obj.get("audienceId"),
             "participantsCount": obj.get("participantsCount"),
             "createdAt": obj.get("createdAt"),
             "updatedAt": obj.get("updatedAt"),

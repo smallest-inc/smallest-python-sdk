@@ -6,7 +6,7 @@ import wave
 import re
 from deepgram import DeepgramClient, DeepgramClientOptions, PrerecordedOptions, FileSource
 
-from waves.async_tts import AsyncSmallest
+from smallestai.waves.async_waves_client import AsyncWavesClient
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -27,7 +27,7 @@ transforms = jiwer.Compose(
 )
 
 def get_tts_client():
-    return AsyncSmallest(api_key=os.environ.get("SMALLEST_API_KEY"))
+    return AsyncWavesClient(api_key=os.environ.get("SMALLEST_API_KEY"))
 
 config: DeepgramClientOptions = DeepgramClientOptions(api_key=os.environ.get("DEEPGRAM_API_KEY"),)
 

@@ -28,10 +28,10 @@ class KnowledgeBaseItemDTO(BaseModel):
     KnowledgeBaseItemDTO
     """ # noqa: E501
     id: StrictStr = Field(alias="_id")
-    item_type: Optional[StrictStr] = Field(default=None, alias="itemType")
+    item_type: StrictStr = Field(alias="itemType")
     metadata: Optional[Dict[str, Any]] = None
-    knowledge_base_id: Optional[StrictStr] = Field(default=None, alias="knowledgeBaseId")
-    processing_status: Optional[StrictStr] = Field(default=None, alias="processingStatus")
+    knowledge_base_id: StrictStr = Field(alias="knowledgeBaseId")
+    processing_status: StrictStr = Field(alias="processingStatus")
     content_type: Optional[StrictStr] = Field(default=None, alias="contentType")
     size: Optional[Union[StrictFloat, StrictInt]] = None
     key: Optional[StrictStr] = None
@@ -44,9 +44,6 @@ class KnowledgeBaseItemDTO(BaseModel):
     @field_validator('item_type')
     def item_type_validate_enum(cls, value):
         """Validates the enum"""
-        if value is None:
-            return value
-
         if value not in set(['file', 'text']):
             raise ValueError("must be one of enum values ('file', 'text')")
         return value
@@ -54,9 +51,6 @@ class KnowledgeBaseItemDTO(BaseModel):
     @field_validator('processing_status')
     def processing_status_validate_enum(cls, value):
         """Validates the enum"""
-        if value is None:
-            return value
-
         if value not in set(['pending', 'processing', 'completed', 'failed']):
             raise ValueError("must be one of enum values ('pending', 'processing', 'completed', 'failed')")
         return value

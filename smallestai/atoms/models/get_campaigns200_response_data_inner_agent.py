@@ -22,12 +22,13 @@ from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
-class StartOutboundCall200ResponseData(BaseModel):
+class GetCampaigns200ResponseDataInnerAgent(BaseModel):
     """
-    StartOutboundCall200ResponseData
+    GetCampaigns200ResponseDataInnerAgent
     """ # noqa: E501
-    conversation_id: Optional[StrictStr] = Field(default=None, description="The ID of the initiated call", alias="conversationId")
-    __properties: ClassVar[List[str]] = ["conversationId"]
+    id: Optional[StrictStr] = Field(default=None, description="The ID of the agent", alias="_id")
+    name: Optional[StrictStr] = Field(default=None, description="The name of the agent")
+    __properties: ClassVar[List[str]] = ["_id", "name"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -47,7 +48,7 @@ class StartOutboundCall200ResponseData(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of StartOutboundCall200ResponseData from a JSON string"""
+        """Create an instance of GetCampaigns200ResponseDataInnerAgent from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -72,7 +73,7 @@ class StartOutboundCall200ResponseData(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of StartOutboundCall200ResponseData from a dict"""
+        """Create an instance of GetCampaigns200ResponseDataInnerAgent from a dict"""
         if obj is None:
             return None
 
@@ -80,7 +81,8 @@ class StartOutboundCall200ResponseData(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "conversationId": obj.get("conversationId")
+            "_id": obj.get("_id"),
+            "name": obj.get("name")
         })
         return _obj
 

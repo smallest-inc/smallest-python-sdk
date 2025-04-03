@@ -190,7 +190,7 @@ class Configuration:
     ) -> None:
         """Constructor
         """
-        self._base_path = "http://localhost:4001/api/v1" if host is None else host
+        self._base_path = "https://atoms-api.dev.smallest.ai/api/v1" if host is None else host
         """Default Base url
         """
         self.server_index = None

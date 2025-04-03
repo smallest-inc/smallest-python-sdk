@@ -4,15 +4,15 @@ from threading import Thread
 from queue import Queue, Empty
 from typing import AsyncGenerator, Optional, Union, List, Dict, Any
 
-from waves.tts import Smallest
-from waves.exceptions import APIError
-from waves.async_tts import AsyncSmallest
-from waves.utils import SENTENCE_END_REGEX
+from smallestai.waves.waves_client import WavesClient
+from smallestai.waves.exceptions import APIError
+from smallestai.waves.async_tts import AsyncWavesClient
+from smallestai.waves.utils import SENTENCE_END_REGEX
 
 class TextToAudioStream:
     def __init__(
         self,
-        tts_instance: Union[Smallest, AsyncSmallest],
+        tts_instance: Union[WavesClient, AsyncWavesClient],
         queue_timeout: Optional[float] = 5.0,
         max_retries: Optional[int] = 3,
         verbose: bool = False
@@ -182,7 +182,7 @@ class TextToAudioStream:
             try:
                 sentence = self.queue.get_nowait()
                 
-                if isinstance(self.tts_instance, AsyncSmallest):
+                if isinstance(self.tts_instance, AsyncWavesClient):
                     audio_content = await self._synthesize_async(sentence)
                 else:
                     loop = asyncio.get_running_loop()
