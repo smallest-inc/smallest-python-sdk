@@ -4,7 +4,6 @@
 <div align="center">
   <a href="https://twitter.com/smallest_AI">
     <img src="https://img.shields.io/twitter/url/https/twitter.com/smallest_AI.svg?style=social&label=Follow%20smallest_AI" alt="Twitter">
-  </a>API_BASE_URL
   <a href="https://discord.gg/ywShEyXHBW">
     <img src="https://dcbadge.vercel.app/api/server/ywShEyXHBW?style=flat" alt="Discord">
   </a>
@@ -51,8 +50,8 @@ When using an SDK in your application, make sure to pin to at least the major ve
 
 ## Get the API Key  
 
-1. Visit [waves.smallest.ai](https://waves.smallest.ai/) and sign up for an account or log in if you already have an account.  
-2. Navigate to `API Key` tab in your account dashboard.
+1. Visit [console.smallest.ai](https://console.smallest.ai//) and sign up for an account or log in if you already have an account.  
+2. Navigate to `API Keys` tab in your account dashboard.
 3. Create a new API Key and copy it.
 4. Export the API Key in your environment with the name `SMALLEST_API_KEY`, ensuring that your application can access it securely for authentication.
 

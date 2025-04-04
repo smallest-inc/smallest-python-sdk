@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
 from smallestai.atoms import AtomsClient
 
-API_KEY = os.environ.get("API_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2U1MjFjOGZlZTk3MzY2NjcwMDM3MmQiLCJpYXQiOjE3NDMwNjk2NDB9.EPizbqQLuxrx4HirxyouldzoD6ggnYSS_h0H38m0F8M")
+API_KEY = os.environ.get("API_KEY")
 AGENT_ID = "67e663bffaec7a78253c9e32"
 TARGET_PHONE_NUMBER = "+919666666666"
 
