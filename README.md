@@ -109,90 +109,90 @@ All URIs are relative to *https://atoms-api.smallest.ai/api/v1*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*AgentTemplatesApi* | [**create_agent_from_template**](atoms/docs/AgentTemplatesApi.md#create_agent_from_template) | **POST** /agent/from-template | Create agent from template
-*AgentTemplatesApi* | [**get_agent_templates**](atoms/docs/AgentTemplatesApi.md#get_agent_templates) | **GET** /agent/template | Get agent templates
-*AgentsApi* | [**create_agent**](atoms/docs/AgentsApi.md#create_agent) | **POST** /agent | Create a new agent
-*AgentsApi* | [**delete_agent**](atoms/docs/AgentsApi.md#delete_agent) | **DELETE** /agent/{id} | Delete an agent
-*AgentsApi* | [**get_agent_by_id**](atoms/docs/AgentsApi.md#get_agent_by_id) | **GET** /agent/{id} | Get agent by ID
-*AgentsApi* | [**get_agents**](atoms/docs/AgentsApi.md#get_agents) | **GET** /agent | Get all agents
-*AgentsApi* | [**update_agent**](atoms/docs/AgentsApi.md#update_agent) | **PATCH** /agent/{id} | Update an agent
-*CallsApi* | [**start_outbound_call**](atoms/docs/CallsApi.md#start_outbound_call) | **POST** /conversation/outbound | Start an outbound call
-*CampaignsApi* | [**create_campaign**](atoms/docs/CampaignsApi.md#create_campaign) | **POST** /campaign | Create a campaign
-*CampaignsApi* | [**delete_campaign**](atoms/docs/CampaignsApi.md#delete_campaign) | **DELETE** /campaign/{id} | Delete a campaign
-*CampaignsApi* | [**get_campaign_by_id**](atoms/docs/CampaignsApi.md#get_campaign_by_id) | **GET** /campaign/{id} | Get a campaign
-*CampaignsApi* | [**get_campaigns**](atoms/docs/CampaignsApi.md#get_campaigns) | **GET** /campaign | Retrieve all campaigns
-*CampaignsApi* | [**pause_campaign**](atoms/docs/CampaignsApi.md#pause_campaign) | **POST** /campaign/{id}/pause | Pause a campaign
-*CampaignsApi* | [**start_campaign**](atoms/docs/CampaignsApi.md#start_campaign) | **POST** /campaign/{id}/start | Start a campaign
-*KnowledgeBaseApi* | [**create_knowledge_base**](atoms/docs/KnowledgeBaseApi.md#create_knowledge_base) | **POST** /knowledgebase | Create a knowledge base
-*KnowledgeBaseApi* | [**delete_knowledge_base**](atoms/docs/KnowledgeBaseApi.md#delete_knowledge_base) | **DELETE** /knowledgebase/{id} | Delete a knowledge base
-*KnowledgeBaseApi* | [**delete_knowledge_base_item**](atoms/docs/KnowledgeBaseApi.md#delete_knowledge_base_item) | **DELETE** /knowledgebase/{knowledgeBaseId}/items/{knowledgeBaseItemId} | Delete a knowledge base item
-*KnowledgeBaseApi* | [**get_knowledge_base_by_id**](atoms/docs/KnowledgeBaseApi.md#get_knowledge_base_by_id) | **GET** /knowledgebase/{id} | Get a knowledge base
-*KnowledgeBaseApi* | [**get_knowledge_base_items**](atoms/docs/KnowledgeBaseApi.md#get_knowledge_base_items) | **GET** /knowledgebase/{id}/items | Get all knowledge base items
-*KnowledgeBaseApi* | [**get_knowledge_bases**](atoms/docs/KnowledgeBaseApi.md#get_knowledge_bases) | **GET** /knowledgebase | Get all knowledge bases
-*KnowledgeBaseApi* | [**upload_media_to_knowledge_base**](atoms/docs/KnowledgeBaseApi.md#upload_media_to_knowledge_base) | **POST** /knowledgebase/{id}/items/upload-media | Upload a media to a knowledge base
-*KnowledgeBaseApi* | [**upload_text_to_knowledge_base**](atoms/docs/KnowledgeBaseApi.md#upload_text_to_knowledge_base) | **POST** /knowledgebase/{id}/items/upload-text | Upload a text to a knowledge base
-*LogsApi* | [**get_conversation_logs**](atoms/docs/LogsApi.md#get_conversation_logs) | **GET** /conversation/{id} | Get conversation logs
-*OrganizationApi* | [**get_organization**](atoms/docs/OrganizationApi.md#get_organization) | **GET** /organization | Get organization details
-*UserApi* | [**get_current_user**](atoms/docs/UserApi.md#get_current_user) | **GET** /user | Get user details
+*AgentTemplatesApi* | [**create_agent_from_template**](docs/atoms/AgentTemplatesApi.md#create_agent_from_template) | **POST** /agent/from-template | Create agent from template
+*AgentTemplatesApi* | [**get_agent_templates**](docs/atoms/AgentTemplatesApi.md#get_agent_templates) | **GET** /agent/template | Get agent templates
+*AgentsApi* | [**create_agent**](docs/atoms/AgentsApi.md#create_agent) | **POST** /agent | Create a new agent
+*AgentsApi* | [**delete_agent**](docs/atoms/AgentsApi.md#delete_agent) | **DELETE** /agent/{id} | Delete an agent
+*AgentsApi* | [**get_agent_by_id**](docs/atoms/AgentsApi.md#get_agent_by_id) | **GET** /agent/{id} | Get agent by ID
+*AgentsApi* | [**get_agents**](docs/atoms/AgentsApi.md#get_agents) | **GET** /agent | Get all agents
+*AgentsApi* | [**update_agent**](docs/atoms/AgentsApi.md#update_agent) | **PATCH** /agent/{id} | Update an agent
+*CallsApi* | [**start_outbound_call**](docs/atoms/CallsApi.md#start_outbound_call) | **POST** /conversation/outbound | Start an outbound call
+*CampaignsApi* | [**create_campaign**](docs/atoms/CampaignsApi.md#create_campaign) | **POST** /campaign | Create a campaign
+*CampaignsApi* | [**delete_campaign**](docs/atoms/CampaignsApi.md#delete_campaign) | **DELETE** /campaign/{id} | Delete a campaign
+*CampaignsApi* | [**get_campaign_by_id**](docs/atoms/CampaignsApi.md#get_campaign_by_id) | **GET** /campaign/{id} | Get a campaign
+*CampaignsApi* | [**get_campaigns**](docs/atoms/CampaignsApi.md#get_campaigns) | **GET** /campaign | Retrieve all campaigns
+*CampaignsApi* | [**pause_campaign**](docs/atoms/CampaignsApi.md#pause_campaign) | **POST** /campaign/{id}/pause | Pause a campaign
+*CampaignsApi* | [**start_campaign**](docs/atoms/CampaignsApi.md#start_campaign) | **POST** /campaign/{id}/start | Start a campaign
+*KnowledgeBaseApi* | [**create_knowledge_base**](docs/atoms/KnowledgeBaseApi.md#create_knowledge_base) | **POST** /knowledgebase | Create a knowledge base
+*KnowledgeBaseApi* | [**delete_knowledge_base**](docs/atoms/KnowledgeBaseApi.md#delete_knowledge_base) | **DELETE** /knowledgebase/{id} | Delete a knowledge base
+*KnowledgeBaseApi* | [**delete_knowledge_base_item**](docs/atoms/KnowledgeBaseApi.md#delete_knowledge_base_item) | **DELETE** /knowledgebase/{knowledgeBaseId}/items/{knowledgeBaseItemId} | Delete a knowledge base item
+*KnowledgeBaseApi* | [**get_knowledge_base_by_id**](docs/atoms/KnowledgeBaseApi.md#get_knowledge_base_by_id) | **GET** /knowledgebase/{id} | Get a knowledge base
+*KnowledgeBaseApi* | [**get_knowledge_base_items**](docs/atoms/KnowledgeBaseApi.md#get_knowledge_base_items) | **GET** /knowledgebase/{id}/items | Get all knowledge base items
+*KnowledgeBaseApi* | [**get_knowledge_bases**](docs/atoms/KnowledgeBaseApi.md#get_knowledge_bases) | **GET** /knowledgebase | Get all knowledge bases
+*KnowledgeBaseApi* | [**upload_media_to_knowledge_base**](docs/atoms/KnowledgeBaseApi.md#upload_media_to_knowledge_base) | **POST** /knowledgebase/{id}/items/upload-media | Upload a media to a knowledge base
+*KnowledgeBaseApi* | [**upload_text_to_knowledge_base**](docs/atoms/KnowledgeBaseApi.md#upload_text_to_knowledge_base) | **POST** /knowledgebase/{id}/items/upload-text | Upload a text to a knowledge base
+*LogsApi* | [**get_conversation_logs**](docs/atoms/LogsApi.md#get_conversation_logs) | **GET** /conversation/{id} | Get conversation logs
+*OrganizationApi* | [**get_organization**](docs/atoms/OrganizationApi.md#get_organization) | **GET** /organization | Get organization details
+*UserApi* | [**get_current_user**](docs/atoms/UserApi.md#get_current_user) | **GET** /user | Get user details
 
 ### Documentation For Models
 
- - [AgentDTO](atoms/docs/AgentDTO.md)
- - [AgentDTOLanguage](atoms/docs/AgentDTOLanguage.md)
- - [AgentDTOSynthesizer](atoms/docs/AgentDTOSynthesizer.md)
- - [AgentDTOSynthesizerVoiceConfig](atoms/docs/AgentDTOSynthesizerVoiceConfig.md)
- - [ApiResponse](atoms/docs/ApiResponse.md)
- - [BadRequestErrorResponse](atoms/docs/BadRequestErrorResponse.md)
- - [CreateAgentFromTemplate200Response](atoms/docs/CreateAgentFromTemplate200Response.md)
- - [CreateAgentFromTemplateRequest](atoms/docs/CreateAgentFromTemplateRequest.md)
- - [CreateAgentRequest](atoms/docs/CreateAgentRequest.md)
- - [CreateAgentRequestLanguage](atoms/docs/CreateAgentRequestLanguage.md)
- - [CreateAgentRequestLanguageSynthesizer](atoms/docs/CreateAgentRequestLanguageSynthesizer.md)
- - [CreateAgentRequestLanguageSynthesizerVoiceConfig](atoms/docs/CreateAgentRequestLanguageSynthesizerVoiceConfig.md)
- - [CreateCampaign201Response](atoms/docs/CreateCampaign201Response.md)
- - [CreateCampaign201ResponseData](atoms/docs/CreateCampaign201ResponseData.md)
- - [CreateCampaignRequest](atoms/docs/CreateCampaignRequest.md)
- - [CreateKnowledgeBase201Response](atoms/docs/CreateKnowledgeBase201Response.md)
- - [CreateKnowledgeBaseRequest](atoms/docs/CreateKnowledgeBaseRequest.md)
- - [DeleteAgent200Response](atoms/docs/DeleteAgent200Response.md)
- - [GetAgentById200Response](atoms/docs/GetAgentById200Response.md)
- - [GetAgentTemplates200Response](atoms/docs/GetAgentTemplates200Response.md)
- - [GetAgentTemplates200ResponseDataInner](atoms/docs/GetAgentTemplates200ResponseDataInner.md)
- - [GetAgents200Response](atoms/docs/GetAgents200Response.md)
- - [GetAgents200ResponseData](atoms/docs/GetAgents200ResponseData.md)
- - [GetCampaignById200Response](atoms/docs/GetCampaignById200Response.md)
- - [GetCampaignById200ResponseData](atoms/docs/GetCampaignById200ResponseData.md)
- - [GetCampaigns200Response](atoms/docs/GetCampaigns200Response.md)
- - [GetCampaigns200ResponseDataInner](atoms/docs/GetCampaigns200ResponseDataInner.md)
- - [GetCampaigns200ResponseDataInnerAgent](atoms/docs/GetCampaigns200ResponseDataInnerAgent.md)
- - [GetCampaigns200ResponseDataInnerAudience](atoms/docs/GetCampaigns200ResponseDataInnerAudience.md)
- - [GetCampaignsRequest](atoms/docs/GetCampaignsRequest.md)
- - [GetConversationLogs200Response](atoms/docs/GetConversationLogs200Response.md)
- - [GetConversationLogs200ResponseData](atoms/docs/GetConversationLogs200ResponseData.md)
- - [GetCurrentUser200Response](atoms/docs/GetCurrentUser200Response.md)
- - [GetCurrentUser200ResponseData](atoms/docs/GetCurrentUser200ResponseData.md)
- - [GetKnowledgeBaseById200Response](atoms/docs/GetKnowledgeBaseById200Response.md)
- - [GetKnowledgeBaseItems200Response](atoms/docs/GetKnowledgeBaseItems200Response.md)
- - [GetKnowledgeBases200Response](atoms/docs/GetKnowledgeBases200Response.md)
- - [GetOrganization200Response](atoms/docs/GetOrganization200Response.md)
- - [GetOrganization200ResponseData](atoms/docs/GetOrganization200ResponseData.md)
- - [GetOrganization200ResponseDataMembersInner](atoms/docs/GetOrganization200ResponseDataMembersInner.md)
- - [GetOrganization200ResponseDataSubscription](atoms/docs/GetOrganization200ResponseDataSubscription.md)
- - [InternalServerErrorResponse](atoms/docs/InternalServerErrorResponse.md)
- - [KnowledgeBaseDTO](atoms/docs/KnowledgeBaseDTO.md)
- - [KnowledgeBaseItemDTO](atoms/docs/KnowledgeBaseItemDTO.md)
- - [StartOutboundCall200Response](atoms/docs/StartOutboundCall200Response.md)
- - [StartOutboundCall200ResponseData](atoms/docs/StartOutboundCall200ResponseData.md)
- - [StartOutboundCallRequest](atoms/docs/StartOutboundCallRequest.md)
- - [UnauthorizedErrorReponse](atoms/docs/UnauthorizedErrorReponse.md)
- - [UpdateAgent200Response](atoms/docs/UpdateAgent200Response.md)
- - [UpdateAgentRequest](atoms/docs/UpdateAgentRequest.md)
- - [UpdateAgentRequestLanguage](atoms/docs/UpdateAgentRequestLanguage.md)
- - [UpdateAgentRequestSynthesizer](atoms/docs/UpdateAgentRequestSynthesizer.md)
- - [UpdateAgentRequestSynthesizerVoiceConfig](atoms/docs/UpdateAgentRequestSynthesizerVoiceConfig.md)
- - [UpdateAgentRequestSynthesizerVoiceConfigOneOf](atoms/docs/UpdateAgentRequestSynthesizerVoiceConfigOneOf.md)
- - [UpdateAgentRequestSynthesizerVoiceConfigOneOf1](atoms/docs/UpdateAgentRequestSynthesizerVoiceConfigOneOf1.md)
- - [UploadTextToKnowledgeBaseRequest](atoms/docs/UploadTextToKnowledgeBaseRequest.md)
+ - [AgentDTO](docs/atoms/AgentDTO.md)
+ - [AgentDTOLanguage](docs/atoms/AgentDTOLanguage.md)
+ - [AgentDTOSynthesizer](docs/atoms/AgentDTOSynthesizer.md)
+ - [AgentDTOSynthesizerVoiceConfig](docs/atoms/AgentDTOSynthesizerVoiceConfig.md)
+ - [ApiResponse](docs/atoms/ApiResponse.md)
+ - [BadRequestErrorResponse](docs/atoms/BadRequestErrorResponse.md)
+ - [CreateAgentFromTemplate200Response](docs/atoms/CreateAgentFromTemplate200Response.md)
+ - [CreateAgentFromTemplateRequest](docs/atoms/CreateAgentFromTemplateRequest.md)
+ - [CreateAgentRequest](docs/atoms/CreateAgentRequest.md)
+ - [CreateAgentRequestLanguage](docs/atoms/CreateAgentRequestLanguage.md)
+ - [CreateAgentRequestLanguageSynthesizer](docs/atoms/CreateAgentRequestLanguageSynthesizer.md)
+ - [CreateAgentRequestLanguageSynthesizerVoiceConfig](docs/atoms/CreateAgentRequestLanguageSynthesizerVoiceConfig.md)
+ - [CreateCampaign201Response](docs/atoms/CreateCampaign201Response.md)
+ - [CreateCampaign201ResponseData](docs/atoms/CreateCampaign201ResponseData.md)
+ - [CreateCampaignRequest](docs/atoms/CreateCampaignRequest.md)
+ - [CreateKnowledgeBase201Response](docs/atoms/CreateKnowledgeBase201Response.md)
+ - [CreateKnowledgeBaseRequest](docs/atoms/CreateKnowledgeBaseRequest.md)
+ - [DeleteAgent200Response](docs/atoms/DeleteAgent200Response.md)
+ - [GetAgentById200Response](docs/atoms/GetAgentById200Response.md)
+ - [GetAgentTemplates200Response](docs/atoms/GetAgentTemplates200Response.md)
+ - [GetAgentTemplates200ResponseDataInner](docs/atoms/GetAgentTemplates200ResponseDataInner.md)
+ - [GetAgents200Response](docs/atoms/GetAgents200Response.md)
+ - [GetAgents200ResponseData](docs/atoms/GetAgents200ResponseData.md)
+ - [GetCampaignById200Response](docs/atoms/GetCampaignById200Response.md)
+ - [GetCampaignById200ResponseData](docs/atoms/GetCampaignById200ResponseData.md)
+ - [GetCampaigns200Response](docs/atoms/GetCampaigns200Response.md)
+ - [GetCampaigns200ResponseDataInner](docs/atoms/GetCampaigns200ResponseDataInner.md)
+ - [GetCampaigns200ResponseDataInnerAgent](docs/atoms/GetCampaigns200ResponseDataInnerAgent.md)
+ - [GetCampaigns200ResponseDataInnerAudience](docs/atoms/GetCampaigns200ResponseDataInnerAudience.md)
+ - [GetCampaignsRequest](docs/atoms/GetCampaignsRequest.md)
+ - [GetConversationLogs200Response](docs/atoms/GetConversationLogs200Response.md)
+ - [GetConversationLogs200ResponseData](docs/atoms/GetConversationLogs200ResponseData.md)
+ - [GetCurrentUser200Response](docs/atoms/GetCurrentUser200Response.md)
+ - [GetCurrentUser200ResponseData](docs/atoms/GetCurrentUser200ResponseData.md)
+ - [GetKnowledgeBaseById200Response](docs/atoms/GetKnowledgeBaseById200Response.md)
+ - [GetKnowledgeBaseItems200Response](docs/atoms/GetKnowledgeBaseItems200Response.md)
+ - [GetKnowledgeBases200Response](docs/atoms/GetKnowledgeBases200Response.md)
+ - [GetOrganization200Response](docs/atoms/GetOrganization200Response.md)
+ - [GetOrganization200ResponseData](docs/atoms/GetOrganization200ResponseData.md)
+ - [GetOrganization200ResponseDataMembersInner](docs/atoms/GetOrganization200ResponseDataMembersInner.md)
+ - [GetOrganization200ResponseDataSubscription](docs/atoms/GetOrganization200ResponseDataSubscription.md)
+ - [InternalServerErrorResponse](docs/atoms/InternalServerErrorResponse.md)
+ - [KnowledgeBaseDTO](docs/atoms/KnowledgeBaseDTO.md)
+ - [KnowledgeBaseItemDTO](docs/atoms/KnowledgeBaseItemDTO.md)
+ - [StartOutboundCall200Response](docs/atoms/StartOutboundCall200Response.md)
+ - [StartOutboundCall200ResponseData](docs/atoms/StartOutboundCall200ResponseData.md)
+ - [StartOutboundCallRequest](docs/atoms/StartOutboundCallRequest.md)
+ - [UnauthorizedErrorReponse](docs/atoms/UnauthorizedErrorReponse.md)
+ - [UpdateAgent200Response](docs/atoms/UpdateAgent200Response.md)
+ - [UpdateAgentRequest](docs/atoms/UpdateAgentRequest.md)
+ - [UpdateAgentRequestLanguage](docs/atoms/UpdateAgentRequestLanguage.md)
+ - [UpdateAgentRequestSynthesizer](docs/atoms/UpdateAgentRequestSynthesizer.md)
+ - [UpdateAgentRequestSynthesizerVoiceConfig](docs/atoms/UpdateAgentRequestSynthesizerVoiceConfig.md)
+ - [UpdateAgentRequestSynthesizerVoiceConfigOneOf](docs/atoms/UpdateAgentRequestSynthesizerVoiceConfigOneOf.md)
+ - [UpdateAgentRequestSynthesizerVoiceConfigOneOf1](docs/atoms/UpdateAgentRequestSynthesizerVoiceConfigOneOf1.md)
+ - [UploadTextToKnowledgeBaseRequest](docs/atoms/UploadTextToKnowledgeBaseRequest.md)
 
 ## Waves Documentation
 
