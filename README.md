@@ -4,7 +4,6 @@
 <div align="center">
   <a href="https://twitter.com/smallest_AI">
     <img src="https://img.shields.io/twitter/url/https/twitter.com/smallest_AI.svg?style=social&label=Follow%20smallest_AI" alt="Twitter">
-  </a>
   <a href="https://discord.gg/ywShEyXHBW">
     <img src="https://dcbadge.vercel.app/api/server/ywShEyXHBW?style=flat" alt="Discord">
   </a>
@@ -20,25 +19,30 @@
 
 Smallest AI builds high-speed multi-lingual voice models tailored for real-time applications, achieving ultra-realistic audio generation in as fast as ~100 milliseconds for 10 seconds of audio. With this sdk, you can easily convert text into high-quality audio with humanlike expressiveness.
 
-Currently, the library supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously.  
+Currently, the WavesClient supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously.  
 
 ## Table of Contents
 
 - [Installation](#installation)
 - [Get the API Key](#get-the-api-key)
-- [Best Practices for Input Text](#best-practices-for-input-text)
-- [Examples](#examples)
-  - [Synchronous](#Synchronous)
-  - [Aynchronous](#Synchronous)
-  - [LLM to Speech](#llm-to-speech)
-  - [Add your Voice](#add-your-voice)
-    - [Synchronously](#add-synchronously)
-    - [Asynchronously](#add-asynchronously)
-  - [Delete your Voice](#delete-your-voice)
-    - [Synchronously](#delete-synchronously)
-    - [Asynchronously](#delete-asynchronously)
-- [Available Methods](#available-methods)
-- [Technical Note: WAV Headers in Streaming Audio](#technical-note-wav-headers-in-streaming-audio)
+- [Atoms Documentation](#atoms-documentation)
+  - [Getting Started](#getting-started)
+  - [Documentation for API Endpoints](#documentation-for-api-endpoints)
+  - [Documentation For Models](#documentation-for-models)
+- [Waves Documentation](#waves-documentation)
+  - [Best Practices for Input Text](#best-practices-for-input-text)
+  - [Examples](#examples)
+    - [Synchronous](#synchronous)
+    - [Asynchronous](#asynchronous)
+    - [LLM to Speech](#llm-to-speech)
+    - [Add your Voice](#add-your-voice)
+      - [Synchronously](#add-synchronously)
+      - [Asynchronously](#add-asynchronously)
+    - [Delete your Voice](#delete-your-voice)
+      - [Synchronously](#delete-synchronously)
+      - [Asynchronously](#delete-asynchronously)
+  - [Available Methods](#available-methods)
+  - [Technical Note: WAV Headers in Streaming Audio](#technical-note-wav-headers-in-streaming-audio)
 
 ## Installation
 
@@ -51,24 +55,162 @@ When using an SDK in your application, make sure to pin to at least the major ve
 
 ## Get the API Key  
 
-1. Visit [waves.smallest.ai](https://waves.smallest.ai/) and sign up for an account or log in if you already have an account.  
-2. Navigate to `API Key` tab in your account dashboard.
+1. Visit [console.smallest.ai](https://console.smallest.ai//) and sign up for an account or log in if you already have an account.  
+2. Navigate to `API Keys` tab in your account dashboard.
 3. Create a new API Key and copy it.
 4. Export the API Key in your environment with the name `SMALLEST_API_KEY`, ensuring that your application can access it securely for authentication.
 
 
-## Examples
+## Atoms Documentation
 
-### Synchronous  
+### Getting Started
+
+Please follow the [installation procedure](#installation--usage) and then run the following:
+
+```python
+import smallestai.atoms
+from smallestai.atoms.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
+# See configuration.py for a list of all supported configuration parameters.
+configuration = atoms.Configuration(
+    host = "https://atoms-api.smallest.ai/api/v1"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization (JWT): BearerAuth
+configuration = atoms.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with atoms.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = atoms.AgentTemplatesApi(api_client)
+    create_agent_from_template_request = atoms.CreateAgentFromTemplateRequest()
+
+    try:
+        # Create agent from template
+        api_response = api_instance.create_agent_from_template(create_agent_from_template_request)
+        print("The response of AgentTemplatesApi->create_agent_from_template:\n")
+        pprint(api_response)
+    except ApiException as e:
+        print("Exception when calling AgentTemplatesApi->create_agent_from_template: %s\n" % e)
+```
+
+### Documentation for API Endpoints
+
+All URIs are relative to *https://atoms-api.smallest.ai/api/v1*
+
+Class | Method | HTTP request | Description
+------------ | ------------- | ------------- | -------------
+*AgentTemplatesApi* | [**create_agent_from_template**](atoms/docs/AgentTemplatesApi.md#create_agent_from_template) | **POST** /agent/from-template | Create agent from template
+*AgentTemplatesApi* | [**get_agent_templates**](atoms/docs/AgentTemplatesApi.md#get_agent_templates) | **GET** /agent/template | Get agent templates
+*AgentsApi* | [**create_agent**](atoms/docs/AgentsApi.md#create_agent) | **POST** /agent | Create a new agent
+*AgentsApi* | [**delete_agent**](atoms/docs/AgentsApi.md#delete_agent) | **DELETE** /agent/{id} | Delete an agent
+*AgentsApi* | [**get_agent_by_id**](atoms/docs/AgentsApi.md#get_agent_by_id) | **GET** /agent/{id} | Get agent by ID
+*AgentsApi* | [**get_agents**](atoms/docs/AgentsApi.md#get_agents) | **GET** /agent | Get all agents
+*AgentsApi* | [**update_agent**](atoms/docs/AgentsApi.md#update_agent) | **PATCH** /agent/{id} | Update an agent
+*CallsApi* | [**start_outbound_call**](atoms/docs/CallsApi.md#start_outbound_call) | **POST** /conversation/outbound | Start an outbound call
+*CampaignsApi* | [**create_campaign**](atoms/docs/CampaignsApi.md#create_campaign) | **POST** /campaign | Create a campaign
+*CampaignsApi* | [**delete_campaign**](atoms/docs/CampaignsApi.md#delete_campaign) | **DELETE** /campaign/{id} | Delete a campaign
+*CampaignsApi* | [**get_campaign_by_id**](atoms/docs/CampaignsApi.md#get_campaign_by_id) | **GET** /campaign/{id} | Get a campaign
+*CampaignsApi* | [**get_campaigns**](atoms/docs/CampaignsApi.md#get_campaigns) | **GET** /campaign | Retrieve all campaigns
+*CampaignsApi* | [**pause_campaign**](atoms/docs/CampaignsApi.md#pause_campaign) | **POST** /campaign/{id}/pause | Pause a campaign
+*CampaignsApi* | [**start_campaign**](atoms/docs/CampaignsApi.md#start_campaign) | **POST** /campaign/{id}/start | Start a campaign
+*KnowledgeBaseApi* | [**create_knowledge_base**](atoms/docs/KnowledgeBaseApi.md#create_knowledge_base) | **POST** /knowledgebase | Create a knowledge base
+*KnowledgeBaseApi* | [**delete_knowledge_base**](atoms/docs/KnowledgeBaseApi.md#delete_knowledge_base) | **DELETE** /knowledgebase/{id} | Delete a knowledge base
+*KnowledgeBaseApi* | [**delete_knowledge_base_item**](atoms/docs/KnowledgeBaseApi.md#delete_knowledge_base_item) | **DELETE** /knowledgebase/{knowledgeBaseId}/items/{knowledgeBaseItemId} | Delete a knowledge base item
+*KnowledgeBaseApi* | [**get_knowledge_base_by_id**](atoms/docs/KnowledgeBaseApi.md#get_knowledge_base_by_id) | **GET** /knowledgebase/{id} | Get a knowledge base
+*KnowledgeBaseApi* | [**get_knowledge_base_items**](atoms/docs/KnowledgeBaseApi.md#get_knowledge_base_items) | **GET** /knowledgebase/{id}/items | Get all knowledge base items
+*KnowledgeBaseApi* | [**get_knowledge_bases**](atoms/docs/KnowledgeBaseApi.md#get_knowledge_bases) | **GET** /knowledgebase | Get all knowledge bases
+*KnowledgeBaseApi* | [**upload_media_to_knowledge_base**](atoms/docs/KnowledgeBaseApi.md#upload_media_to_knowledge_base) | **POST** /knowledgebase/{id}/items/upload-media | Upload a media to a knowledge base
+*KnowledgeBaseApi* | [**upload_text_to_knowledge_base**](atoms/docs/KnowledgeBaseApi.md#upload_text_to_knowledge_base) | **POST** /knowledgebase/{id}/items/upload-text | Upload a text to a knowledge base
+*LogsApi* | [**get_conversation_logs**](atoms/docs/LogsApi.md#get_conversation_logs) | **GET** /conversation/{id} | Get conversation logs
+*OrganizationApi* | [**get_organization**](atoms/docs/OrganizationApi.md#get_organization) | **GET** /organization | Get organization details
+*UserApi* | [**get_current_user**](atoms/docs/UserApi.md#get_current_user) | **GET** /user | Get user details
+
+### Documentation For Models
+
+ - [AgentDTO](atoms/docs/AgentDTO.md)
+ - [AgentDTOLanguage](atoms/docs/AgentDTOLanguage.md)
+ - [AgentDTOSynthesizer](atoms/docs/AgentDTOSynthesizer.md)
+ - [AgentDTOSynthesizerVoiceConfig](atoms/docs/AgentDTOSynthesizerVoiceConfig.md)
+ - [ApiResponse](atoms/docs/ApiResponse.md)
+ - [BadRequestErrorResponse](atoms/docs/BadRequestErrorResponse.md)
+ - [CreateAgentFromTemplate200Response](atoms/docs/CreateAgentFromTemplate200Response.md)
+ - [CreateAgentFromTemplateRequest](atoms/docs/CreateAgentFromTemplateRequest.md)
+ - [CreateAgentRequest](atoms/docs/CreateAgentRequest.md)
+ - [CreateAgentRequestLanguage](atoms/docs/CreateAgentRequestLanguage.md)
+ - [CreateAgentRequestLanguageSynthesizer](atoms/docs/CreateAgentRequestLanguageSynthesizer.md)
+ - [CreateAgentRequestLanguageSynthesizerVoiceConfig](atoms/docs/CreateAgentRequestLanguageSynthesizerVoiceConfig.md)
+ - [CreateCampaign201Response](atoms/docs/CreateCampaign201Response.md)
+ - [CreateCampaign201ResponseData](atoms/docs/CreateCampaign201ResponseData.md)
+ - [CreateCampaignRequest](atoms/docs/CreateCampaignRequest.md)
+ - [CreateKnowledgeBase201Response](atoms/docs/CreateKnowledgeBase201Response.md)
+ - [CreateKnowledgeBaseRequest](atoms/docs/CreateKnowledgeBaseRequest.md)
+ - [DeleteAgent200Response](atoms/docs/DeleteAgent200Response.md)
+ - [GetAgentById200Response](atoms/docs/GetAgentById200Response.md)
+ - [GetAgentTemplates200Response](atoms/docs/GetAgentTemplates200Response.md)
+ - [GetAgentTemplates200ResponseDataInner](atoms/docs/GetAgentTemplates200ResponseDataInner.md)
+ - [GetAgents200Response](atoms/docs/GetAgents200Response.md)
+ - [GetAgents200ResponseData](atoms/docs/GetAgents200ResponseData.md)
+ - [GetCampaignById200Response](atoms/docs/GetCampaignById200Response.md)
+ - [GetCampaignById200ResponseData](atoms/docs/GetCampaignById200ResponseData.md)
+ - [GetCampaigns200Response](atoms/docs/GetCampaigns200Response.md)
+ - [GetCampaigns200ResponseDataInner](atoms/docs/GetCampaigns200ResponseDataInner.md)
+ - [GetCampaigns200ResponseDataInnerAgent](atoms/docs/GetCampaigns200ResponseDataInnerAgent.md)
+ - [GetCampaigns200ResponseDataInnerAudience](atoms/docs/GetCampaigns200ResponseDataInnerAudience.md)
+ - [GetCampaignsRequest](atoms/docs/GetCampaignsRequest.md)
+ - [GetConversationLogs200Response](atoms/docs/GetConversationLogs200Response.md)
+ - [GetConversationLogs200ResponseData](atoms/docs/GetConversationLogs200ResponseData.md)
+ - [GetCurrentUser200Response](atoms/docs/GetCurrentUser200Response.md)
+ - [GetCurrentUser200ResponseData](atoms/docs/GetCurrentUser200ResponseData.md)
+ - [GetKnowledgeBaseById200Response](atoms/docs/GetKnowledgeBaseById200Response.md)
+ - [GetKnowledgeBaseItems200Response](atoms/docs/GetKnowledgeBaseItems200Response.md)
+ - [GetKnowledgeBases200Response](atoms/docs/GetKnowledgeBases200Response.md)
+ - [GetOrganization200Response](atoms/docs/GetOrganization200Response.md)
+ - [GetOrganization200ResponseData](atoms/docs/GetOrganization200ResponseData.md)
+ - [GetOrganization200ResponseDataMembersInner](atoms/docs/GetOrganization200ResponseDataMembersInner.md)
+ - [GetOrganization200ResponseDataSubscription](atoms/docs/GetOrganization200ResponseDataSubscription.md)
+ - [InternalServerErrorResponse](atoms/docs/InternalServerErrorResponse.md)
+ - [KnowledgeBaseDTO](atoms/docs/KnowledgeBaseDTO.md)
+ - [KnowledgeBaseItemDTO](atoms/docs/KnowledgeBaseItemDTO.md)
+ - [StartOutboundCall200Response](atoms/docs/StartOutboundCall200Response.md)
+ - [StartOutboundCall200ResponseData](atoms/docs/StartOutboundCall200ResponseData.md)
+ - [StartOutboundCallRequest](atoms/docs/StartOutboundCallRequest.md)
+ - [UnauthorizedErrorReponse](atoms/docs/UnauthorizedErrorReponse.md)
+ - [UpdateAgent200Response](atoms/docs/UpdateAgent200Response.md)
+ - [UpdateAgentRequest](atoms/docs/UpdateAgentRequest.md)
+ - [UpdateAgentRequestLanguage](atoms/docs/UpdateAgentRequestLanguage.md)
+ - [UpdateAgentRequestSynthesizer](atoms/docs/UpdateAgentRequestSynthesizer.md)
+ - [UpdateAgentRequestSynthesizerVoiceConfig](atoms/docs/UpdateAgentRequestSynthesizerVoiceConfig.md)
+ - [UpdateAgentRequestSynthesizerVoiceConfigOneOf](atoms/docs/UpdateAgentRequestSynthesizerVoiceConfigOneOf.md)
+ - [UpdateAgentRequestSynthesizerVoiceConfigOneOf1](atoms/docs/UpdateAgentRequestSynthesizerVoiceConfigOneOf1.md)
+ - [UploadTextToKnowledgeBaseRequest](atoms/docs/UploadTextToKnowledgeBaseRequest.md)
+
+## Waves Documentation
+
+### Best Practices for Input Text
+
+### Examples
+
+#### Synchronous  
 A synchronous text-to-speech synthesis client. 
 
 **Basic Usage:**   
 ```python
-from smallest import Smallest
+
+from smallestai.waves import WavesClient
 
 def main():
-    client = Smallest(api_key="SMALLEST_API_KEY")
-    client.synthesize(
+    waves_client = WavesClient(api_key="SMALLEST_API_KEY")
+    waves_client.synthesize(
         text="Hello, this is a test for sync synthesis function.",
         save_as="sync_synthesize.wav"
     )
@@ -101,17 +243,17 @@ client.synthesize(
 ```
 
 
-### Asynchronous   
+#### Asynchronous   
 Asynchronous text-to-speech synthesis client.    
 
 **Basic Usage:**   
 ```python
 import asyncio
 import aiofiles
-from smallest import AsyncSmallest
+import smallestai
 
 async def main():
-    client = AsyncSmallest(api_key="SMALLEST_API_KEY")
+    client = smallestai.waves.AsyncWavesClient(api_key="SMALLEST_API_KEY")
     async with client as tts:
         audio_bytes = await tts.synthesize("Hello, this is a test of the async synthesis function.") 
         async with aiofiles.open("async_synthesize.wav", "wb") as f:
@@ -160,11 +302,11 @@ audio_bytes = await tts.synthesize(
 )
 ```
 
-### LLM to Speech    
+#### LLM to Speech    
 
 The `TextToAudioStream` class provides real-time text-to-speech processing, converting streaming text into audio output. It's particularly useful for applications like voice assistants, live captioning, or interactive chatbots that require immediate audio feedback from text generation. Supports both synchronous and asynchronous TTS instance.
 
-#### Stream through a WebSocket
+##### Stream through a WebSocket
 
 ```python
 import asyncio
@@ -215,7 +357,7 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-#### Save to a File
+##### Save to a File
 ```python
 import wave
 import asyncio
@@ -280,10 +422,10 @@ The processor yields raw audio data chunks without WAV headers for streaming eff
 - Streamed over a network
 - Further processed as needed
 
-## Add your Voice   
+#### Add your Voice   
 The Smallest AI SDK allows you to clone your voice by uploading an audio file. This feature is available both synchronously and asynchronously, making it flexible for different use cases. Below are examples of how to use this functionality.  
 
-### Add Synchronously
+##### Add Synchronously
 ```python
 from smallest import Smallest
 
@@ -296,7 +438,7 @@ if __name__ == "__main__":
     main()
 ```  
 
-### Add Asynchronously
+##### Add Asynchronously
 ```python
 import asyncio
 from smallest import AsyncSmallest
@@ -310,10 +452,10 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-## Delete your Voice
+#### Delete your Voice
 The Smallest AI SDK allows you to delete your cloned voice. This feature is available both synchronously and asynchronously, making it flexible for different use cases. Below are examples of how to use this functionality.
 
-### Delete Synchronously
+##### Delete Synchronously
 ```python
 from smallest import Smallest
 
@@ -326,7 +468,7 @@ if __name__ == "__main__":
     main()
 ```
 
-### Delete Asynchronously
+##### Delete Asynchronously
 ```python
 import asyncio
 from smallest import AsyncSmallest
@@ -340,7 +482,7 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-## Available Methods
+#### Available Methods
 
 ```python
 from smallest import Smallest
@@ -353,18 +495,18 @@ print(f"Available Voices: {client.get_cloned_voices()}")
 print(f"Available Models: {client.get_models()}")
 ```
 
-## Technical Note: WAV Headers in Streaming Audio
+#### Technical Note: WAV Headers in Streaming Audio
 
 When implementing audio streaming with chunks of synthesized speech, WAV headers are omitted from individual chunks because:
 
-#### Technical Issues
+##### Technical Issues
 - Each WAV header contains metadata about the entire audio file.
 - Multiple headers would make chunks appear as separate audio files and add redundancy.
 - Headers contain file-specific data (like total size) that's invalid for chunks.
 - Sequential playback of chunks with headers causes audio artifacts (pop sounds) when concatenating or playing audio sequentially.
 - Audio players would try to reinitialize audio settings for each chunk.
 
-### Best Practices for Audio Streaming
+##### Best Practices for Audio Streaming
 1. Stream raw PCM audio data without headers
 2. Add a single WAV header only when:
    - Saving the complete stream to a file
