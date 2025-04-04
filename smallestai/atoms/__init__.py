@@ -14,8 +14,6 @@
 """  # noqa: E501
 
 
-__version__ = "1.0.0"
-
 # import apis into sdk package
 from smallestai.atoms.api.agent_templates_api import AgentTemplatesApi
 from smallestai.atoms.api.agents_api import AgentsApi
@@ -94,3 +92,91 @@ from smallestai.atoms.models.update_agent_request_synthesizer_voice_config impor
 from smallestai.atoms.models.update_agent_request_synthesizer_voice_config_one_of import UpdateAgentRequestSynthesizerVoiceConfigOneOf
 from smallestai.atoms.models.update_agent_request_synthesizer_voice_config_one_of1 import UpdateAgentRequestSynthesizerVoiceConfigOneOf1
 from smallestai.atoms.models.upload_text_to_knowledge_base_request import UploadTextToKnowledgeBaseRequest
+
+from smallestai.atoms.atoms_client import AtomsClient
+
+__all__ = [
+    # APIs
+    'AgentTemplatesApi',
+    'AgentsApi',
+    'CallsApi',
+    'CampaignsApi',
+    'KnowledgeBaseApi',
+    'LogsApi',
+    'OrganizationApi',
+    'UserApi',
+    
+    # Core classes
+    'ApiResponse',
+    'ApiClient',
+    'Configuration',
+    
+    # Exceptions
+    'OpenApiException',
+    'ApiTypeError',
+    'ApiValueError',
+    'ApiKeyError',
+    'ApiAttributeError',
+    'ApiException',
+    
+    # Models
+    'AgentDTO',
+    'AgentDTOLanguage',
+    'AgentDTOSynthesizer',
+    'AgentDTOSynthesizerVoiceConfig',
+    'ApiResponse',
+    'BadRequestErrorResponse',
+    'CreateAgentFromTemplate200Response',
+    'CreateAgentFromTemplateRequest',
+    'CreateAgentRequest',
+    'CreateAgentRequestLanguage',
+    'CreateAgentRequestLanguageSynthesizer',
+    'CreateAgentRequestLanguageSynthesizerVoiceConfig',
+    'CreateCampaign201Response',
+    'CreateCampaign201ResponseData',
+    'CreateCampaignRequest',
+    'CreateKnowledgeBase201Response',
+    'CreateKnowledgeBaseRequest',
+    'DeleteAgent200Response',
+    'GetAgentById200Response',
+    'GetAgentTemplates200Response',
+    'GetAgentTemplates200ResponseDataInner',
+    'GetAgents200Response',
+    'GetAgents200ResponseData',
+    'GetCampaignById200Response',
+    'GetCampaignById200ResponseData',
+    'GetCampaigns200Response',
+    'GetCampaigns200ResponseDataInner',
+    'GetCampaigns200ResponseDataInnerAgent',
+    'GetCampaigns200ResponseDataInnerAudience',
+    'GetCampaignsRequest',
+    'GetConversationLogs200Response',
+    'GetConversationLogs200ResponseData',
+    'GetCurrentUser200Response',
+    'GetCurrentUser200ResponseData',
+    'GetKnowledgeBaseById200Response',
+    'GetKnowledgeBaseItems200Response',
+    'GetKnowledgeBases200Response',
+    'GetOrganization200Response',
+    'GetOrganization200ResponseData',
+    'GetOrganization200ResponseDataMembersInner',
+    'GetOrganization200ResponseDataSubscription',
+    'InternalServerErrorResponse',
+    'KnowledgeBaseDTO',
+    'KnowledgeBaseItemDTO',
+    'StartOutboundCall200Response',
+    'StartOutboundCall200ResponseData',
+    'StartOutboundCallRequest',
+    'UnauthorizedErrorReponse',
+    'UpdateAgent200Response',
+    'UpdateAgentRequest',
+    'UpdateAgentRequestLanguage',
+    'UpdateAgentRequestSynthesizer',
+    'UpdateAgentRequestSynthesizerVoiceConfig',
+    'UpdateAgentRequestSynthesizerVoiceConfigOneOf',
+    'UpdateAgentRequestSynthesizerVoiceConfigOneOf1',
+    'UploadTextToKnowledgeBaseRequest',
+    
+    # Main Client
+    'AtomsClient'
+]
