@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.get_conversation200_response import GetConversation200Response
+from smallestai.atoms.models.get_conversation200_response import GetConversation200Response
 
 # TODO update the JSON string below
 json = "{}"

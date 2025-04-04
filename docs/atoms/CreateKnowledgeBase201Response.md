@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.create_knowledge_base201_response import CreateKnowledgeBase201Response
+from smallestai.atoms.models.create_knowledge_base201_response import CreateKnowledgeBase201Response
 
 # TODO update the JSON string below
 json = "{}"

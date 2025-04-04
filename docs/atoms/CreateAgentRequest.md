@@ -16,7 +16,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.create_agent_request import CreateAgentRequest
+from smallestai.atoms.models.create_agent_request import CreateAgentRequest
 
 # TODO update the JSON string below
 json = "{}"

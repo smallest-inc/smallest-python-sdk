@@ -1,19 +1,19 @@
-# atoms_client.CampaignsApi
+# atoms.CampaignsApi
 
 All URIs are relative to *https://atoms-api.smallest.ai/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**create_campaign**](CampaignsApi.md#create_campaign) | **POST** /campaign | Create a campaign
-[**delete_campaign**](CampaignsApi.md#delete_campaign) | **DELETE** /campaign | Delete a campaign
+[**delete_campaign**](CampaignsApi.md#delete_campaign) | **DELETE** /campaign/{id} | Delete a campaign
 [**get_campaign_by_id**](CampaignsApi.md#get_campaign_by_id) | **GET** /campaign/{id} | Get a campaign
 [**get_campaigns**](CampaignsApi.md#get_campaigns) | **GET** /campaign | Retrieve all campaigns
+[**pause_campaign**](CampaignsApi.md#pause_campaign) | **POST** /campaign/{id}/pause | Pause a campaign
 [**start_campaign**](CampaignsApi.md#start_campaign) | **POST** /campaign/{id}/start | Start a campaign
-[**stop_campaign**](CampaignsApi.md#stop_campaign) | **POST** /campaign/{id}/stop | Stop a campaign
 
 
 # **create_campaign**
-> List[CreateCampaign200ResponseInner] create_campaign(create_campaign_request)
+> CreateCampaign201Response create_campaign(create_campaign_request)
 
 Create a campaign
 
@@ -24,15 +24,15 @@ Create a campaign
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.create_campaign200_response_inner import CreateCampaign200ResponseInner
-from smallestai.atoms_client.models.create_campaign_request import CreateCampaignRequest
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.create_campaign201_response import CreateCampaign201Response
+from smallestai.atoms.models.create_campaign_request import CreateCampaignRequest
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -42,15 +42,15 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.CampaignsApi(api_client)
-    create_campaign_request = atoms_client.CreateCampaignRequest() # CreateCampaignRequest | 
+    api_instance = atoms.CampaignsApi(api_client)
+    create_campaign_request = atoms.CreateCampaignRequest() # CreateCampaignRequest | 
 
     try:
         # Create a campaign
@@ -72,7 +72,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**List[CreateCampaign200ResponseInner]**](CreateCampaign200ResponseInner.md)
+[**CreateCampaign201Response**](CreateCampaign201Response.md)
 
 ### Authorization
 
@@ -87,7 +87,7 @@ Name | Type | Description  | Notes
 
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-**200** | Campaign created successfully |  -  |
+**201** | Campaign created successfully |  -  |
 **400** | Invalid input |  -  |
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
@@ -106,14 +106,14 @@ Delete a campaign
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.delete_agent200_response import DeleteAgent200Response
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -123,14 +123,14 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.CampaignsApi(api_client)
+    api_instance = atoms.CampaignsApi(api_client)
     id = 'id_example' # str | The ID of the campaign
 
     try:
@@ -187,14 +187,14 @@ Get a campaign
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.get_campaign_by_id200_response import GetCampaignById200Response
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.get_campaign_by_id200_response import GetCampaignById200Response
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -204,14 +204,14 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.CampaignsApi(api_client)
+    api_instance = atoms.CampaignsApi(api_client)
     id = 'id_example' # str | The ID of the campaign
 
     try:
@@ -268,15 +268,15 @@ Get all campaigns
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.get_campaigns200_response import GetCampaigns200Response
-from smallestai.atoms_client.models.get_campaigns_request import GetCampaignsRequest
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.get_campaigns200_response import GetCampaigns200Response
+from smallestai.atoms.models.get_campaigns_request import GetCampaignsRequest
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -286,15 +286,15 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.CampaignsApi(api_client)
-    get_campaigns_request = atoms_client.GetCampaignsRequest() # GetCampaignsRequest | 
+    api_instance = atoms.CampaignsApi(api_client)
+    get_campaigns_request = atoms.GetCampaignsRequest() # GetCampaignsRequest | 
 
     try:
         # Retrieve all campaigns
@@ -338,6 +338,87 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **pause_campaign**
+> DeleteAgent200Response pause_campaign(id)
+
+Pause a campaign
+
+Pause a campaign
+
+### Example
+
+* Bearer (JWT) Authentication (BearerAuth):
+
+```python
+import smallestai.atoms
+from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
+from smallestai.atoms.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
+# See configuration.py for a list of all supported configuration parameters.
+configuration = atoms.Configuration(
+    host = "https://atoms-api.smallest.ai/api/v1"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization (JWT): BearerAuth
+configuration = atoms.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with atoms.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = atoms.CampaignsApi(api_client)
+    id = 'id_example' # str | The ID of the campaign
+
+    try:
+        # Pause a campaign
+        api_response = api_instance.pause_campaign(id)
+        print("The response of CampaignsApi->pause_campaign:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling CampaignsApi->pause_campaign: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **str**| The ID of the campaign | 
+
+### Return type
+
+[**DeleteAgent200Response**](DeleteAgent200Response.md)
+
+### Authorization
+
+[BearerAuth](../README.md#BearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Campaign paused successfully |  -  |
+**400** | Invalid input |  -  |
+**401** | Unauthorized access |  -  |
+**500** | Internal server error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **start_campaign**
 > DeleteAgent200Response start_campaign(id)
 
@@ -350,14 +431,14 @@ Start a campaign
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.delete_agent200_response import DeleteAgent200Response
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -367,14 +448,14 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.CampaignsApi(api_client)
+    api_instance = atoms.CampaignsApi(api_client)
     id = 'id_example' # str | The ID of the campaign
 
     try:
@@ -412,88 +493,7 @@ Name | Type | Description  | Notes
 
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-**200** | Campaign started successfully |  -  |
-**400** | Invalid input |  -  |
-**401** | Unauthorized access |  -  |
-**500** | Internal server error |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **stop_campaign**
-> DeleteAgent200Response stop_campaign(id)
-
-Stop a campaign
-
-Stop a campaign
-
-### Example
-
-* Bearer (JWT) Authentication (BearerAuth):
-
-```python
-import atoms_client
-from smallestai.atoms_client.models.delete_agent200_response import DeleteAgent200Response
-from smallestai.atoms_client.rest import ApiException
-from pprint import pprint
-
-# Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
-# See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
-    host = "https://atoms-api.smallest.ai/api/v1"
-)
-
-# The client must configure the authentication and authorization parameters
-# in accordance with the API server security policy.
-# Examples for each auth method are provided below, use the example that
-# satisfies your auth use case.
-
-# Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
-    access_token = os.environ["BEARER_TOKEN"]
-)
-
-# Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = atoms_client.CampaignsApi(api_client)
-    id = 'id_example' # str | The ID of the campaign
-
-    try:
-        # Stop a campaign
-        api_response = api_instance.stop_campaign(id)
-        print("The response of CampaignsApi->stop_campaign:\n")
-        pprint(api_response)
-    except Exception as e:
-        print("Exception when calling CampaignsApi->stop_campaign: %s\n" % e)
-```
-
-
-
-### Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **id** | **str**| The ID of the campaign | 
-
-### Return type
-
-[**DeleteAgent200Response**](DeleteAgent200Response.md)
-
-### Authorization
-
-[BearerAuth](../README.md#BearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
-### HTTP response details
-
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Campaign stopped successfully |  -  |
+**201** | Campaign started successfully |  -  |
 **400** | Invalid input |  -  |
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |

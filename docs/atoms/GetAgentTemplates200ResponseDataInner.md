@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | **str** | The ID of the agent template | [optional] 
-**name** | **str** | The name of the agent template | [optional] 
+**id** | **str** | The ID of the agent template | 
+**name** | **str** | The name of the agent template | 
 **description** | **str** | The description of the agent template | [optional] 
 **avatar_url** | **str** | The avatar URL of the agent template | [optional] 
 **reference_url** | **str** | The docs url of the agent template | [optional] 
@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.get_agent_templates200_response_data_inner import GetAgentTemplates200ResponseDataInner
+from smallestai.atoms.models.get_agent_templates200_response_data_inner import GetAgentTemplates200ResponseDataInner
 
 # TODO update the JSON string below
 json = "{}"

@@ -1,4 +1,4 @@
-# atoms_client.CallsApi
+# atoms.CallsApi
 
 All URIs are relative to *https://atoms-api.smallest.ai/api/v1*
 
@@ -19,15 +19,15 @@ Initiates an outbound conversation with a specified agent and phone number.
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.start_outbound_call200_response import StartOutboundCall200Response
-from smallestai.atoms_client.models.start_outbound_call_request import StartOutboundCallRequest
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.start_outbound_call200_response import StartOutboundCall200Response
+from smallestai.atoms.models.start_outbound_call_request import StartOutboundCallRequest
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -37,15 +37,15 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.CallsApi(api_client)
-    start_outbound_call_request = atoms_client.StartOutboundCallRequest() # StartOutboundCallRequest | 
+    api_instance = atoms.CallsApi(api_client)
+    start_outbound_call_request = atoms.StartOutboundCallRequest() # StartOutboundCallRequest | 
 
     try:
         # Start an outbound call

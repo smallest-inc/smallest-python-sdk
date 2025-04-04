@@ -1,4 +1,4 @@
-# atoms_client.KnowledgeBaseApi
+# atoms.KnowledgeBaseApi
 
 All URIs are relative to *https://atoms-api.smallest.ai/api/v1*
 
@@ -26,15 +26,15 @@ Create a knowledge base
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.create_knowledge_base201_response import CreateKnowledgeBase201Response
-from smallestai.atoms_client.models.create_knowledge_base_request import CreateKnowledgeBaseRequest
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.create_knowledge_base201_response import CreateKnowledgeBase201Response
+from smallestai.atoms.models.create_knowledge_base_request import CreateKnowledgeBaseRequest
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -44,15 +44,15 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.KnowledgeBaseApi(api_client)
-    create_knowledge_base_request = atoms_client.CreateKnowledgeBaseRequest() # CreateKnowledgeBaseRequest | 
+    api_instance = atoms.KnowledgeBaseApi(api_client)
+    create_knowledge_base_request = atoms.CreateKnowledgeBaseRequest() # CreateKnowledgeBaseRequest | 
 
     try:
         # Create a knowledge base
@@ -108,14 +108,14 @@ Delete a knowledge base
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.delete_agent200_response import DeleteAgent200Response
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -125,14 +125,14 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.KnowledgeBaseApi(api_client)
+    api_instance = atoms.KnowledgeBaseApi(api_client)
     id = 'id_example' # str | The ID of the knowledge base
 
     try:
@@ -189,14 +189,14 @@ Delete a knowledge base item
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.delete_agent200_response import DeleteAgent200Response
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -206,14 +206,14 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.KnowledgeBaseApi(api_client)
+    api_instance = atoms.KnowledgeBaseApi(api_client)
     knowledge_base_id = 'knowledge_base_id_example' # str | The ID of the knowledge base
     knowledge_base_item_id = 'knowledge_base_item_id_example' # str | The ID of the knowledge base item
 
@@ -272,14 +272,14 @@ Get a knowledge base
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.get_knowledge_base_by_id200_response import GetKnowledgeBaseById200Response
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.get_knowledge_base_by_id200_response import GetKnowledgeBaseById200Response
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -289,14 +289,14 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.KnowledgeBaseApi(api_client)
+    api_instance = atoms.KnowledgeBaseApi(api_client)
     id = 'id_example' # str | The ID of the knowledge base
 
     try:
@@ -342,7 +342,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **get_knowledge_base_items**
-> ApiResponse get_knowledge_base_items(id)
+> GetKnowledgeBaseItems200Response get_knowledge_base_items(id)
 
 Get all knowledge base items
 
@@ -353,14 +353,14 @@ Get all knowledge base items
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.api_response import ApiResponse
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.get_knowledge_base_items200_response import GetKnowledgeBaseItems200Response
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -370,14 +370,14 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.KnowledgeBaseApi(api_client)
+    api_instance = atoms.KnowledgeBaseApi(api_client)
     id = 'id_example' # str | The ID of the knowledge base
 
     try:
@@ -400,7 +400,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**ApiResponse**](ApiResponse.md)
+[**GetKnowledgeBaseItems200Response**](GetKnowledgeBaseItems200Response.md)
 
 ### Authorization
 
@@ -423,7 +423,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **get_knowledge_bases**
-> ApiResponse get_knowledge_bases()
+> GetKnowledgeBases200Response get_knowledge_bases()
 
 Get all knowledge bases
 
@@ -434,14 +434,14 @@ Get all knowledge bases
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.api_response import ApiResponse
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.get_knowledge_bases200_response import GetKnowledgeBases200Response
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -451,14 +451,14 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.KnowledgeBaseApi(api_client)
+    api_instance = atoms.KnowledgeBaseApi(api_client)
 
     try:
         # Get all knowledge bases
@@ -477,7 +477,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**ApiResponse**](ApiResponse.md)
+[**GetKnowledgeBases200Response**](GetKnowledgeBases200Response.md)
 
 ### Authorization
 
@@ -510,14 +510,14 @@ Upload a media to a knowledge base
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.delete_agent200_response import DeleteAgent200Response
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -527,14 +527,14 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.KnowledgeBaseApi(api_client)
+    api_instance = atoms.KnowledgeBaseApi(api_client)
     id = 'id_example' # str | The ID of the knowledge base
     media = None # bytearray | 
 
@@ -593,15 +593,15 @@ Upload a text to a knowledge base
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.delete_agent200_response import DeleteAgent200Response
-from smallestai.atoms_client.models.upload_text_to_knowledge_base_request import UploadTextToKnowledgeBaseRequest
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
+from smallestai.atoms.models.upload_text_to_knowledge_base_request import UploadTextToKnowledgeBaseRequest
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -611,16 +611,16 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.KnowledgeBaseApi(api_client)
+    api_instance = atoms.KnowledgeBaseApi(api_client)
     id = 'id_example' # str | The ID of the knowledge base
-    upload_text_to_knowledge_base_request = atoms_client.UploadTextToKnowledgeBaseRequest() # UploadTextToKnowledgeBaseRequest | 
+    upload_text_to_knowledge_base_request = atoms.UploadTextToKnowledgeBaseRequest() # UploadTextToKnowledgeBaseRequest | 
 
     try:
         # Upload a text to a knowledge base

@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.delete_agent200_response import DeleteAgent200Response
+from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
 
 # TODO update the JSON string below
 json = "{}"

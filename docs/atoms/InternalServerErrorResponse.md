@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.internal_server_error_response import InternalServerErrorResponse
+from smallestai.atoms.models.internal_server_error_response import InternalServerErrorResponse
 
 # TODO update the JSON string below
 json = "{}"

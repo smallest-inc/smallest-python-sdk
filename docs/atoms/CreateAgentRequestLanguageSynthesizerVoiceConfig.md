@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.create_agent_request_language_synthesizer_voice_config import CreateAgentRequestLanguageSynthesizerVoiceConfig
+from smallestai.atoms.models.create_agent_request_language_synthesizer_voice_config import CreateAgentRequestLanguageSynthesizerVoiceConfig
 
 # TODO update the JSON string below
 json = "{}"

@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.create_campaign_request import CreateCampaignRequest
+from smallestai.atoms.models.create_campaign_request import CreateCampaignRequest
 
 # TODO update the JSON string below
 json = "{}"

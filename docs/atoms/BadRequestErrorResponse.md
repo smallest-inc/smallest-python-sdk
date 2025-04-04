@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.bad_request_error_response import BadRequestErrorResponse
+from smallestai.atoms.models.bad_request_error_response import BadRequestErrorResponse
 
 # TODO update the JSON string below
 json = "{}"

@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.unauthorized_error_reponse import UnauthorizedErrorReponse
+from smallestai.atoms.models.unauthorized_error_reponse import UnauthorizedErrorReponse
 
 # TODO update the JSON string below
 json = "{}"

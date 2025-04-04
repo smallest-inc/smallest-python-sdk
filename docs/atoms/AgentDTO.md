@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | **str** | The ID of the agent | [optional] 
-**name** | **str** | The name of the agent | [optional] 
+**id** | **str** | The ID of the agent | 
+**name** | **str** | The name of the agent | 
 **description** | **str** | The description of the agent | [optional] 
 **organization** | **str** | The organization ID of the agent | [optional] 
 **workflow_id** | **str** | The workflow ID of the agent | [optional] 
@@ -22,7 +22,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.agent_dto import AgentDTO
+from smallestai.atoms.models.agent_dto import AgentDTO
 
 # TODO update the JSON string below
 json = "{}"

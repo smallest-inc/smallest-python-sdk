@@ -1,4 +1,4 @@
-# atoms_client.OrganizationApi
+# atoms.OrganizationApi
 
 All URIs are relative to *https://atoms-api.smallest.ai/api/v1*
 
@@ -17,14 +17,14 @@ Get organization details
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.get_organization200_response import GetOrganization200Response
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.get_organization200_response import GetOrganization200Response
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -34,14 +34,14 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.OrganizationApi(api_client)
+    api_instance = atoms.OrganizationApi(api_client)
 
     try:
         # Get organization details

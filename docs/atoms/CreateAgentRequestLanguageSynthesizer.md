@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.create_agent_request_language_synthesizer import CreateAgentRequestLanguageSynthesizer
+from smallestai.atoms.models.create_agent_request_language_synthesizer import CreateAgentRequestLanguageSynthesizer
 
 # TODO update the JSON string below
 json = "{}"

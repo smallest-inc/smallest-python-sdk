@@ -1,4 +1,4 @@
-# atoms_client.AgentsApi
+# atoms.AgentsApi
 
 All URIs are relative to *https://atoms-api.smallest.ai/api/v1*
 
@@ -23,15 +23,15 @@ You can create a new agent by passing the name of the agent in the request body.
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.create_agent_from_template200_response import CreateAgentFromTemplate200Response
-from smallestai.atoms_client.models.create_agent_request import CreateAgentRequest
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.create_agent_from_template200_response import CreateAgentFromTemplate200Response
+from smallestai.atoms.models.create_agent_request import CreateAgentRequest
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -41,15 +41,15 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.AgentsApi(api_client)
-    create_agent_request = atoms_client.CreateAgentRequest() # CreateAgentRequest | 
+    api_instance = atoms.AgentsApi(api_client)
+    create_agent_request = atoms.CreateAgentRequest() # CreateAgentRequest | 
 
     try:
         # Create a new agent
@@ -103,14 +103,14 @@ Delete an agent
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.delete_agent200_response import DeleteAgent200Response
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -120,14 +120,14 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.AgentsApi(api_client)
+    api_instance = atoms.AgentsApi(api_client)
     id = 'id_example' # str | 
 
     try:
@@ -184,14 +184,14 @@ Agents are the main entities in the system. Agents are used to create conversati
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.get_agent_by_id200_response import GetAgentById200Response
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.get_agent_by_id200_response import GetAgentById200Response
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -201,14 +201,14 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.AgentsApi(api_client)
+    api_instance = atoms.AgentsApi(api_client)
     id = 'id_example' # str | 
 
     try:
@@ -265,14 +265,14 @@ Agents are the main entities in the system. Agents are used to create conversati
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.get_agents200_response import GetAgents200Response
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.get_agents200_response import GetAgents200Response
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -282,14 +282,14 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.AgentsApi(api_client)
+    api_instance = atoms.AgentsApi(api_client)
     page = 1 # int |  (optional) (default to 1)
     offset = 5 # int |  (optional) (default to 5)
     search = 'search_example' # str |  (optional)
@@ -348,15 +348,15 @@ Update an agent
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.update_agent200_response import UpdateAgent200Response
-from smallestai.atoms_client.models.update_agent_request import UpdateAgentRequest
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.update_agent200_response import UpdateAgent200Response
+from smallestai.atoms.models.update_agent_request import UpdateAgentRequest
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -366,16 +366,16 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.AgentsApi(api_client)
+    api_instance = atoms.AgentsApi(api_client)
     id = 'id_example' # str | 
-    update_agent_request = atoms_client.UpdateAgentRequest() # UpdateAgentRequest | 
+    update_agent_request = atoms.UpdateAgentRequest() # UpdateAgentRequest | 
 
     try:
         # Update an agent

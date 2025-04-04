@@ -1,14 +1,14 @@
-# atoms_client.LogsApi
+# atoms.LogsApi
 
 All URIs are relative to *https://atoms-api.smallest.ai/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**get_conversation**](LogsApi.md#get_conversation) | **GET** /conversation/{id} | Get conversation logs
+[**get_conversation_logs**](LogsApi.md#get_conversation_logs) | **GET** /conversation/{id} | Get conversation logs
 
 
-# **get_conversation**
-> GetConversation200Response get_conversation(id)
+# **get_conversation_logs**
+> GetConversationLogs200Response get_conversation_logs(id)
 
 Get conversation logs
 
@@ -17,14 +17,14 @@ Get conversation logs
 * Bearer (JWT) Authentication (BearerAuth):
 
 ```python
-import atoms_client
-from smallestai.atoms_client.models.get_conversation200_response import GetConversation200Response
-from smallestai.atoms_client.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.models.get_conversation_logs200_response import GetConversationLogs200Response
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     host = "https://atoms-api.smallest.ai/api/v1"
 )
 
@@ -34,23 +34,23 @@ configuration = atoms_client.Configuration(
 # satisfies your auth use case.
 
 # Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms_client.Configuration(
+configuration = atoms.Configuration(
     access_token = os.environ["BEARER_TOKEN"]
 )
 
 # Enter a context with an instance of the API client
-with atoms_client.ApiClient(configuration) as api_client:
+with atoms.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = atoms_client.LogsApi(api_client)
+    api_instance = atoms.LogsApi(api_client)
     id = 'id_example' # str | The callId of the conversation. You can get the callId from the conversation logs.
 
     try:
         # Get conversation logs
-        api_response = api_instance.get_conversation(id)
-        print("The response of LogsApi->get_conversation:\n")
+        api_response = api_instance.get_conversation_logs(id)
+        print("The response of LogsApi->get_conversation_logs:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling LogsApi->get_conversation: %s\n" % e)
+        print("Exception when calling LogsApi->get_conversation_logs: %s\n" % e)
 ```
 
 
@@ -64,7 +64,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetConversation200Response**](GetConversation200Response.md)
+[**GetConversationLogs200Response**](GetConversationLogs200Response.md)
 
 ### Authorization
 

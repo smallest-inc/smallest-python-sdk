@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.get_campaigns_request import GetCampaignsRequest
+from smallestai.atoms.models.get_campaigns_request import GetCampaignsRequest
 
 # TODO update the JSON string below
 json = "{}"

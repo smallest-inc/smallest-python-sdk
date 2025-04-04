@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.agent_dto_synthesizer import AgentDTOSynthesizer
+from smallestai.atoms.models.agent_dto_synthesizer import AgentDTOSynthesizer
 
 # TODO update the JSON string below
 json = "{}"

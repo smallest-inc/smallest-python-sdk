@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.agent_dto_language import AgentDTOLanguage
+from smallestai.atoms.models.agent_dto_language import AgentDTOLanguage
 
 # TODO update the JSON string below
 json = "{}"

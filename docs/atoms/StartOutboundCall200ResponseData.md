@@ -5,12 +5,12 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**call_id** | **str** | The ID of the initiated call | [optional] 
+**conversation_id** | **str** | The ID of the initiated call | [optional] 
 
 ## Example
 
 ```python
-from smallestai.atoms_client.models.start_outbound_call200_response_data import StartOutboundCall200ResponseData
+from smallestai.atoms.models.start_outbound_call200_response_data import StartOutboundCall200ResponseData
 
 # TODO update the JSON string below
 json = "{}"

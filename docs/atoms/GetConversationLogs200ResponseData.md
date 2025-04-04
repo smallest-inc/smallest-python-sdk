@@ -1,4 +1,4 @@
-# GetConversation200ResponseData
+# GetConversationLogs200ResponseData
 
 
 ## Properties
@@ -22,19 +22,19 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms.models.get_conversation200_response_data import GetConversation200ResponseData
+from smallestai.atoms.models.get_conversation_logs200_response_data import GetConversationLogs200ResponseData
 
 # TODO update the JSON string below
 json = "{}"
-# create an instance of GetConversation200ResponseData from a JSON string
-get_conversation200_response_data_instance = GetConversation200ResponseData.from_json(json)
+# create an instance of GetConversationLogs200ResponseData from a JSON string
+get_conversation_logs200_response_data_instance = GetConversationLogs200ResponseData.from_json(json)
 # print the JSON string representation of the object
-print(GetConversation200ResponseData.to_json())
+print(GetConversationLogs200ResponseData.to_json())
 
 # convert the object into a dict
-get_conversation200_response_data_dict = get_conversation200_response_data_instance.to_dict()
-# create an instance of GetConversation200ResponseData from a dict
-get_conversation200_response_data_from_dict = GetConversation200ResponseData.from_dict(get_conversation200_response_data_dict)
+get_conversation_logs200_response_data_dict = get_conversation_logs200_response_data_instance.to_dict()
+# create an instance of GetConversationLogs200ResponseData from a dict
+get_conversation_logs200_response_data_from_dict = GetConversationLogs200ResponseData.from_dict(get_conversation_logs200_response_data_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

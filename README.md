@@ -68,8 +68,8 @@ When using an SDK in your application, make sure to pin to at least the major ve
 Please follow the [installation procedure](#installation--usage) and then run the following:
 
 ```python
-import atoms
-from atoms.rest import ApiException
+import smallestai.atoms
+from smallestai.atoms.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1

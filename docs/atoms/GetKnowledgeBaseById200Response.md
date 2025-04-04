@@ -6,12 +6,12 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **status** | **bool** |  | [optional] 
-**data** | [**GetKnowledgeBaseById200ResponseData**](GetKnowledgeBaseById200ResponseData.md) |  | [optional] 
+**data** | [**KnowledgeBaseDTO**](KnowledgeBaseDTO.md) |  | [optional] 
 
 ## Example
 
 ```python
-from smallestai.atoms_client.models.get_knowledge_base_by_id200_response import GetKnowledgeBaseById200Response
+from smallestai.atoms.models.get_knowledge_base_by_id200_response import GetKnowledgeBaseById200Response
 
 # TODO update the JSON string below
 json = "{}"

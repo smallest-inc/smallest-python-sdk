@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.start_outbound_call_request import StartOutboundCallRequest
+from smallestai.atoms.models.start_outbound_call_request import StartOutboundCallRequest
 
 # TODO update the JSON string below
 json = "{}"

@@ -6,12 +6,12 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **status** | **bool** |  | [optional] 
-**data** | [**GetCampaigns200ResponseDataInner**](GetCampaigns200ResponseDataInner.md) |  | [optional] 
+**data** | [**GetCampaignById200ResponseData**](GetCampaignById200ResponseData.md) |  | [optional] 
 
 ## Example
 
 ```python
-from smallestai.atoms_client.models.get_campaign_by_id200_response import GetCampaignById200Response
+from smallestai.atoms.models.get_campaign_by_id200_response import GetCampaignById200Response
 
 # TODO update the JSON string below
 json = "{}"

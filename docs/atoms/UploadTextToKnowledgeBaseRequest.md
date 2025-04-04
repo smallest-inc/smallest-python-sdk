@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms_client.models.upload_text_to_knowledge_base_request import UploadTextToKnowledgeBaseRequest
+from smallestai.atoms.models.upload_text_to_knowledge_base_request import UploadTextToKnowledgeBaseRequest
 
 # TODO update the JSON string below
 json = "{}"
