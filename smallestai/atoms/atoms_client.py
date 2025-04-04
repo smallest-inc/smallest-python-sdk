@@ -2,6 +2,7 @@ from typing import Dict, List, Optional, Tuple, Union, Any
 from typing_extensions import Annotated
 from pydantic import StrictFloat, StrictStr, StrictInt, StrictBytes, Field, validate_call
 
+from smallestai.atoms.configuration import Configuration
 from smallestai.atoms.api.agents_api import AgentsApi
 from smallestai.atoms.api.knowledge_base_api import KnowledgeBaseApi
 from smallestai.atoms.api.calls_api import CallsApi
@@ -24,18 +25,19 @@ from smallestai.atoms.api.logs_api import LogsApi
 from smallestai.atoms.models.get_conversation_logs200_response import GetConversationLogs200Response
 
 class AtomsClient:
-    def __init__(self, api_client=None) -> None:
-        if api_client is None:
-            api_client = ApiClient.get_default()
-        self.api_client = api_client
-        self.agents_api = AgentsApi(api_client)
-        self.knowledge_base_api = KnowledgeBaseApi(api_client)
-        self.calls_api = CallsApi(api_client)
-        self.user_api = UserApi(api_client)
-        self.organization_api = OrganizationApi(api_client)
-        self.campaigns_api = CampaignsApi(api_client)
-        self.agent_templates_api = AgentTemplatesApi(api_client)
-        self.logs_api = LogsApi(api_client)
+    def __init__(self, configuration=None) -> None:
+        if configuration is None:
+            configuration = Configuration.get_default()
+        
+        self.api_client = ApiClient(configuration)
+        self.agents_api = AgentsApi(self.api_client)
+        self.knowledge_base_api = KnowledgeBaseApi(self.api_client)
+        self.calls_api = CallsApi(self.api_client)
+        self.user_api = UserApi(self.api_client)
+        self.organization_api = OrganizationApi(self.api_client)
+        self.campaigns_api = CampaignsApi(self.api_client)
+        self.agent_templates_api = AgentTemplatesApi(self.api_client)
+        self.logs_api = LogsApi(self.api_client)
 
     @validate_call
     def create_agent(

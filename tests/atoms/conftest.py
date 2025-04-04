@@ -4,6 +4,7 @@ import pytest
 import requests
 from dotenv import load_dotenv
 from smallestai.atoms.atoms_client import AtomsClient
+from smallestai.atoms.configuration import Configuration
 import uuid
 
 GLOBAL_STATE = {}
@@ -271,7 +272,10 @@ def pytest_configure(config):
 
 @pytest.fixture
 def atoms_client():
-    return AtomsClient()
+    config = Configuration(
+        host="https://atoms-api.dev.smallest.ai/api/v1"
+    )
+    return AtomsClient(configuration=config)
 
 @pytest.fixture
 def global_state():
