@@ -4,7 +4,6 @@ from smallestai.atoms.models.start_outbound_call_request import StartOutboundCal
 from smallestai.atoms.models.start_outbound_call200_response import StartOutboundCall200Response
 
 def test_start_outbound_call(atoms_client, global_state):
-    """Test starting an outbound call"""
     
     request = StartOutboundCallRequest(
         agentId=global_state["base_agent"]["id"],

@@ -20,7 +20,7 @@
 
 Smallest AI builds high-speed multi-lingual voice models tailored for real-time applications, achieving ultra-realistic audio generation in as fast as ~100 milliseconds for 10 seconds of audio. With this sdk, you can easily convert text into high-quality audio with humanlike expressiveness.
 
-Currently, the library supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously.  
+Currently, the WavesClient supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously.  
 
 ## Table of Contents
 

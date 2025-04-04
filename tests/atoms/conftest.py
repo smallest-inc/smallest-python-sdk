@@ -6,12 +6,9 @@ from dotenv import load_dotenv
 from smallestai.atoms.atoms_client import AtomsClient
 import uuid
 
-# Global state to share across tests
 GLOBAL_STATE = {}
 
 def create_knowledge_bases(base_url, headers):
-    """Create test knowledge bases"""
-    # Create base knowledge base
     resp = requests.post(
         f"{base_url}/knowledgebase",
         headers=headers,
@@ -24,7 +21,6 @@ def create_knowledge_bases(base_url, headers):
     base_knowledge_base_id = resp.json()["data"]
     time.sleep(0.2)
 
-    # Add base knowledge base item
     resp = requests.post(
         f"{base_url}/knowledgebase/{base_knowledge_base_id}/items/upload-text",
         headers=headers,
@@ -36,7 +32,6 @@ def create_knowledge_bases(base_url, headers):
     resp.raise_for_status()
     time.sleep(0.2)
 
-    # Add temporary knowledge base item for delete testing
     resp = requests.post(
         f"{base_url}/knowledgebase/{base_knowledge_base_id}/items/upload-text",
         headers=headers,
@@ -48,7 +43,6 @@ def create_knowledge_bases(base_url, headers):
     resp.raise_for_status()
     time.sleep(0.2)
 
-    # Get items to fetch their IDs
     resp = requests.get(
         f"{base_url}/knowledgebase/{base_knowledge_base_id}/items",
         headers=headers
@@ -60,7 +54,6 @@ def create_knowledge_bases(base_url, headers):
     
     temp_item_id = items[0]["_id"]
 
-    # Create temporary knowledge base for delete test
     resp = requests.post(
         f"{base_url}/knowledgebase",
         headers=headers,
@@ -83,8 +76,6 @@ def create_knowledge_bases(base_url, headers):
     }
 
 def create_agents(base_url, headers, knowledge_base_id):
-    """Create test agents"""
-    # Create base agent
     resp = requests.post(
         f"{base_url}/agent",
         headers=headers,
@@ -113,7 +104,6 @@ def create_agents(base_url, headers, knowledge_base_id):
     base_agent_id = resp.json()["data"]
     time.sleep(0.2)
 
-    # Create temporary agent for delete test
     resp = requests.post(
         f"{base_url}/agent",
         headers=headers,
@@ -148,8 +138,6 @@ def create_agents(base_url, headers, knowledge_base_id):
     }
 
 def create_audience(base_url, headers):
-    """Create test audience"""
-    # Open and upload the audience template CSV file
     csv_path = os.path.join(os.path.dirname(__file__), "audience_template.csv")
     with open(csv_path, "rb") as file:
         files = {
@@ -170,7 +158,6 @@ def create_audience(base_url, headers):
             resp.raise_for_status()
             time.sleep(0.2)
 
-            # Get the first audience ID from the list
             resp = requests.get(f"{base_url}/audience", headers=headers)
             resp.raise_for_status()
             time.sleep(0.2)
@@ -179,12 +166,9 @@ def create_audience(base_url, headers):
             
             return {"id": audience_id}
         except Exception:
-            # Silently ignore any errors during audience creation
             print("Error creating audience")
 
 def create_campaign(base_url, headers):
-    """Create test campaigns"""
-    # Create base campaign
     resp = requests.post(
         f"{base_url}/campaign",
         headers=headers,
@@ -219,7 +203,6 @@ def create_campaign(base_url, headers):
     }
 
 def fetch_agent_template(base_url, headers):
-    """Fetch agent templates and return first template ID"""
     resp = requests.get(
         f"{base_url}/agent/template",
         headers=headers
@@ -231,7 +214,6 @@ def fetch_agent_template(base_url, headers):
     return {"id": templates[0]["id"]}
 
 def start_call(base_url, headers):
-    """Start a test outbound call"""
     resp = requests.post(
         f"{base_url}/conversation/outbound",
         headers=headers,
@@ -249,7 +231,6 @@ def start_call(base_url, headers):
     }
 
 def pytest_configure(config):
-    """Global setup before any test collection"""
     load_dotenv()
     
     api_key = os.getenv("SMALLEST_API_KEY")
@@ -258,13 +239,12 @@ def pytest_configure(config):
     headers = {"Authorization": f"Bearer {api_key}"}
     
     try:
-        # Create resources
         knowledge_bases = create_knowledge_bases(base_url, headers)
         agents = create_agents(base_url, headers, knowledge_bases["base"]["id"])
         audience = create_audience(base_url, headers)
-        ref_template = fetch_agent_template(base_url, headers)
+        base_agent_template = fetch_agent_template(base_url, headers)
         
-        # Store in global state
+        # temps are created for deletion testing
         GLOBAL_STATE.update({
             "base_knowledge_base": knowledge_bases["base"],
             "temp_knowledge_base_item_id": knowledge_bases["base"]["temp_item"]["id"],
@@ -272,7 +252,7 @@ def pytest_configure(config):
             "base_agent": agents["base"],
             "temp_agent": agents["temp"],
             "audience": audience,
-            "ref_template": ref_template
+            "base_agent_template": base_agent_template
         })
         
         campaign = create_campaign(base_url, headers)
@@ -291,10 +271,8 @@ def pytest_configure(config):
 
 @pytest.fixture
 def atoms_client():
-    """Fixture to provide AtomsClient instance"""
     return AtomsClient()
 
 @pytest.fixture
 def global_state():
-    """Fixture to access global state"""
     return GLOBAL_STATE 

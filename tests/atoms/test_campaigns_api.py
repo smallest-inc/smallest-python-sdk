@@ -22,7 +22,6 @@ def test_create_campaign(atoms_client, global_state):
     assert isinstance(response, CreateCampaign201Response)
 
 def test_get_campaign_by_id(atoms_client, global_state):
-    # First create a campaign to get its ID
     response = atoms_client.get_campaign_by_id(id=global_state["base_campaign"]["id"])
     assert isinstance(response, GetCampaignById200Response)
 

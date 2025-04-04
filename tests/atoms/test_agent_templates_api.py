@@ -13,7 +13,7 @@ def test_create_agent_from_template(atoms_client, global_state):
     """Test creating an agent from a template"""
     
     request = CreateAgentFromTemplateRequest(
-        templateId=global_state["ref_template"]["id"],
+        templateId=global_state["base_agent_template"]["id"],
         agentName="Test Template Agent",
         agentDescription="Agent created from template for testing"
     )
