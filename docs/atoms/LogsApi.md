@@ -64,7 +64,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetConversationLogs200Response**](GetConversationLogs200Response.md)
+[**GetConversationLogs200Response**](./models/GetConversationLogs200Response.md)
 
 ### Authorization
 
@@ -84,5 +84,5 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 

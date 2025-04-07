@@ -63,11 +63,11 @@ with atoms.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **start_outbound_call_request** | [**StartOutboundCallRequest**](StartOutboundCallRequest.md)|  | 
+ **start_outbound_call_request** | [**StartOutboundCallRequest**](./models/StartOutboundCallRequest.md)|  | 
 
 ### Return type
 
-[**StartOutboundCall200Response**](StartOutboundCall200Response.md)
+[**StartOutboundCall200Response**](./models/StartOutboundCall200Response.md)
 
 ### Authorization
 
@@ -87,5 +87,5 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 

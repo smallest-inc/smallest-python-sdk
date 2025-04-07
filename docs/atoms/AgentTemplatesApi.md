@@ -64,11 +64,11 @@ with atoms.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **create_agent_from_template_request** | [**CreateAgentFromTemplateRequest**](CreateAgentFromTemplateRequest.md)|  | 
+ **create_agent_from_template_request** | [**CreateAgentFromTemplateRequest**](./models/CreateAgentFromTemplateRequest.md)|  | 
 
 ### Return type
 
-[**CreateAgentFromTemplate200Response**](CreateAgentFromTemplate200Response.md)
+[**CreateAgentFromTemplate200Response**](./models/CreateAgentFromTemplate200Response.md)
 
 ### Authorization
 
@@ -88,7 +88,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **get_agent_templates**
 > GetAgentTemplates200Response get_agent_templates()
@@ -143,7 +143,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**GetAgentTemplates200Response**](GetAgentTemplates200Response.md)
+[**GetAgentTemplates200Response**](./models/GetAgentTemplates200Response.md)
 
 ### Authorization
 
@@ -163,5 +163,5 @@ This endpoint does not need any parameter.
 **400** | Invalid input |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 

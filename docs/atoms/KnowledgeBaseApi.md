@@ -70,11 +70,11 @@ with atoms.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **create_knowledge_base_request** | [**CreateKnowledgeBaseRequest**](CreateKnowledgeBaseRequest.md)|  | 
+ **create_knowledge_base_request** | [**CreateKnowledgeBaseRequest**](./models/CreateKnowledgeBaseRequest.md)|  | 
 
 ### Return type
 
-[**CreateKnowledgeBase201Response**](CreateKnowledgeBase201Response.md)
+[**CreateKnowledgeBase201Response**](./models/CreateKnowledgeBase201Response.md)
 
 ### Authorization
 
@@ -94,7 +94,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **delete_knowledge_base**
 > DeleteAgent200Response delete_knowledge_base(id)
@@ -155,7 +155,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](DeleteAgent200Response.md)
+[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
 
 ### Authorization
 
@@ -175,7 +175,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **delete_knowledge_base_item**
 > DeleteAgent200Response delete_knowledge_base_item(knowledge_base_id, knowledge_base_item_id)
@@ -238,7 +238,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](DeleteAgent200Response.md)
+[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
 
 ### Authorization
 
@@ -258,7 +258,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **get_knowledge_base_by_id**
 > GetKnowledgeBaseById200Response get_knowledge_base_by_id(id)
@@ -319,7 +319,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetKnowledgeBaseById200Response**](GetKnowledgeBaseById200Response.md)
+[**GetKnowledgeBaseById200Response**](./models/GetKnowledgeBaseById200Response.md)
 
 ### Authorization
 
@@ -339,7 +339,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **get_knowledge_base_items**
 > GetKnowledgeBaseItems200Response get_knowledge_base_items(id)
@@ -400,7 +400,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetKnowledgeBaseItems200Response**](GetKnowledgeBaseItems200Response.md)
+[**GetKnowledgeBaseItems200Response**](./models/GetKnowledgeBaseItems200Response.md)
 
 ### Authorization
 
@@ -420,7 +420,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **get_knowledge_bases**
 > GetKnowledgeBases200Response get_knowledge_bases()
@@ -477,7 +477,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**GetKnowledgeBases200Response**](GetKnowledgeBases200Response.md)
+[**GetKnowledgeBases200Response**](./models/GetKnowledgeBases200Response.md)
 
 ### Authorization
 
@@ -496,7 +496,7 @@ This endpoint does not need any parameter.
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **upload_media_to_knowledge_base**
 > DeleteAgent200Response upload_media_to_knowledge_base(id, media)
@@ -559,7 +559,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](DeleteAgent200Response.md)
+[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
 
 ### Authorization
 
@@ -579,7 +579,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **upload_text_to_knowledge_base**
 > DeleteAgent200Response upload_text_to_knowledge_base(id, upload_text_to_knowledge_base_request)
@@ -639,11 +639,11 @@ with atoms.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **id** | **str**| The ID of the knowledge base | 
- **upload_text_to_knowledge_base_request** | [**UploadTextToKnowledgeBaseRequest**](UploadTextToKnowledgeBaseRequest.md)|  | 
+ **upload_text_to_knowledge_base_request** | [**UploadTextToKnowledgeBaseRequest**](./models/UploadTextToKnowledgeBaseRequest.md)|  | 
 
 ### Return type
 
-[**DeleteAgent200Response**](DeleteAgent200Response.md)
+[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
 
 ### Authorization
 
@@ -663,5 +663,5 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 

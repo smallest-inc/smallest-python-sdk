@@ -68,11 +68,11 @@ with atoms.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **create_campaign_request** | [**CreateCampaignRequest**](CreateCampaignRequest.md)|  | 
+ **create_campaign_request** | [**CreateCampaignRequest**](./models/CreateCampaignRequest.md)|  | 
 
 ### Return type
 
-[**CreateCampaign201Response**](CreateCampaign201Response.md)
+[**CreateCampaign201Response**](./models/CreateCampaign201Response.md)
 
 ### Authorization
 
@@ -92,7 +92,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **delete_campaign**
 > DeleteAgent200Response delete_campaign(id)
@@ -153,7 +153,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](DeleteAgent200Response.md)
+[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
 
 ### Authorization
 
@@ -173,7 +173,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **get_campaign_by_id**
 > GetCampaignById200Response get_campaign_by_id(id)
@@ -234,7 +234,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetCampaignById200Response**](GetCampaignById200Response.md)
+[**GetCampaignById200Response**](./models/GetCampaignById200Response.md)
 
 ### Authorization
 
@@ -254,7 +254,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **get_campaigns**
 > GetCampaigns200Response get_campaigns(get_campaigns_request)
@@ -312,11 +312,11 @@ with atoms.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **get_campaigns_request** | [**GetCampaignsRequest**](GetCampaignsRequest.md)|  | 
+ **get_campaigns_request** | [**GetCampaignsRequest**](./models/GetCampaignsRequest.md)|  | 
 
 ### Return type
 
-[**GetCampaigns200Response**](GetCampaigns200Response.md)
+[**GetCampaigns200Response**](./models/GetCampaigns200Response.md)
 
 ### Authorization
 
@@ -336,7 +336,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **pause_campaign**
 > DeleteAgent200Response pause_campaign(id)
@@ -397,7 +397,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](DeleteAgent200Response.md)
+[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
 
 ### Authorization
 
@@ -417,7 +417,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **start_campaign**
 > DeleteAgent200Response start_campaign(id)
@@ -478,7 +478,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](DeleteAgent200Response.md)
+[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
 
 ### Authorization
 
@@ -498,5 +498,5 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 

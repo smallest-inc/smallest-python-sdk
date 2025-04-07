@@ -60,7 +60,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**GetOrganization200Response**](GetOrganization200Response.md)
+[**GetOrganization200Response**](./models/GetOrganization200Response.md)
 
 ### Authorization
 
@@ -79,5 +79,5 @@ This endpoint does not need any parameter.
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 

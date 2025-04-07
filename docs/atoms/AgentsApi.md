@@ -67,11 +67,11 @@ with atoms.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **create_agent_request** | [**CreateAgentRequest**](CreateAgentRequest.md)|  | 
+ **create_agent_request** | [**CreateAgentRequest**](./models/CreateAgentRequest.md)|  | 
 
 ### Return type
 
-[**CreateAgentFromTemplate200Response**](CreateAgentFromTemplate200Response.md)
+[**CreateAgentFromTemplate200Response**](./models/CreateAgentFromTemplate200Response.md)
 
 ### Authorization
 
@@ -91,7 +91,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **delete_agent**
 > DeleteAgent200Response delete_agent(id)
@@ -150,7 +150,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](DeleteAgent200Response.md)
+[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
 
 ### Authorization
 
@@ -170,7 +170,7 @@ Name | Type | Description  | Notes
 **401** | Access token is missing or invalid |  -  |
 **403** | Forbidden access |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **get_agent_by_id**
 > GetAgentById200Response get_agent_by_id(id)
@@ -231,7 +231,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetAgentById200Response**](GetAgentById200Response.md)
+[**GetAgentById200Response**](./models/GetAgentById200Response.md)
 
 ### Authorization
 
@@ -251,7 +251,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **get_agents**
 > GetAgents200Response get_agents(page=page, offset=offset, search=search)
@@ -316,7 +316,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetAgents200Response**](GetAgents200Response.md)
+[**GetAgents200Response**](./models/GetAgents200Response.md)
 
 ### Authorization
 
@@ -336,7 +336,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
 # **update_agent**
 > UpdateAgent200Response update_agent(id, update_agent_request)
@@ -394,11 +394,11 @@ with atoms.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **id** | **str**|  | 
- **update_agent_request** | [**UpdateAgentRequest**](UpdateAgentRequest.md)|  | 
+ **update_agent_request** | [**UpdateAgentRequest**](./models/UpdateAgentRequest.md)|  | 
 
 ### Return type
 
-[**UpdateAgent200Response**](UpdateAgent200Response.md)
+[**UpdateAgent200Response**](./models/UpdateAgent200Response.md)
 
 ### Authorization
 
@@ -418,5 +418,5 @@ Name | Type | Description  | Notes
 **401** | Access token is missing or invalid |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 
