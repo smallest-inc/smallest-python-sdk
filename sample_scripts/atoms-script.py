@@ -5,10 +5,13 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
 from smallestai.atoms import AtomsClient
 
-AGENT_ID = "676*63b***c9e32"
+AGENT_ID = "67e663bffaec7a78253c9e32"
 TARGET_PHONE_NUMBER = "+919666666666"
 
 # Initialize API instances
+configuration = Configuration(
+    host="https://atoms-api.com"
+)
 atoms_client = AtomsClient()
 
 def main():

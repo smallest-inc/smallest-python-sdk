@@ -17,16 +17,16 @@
 
 ## Official Python Client for Smallest AI API   
 
-Smallest AI builds high-speed multi-lingual voice models tailored for real-time applications, achieving ultra-realistic audio generation in as fast as ~100 milliseconds for 10 seconds of audio. With this sdk, you can easily convert text into high-quality audio with humanlike expressiveness.
+Smallest AI's Waves offers high-speed multi-lingual voice models tailored for real-time applications, supprting ultra-realistic audio generation in as fast as ~100 milliseconds for 10 seconds of audio. On top of this powerful voice stack, Atoms lets you develop Multi-Modal Agents for your applications.
 
-Currently, the WavesClient supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously.  
+With this sdk, you can easily interact with both Waves and Atoms. Currently, the WavesClient supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously. AtomsClient provides a simpler way to interact with all our API's to develop and run agentic workflows. 
 
 ## Table of Contents
 
 - [Installation](#installation)
 - [Get the API Key](#get-the-api-key)
 - [Atoms Documentation](#atoms-documentation)
-  - [Getting Started](#getting-started)
+  - [Basic usage](#basic-usage)
   - [Documentation for API Endpoints](#documentation-for-api-endpoints)
 - [Waves Documentation](#waves-documentation)
   - [Best Practices for Input Text](#best-practices-for-input-text)
@@ -62,44 +62,83 @@ When using an SDK in your application, make sure to pin to at least the major ve
 
 ## Atoms Documentation
 
-### Getting Started
+The following scripts give a basic overview of how AtomsClient works. The next section gives a detailed reference for all the available API interfaces.
 
-Please follow the [installation procedure](#installation--usage) and then run the following:
+### Basic usage
 
 ```python
-import smallestai.atoms
-from smallestai.atoms.rest import ApiException
-from pprint import pprint
+from smallestai.atoms import AtomsClient
 
-# Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
-# See configuration.py for a list of all supported configuration parameters.
-configuration = atoms.Configuration(
-    host = "https://atoms-api.smallest.ai/api/v1"
-)
+# assumes your API Key is exported as environment variable SMALLEST_API_KEY
 
-# The client must configure the authentication and authorization parameters
-# in accordance with the API server security policy.
-# Examples for each auth method are provided below, use the example that
-# satisfies your auth use case.
+TARGET_PHONE_NUMBER = "+919666666666"
+ 
+def main():
 
-# Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms.Configuration(
-    access_token = os.environ["BEARER_TOKEN"]
-)
+    atoms_client = AtomsClient()
+    
+    new_agent_request = CreateAgentRequest(
+        name="Atoms Multi-Modal Agent",
+        description="My first atoms agent",
+        language={
+            "enabled": "en",
+            "switching": False
+        },
+        synthesizer={
+            "voiceConfig": {
+                "model": "waves_lightning_large",
+                "voiceId": "nyah"
+            },
+            "speed": 1.2,
+            "consistency": 0.5,
+            "similarity": 0,
+            "enhancement": 1
+        },
+        slmModel="atoms-slm-v1",
+    )
+    
+    agent_id = atoms_client.create_agent(create_agent_request=new_agent_request).data
 
-# Enter a context with an instance of the API client
-with atoms.ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = atoms.AgentTemplatesApi(api_client)
-    create_agent_from_template_request = atoms.CreateAgentFromTemplateRequest()
+    # initate a call using the newly created agent
+    call_response = atoms_client.start_outbound_call(
+        start_outbound_call_request={
+            "agent_id": agent_id,
+            "phone_number": TARGET_PHONE_NUMBER,
+        }
+    )
+    print(f"Successfully placed call with id: {call_response.conversation_id}")
 
-    try:
-        # Create agent from template
-        api_response = api_instance.create_agent_from_template(create_agent_from_template_request)
-        print("The response of AgentTemplatesApi->create_agent_from_template:\n")
-        pprint(api_response)
-    except ApiException as e:
-        print("Exception when calling AgentTemplatesApi->create_agent_from_template: %s\n" % e)
+        
+if __name__ == "__main__":
+    main()
+```
+
+### Passing configuration to the client
+
+```python
+from smallestai.atoms import AtomsClient
+from smallestai.atoms import Configuration
+
+TARGET_PHONE_NUMBER = "+919666666666"
+MY_AGENT_ID = "67e****ff*ec***82*3c9e**"
+
+def main():
+    config = Configuration(
+        access_token = 'SMALLEST_API_KEY'
+    )
+    atoms_client = AtomsClient(config)
+
+    call_response = atoms_client.start_outbound_call(
+        start_outbound_call_request={
+            "agent_id": MY_AGENT_ID,
+            "phone_number": TARGET_PHONE_NUMBER,
+        }
+    )
+    print(f"Successfully placed call with id: {call_response.conversation_id}")
+    
+        
+if __name__ == "__main__":
+    main()
 ```
 
 ### Documentation for API Endpoints
