@@ -25,6 +25,6 @@ create_campaign200_response_dict = create_campaign200_response_instance.to_dict(
 # create an instance of CreateCampaign200Response from a dict
 create_campaign200_response_from_dict = CreateCampaign200Response.from_dict(create_campaign200_response_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

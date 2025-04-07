@@ -25,6 +25,6 @@ upload_text_to_knowledge_base_request_dict = upload_text_to_knowledge_base_reque
 # create an instance of UploadTextToKnowledgeBaseRequest from a dict
 upload_text_to_knowledge_base_request_from_dict = UploadTextToKnowledgeBaseRequest.from_dict(upload_text_to_knowledge_base_request_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

@@ -33,6 +33,6 @@ get_campaign_by_id200_response_data_dict = get_campaign_by_id200_response_data_i
 # create an instance of GetCampaignById200ResponseData from a dict
 get_campaign_by_id200_response_data_from_dict = GetCampaignById200ResponseData.from_dict(get_campaign_by_id200_response_data_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

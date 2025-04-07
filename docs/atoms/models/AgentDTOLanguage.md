@@ -27,6 +27,6 @@ agent_dto_language_dict = agent_dto_language_instance.to_dict()
 # create an instance of AgentDTOLanguage from a dict
 agent_dto_language_from_dict = AgentDTOLanguage.from_dict(agent_dto_language_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

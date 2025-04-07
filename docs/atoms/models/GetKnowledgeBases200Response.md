@@ -25,6 +25,6 @@ get_knowledge_bases200_response_dict = get_knowledge_bases200_response_instance.
 # create an instance of GetKnowledgeBases200Response from a dict
 get_knowledge_bases200_response_from_dict = GetKnowledgeBases200Response.from_dict(get_knowledge_bases200_response_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

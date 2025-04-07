@@ -29,6 +29,6 @@ get_agent_templates200_response_data_inner_dict = get_agent_templates200_respons
 # create an instance of GetAgentTemplates200ResponseDataInner from a dict
 get_agent_templates200_response_data_inner_from_dict = GetAgentTemplates200ResponseDataInner.from_dict(get_agent_templates200_response_data_inner_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

@@ -25,6 +25,6 @@ create_knowledge_base_request_dict = create_knowledge_base_request_instance.to_d
 # create an instance of CreateKnowledgeBaseRequest from a dict
 create_knowledge_base_request_from_dict = CreateKnowledgeBaseRequest.from_dict(create_knowledge_base_request_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

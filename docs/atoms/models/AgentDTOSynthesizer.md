@@ -29,6 +29,6 @@ agent_dto_synthesizer_dict = agent_dto_synthesizer_instance.to_dict()
 # create an instance of AgentDTOSynthesizer from a dict
 agent_dto_synthesizer_from_dict = AgentDTOSynthesizer.from_dict(agent_dto_synthesizer_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

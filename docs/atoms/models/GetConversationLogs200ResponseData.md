@@ -36,6 +36,6 @@ get_conversation_logs200_response_data_dict = get_conversation_logs200_response_
 # create an instance of GetConversationLogs200ResponseData from a dict
 get_conversation_logs200_response_data_from_dict = GetConversationLogs200ResponseData.from_dict(get_conversation_logs200_response_data_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

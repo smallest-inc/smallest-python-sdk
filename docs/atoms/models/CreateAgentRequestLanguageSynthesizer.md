@@ -29,6 +29,6 @@ create_agent_request_language_synthesizer_dict = create_agent_request_language_s
 # create an instance of CreateAgentRequestLanguageSynthesizer from a dict
 create_agent_request_language_synthesizer_from_dict = CreateAgentRequestLanguageSynthesizer.from_dict(create_agent_request_language_synthesizer_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

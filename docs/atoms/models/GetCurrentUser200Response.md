@@ -25,6 +25,6 @@ get_current_user200_response_dict = get_current_user200_response_instance.to_dic
 # create an instance of GetCurrentUser200Response from a dict
 get_current_user200_response_from_dict = GetCurrentUser200Response.from_dict(get_current_user200_response_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

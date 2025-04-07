@@ -24,6 +24,6 @@ get_organization200_response_data_subscription_dict = get_organization200_respon
 # create an instance of GetOrganization200ResponseDataSubscription from a dict
 get_organization200_response_data_subscription_from_dict = GetOrganization200ResponseDataSubscription.from_dict(get_organization200_response_data_subscription_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

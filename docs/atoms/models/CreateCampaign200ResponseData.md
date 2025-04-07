@@ -33,6 +33,6 @@ create_campaign200_response_data_dict = create_campaign200_response_data_instanc
 # create an instance of CreateCampaign200ResponseData from a dict
 create_campaign200_response_data_from_dict = CreateCampaign200ResponseData.from_dict(create_campaign200_response_data_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

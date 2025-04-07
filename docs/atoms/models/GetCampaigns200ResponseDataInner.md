@@ -35,6 +35,6 @@ get_campaigns200_response_data_inner_dict = get_campaigns200_response_data_inner
 # create an instance of GetCampaigns200ResponseDataInner from a dict
 get_campaigns200_response_data_inner_from_dict = GetCampaigns200ResponseDataInner.from_dict(get_campaigns200_response_data_inner_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

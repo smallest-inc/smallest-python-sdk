@@ -27,6 +27,6 @@ knowledge_base_dto_dict = knowledge_base_dto_instance.to_dict()
 # create an instance of KnowledgeBaseDTO from a dict
 knowledge_base_dto_from_dict = KnowledgeBaseDTO.from_dict(knowledge_base_dto_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

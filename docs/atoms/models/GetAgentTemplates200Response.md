@@ -25,6 +25,6 @@ get_agent_templates200_response_dict = get_agent_templates200_response_instance.
 # create an instance of GetAgentTemplates200Response from a dict
 get_agent_templates200_response_from_dict = GetAgentTemplates200Response.from_dict(get_agent_templates200_response_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

@@ -25,6 +25,6 @@ get_campaigns200_response_data_inner_agent_dict = get_campaigns200_response_data
 # create an instance of GetCampaigns200ResponseDataInnerAgent from a dict
 get_campaigns200_response_data_inner_agent_from_dict = GetCampaigns200ResponseDataInnerAgent.from_dict(get_campaigns200_response_data_inner_agent_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

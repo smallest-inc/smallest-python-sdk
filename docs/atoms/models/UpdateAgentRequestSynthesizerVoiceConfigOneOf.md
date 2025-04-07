@@ -26,6 +26,6 @@ update_agent_request_synthesizer_voice_config_one_of_dict = update_agent_request
 # create an instance of UpdateAgentRequestSynthesizerVoiceConfigOneOf from a dict
 update_agent_request_synthesizer_voice_config_one_of_from_dict = UpdateAgentRequestSynthesizerVoiceConfigOneOf.from_dict(update_agent_request_synthesizer_voice_config_one_of_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 

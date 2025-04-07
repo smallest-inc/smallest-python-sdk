@@ -24,6 +24,6 @@ start_outbound_call200_response_data_dict = start_outbound_call200_response_data
 # create an instance of StartOutboundCall200ResponseData from a dict
 start_outbound_call200_response_data_from_dict = StartOutboundCall200ResponseData.from_dict(start_outbound_call200_response_data_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
 
 
