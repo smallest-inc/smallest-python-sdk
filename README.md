@@ -21,11 +21,13 @@ Smallest AI offers an end to end Voice AI suite for developers trying to build r
 
 With this sdk, you can easily interact with both Waves and Atoms. Currently, the WavesClient supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously. AtomsClient provides a simpler way of interacting with all our API's to develop and run agentic workflows. 
 
+To learn how to use our API's, check out our documentation for [Atoms](https://atoms-docs.smallest.ai/introduction) and [Waves](https://waves-docs.smallest.ai/content/introduction/)
+
 ## Table of Contents
 
 - [Installation](#installation)
 - [Get the API Key](#get-the-api-key)
-- [Getting started with Atoms](#getting-started-with-atoms)
+- [What are Atoms?](#what-are-atoms)
   - [Basic usage](#basic-usage)
   - [Documentation for API Endpoints](#documentation-for-api-endpoints)
 - [Getting started with Waves](#getting-started-with-waves)
@@ -51,11 +53,11 @@ When using an SDK in your application, make sure to pin to at least the major ve
 4. Export the API Key in your environment with the name `SMALLEST_API_KEY`, ensuring that your application can access it securely for authentication.
 
 
-## Getting started with Atoms
+## What are Atoms
 
-The following scripts give a basic overview of how AtomsClient works. The next section gives a detailed reference for all the available API interfaces.
+Atoms are agents that can talk to anyone on voice or text in any language, in any voice. Imagine an AI that you can hire to perform end-to-end tasks for your business. The following examples give an overview of how AtomsClient lets you configure your agent and automate workflows.  
 
-### Basic usage
+### Creating your first Agent
 
 ```python
 from smallestai.atoms import AtomsClient
@@ -89,22 +91,14 @@ def main():
     )
     
     agent_id = atoms_client.create_agent(create_agent_request=new_agent_request).data
-
-    # initate a call using the newly created agent
-    call_response = atoms_client.start_outbound_call(
-        start_outbound_call_request={
-            "agent_id": agent_id,
-            "phone_number": TARGET_PHONE_NUMBER,
-        }
-    )
-    print(f"Successfully placed call with id: {call_response.conversation_id}")
+    print(f"Successfully created agent with id: {agent_id}")
 
         
 if __name__ == "__main__":
     main()
 ```
 
-### Passing configuration to the client
+### Placing an outbound call
 
 ```python
 from smallestai.atoms import AtomsClient
@@ -132,37 +126,7 @@ if __name__ == "__main__":
     main()
 ```
 
-### Documentation for API Endpoints
-
-All URIs are relative to *https://atoms-api.smallest.ai/api/v1*
-
-Class | Method | HTTP request | Description
------------- | ------------- | ------------- | -------------
-*AgentTemplatesApi* | [**create_agent_from_template**](docs/atoms/AgentTemplatesApi.md#create_agent_from_template) | **POST** /agent/from-template | Create agent from template
-*AgentTemplatesApi* | [**get_agent_templates**](docs/atoms/AgentTemplatesApi.md#get_agent_templates) | **GET** /agent/template | Get agent templates
-*AgentsApi* | [**create_agent**](docs/atoms/AgentsApi.md#create_agent) | **POST** /agent | Create a new agent
-*AgentsApi* | [**delete_agent**](docs/atoms/AgentsApi.md#delete_agent) | **DELETE** /agent/{id} | Delete an agent
-*AgentsApi* | [**get_agent_by_id**](docs/atoms/AgentsApi.md#get_agent_by_id) | **GET** /agent/{id} | Get agent by ID
-*AgentsApi* | [**get_agents**](docs/atoms/AgentsApi.md#get_agents) | **GET** /agent | Get all agents
-*AgentsApi* | [**update_agent**](docs/atoms/AgentsApi.md#update_agent) | **PATCH** /agent/{id} | Update an agent
-*CallsApi* | [**start_outbound_call**](docs/atoms/CallsApi.md#start_outbound_call) | **POST** /conversation/outbound | Start an outbound call
-*CampaignsApi* | [**create_campaign**](docs/atoms/CampaignsApi.md#create_campaign) | **POST** /campaign | Create a campaign
-*CampaignsApi* | [**delete_campaign**](docs/atoms/CampaignsApi.md#delete_campaign) | **DELETE** /campaign/{id} | Delete a campaign
-*CampaignsApi* | [**get_campaign_by_id**](docs/atoms/CampaignsApi.md#get_campaign_by_id) | **GET** /campaign/{id} | Get a campaign
-*CampaignsApi* | [**get_campaigns**](docs/atoms/CampaignsApi.md#get_campaigns) | **GET** /campaign | Retrieve all campaigns
-*CampaignsApi* | [**pause_campaign**](docs/atoms/CampaignsApi.md#pause_campaign) | **POST** /campaign/{id}/pause | Pause a campaign
-*CampaignsApi* | [**start_campaign**](docs/atoms/CampaignsApi.md#start_campaign) | **POST** /campaign/{id}/start | Start a campaign
-*KnowledgeBaseApi* | [**create_knowledge_base**](docs/atoms/KnowledgeBaseApi.md#create_knowledge_base) | **POST** /knowledgebase | Create a knowledge base
-*KnowledgeBaseApi* | [**delete_knowledge_base**](docs/atoms/KnowledgeBaseApi.md#delete_knowledge_base) | **DELETE** /knowledgebase/{id} | Delete a knowledge base
-*KnowledgeBaseApi* | [**delete_knowledge_base_item**](docs/atoms/KnowledgeBaseApi.md#delete_knowledge_base_item) | **DELETE** /knowledgebase/{knowledgeBaseId}/items/{knowledgeBaseItemId} | Delete a knowledge base item
-*KnowledgeBaseApi* | [**get_knowledge_base_by_id**](docs/atoms/KnowledgeBaseApi.md#get_knowledge_base_by_id) | **GET** /knowledgebase/{id} | Get a knowledge base
-*KnowledgeBaseApi* | [**get_knowledge_base_items**](docs/atoms/KnowledgeBaseApi.md#get_knowledge_base_items) | **GET** /knowledgebase/{id}/items | Get all knowledge base items
-*KnowledgeBaseApi* | [**get_knowledge_bases**](docs/atoms/KnowledgeBaseApi.md#get_knowledge_bases) | **GET** /knowledgebase | Get all knowledge bases
-*KnowledgeBaseApi* | [**upload_media_to_knowledge_base**](docs/atoms/KnowledgeBaseApi.md#upload_media_to_knowledge_base) | **POST** /knowledgebase/{id}/items/upload-media | Upload a media to a knowledge base
-*KnowledgeBaseApi* | [**upload_text_to_knowledge_base**](docs/atoms/KnowledgeBaseApi.md#upload_text_to_knowledge_base) | **POST** /knowledgebase/{id}/items/upload-text | Upload a text to a knowledge base
-*LogsApi* | [**get_conversation_logs**](docs/atoms/LogsApi.md#get_conversation_logs) | **GET** /conversation/{id} | Get conversation logs
-*OrganizationApi* | [**get_organization**](docs/atoms/OrganizationApi.md#get_organization) | **GET** /organization | Get organization details
-*UserApi* | [**get_current_user**](docs/atoms/UserApi.md#get_current_user) | **GET** /user | Get user details
+You can find the full reference for Atoms [here](./docs/atoms/Api.md).
 
 ## Getting started with Waves
 
