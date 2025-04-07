@@ -19,7 +19,7 @@
 
 Smallest AI's Waves offers high-speed multi-lingual voice models tailored for real-time applications, supprting ultra-realistic audio generation in as fast as ~100 milliseconds for 10 seconds of audio. On top of this powerful voice stack, Atoms lets you develop Multi-Modal Agents for your applications.
 
-With this sdk, you can easily interact with both Waves and Atoms. Currently, the WavesClient supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously. AtomsClient provides a simpler way to interact with all our API's to develop and run agentic workflows. 
+With this sdk, you can easily interact with both Waves and Atoms. Currently, the WavesClient supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously. AtomsClient provides a simpler way of interacting with all our API's to develop and run agentic workflows. 
 
 ## Table of Contents
 
