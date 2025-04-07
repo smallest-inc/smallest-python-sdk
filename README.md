@@ -17,7 +17,7 @@
 
 ## Official Python Client for Smallest AI API   
 
-Smallest AI's Waves offers high-speed multi-lingual voice models tailored for real-time applications, supprting ultra-realistic audio generation in as fast as ~100 milliseconds for 10 seconds of audio. On top of this powerful voice stack, Atoms lets you develop Multi-Modal Agents for your applications.
+Smallest AI offers an end to end Voice AI suite for developers trying to build real-time voice agents. You can either directly use our Text to Speech APIs through the Waves Client or use the Atoms Client to build and operate end to end enterprise ready Voice Agents.
 
 With this sdk, you can easily interact with both Waves and Atoms. Currently, the WavesClient supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously. AtomsClient provides a simpler way of interacting with all our API's to develop and run agentic workflows. 
 
@@ -25,21 +25,12 @@ With this sdk, you can easily interact with both Waves and Atoms. Currently, the
 
 - [Installation](#installation)
 - [Get the API Key](#get-the-api-key)
-- [Atoms Documentation](#atoms-documentation)
+- [Getting started with Atoms](#getting-started-with-atoms)
   - [Basic usage](#basic-usage)
   - [Documentation for API Endpoints](#documentation-for-api-endpoints)
-- [Waves Documentation](#waves-documentation)
+- [Getting started with Waves](#getting-started-with-waves)
   - [Best Practices for Input Text](#best-practices-for-input-text)
   - [Examples](#examples)
-    - [Synchronous](#synchronous)
-    - [Asynchronous](#asynchronous)
-    - [LLM to Speech](#llm-to-speech)
-    - [Add your Voice](#add-your-voice)
-      - [Synchronously](#add-synchronously)
-      - [Asynchronously](#add-asynchronously)
-    - [Delete your Voice](#delete-your-voice)
-      - [Synchronously](#delete-synchronously)
-      - [Asynchronously](#delete-asynchronously)
   - [Available Methods](#available-methods)
   - [Technical Note: WAV Headers in Streaming Audio](#technical-note-wav-headers-in-streaming-audio)
 
@@ -60,7 +51,7 @@ When using an SDK in your application, make sure to pin to at least the major ve
 4. Export the API Key in your environment with the name `SMALLEST_API_KEY`, ensuring that your application can access it securely for authentication.
 
 
-## Atoms Documentation
+## Getting started with Atoms
 
 The following scripts give a basic overview of how AtomsClient works. The next section gives a detailed reference for all the available API interfaces.
 
@@ -173,7 +164,7 @@ Class | Method | HTTP request | Description
 *OrganizationApi* | [**get_organization**](docs/atoms/OrganizationApi.md#get_organization) | **GET** /organization | Get organization details
 *UserApi* | [**get_current_user**](docs/atoms/UserApi.md#get_current_user) | **GET** /user | Get user details
 
-## Waves Documentation
+## Getting started with Waves
 
 ### Best Practices for Input Text
 
