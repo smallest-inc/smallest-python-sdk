@@ -1,14 +1,12 @@
 import sys
 import os
 import time
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
 from smallestai.atoms import AtomsClient
 
 AGENT_ID = "676*63b***c9e32"
 TARGET_PHONE_NUMBER = "+919666666666"
 
-# Initialize API instances
 atoms_client = AtomsClient()
 
 def main():

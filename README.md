@@ -17,18 +17,23 @@
 
 ## Official Python Client for Smallest AI API   
 
-Smallest AI builds high-speed multi-lingual voice models tailored for real-time applications, achieving ultra-realistic audio generation in as fast as ~100 milliseconds for 10 seconds of audio. With this sdk, you can easily convert text into high-quality audio with humanlike expressiveness.
+Smallest AI offers an end to end Voice AI suite for developers trying to build real-time voice agents. You can either directly use our Text to Speech APIs through the Waves Client or use the Atoms Client to build and operate end to end enterprise ready Voice Agents.
 
-Currently, the WavesClient supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously.  
+With this sdk, you can easily interact with both Waves and Atoms from any Python 3.9+ application, by utilising WavesClient and AtomsClient classes respectively. Currently, the WavesClient supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously. AtomsClient provides a simpler way of interacting with all our API's to develop and run agentic workflows. 
+
+To learn how to use our API's, check out our documentation for [Atoms](https://atoms-docs.smallest.ai/introduction) and [Waves](https://waves-docs.smallest.ai/content/introduction/)
 
 ## Table of Contents
 
 - [Installation](#installation)
 - [Get the API Key](#get-the-api-key)
-- [Atoms Documentation](#atoms-documentation)
-  - [Getting Started](#getting-started)
-  - [Documentation for API Endpoints](#documentation-for-api-endpoints)
-- [Waves Documentation](#waves-documentation)
+- [What are Atoms?](#what-are-atoms)
+  - [Creating your first Agent](#creating-your-first-agent)
+  - [Placing an outbound call](#placing-an-outbound-call)
+  - [Providing context to the agent](#providing-context-to-the-agent)
+  - [Configuring workflows to drive conversations](#configuring-workflows-to-drive-conversations)
+  - [Provisioning bulk calling using campaigns](#provisioning-bulk-calling-using-campaigns)  
+- [Getting started with Waves](#getting-started-with-waves)
   - [Best Practices for Input Text](#best-practices-for-input-text)
   - [Examples](#examples)
     - [Synchronous](#synchronous)
@@ -60,81 +65,122 @@ When using an SDK in your application, make sure to pin to at least the major ve
 4. Export the API Key in your environment with the name `SMALLEST_API_KEY`, ensuring that your application can access it securely for authentication.
 
 
-## Atoms Documentation
+## What are Atoms
 
-### Getting Started
+Atoms are agents that can talk to anyone on voice or text in any language, in any voice. Imagine an AI that you can hire to perform end-to-end tasks for your business. The following examples give an overview of how AtomsClient leverages abstractions such as KnowledgeBase, Campaigns and graph-based Workflows to let you build the smartest voice agent for your usecase.
 
-Please follow the [installation procedure](#installation--usage) and then run the following:
+You can find the full reference for Atoms [here](./docs/atoms/Api.md).
+
+### Creating your first Agent
 
 ```python
-import smallestai.atoms
-from smallestai.atoms.rest import ApiException
-from pprint import pprint
+from smallestai.atoms import AtomsClient
 
-# Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
-# See configuration.py for a list of all supported configuration parameters.
-configuration = atoms.Configuration(
-    host = "https://atoms-api.smallest.ai/api/v1"
-)
+TARGET_PHONE_NUMBER = "+919666666666"
+ 
+def main():
+    # alternatively, you can export API Key as environment variable SMALLEST_API_KEY. 
+    config = Configuration(
+        access_token = 'SMALLEST_API_KEY' 
+    )
 
-# The client must configure the authentication and authorization parameters
-# in accordance with the API server security policy.
-# Examples for each auth method are provided below, use the example that
-# satisfies your auth use case.
+    atoms_client = AtomsClient(config)
 
-# Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms.Configuration(
-    access_token = os.environ["BEARER_TOKEN"]
-)
+    agent_id = atoms_client.create_agent(
+        create_agent_request={
+            "name": "Atoms Multi-Modal Agent",
+            "description": "My first atoms agent",
+            "language": {
+                "enabled": "en",
+                "switching": False
+            },
+            "synthesizer": {
+                "voiceConfig": {
+                    "model": "waves_lightning_large",
+                    "voiceId": "nyah"
+                },
+                "speed": 1.2,
+                "consistency": 0.5,
+                "similarity": 0,
+                "enhancement": 1
+            },
+            "slmModel": "atoms-slm-v1",
+        }
+    ).data
+    
+    print(f"Successfully created agent with id: {agent_id}")
 
-# Enter a context with an instance of the API client
-with atoms.ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = atoms.AgentTemplatesApi(api_client)
-    create_agent_from_template_request = atoms.CreateAgentFromTemplateRequest()
-
-    try:
-        # Create agent from template
-        api_response = api_instance.create_agent_from_template(create_agent_from_template_request)
-        print("The response of AgentTemplatesApi->create_agent_from_template:\n")
-        pprint(api_response)
-    except ApiException as e:
-        print("Exception when calling AgentTemplatesApi->create_agent_from_template: %s\n" % e)
+if __name__ == "__main__":
+    main()
 ```
 
-### Documentation for API Endpoints
+### Placing an outbound call
 
-All URIs are relative to *https://atoms-api.smallest.ai/api/v1*
+```python
+from smallestai.atoms import AtomsClient
+from smallestai.atoms import Configuration
 
-Class | Method | HTTP request | Description
------------- | ------------- | ------------- | -------------
-*AgentTemplatesApi* | [**create_agent_from_template**](docs/atoms/AgentTemplatesApi.md#create_agent_from_template) | **POST** /agent/from-template | Create agent from template
-*AgentTemplatesApi* | [**get_agent_templates**](docs/atoms/AgentTemplatesApi.md#get_agent_templates) | **GET** /agent/template | Get agent templates
-*AgentsApi* | [**create_agent**](docs/atoms/AgentsApi.md#create_agent) | **POST** /agent | Create a new agent
-*AgentsApi* | [**delete_agent**](docs/atoms/AgentsApi.md#delete_agent) | **DELETE** /agent/{id} | Delete an agent
-*AgentsApi* | [**get_agent_by_id**](docs/atoms/AgentsApi.md#get_agent_by_id) | **GET** /agent/{id} | Get agent by ID
-*AgentsApi* | [**get_agents**](docs/atoms/AgentsApi.md#get_agents) | **GET** /agent | Get all agents
-*AgentsApi* | [**update_agent**](docs/atoms/AgentsApi.md#update_agent) | **PATCH** /agent/{id} | Update an agent
-*CallsApi* | [**start_outbound_call**](docs/atoms/CallsApi.md#start_outbound_call) | **POST** /conversation/outbound | Start an outbound call
-*CampaignsApi* | [**create_campaign**](docs/atoms/CampaignsApi.md#create_campaign) | **POST** /campaign | Create a campaign
-*CampaignsApi* | [**delete_campaign**](docs/atoms/CampaignsApi.md#delete_campaign) | **DELETE** /campaign/{id} | Delete a campaign
-*CampaignsApi* | [**get_campaign_by_id**](docs/atoms/CampaignsApi.md#get_campaign_by_id) | **GET** /campaign/{id} | Get a campaign
-*CampaignsApi* | [**get_campaigns**](docs/atoms/CampaignsApi.md#get_campaigns) | **GET** /campaign | Retrieve all campaigns
-*CampaignsApi* | [**pause_campaign**](docs/atoms/CampaignsApi.md#pause_campaign) | **POST** /campaign/{id}/pause | Pause a campaign
-*CampaignsApi* | [**start_campaign**](docs/atoms/CampaignsApi.md#start_campaign) | **POST** /campaign/{id}/start | Start a campaign
-*KnowledgeBaseApi* | [**create_knowledge_base**](docs/atoms/KnowledgeBaseApi.md#create_knowledge_base) | **POST** /knowledgebase | Create a knowledge base
-*KnowledgeBaseApi* | [**delete_knowledge_base**](docs/atoms/KnowledgeBaseApi.md#delete_knowledge_base) | **DELETE** /knowledgebase/{id} | Delete a knowledge base
-*KnowledgeBaseApi* | [**delete_knowledge_base_item**](docs/atoms/KnowledgeBaseApi.md#delete_knowledge_base_item) | **DELETE** /knowledgebase/{knowledgeBaseId}/items/{knowledgeBaseItemId} | Delete a knowledge base item
-*KnowledgeBaseApi* | [**get_knowledge_base_by_id**](docs/atoms/KnowledgeBaseApi.md#get_knowledge_base_by_id) | **GET** /knowledgebase/{id} | Get a knowledge base
-*KnowledgeBaseApi* | [**get_knowledge_base_items**](docs/atoms/KnowledgeBaseApi.md#get_knowledge_base_items) | **GET** /knowledgebase/{id}/items | Get all knowledge base items
-*KnowledgeBaseApi* | [**get_knowledge_bases**](docs/atoms/KnowledgeBaseApi.md#get_knowledge_bases) | **GET** /knowledgebase | Get all knowledge bases
-*KnowledgeBaseApi* | [**upload_media_to_knowledge_base**](docs/atoms/KnowledgeBaseApi.md#upload_media_to_knowledge_base) | **POST** /knowledgebase/{id}/items/upload-media | Upload a media to a knowledge base
-*KnowledgeBaseApi* | [**upload_text_to_knowledge_base**](docs/atoms/KnowledgeBaseApi.md#upload_text_to_knowledge_base) | **POST** /knowledgebase/{id}/items/upload-text | Upload a text to a knowledge base
-*LogsApi* | [**get_conversation_logs**](docs/atoms/LogsApi.md#get_conversation_logs) | **GET** /conversation/{id} | Get conversation logs
-*OrganizationApi* | [**get_organization**](docs/atoms/OrganizationApi.md#get_organization) | **GET** /organization | Get organization details
-*UserApi* | [**get_current_user**](docs/atoms/UserApi.md#get_current_user) | **GET** /user | Get user details
+TARGET_PHONE_NUMBER = "+919666666666"
+MY_AGENT_ID = "67e****ff*ec***82*3c9e**"
 
-## Waves Documentation
+def main():
+    # assumes you have exported API_KEY in SMALLEST_API_KEY environment variable
+    atoms_client = AtomsClient()
+
+    call_response = atoms_client.start_outbound_call(
+        start_outbound_call_request={
+            "agent_id": MY_AGENT_ID,
+            "phone_number": TARGET_PHONE_NUMBER,
+        }
+    )
+    print(f"Successfully placed call with id: {call_response.conversation_id}")
+           
+if __name__ == "__main__":
+    main()
+```
+### Providing context to the agent
+
+An agent can be attached to a knowledge base, which it can look up during conversations. Here is how you can do it:
+
+```python
+from smallestai.atoms import AtomsClient
+
+def main():
+    # assumes you have exported API_KEY in SMALLEST_API_KEY environment variable
+    atoms_client = AtomsClient()
+    
+    # Create a new knowledge base
+    knowledge_base = atoms_client.create_knowledge_base(
+        create_knowledge_base_request={
+            "name": "Customer Support Knowledge Base",
+            "description": "Contains FAQs and product information"
+        }
+    )
+    knowledge_base_id = knowledge_base.data
+
+    with open("product_manual.pdf", "rb") as f:
+        media_content = f.read()
+        media_response = atoms_client.upload_media_to_knowledge_base(
+            id=knowledge_base_id,
+            media=media_content
+        )
+    print("Added product_manual.pdf to knowledge base")
+
+if __name__ == "__main__":
+    main()
+ ```   
+
+### Configuring workflows to drive conversations
+
+An agent can be configured with a graph-based workflow to help it drive meaningful conversations. You can explore making one on our [platform](https://atoms.smallest.ai/dashboard/agents). Refer to our [documentation](https://atoms-docs.smallest.ai/deep-dive/workflow/what-is-a-workflow) for learning more extensively.
+
+![image](https://i.imgur.com/kRs53zV.png)
+
+### Provisioning bulk calling using campaigns
+
+To manage bulk calls, you can use [Atoms platform](https://atoms.smallest.ai/dashboard/audience) to create [audience](https://atoms-docs.smallest.ai/deep-dive/audience/audience) (collection of contacts) and then configure [campaigns](https://atoms-docs.smallest.ai/deep-dive/campaign/campaign) to run.  
+
+## Getting started with Waves
 
 ### Best Practices for Input Text
 

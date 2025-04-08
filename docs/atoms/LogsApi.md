@@ -6,65 +6,35 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**get_conversation_logs**](LogsApi.md#get_conversation_logs) | **GET** /conversation/{id} | Get conversation logs
 
-
 # **get_conversation_logs**
-> GetConversationLogs200Response get_conversation_logs(id)
 
-Get conversation logs
+Get conversation logs for a specific conversation ID.
 
 ### Example
 
-* Bearer (JWT) Authentication (BearerAuth):
-
 ```python
-import smallestai.atoms
-from smallestai.atoms.models.get_conversation_logs200_response import GetConversationLogs200Response
-from smallestai.atoms.rest import ApiException
-from pprint import pprint
+from smallestai.atoms import AtomsClient
 
-# Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
-# See configuration.py for a list of all supported configuration parameters.
-configuration = atoms.Configuration(
-    host = "https://atoms-api.smallest.ai/api/v1"
-)
+def main():
+    atoms_client = AtomsClient()
+    
+    conversation_id = "your_conversation_id"
+    response = atoms_client.get_conversation_logs(id=conversation_id)
+    print(f"Conversation logs: {response.data}")
 
-# The client must configure the authentication and authorization parameters
-# in accordance with the API server security policy.
-# Examples for each auth method are provided below, use the example that
-# satisfies your auth use case.
-
-# Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms.Configuration(
-    access_token = os.environ["BEARER_TOKEN"]
-)
-
-# Enter a context with an instance of the API client
-with atoms.ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = atoms.LogsApi(api_client)
-    id = 'id_example' # str | The callId of the conversation. You can get the callId from the conversation logs.
-
-    try:
-        # Get conversation logs
-        api_response = api_instance.get_conversation_logs(id)
-        print("The response of LogsApi->get_conversation_logs:\n")
-        pprint(api_response)
-    except Exception as e:
-        print("Exception when calling LogsApi->get_conversation_logs: %s\n" % e)
+if __name__ == "__main__":
+    main()
 ```
-
-
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **str**| The callId of the conversation. You can get the callId from the conversation logs. | 
+**id** | **str** | The conversation ID to retrieve logs for | 
 
 ### Return type
 
-[**GetConversationLogs200Response**](GetConversationLogs200Response.md)
+[**GetConversationLogs200Response**](./models/GetConversationLogs200Response.md)
 
 ### Authorization
 
@@ -84,5 +54,5 @@ Name | Type | Description  | Notes
 **401** | Unauthorized access |  -  |
 **500** | Internal server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[[Back to API list]](../../README.md#documentation-for-api-endpoints)
 

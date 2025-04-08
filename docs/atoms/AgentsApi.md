@@ -10,413 +10,187 @@ Method | HTTP request | Description
 [**get_agents**](AgentsApi.md#get_agents) | **GET** /agent | Get all agents
 [**update_agent**](AgentsApi.md#update_agent) | **PATCH** /agent/{id} | Update an agent
 
-
 # **create_agent**
-> CreateAgentFromTemplate200Response create_agent(create_agent_request)
 
-Create a new agent
-
-You can create a new agent by passing the name of the agent in the request body.
+Create a new agent by providing the agent configuration.
 
 ### Example
 
-* Bearer (JWT) Authentication (BearerAuth):
-
 ```python
-import smallestai.atoms
-from smallestai.atoms.models.create_agent_from_template200_response import CreateAgentFromTemplate200Response
-from smallestai.atoms.models.create_agent_request import CreateAgentRequest
-from smallestai.atoms.rest import ApiException
-from pprint import pprint
+from smallestai.atoms import AtomsClient
 
-# Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
-# See configuration.py for a list of all supported configuration parameters.
-configuration = atoms.Configuration(
-    host = "https://atoms-api.smallest.ai/api/v1"
-)
+def main():
+    atoms_client = AtomsClient()
+    
+    new_agent_request = {
+        "name": "Test Agent",
+        "description": "Test agent description",
+        "language": {
+            "enabled": "en",
+            "switching": False
+        },
+        "synthesizer": {
+            "voiceConfig": {
+                "model": "waves_lightning_large",
+                "voiceId": "nyah"
+            },
+            "speed": 1.2,
+            "consistency": 0.5,
+            "similarity": 0,
+            "enhancement": 1
+        },
+        "slmModel": "atoms-slm-v1"
+    }
+    
+    response = atoms_client.create_agent(create_agent_request=new_agent_request)
+    print(f"Created agent with ID: {response.data}")
 
-# The client must configure the authentication and authorization parameters
-# in accordance with the API server security policy.
-# Examples for each auth method are provided below, use the example that
-# satisfies your auth use case.
-
-# Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms.Configuration(
-    access_token = os.environ["BEARER_TOKEN"]
-)
-
-# Enter a context with an instance of the API client
-with atoms.ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = atoms.AgentsApi(api_client)
-    create_agent_request = atoms.CreateAgentRequest() # CreateAgentRequest | 
-
-    try:
-        # Create a new agent
-        api_response = api_instance.create_agent(create_agent_request)
-        print("The response of AgentsApi->create_agent:\n")
-        pprint(api_response)
-    except Exception as e:
-        print("Exception when calling AgentsApi->create_agent: %s\n" % e)
+if __name__ == "__main__":
+    main()
 ```
-
-
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **create_agent_request** | [**CreateAgentRequest**](CreateAgentRequest.md)|  | 
+**create_agent_request** | [**CreateAgentRequest**](./models/CreateAgentRequest.md) | Agent configuration | 
 
 ### Return type
 
-[**CreateAgentFromTemplate200Response**](CreateAgentFromTemplate200Response.md)
-
-### Authorization
-
-[BearerAuth](../README.md#BearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-### HTTP response details
-
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**201** | Agent created successfully |  -  |
-**400** | Invalid input |  -  |
-**401** | Unauthorized access |  -  |
-**500** | Internal server error |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[**CreateAgentFromTemplate200Response**](./models/CreateAgentFromTemplate200Response.md)
 
 # **delete_agent**
-> DeleteAgent200Response delete_agent(id)
 
-Delete an agent
+Delete an existing agent by ID.
 
 ### Example
 
-* Bearer (JWT) Authentication (BearerAuth):
-
 ```python
-import smallestai.atoms
-from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
-from smallestai.atoms.rest import ApiException
-from pprint import pprint
+from smallestai.atoms import AtomsClient
 
-# Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
-# See configuration.py for a list of all supported configuration parameters.
-configuration = atoms.Configuration(
-    host = "https://atoms-api.smallest.ai/api/v1"
-)
+def main():
+    atoms_client = AtomsClient()
+    
+    agent_id = "your_agent_id"
+    response = atoms_client.delete_agent(id=agent_id)
+    print("Agent deleted successfully")
 
-# The client must configure the authentication and authorization parameters
-# in accordance with the API server security policy.
-# Examples for each auth method are provided below, use the example that
-# satisfies your auth use case.
-
-# Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms.Configuration(
-    access_token = os.environ["BEARER_TOKEN"]
-)
-
-# Enter a context with an instance of the API client
-with atoms.ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = atoms.AgentsApi(api_client)
-    id = 'id_example' # str | 
-
-    try:
-        # Delete an agent
-        api_response = api_instance.delete_agent(id)
-        print("The response of AgentsApi->delete_agent:\n")
-        pprint(api_response)
-    except Exception as e:
-        print("Exception when calling AgentsApi->delete_agent: %s\n" % e)
+if __name__ == "__main__":
+    main()
 ```
-
-
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **str**|  | 
+**id** | **str** | Agent ID to delete | 
 
 ### Return type
 
-[**DeleteAgent200Response**](DeleteAgent200Response.md)
-
-### Authorization
-
-[BearerAuth](../README.md#BearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
-### HTTP response details
-
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Agent deleted successfully |  -  |
-**400** | Invalid input |  -  |
-**401** | Access token is missing or invalid |  -  |
-**403** | Forbidden access |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
 
 # **get_agent_by_id**
-> GetAgentById200Response get_agent_by_id(id)
 
-Get agent by ID
-
-Agents are the main entities in the system. Agents are used to create conversations. You can create workflow for an agent and configure it for different use cases. You can also create custom workflows for an agent.
+Get details of a specific agent by ID.
 
 ### Example
 
-* Bearer (JWT) Authentication (BearerAuth):
-
 ```python
-import smallestai.atoms
-from smallestai.atoms.models.get_agent_by_id200_response import GetAgentById200Response
-from smallestai.atoms.rest import ApiException
-from pprint import pprint
+from smallestai.atoms import AtomsClient
 
-# Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
-# See configuration.py for a list of all supported configuration parameters.
-configuration = atoms.Configuration(
-    host = "https://atoms-api.smallest.ai/api/v1"
-)
+def main():
+    atoms_client = AtomsClient()
+    
+    agent_id = "your_agent_id"
+    response = atoms_client.get_agent_by_id(id=agent_id)
+    print(f"Agent details: {response.data}")
 
-# The client must configure the authentication and authorization parameters
-# in accordance with the API server security policy.
-# Examples for each auth method are provided below, use the example that
-# satisfies your auth use case.
-
-# Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms.Configuration(
-    access_token = os.environ["BEARER_TOKEN"]
-)
-
-# Enter a context with an instance of the API client
-with atoms.ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = atoms.AgentsApi(api_client)
-    id = 'id_example' # str | 
-
-    try:
-        # Get agent by ID
-        api_response = api_instance.get_agent_by_id(id)
-        print("The response of AgentsApi->get_agent_by_id:\n")
-        pprint(api_response)
-    except Exception as e:
-        print("Exception when calling AgentsApi->get_agent_by_id: %s\n" % e)
+if __name__ == "__main__":
+    main()
 ```
-
-
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **str**|  | 
+**id** | **str** | Agent ID to retrieve | 
 
 ### Return type
 
-[**GetAgentById200Response**](GetAgentById200Response.md)
-
-### Authorization
-
-[BearerAuth](../README.md#BearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
-### HTTP response details
-
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Successful response |  -  |
-**400** | Invalid input |  -  |
-**401** | Unauthorized access |  -  |
-**500** | Internal server error |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[**GetAgentById200Response**](./models/GetAgentById200Response.md)
 
 # **get_agents**
-> GetAgents200Response get_agents(page=page, offset=offset, search=search)
 
-Get all agents
-
-Agents are the main entities in the system. Agents are used to create conversations. You can create workflow for an agent and configure it for different use cases. You can also create custom workflows for an agent. This API will give you the list of agents created by organization you are a part of.
+Get a list of all agents.
 
 ### Example
 
-* Bearer (JWT) Authentication (BearerAuth):
-
 ```python
-import smallestai.atoms
-from smallestai.atoms.models.get_agents200_response import GetAgents200Response
-from smallestai.atoms.rest import ApiException
-from pprint import pprint
+from smallestai.atoms import AtomsClient
 
-# Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
-# See configuration.py for a list of all supported configuration parameters.
-configuration = atoms.Configuration(
-    host = "https://atoms-api.smallest.ai/api/v1"
-)
+def main():
+    atoms_client = AtomsClient()
+    
+    # Optional parameters for pagination and search
+    response = atoms_client.get_agents(
+        page=1,      # optional, default=1
+        offset=5,    # optional, default=5
+        search=None  # optional search term
+    )
+    print(f"Retrieved agents: {response.data}")
 
-# The client must configure the authentication and authorization parameters
-# in accordance with the API server security policy.
-# Examples for each auth method are provided below, use the example that
-# satisfies your auth use case.
-
-# Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms.Configuration(
-    access_token = os.environ["BEARER_TOKEN"]
-)
-
-# Enter a context with an instance of the API client
-with atoms.ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = atoms.AgentsApi(api_client)
-    page = 1 # int |  (optional) (default to 1)
-    offset = 5 # int |  (optional) (default to 5)
-    search = 'search_example' # str |  (optional)
-
-    try:
-        # Get all agents
-        api_response = api_instance.get_agents(page=page, offset=offset, search=search)
-        print("The response of AgentsApi->get_agents:\n")
-        pprint(api_response)
-    except Exception as e:
-        print("Exception when calling AgentsApi->get_agents: %s\n" % e)
+if __name__ == "__main__":
+    main()
 ```
-
-
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **page** | **int**|  | [optional] [default to 1]
- **offset** | **int**|  | [optional] [default to 5]
- **search** | **str**|  | [optional] 
+**page** | **int** | Page number | [optional] [default to 1]
+**offset** | **int** | Number of items per page | [optional] [default to 5]
+**search** | **str** | Search term | [optional]
 
 ### Return type
 
-[**GetAgents200Response**](GetAgents200Response.md)
-
-### Authorization
-
-[BearerAuth](../README.md#BearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
-### HTTP response details
-
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Successful response |  -  |
-**400** | Invalid input |  -  |
-**401** | Unauthorized access |  -  |
-**500** | Internal server error |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[**GetAgents200Response**](./models/GetAgents200Response.md)
 
 # **update_agent**
-> UpdateAgent200Response update_agent(id, update_agent_request)
 
-Update an agent
+Update an existing agent's configuration.
 
 ### Example
 
-* Bearer (JWT) Authentication (BearerAuth):
-
 ```python
-import smallestai.atoms
-from smallestai.atoms.models.update_agent200_response import UpdateAgent200Response
-from smallestai.atoms.models.update_agent_request import UpdateAgentRequest
-from smallestai.atoms.rest import ApiException
-from pprint import pprint
+from smallestai.atoms import AtomsClient
 
-# Defining the host is optional and defaults to https://atoms-api.smallest.ai/api/v1
-# See configuration.py for a list of all supported configuration parameters.
-configuration = atoms.Configuration(
-    host = "https://atoms-api.smallest.ai/api/v1"
-)
+def main():
+    atoms_client = AtomsClient()
+    
+    agent_id = "your_agent_id"
+    update_request = {
+        "name": "Updated Test Agent"
+        # Add other fields to update as needed
+    }
+    
+    response = atoms_client.update_agent(
+        id=agent_id,
+        update_agent_request=update_request
+    )
+    print("Agent updated successfully")
 
-# The client must configure the authentication and authorization parameters
-# in accordance with the API server security policy.
-# Examples for each auth method are provided below, use the example that
-# satisfies your auth use case.
-
-# Configure Bearer authorization (JWT): BearerAuth
-configuration = atoms.Configuration(
-    access_token = os.environ["BEARER_TOKEN"]
-)
-
-# Enter a context with an instance of the API client
-with atoms.ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = atoms.AgentsApi(api_client)
-    id = 'id_example' # str | 
-    update_agent_request = atoms.UpdateAgentRequest() # UpdateAgentRequest | 
-
-    try:
-        # Update an agent
-        api_response = api_instance.update_agent(id, update_agent_request)
-        print("The response of AgentsApi->update_agent:\n")
-        pprint(api_response)
-    except Exception as e:
-        print("Exception when calling AgentsApi->update_agent: %s\n" % e)
+if __name__ == "__main__":
+    main()
 ```
-
-
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **id** | **str**|  | 
- **update_agent_request** | [**UpdateAgentRequest**](UpdateAgentRequest.md)|  | 
+**id** | **str** | Agent ID to update | 
+**update_agent_request** | [**UpdateAgentRequest**](./models/UpdateAgentRequest.md) | Updated agent configuration | 
 
 ### Return type
 
-[**UpdateAgent200Response**](UpdateAgent200Response.md)
-
-### Authorization
-
-[BearerAuth](../README.md#BearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-### HTTP response details
-
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Agent updated successfully |  -  |
-**400** | Invalid input |  -  |
-**401** | Access token is missing or invalid |  -  |
-**500** | Internal server error |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+[**UpdateAgent200Response**](./models/UpdateAgent200Response.md)
 
