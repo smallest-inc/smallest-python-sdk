@@ -30,9 +30,21 @@ To learn how to use our API's, check out our documentation for [Atoms](https://a
 - [What are Atoms?](#what-are-atoms)
   - [Creating your first Agent](#creating-your-first-agent)
   - [Placing an outbound call](#placing-an-outbound-call)
+  - [Providing context to the agent](#providing-context-to-the-agent)
+  - [Configuring workflows to drive conversations](#configuring-workflows-to-drive-conversations)
+  - [Provisioning bulk calling using campaigns](#provisioning-bulk-calling-using-campaigns)  
 - [Getting started with Waves](#getting-started-with-waves)
   - [Best Practices for Input Text](#best-practices-for-input-text)
   - [Examples](#examples)
+    - [Synchronous](#synchronous)
+    - [Asynchronous](#asynchronous)
+    - [LLM to Speech](#llm-to-speech)
+    - [Add your Voice](#add-your-voice)
+      - [Synchronously](#add-synchronously)
+      - [Asynchronously](#add-asynchronously)
+    - [Delete your Voice](#delete-your-voice)
+      - [Synchronously](#delete-synchronously)
+      - [Asynchronously](#delete-asynchronously)
   - [Available Methods](#available-methods)
   - [Technical Note: WAV Headers in Streaming Audio](#technical-note-wav-headers-in-streaming-audio)
 
@@ -55,7 +67,9 @@ When using an SDK in your application, make sure to pin to at least the major ve
 
 ## What are Atoms
 
-Atoms are agents that can talk to anyone on voice or text in any language, in any voice. Imagine an AI that you can hire to perform end-to-end tasks for your business. The following examples give an overview of how AtomsClient lets you configure your agent and automate workflows.  
+Atoms are agents that can talk to anyone on voice or text in any language, in any voice. Imagine an AI that you can hire to perform end-to-end tasks for your business. The following examples give an overview of how AtomsClient leverages abstractions such as KnowledgeBase, Campaigns and graph-based Workflows to let you build the smartest voice agent for your usecase.
+
+You can find the full reference for Atoms [here](./docs/atoms/Api.md).
 
 ### Creating your first Agent
 
@@ -125,8 +139,46 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+### Providing context to the agent
 
-You can find the full reference for Atoms [here](./docs/atoms/Api.md).
+An agent can be attached to a knowledge base, which it can look up during conversations. Here is how you can do it:
+
+```python
+from smallestai.atoms import AtomsClient
+
+def main():
+    atoms_client = AtomsClient()
+    
+    # Create a new knowledge base
+    knowledge_base = atoms_client.create_knowledge_base(
+        create_knowledge_base_request={
+            "name": "Customer Support Knowledge Base",
+            "description": "Contains FAQs and product information"
+        }
+    )
+    knowledge_base_id = knowledge_base.data
+
+    with open("product_manual.pdf", "rb") as f:
+        media_content = f.read()
+        media_response = atoms_client.upload_media_to_knowledge_base(
+            id=knowledge_base_id,
+            media=media_content
+        )
+    print("Added product_manual.pdf to knowledge base")
+
+if __name__ == "__main__":
+    main()
+ ```   
+
+### Configuring workflows to drive conversations
+
+An agent can be configured with a graph-based workflow to help it drive meaningful conversations. You can explore making one on our [platform](https://atoms.smallest.ai/dashboard/agents). Refer to our [documentation](https://atoms-docs.smallest.ai/deep-dive/workflow/what-is-a-workflow) for learning more extensively.
+
+![image](https://imgur.com/kRs53zV)
+
+### Provisioning bulk calling using campaigns
+
+To manage bulk calls, you can use [Atoms platform](https://atoms.smallest.ai/dashboard/audience) to create [audience](https://atoms-docs.smallest.ai/deep-dive/audience/audience) (collection of contacts) and then configure [campaigns](https://atoms-docs.smallest.ai/deep-dive/campaign/campaign) to run.  
 
 ## Getting started with Waves
 

@@ -248,11 +248,8 @@ def main():
     
     kb_id = "your_knowledge_base_id"
     text_request = {
-        "text": "Your text content here",
-        "metadata": {
-            "source": "manual",
-            "type": "documentation"
-        }
+        "title": "Your title here",
+        "content": "Your text content here"
     }
     
     response = atoms_client.upload_text_to_knowledge_base(
