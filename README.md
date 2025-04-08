@@ -76,14 +76,16 @@ You can find the full reference for Atoms [here](./docs/atoms/Api.md).
 ```python
 from smallestai.atoms import AtomsClient
 
-# assumes your API Key is exported as environment variable SMALLEST_API_KEY
-
 TARGET_PHONE_NUMBER = "+919666666666"
  
 def main():
+    # alternatively, you can export API Key as environment variable SMALLEST_API_KEY. 
+    config = Configuration(
+        access_token = 'SMALLEST_API_KEY' 
+    )
 
-    atoms_client = AtomsClient()
-    
+    atoms_client = AtomsClient(config)
+
     agent_id = atoms_client.create_agent(
         create_agent_request={
             "name": "Atoms Multi-Modal Agent",
@@ -122,10 +124,8 @@ TARGET_PHONE_NUMBER = "+919666666666"
 MY_AGENT_ID = "67e****ff*ec***82*3c9e**"
 
 def main():
-    config = Configuration(
-        access_token = 'SMALLEST_API_KEY'
-    )
-    atoms_client = AtomsClient(config)
+    # assumes you have exported API_KEY in SMALLEST_API_KEY environment variable
+    atoms_client = AtomsClient()
 
     call_response = atoms_client.start_outbound_call(
         start_outbound_call_request={
@@ -146,6 +146,7 @@ An agent can be attached to a knowledge base, which it can look up during conver
 from smallestai.atoms import AtomsClient
 
 def main():
+    # assumes you have exported API_KEY in SMALLEST_API_KEY environment variable
     atoms_client = AtomsClient()
     
     # Create a new knowledge base
