@@ -19,7 +19,7 @@
 
 Smallest AI offers an end to end Voice AI suite for developers trying to build real-time voice agents. You can either directly use our Text to Speech APIs through the Waves Client or use the Atoms Client to build and operate end to end enterprise ready Voice Agents.
 
-With this sdk, you can easily interact with both Waves and Atoms. Currently, the WavesClient supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously. AtomsClient provides a simpler way of interacting with all our API's to develop and run agentic workflows. 
+With this sdk, you can easily interact with both Waves and Atoms from any Python 3.9+ application. Currently, the WavesClient supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously. AtomsClient provides a simpler way of interacting with all our API's to develop and run agentic workflows. 
 
 To learn how to use our API's, check out our documentation for [Atoms](https://atoms-docs.smallest.ai/introduction) and [Waves](https://waves-docs.smallest.ai/content/introduction/)
 
