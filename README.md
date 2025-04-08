@@ -84,30 +84,30 @@ def main():
 
     atoms_client = AtomsClient()
     
-    new_agent_request = CreateAgentRequest(
-        name="Atoms Multi-Modal Agent",
-        description="My first atoms agent",
-        language={
-            "enabled": "en",
-            "switching": False
-        },
-        synthesizer={
-            "voiceConfig": {
-                "model": "waves_lightning_large",
-                "voiceId": "nyah"
+    agent_id = atoms_client.create_agent(
+        create_agent_request={
+            "name": "Atoms Multi-Modal Agent",
+            "description": "My first atoms agent",
+            "language": {
+                "enabled": "en",
+                "switching": False
             },
-            "speed": 1.2,
-            "consistency": 0.5,
-            "similarity": 0,
-            "enhancement": 1
-        },
-        slmModel="atoms-slm-v1",
-    )
+            "synthesizer": {
+                "voiceConfig": {
+                    "model": "waves_lightning_large",
+                    "voiceId": "nyah"
+                },
+                "speed": 1.2,
+                "consistency": 0.5,
+                "similarity": 0,
+                "enhancement": 1
+            },
+            "slmModel": "atoms-slm-v1",
+        }
+    ).data
     
-    agent_id = atoms_client.create_agent(create_agent_request=new_agent_request).data
     print(f"Successfully created agent with id: {agent_id}")
 
-        
 if __name__ == "__main__":
     main()
 ```
@@ -134,8 +134,7 @@ def main():
         }
     )
     print(f"Successfully placed call with id: {call_response.conversation_id}")
-    
-        
+           
 if __name__ == "__main__":
     main()
 ```
@@ -174,7 +173,7 @@ if __name__ == "__main__":
 
 An agent can be configured with a graph-based workflow to help it drive meaningful conversations. You can explore making one on our [platform](https://atoms.smallest.ai/dashboard/agents). Refer to our [documentation](https://atoms-docs.smallest.ai/deep-dive/workflow/what-is-a-workflow) for learning more extensively.
 
-![image](https://imgur.com/kRs53zV)
+![image](https://i.imgur.com/kRs53zV.png)
 
 ### Provisioning bulk calling using campaigns
 
