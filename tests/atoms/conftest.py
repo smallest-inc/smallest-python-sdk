@@ -97,10 +97,11 @@ def create_agents(base_url, headers, knowledge_base_id):
                 "similarity": 0,
                 "enhancement": 1
             },
-            "slmModel": "atoms-slm-v1",
+            "slmModel": "electron-v1",
             "globalKnowledgeBaseId": knowledge_base_id
         }
     )
+    print(resp.json())
     resp.raise_for_status()
     base_agent_id = resp.json()["data"]
     time.sleep(0.2)
@@ -125,7 +126,7 @@ def create_agents(base_url, headers, knowledge_base_id):
                 "similarity": 0,
                 "enhancement": 1
             },
-            "slmModel": "atoms-slm-v1",
+            "slmModel": "electron-v1",
             "globalKnowledgeBaseId": knowledge_base_id
         }
     )

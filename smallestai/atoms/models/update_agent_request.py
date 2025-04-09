@@ -33,7 +33,7 @@ class UpdateAgentRequest(BaseModel):
     language: Optional[UpdateAgentRequestLanguage] = None
     synthesizer: Optional[UpdateAgentRequestSynthesizer] = None
     global_knowledge_base_id: Optional[StrictStr] = Field(default=None, alias="globalKnowledgeBaseId")
-    slm_model: Optional[StrictStr] = Field(default='atoms-slm-v1', alias="slmModel")
+    slm_model: Optional[StrictStr] = Field(default='electron-v1', alias="slmModel")
     default_variables: Optional[Dict[str, Any]] = Field(default=None, description="The default variables to use for the agent. These variables will be used if no variables are provided when initiating a conversation with the agent.", alias="defaultVariables")
     telephony_product_id: Optional[StrictStr] = Field(default=None, description="The telephony product ID of the agent. This is the product ID of the telephony product that will be used to make the outbound call. You can buy telephone number and assign it to the agent.", alias="telephonyProductId")
     __properties: ClassVar[List[str]] = ["name", "description", "language", "synthesizer", "globalKnowledgeBaseId", "slmModel", "defaultVariables", "telephonyProductId"]
@@ -44,8 +44,8 @@ class UpdateAgentRequest(BaseModel):
         if value is None:
             return value
 
-        if value not in set(['atoms-slm-v1', 'gpt-4o-mini']):
-            raise ValueError("must be one of enum values ('atoms-slm-v1', 'gpt-4o-mini')")
+        if value not in set(['electron-v1', 'electron-v2', 'gpt-4o-mini']):
+            raise ValueError("must be one of enum values ('electron-v1', 'electron-v2', 'gpt-4o-mini')")
         return value
 
     model_config = ConfigDict(
@@ -110,7 +110,7 @@ class UpdateAgentRequest(BaseModel):
             "language": UpdateAgentRequestLanguage.from_dict(obj["language"]) if obj.get("language") is not None else None,
             "synthesizer": UpdateAgentRequestSynthesizer.from_dict(obj["synthesizer"]) if obj.get("synthesizer") is not None else None,
             "globalKnowledgeBaseId": obj.get("globalKnowledgeBaseId"),
-            "slmModel": obj.get("slmModel") if obj.get("slmModel") is not None else 'atoms-slm-v1',
+            "slmModel": obj.get("slmModel") if obj.get("slmModel") is not None else 'electron-v1',
             "defaultVariables": obj.get("defaultVariables"),
             "telephonyProductId": obj.get("telephonyProductId")
         })

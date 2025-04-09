@@ -27,7 +27,7 @@ def test_create_agent(atoms_client, global_state):
             "similarity": 0,
             "enhancement": 1
         },
-        slmModel="atoms-slm-v1",
+        slmModel="electron-v1",
         globalKnowledgeBaseId=global_state["base_knowledge_base"]["id"]
     )
     
