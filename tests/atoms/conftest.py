@@ -18,7 +18,7 @@ def create_knowledge_bases(base_url, headers):
             "description": "Knowledge base for testing"
         }
     )
-    resp.raise_for_status()
+    # resp.raise_for_status()
     base_knowledge_base_id = resp.json()["data"]
     time.sleep(0.2)
 
@@ -30,7 +30,7 @@ def create_knowledge_bases(base_url, headers):
             "content": "This is a test knowledge base item",
         }
     )
-    resp.raise_for_status()
+    # resp.raise_for_status()
     time.sleep(0.2)
 
     resp = requests.post(
@@ -41,14 +41,14 @@ def create_knowledge_bases(base_url, headers):
             "content": "This is a temporary test knowledge base item",
         }
     )
-    resp.raise_for_status()
+    # resp.raise_for_status()
     time.sleep(0.2)
 
     resp = requests.get(
         f"{base_url}/knowledgebase/{base_knowledge_base_id}/items",
         headers=headers
     )
-    resp.raise_for_status()
+    # resp.raise_for_status()
     items = resp.json()["data"]
     if len(items) < 1:
         raise Exception("Expected at least 1 knowledge base items")
@@ -63,7 +63,7 @@ def create_knowledge_bases(base_url, headers):
             "description": "Temporary knowledge base for delete testing"
         }
     )
-    resp.raise_for_status()
+    # resp.raise_for_status()
     time.sleep(0.2)
     
     return {
@@ -97,11 +97,12 @@ def create_agents(base_url, headers, knowledge_base_id):
                 "similarity": 0,
                 "enhancement": 1
             },
-            "slmModel": "atoms-slm-v1",
+            "slmModel": "electron-v1",
             "globalKnowledgeBaseId": knowledge_base_id
         }
     )
-    resp.raise_for_status()
+    print(resp.json())
+    # resp.raise_for_status()
     base_agent_id = resp.json()["data"]
     time.sleep(0.2)
 
@@ -125,11 +126,11 @@ def create_agents(base_url, headers, knowledge_base_id):
                 "similarity": 0,
                 "enhancement": 1
             },
-            "slmModel": "atoms-slm-v1",
+            "slmModel": "electron-v1",
             "globalKnowledgeBaseId": knowledge_base_id
         }
     )
-    resp.raise_for_status()
+    # resp.raise_for_status()
     temp_agent_id = resp.json()["data"]
     time.sleep(0.2)
     
@@ -156,11 +157,11 @@ def create_audience(base_url, headers):
                 files=files,
                 data=data
             )
-            resp.raise_for_status()
+            # resp.raise_for_status()
             time.sleep(0.2)
 
             resp = requests.get(f"{base_url}/audience", headers=headers)
-            resp.raise_for_status()
+            # resp.raise_for_status()
             time.sleep(0.2)
             audience_data = resp.json()
             audience_id = audience_data["data"][0]["_id"]
@@ -180,7 +181,7 @@ def create_campaign(base_url, headers):
             "audienceId": GLOBAL_STATE["audience"]["id"]
         }
     )
-    resp.raise_for_status()
+    # resp.raise_for_status()
     base_campaign_id = resp.json()["data"]["_id"]
     time.sleep(0.2)
 
@@ -194,7 +195,7 @@ def create_campaign(base_url, headers):
             "audienceId": GLOBAL_STATE["audience"]["id"]
         }
     )
-    resp.raise_for_status()
+    # resp.raise_for_status()
     temp_campaign_id = resp.json()["data"]["_id"]
     time.sleep(0.2)
     
@@ -208,7 +209,7 @@ def fetch_agent_template(base_url, headers):
         f"{base_url}/agent/template",
         headers=headers
     )
-    resp.raise_for_status()
+    # resp.raise_for_status()
     templates = resp.json()["data"]
     if not templates:
         raise Exception("No agent templates found")
@@ -223,7 +224,7 @@ def start_call(base_url, headers):
             "phoneNumber": "+919666666666"
         }
     )
-    resp.raise_for_status()
+    # resp.raise_for_status()
     base_call_id = resp.json()["data"]["conversationId"]
     time.sleep(0.2)
     

@@ -50,8 +50,8 @@ class AgentDTO(BaseModel):
         if value is None:
             return value
 
-        if value not in set(['atoms-slm-v1', 'gpt-4o-mini']):
-            raise ValueError("must be one of enum values ('atoms-slm-v1', 'gpt-4o-mini')")
+        if value not in set(['electron-v1', 'electron-v2', 'gpt-4o-mini']):
+            raise ValueError("must be one of enum values ('electron-v1', 'electron-v2', 'gpt-4o-mini')")
         return value
 
     model_config = ConfigDict(

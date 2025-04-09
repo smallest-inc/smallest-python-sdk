@@ -9,12 +9,14 @@ Name | Type | Description | Notes
 **name** | **str** | The name of the campaign | [optional] 
 **description** | **str** | The description of the campaign | [optional] 
 **organization** | **str** | The ID of the organization | [optional] 
-**agent** | [**GetCampaigns200ResponseDataInnerAgent**](GetCampaigns200ResponseDataInnerAgent.md) |  | [optional] 
+**agent_id** | **str** | The ID of the agent | [optional] 
 **created_by** | **str** | The ID of the user who created the campaign | [optional] 
-**audience** | [**GetCampaigns200ResponseDataInnerAudience**](GetCampaigns200ResponseDataInnerAudience.md) |  | [optional] 
+**audience_id** | **str** | The ID of the audience | [optional] 
 **participants_count** | **int** | The number of participants in the campaign | [optional] 
 **created_at** | **datetime** | The date and time when the campaign was created | [optional] 
 **updated_at** | **datetime** | The date and time when the campaign was last updated | [optional] 
+**is_campaign_in_progress** | **bool** | Whether the campaign is in progress | [optional] 
+**is_campaign_completed** | **bool** | Whether the campaign is completed | [optional] 
 
 ## Example
 
