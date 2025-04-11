@@ -20,7 +20,7 @@ def main():
     
     conversation_id = "your_conversation_id"
     response = atoms_client.get_conversation_logs(id=conversation_id)
-    print(f"Conversation logs: {response.data}")
+    print(f"Conversation logs: {response}")
 
 if __name__ == "__main__":
     main()
@@ -34,7 +34,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetConversationLogs200Response**](./models/GetConversationLogs200Response.md)
+[**GetConversationLogs200ResponseData**](./models/GetConversationLogs200ResponseData.md)
 
 ### Authorization
 

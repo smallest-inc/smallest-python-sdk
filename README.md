@@ -75,6 +75,7 @@ You can find the full reference for Atoms [here](./docs/atoms/Api.md).
 
 ```python
 from smallestai.atoms import AtomsClient
+from smallestai.atoms import Configuration
 
 TARGET_PHONE_NUMBER = "+919666666666"
  
@@ -106,7 +107,7 @@ def main():
             },
             "slmModel": "electron-v1",
         }
-    ).data
+    )
     
     print(f"Successfully created agent with id: {agent_id}")
 
@@ -118,7 +119,6 @@ if __name__ == "__main__":
 
 ```python
 from smallestai.atoms import AtomsClient
-from smallestai.atoms import Configuration
 
 TARGET_PHONE_NUMBER = "+919666666666"
 MY_AGENT_ID = "67e****ff*ec***82*3c9e**"
@@ -150,13 +150,12 @@ def main():
     atoms_client = AtomsClient()
     
     # Create a new knowledge base
-    knowledge_base = atoms_client.create_knowledge_base(
+    knowledge_base_id = atoms_client.create_knowledge_base(
         create_knowledge_base_request={
             "name": "Customer Support Knowledge Base",
             "description": "Contains FAQs and product information"
         }
     )
-    knowledge_base_id = knowledge_base.data
 
     with open("product_manual.pdf", "rb") as f:
         media_content = f.read()

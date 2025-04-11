@@ -25,7 +25,7 @@ def main():
     }
     
     response = atoms_client.create_agent_from_template(create_agent_from_template_request=template_request)
-    print(f"Created agent with ID: {response.data}")
+    print(f"Created agent with ID: {response}")
 
 if __name__ == "__main__":
     main()
@@ -39,7 +39,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**CreateAgentFromTemplate200Response**](./models/CreateAgentFromTemplate200Response.md)
+**str**
 
 # **get_agent_templates**
 
@@ -54,7 +54,7 @@ def main():
     atoms_client = AtomsClient()
     
     response = atoms_client.get_agent_templates()
-    print(f"Available templates: {response.data}")
+    print(f"Available templates: {response}")
 
 if __name__ == "__main__":
     main()
@@ -66,5 +66,5 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**GetAgentTemplates200Response**](./models/GetAgentTemplates200Response.md)
+[**List[GetAgentTemplates200ResponseDataInner]**](./models/GetAgentTemplates200ResponseDataInner.md)
 
