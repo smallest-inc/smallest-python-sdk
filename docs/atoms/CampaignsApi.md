@@ -34,7 +34,7 @@ def main():
     }
     
     response = atoms_client.create_campaign(create_campaign_request=campaign_request)
-    print(f"Created campaign with ID: {response.data}")
+    print(f"Created campaign with ID: {response}")
 
 if __name__ == "__main__":
     main()
@@ -48,7 +48,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**CreateCampaign201Response**](./models/CreateCampaign201Response.md)
+[**CreateCampaign201ResponseData**](./models/CreateCampaign201ResponseData.md)
 
 # **delete_campaign**
 
@@ -64,7 +64,7 @@ def main():
     
     campaign_id = "your_campaign_id"
     response = atoms_client.delete_campaign(id=campaign_id)
-    print("Campaign deleted successfully")
+    print(f"Campaign deletion status: {response}")
 
 if __name__ == "__main__":
     main()
@@ -78,7 +78,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
+**bool**
 
 # **get_campaign_by_id**
 
@@ -94,7 +94,7 @@ def main():
     
     campaign_id = "your_campaign_id"
     response = atoms_client.get_campaign_by_id(id=campaign_id)
-    print(f"Campaign details: {response.data}")
+    print(f"Campaign details: {response}")
 
 if __name__ == "__main__":
     main()
@@ -108,7 +108,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetCampaignById200Response**](./models/GetCampaignById200Response.md)
+[**GetCampaignById200ResponseData**](./models/GetCampaignById200ResponseData.md)
 
 # **get_campaigns**
 
@@ -128,7 +128,7 @@ def main():
     }
     
     response = atoms_client.get_campaigns(get_campaigns_request=request)
-    print(f"Retrieved campaigns: {response.data}")
+    print(f"Retrieved campaigns: {response}")
 
 if __name__ == "__main__":
     main()
@@ -142,7 +142,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetCampaigns200Response**](./models/GetCampaigns200Response.md)
+[**List[GetCampaigns200ResponseDataInner]**](./models/GetCampaigns200ResponseDataInner.md)
 
 # **pause_campaign**
 
@@ -158,7 +158,7 @@ def main():
     
     campaign_id = "your_campaign_id"
     response = atoms_client.pause_campaign(id=campaign_id)
-    print("Campaign paused successfully")
+    print(f"Campaign pause status: {response}")
 
 if __name__ == "__main__":
     main()
@@ -172,7 +172,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
+**bool**
 
 # **start_campaign**
 
@@ -188,7 +188,7 @@ def main():
     
     campaign_id = "your_campaign_id"
     response = atoms_client.start_campaign(id=campaign_id)
-    print("Campaign started successfully")
+    print(f"Campaign start status: {response}")
 
 if __name__ == "__main__":
     main()
@@ -202,5 +202,5 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
+**bool**
 
