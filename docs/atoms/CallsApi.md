@@ -24,7 +24,7 @@ def main():
     }
     
     response = atoms_client.start_outbound_call(start_outbound_call_request=call_request)
-    print(f"Started call with conversation ID: {response.conversation_id}")
+    print(f"Started call with conversation ID: {response}")
 
 if __name__ == "__main__":
     main()
@@ -38,7 +38,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**StartOutboundCall200Response**](./models/StartOutboundCall200Response.md)
+**str**
 
 ### Authorization
 

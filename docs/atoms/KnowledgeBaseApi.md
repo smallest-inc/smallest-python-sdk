@@ -8,7 +8,7 @@ Method | HTTP request | Description
 [**delete_knowledge_base**](KnowledgeBaseApi.md#delete_knowledge_base) | **DELETE** /knowledgebase/{id} | Delete a knowledge base
 [**delete_knowledge_base_item**](KnowledgeBaseApi.md#delete_knowledge_base_item) | **DELETE** /knowledgebase/{knowledgeBaseId}/items/{knowledgeBaseItemId} | Delete a knowledge base item
 [**get_knowledge_base_by_id**](KnowledgeBaseApi.md#get_knowledge_base_by_id) | **GET** /knowledgebase/{id} | Get a knowledge base
-[**get_knowledge_base_items**](KnowledgeBaseApi.md#get_knowledge_base_items) | **GET** /knowledgebase/{id}/items | Get all knowledge base items
+[**get_knowledge_base_items**](KnowledgeBaseApi.md#get_knowledge_base_items) | **GET** /knowledgebase/{id}/items | Get knowledge base items
 [**get_knowledge_bases**](KnowledgeBaseApi.md#get_knowledge_bases) | **GET** /knowledgebase | Get all knowledge bases
 [**upload_media_to_knowledge_base**](KnowledgeBaseApi.md#upload_media_to_knowledge_base) | **POST** /knowledgebase/{id}/items/upload-media | Upload media to a knowledge base
 [**upload_text_to_knowledge_base**](KnowledgeBaseApi.md#upload_text_to_knowledge_base) | **POST** /knowledgebase/{id}/items/upload-text | Upload text to a knowledge base
@@ -25,13 +25,13 @@ from smallestai.atoms import AtomsClient
 def main():
     atoms_client = AtomsClient()
     
-    kb_request = {
+    request = {
         "name": "My Knowledge Base",
         "description": "Knowledge base description"
     }
     
-    response = atoms_client.create_knowledge_base(create_knowledge_base_request=kb_request)
-    print(f"Created knowledge base with ID: {response.data}")
+    response = atoms_client.create_knowledge_base(create_knowledge_base_request=request)
+    print(f"Created knowledge base with ID: {response}")
 
 if __name__ == "__main__":
     main()
@@ -45,7 +45,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**CreateKnowledgeBase201Response**](./models/CreateKnowledgeBase201Response.md)
+**str**
 
 # **delete_knowledge_base**
 
@@ -59,9 +59,9 @@ from smallestai.atoms import AtomsClient
 def main():
     atoms_client = AtomsClient()
     
-    kb_id = "your_knowledge_base_id"
-    response = atoms_client.delete_knowledge_base(id=kb_id)
-    print("Knowledge base deleted successfully")
+    knowledge_base_id = "your_knowledge_base_id"
+    response = atoms_client.delete_knowledge_base(id=knowledge_base_id)
+    print(f"Knowledge base deletion status: {response}")
 
 if __name__ == "__main__":
     main()
@@ -75,7 +75,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
+**bool**
 
 # **delete_knowledge_base_item**
 
@@ -89,13 +89,13 @@ from smallestai.atoms import AtomsClient
 def main():
     atoms_client = AtomsClient()
     
-    kb_id = "your_knowledge_base_id"
+    knowledge_base_id = "your_knowledge_base_id"
     item_id = "your_item_id"
     response = atoms_client.delete_knowledge_base_item(
-        knowledge_base_id=kb_id,
+        knowledge_base_id=knowledge_base_id,
         knowledge_base_item_id=item_id
     )
-    print("Knowledge base item deleted successfully")
+    print(f"Knowledge base item deletion status: {response}")
 
 if __name__ == "__main__":
     main()
@@ -110,7 +110,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
+**bool**
 
 # **get_knowledge_base_by_id**
 
@@ -124,9 +124,9 @@ from smallestai.atoms import AtomsClient
 def main():
     atoms_client = AtomsClient()
     
-    kb_id = "your_knowledge_base_id"
-    response = atoms_client.get_knowledge_base_by_id(id=kb_id)
-    print(f"Knowledge base details: {response.data}")
+    knowledge_base_id = "your_knowledge_base_id"
+    response = atoms_client.get_knowledge_base_by_id(id=knowledge_base_id)
+    print(f"Knowledge base details: {response}")
 
 if __name__ == "__main__":
     main()
@@ -140,11 +140,11 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetKnowledgeBaseById200Response**](./models/GetKnowledgeBaseById200Response.md)
+[**KnowledgeBaseDTO**](./models/KnowledgeBaseDTO.md)
 
 # **get_knowledge_base_items**
 
-Get all items in a knowledge base.
+Get items from a specific knowledge base.
 
 ### Example
 
@@ -154,9 +154,9 @@ from smallestai.atoms import AtomsClient
 def main():
     atoms_client = AtomsClient()
     
-    kb_id = "your_knowledge_base_id"
-    response = atoms_client.get_knowledge_base_items(id=kb_id)
-    print(f"Knowledge base items: {response.data}")
+    knowledge_base_id = "your_knowledge_base_id"
+    response = atoms_client.get_knowledge_base_items(id=knowledge_base_id)
+    print(f"Knowledge base items: {response}")
 
 if __name__ == "__main__":
     main()
@@ -166,11 +166,11 @@ if __name__ == "__main__":
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**id** | **str** | Knowledge base ID | 
+**id** | **str** | Knowledge base ID to retrieve items from | 
 
 ### Return type
 
-[**GetKnowledgeBaseItems200Response**](./models/GetKnowledgeBaseItems200Response.md)
+[**List[KnowledgeBaseItemDTO]**](./models/KnowledgeBaseItemDTO.md)
 
 # **get_knowledge_bases**
 
@@ -185,7 +185,7 @@ def main():
     atoms_client = AtomsClient()
     
     response = atoms_client.get_knowledge_bases()
-    print(f"Retrieved knowledge bases: {response.data}")
+    print(f"Retrieved knowledge bases: {response}")
 
 if __name__ == "__main__":
     main()
@@ -197,7 +197,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**GetKnowledgeBases200Response**](./models/GetKnowledgeBases200Response.md)
+[**List[KnowledgeBaseDTO]**](./models/KnowledgeBaseDTO.md)
 
 # **upload_media_to_knowledge_base**
 
@@ -211,13 +211,13 @@ from smallestai.atoms import AtomsClient
 def main():
     atoms_client = AtomsClient()
     
-    kb_id = "your_knowledge_base_id"
+    knowledge_base_id = "your_knowledge_base_id"
     with open("media_file.mp4", "rb") as media_file:
         response = atoms_client.upload_media_to_knowledge_base(
-            id=kb_id,
+            id=knowledge_base_id,
             media=media_file.read()
         )
-    print("Media uploaded successfully")
+    print(f"Media upload status: {response}")
 
 if __name__ == "__main__":
     main()
@@ -232,7 +232,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
+**bool**
 
 # **upload_text_to_knowledge_base**
 
@@ -246,17 +246,17 @@ from smallestai.atoms import AtomsClient
 def main():
     atoms_client = AtomsClient()
     
-    kb_id = "your_knowledge_base_id"
+    knowledge_base_id = "your_knowledge_base_id"
     text_request = {
         "title": "Your title here",
         "content": "Your text content here"
     }
     
     response = atoms_client.upload_text_to_knowledge_base(
-        id=kb_id,
+        id=knowledge_base_id,
         upload_text_to_knowledge_base_request=text_request
     )
-    print("Text uploaded successfully")
+    print(f"Text upload status: {response}")
 
 if __name__ == "__main__":
     main()
@@ -271,5 +271,5 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
+**bool**
 

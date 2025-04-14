@@ -43,7 +43,7 @@ def main():
     }
     
     response = atoms_client.create_agent(create_agent_request=new_agent_request)
-    print(f"Created agent with ID: {response.data}")
+    print(f"Created agent with ID: {response}")
 
 if __name__ == "__main__":
     main()
@@ -57,7 +57,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**CreateAgentFromTemplate200Response**](./models/CreateAgentFromTemplate200Response.md)
+**str**
 
 # **delete_agent**
 
@@ -73,7 +73,7 @@ def main():
     
     agent_id = "your_agent_id"
     response = atoms_client.delete_agent(id=agent_id)
-    print("Agent deleted successfully")
+    print(f"Agent deletion status: {response}")
 
 if __name__ == "__main__":
     main()
@@ -87,7 +87,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**DeleteAgent200Response**](./models/DeleteAgent200Response.md)
+**bool**
 
 # **get_agent_by_id**
 
@@ -103,7 +103,7 @@ def main():
     
     agent_id = "your_agent_id"
     response = atoms_client.get_agent_by_id(id=agent_id)
-    print(f"Agent details: {response.data}")
+    print(f"Agent details: {response}")
 
 if __name__ == "__main__":
     main()
@@ -117,7 +117,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetAgentById200Response**](./models/GetAgentById200Response.md)
+[**AgentDTO**](./models/AgentDTO.md)
 
 # **get_agents**
 
@@ -137,7 +137,7 @@ def main():
         offset=5,    # optional, default=5
         search=None  # optional search term
     )
-    print(f"Retrieved agents: {response.data}")
+    print(f"Retrieved agents: {response}")
 
 if __name__ == "__main__":
     main()
@@ -153,7 +153,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetAgents200Response**](./models/GetAgents200Response.md)
+[**GetAgents200ResponseData**](./models/GetAgents200ResponseData.md)
 
 # **update_agent**
 
@@ -177,7 +177,7 @@ def main():
         id=agent_id,
         update_agent_request=update_request
     )
-    print("Agent updated successfully")
+    print(f"Agent update status: {response}")
 
 if __name__ == "__main__":
     main()
@@ -192,5 +192,5 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**UpdateAgent200Response**](./models/UpdateAgent200Response.md)
+**bool**
 

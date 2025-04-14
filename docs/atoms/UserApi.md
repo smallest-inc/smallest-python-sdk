@@ -19,7 +19,7 @@ def main():
     atoms_client = AtomsClient()
     
     response = atoms_client.get_current_user()
-    print(f"Current user details: {response.data}")
+    print(f"Current user details: {response}")
 
 if __name__ == "__main__":
     main()
@@ -31,7 +31,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**GetCurrentUser200Response**](./models/GetCurrentUser200Response.md)
+[**GetCurrentUser200ResponseData**](./models/GetCurrentUser200ResponseData.md)
 
 ### Authorization
 
