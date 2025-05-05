@@ -75,6 +75,7 @@ You can find the full reference for Atoms [here](./docs/atoms/Api.md).
 
 ```python
 from smallestai.atoms import AtomsClient
+from smallestai.atoms import Configuration
 
 TARGET_PHONE_NUMBER = "+919666666666"
  
@@ -106,7 +107,7 @@ def main():
             },
             "slmModel": "electron-v1",
         }
-    ).data
+    )
     
     print(f"Successfully created agent with id: {agent_id}")
 
@@ -118,7 +119,6 @@ if __name__ == "__main__":
 
 ```python
 from smallestai.atoms import AtomsClient
-from smallestai.atoms import Configuration
 
 TARGET_PHONE_NUMBER = "+919666666666"
 MY_AGENT_ID = "67e****ff*ec***82*3c9e**"
@@ -150,13 +150,12 @@ def main():
     atoms_client = AtomsClient()
     
     # Create a new knowledge base
-    knowledge_base = atoms_client.create_knowledge_base(
+    knowledge_base_id = atoms_client.create_knowledge_base(
         create_knowledge_base_request={
             "name": "Customer Support Knowledge Base",
             "description": "Contains FAQs and product information"
         }
     )
-    knowledge_base_id = knowledge_base.data
 
     with open("product_manual.pdf", "rb") as f:
         media_content = f.read()
@@ -236,10 +235,10 @@ Asynchronous text-to-speech synthesis client.
 ```python
 import asyncio
 import aiofiles
-import smallestai
+from smallestai.waves import AsyncWavesClient
 
 async def main():
-    client = smallestai.waves.AsyncWavesClient(api_key="SMALLEST_API_KEY")
+    client = AsyncWavesClient(api_key="SMALLEST_API_KEY")
     async with client as tts:
         audio_bytes = await tts.synthesize("Hello, this is a test of the async synthesis function.") 
         async with aiofiles.open("async_synthesize.wav", "wb") as f:
@@ -254,10 +253,10 @@ If you are using a Jupyter Notebook, use the following approach to execute the a
 ```python
 import asyncio
 import aiofiles
-from smallest import AsyncSmallest
+from smallestai.waves import AsyncWavesClient
 
 async def main():
-    client = AsyncSmallest(api_key="SMALLEST_API_KEY")
+    client = AsyncWavesClient(api_key="SMALLEST_API_KEY")
     async with client as tts:
         audio_bytes = await tts.synthesize("Hello, this is a test of the async synthesis function.") 
         async with aiofiles.open("async_synthesize.wav", "wb") as f:
@@ -298,11 +297,11 @@ The `TextToAudioStream` class provides real-time text-to-speech processing, conv
 import asyncio
 import websockets
 from groq import Groq
-from smallest import Smallest, TextToAudioStream  
+from smallestai.waves import WavesClient, TextToAudioStream  
 
 # Initialize Groq (LLM) and Smallest (TTS) instances
 llm = Groq(api_key="GROQ_API_KEY")
-tts = Smallest(api_key="SMALLEST_API_KEY")
+tts = WavesClient(api_key="SMALLEST_API_KEY")
 WEBSOCKET_URL = "wss://echo.websocket.events" # Mock WebSocket server
 
 # Async function to stream text generation from LLM
@@ -348,10 +347,10 @@ if __name__ == "__main__":
 import wave
 import asyncio
 from groq import Groq
-from smallest import Smallest, TextToAudioStream
+from smallestai.waves import WavesClient, TextToAudioStream
 
 llm = Groq(api_key="GROQ_API_KEY")
-tts = Smallest(api_key="SMALLEST_API_KEY")
+tts = WavesClient(api_key="SMALLEST_API_KEY")
 
 async def generate_text(prompt):
     """Async generator for streaming text from Groq. You can use any LLM"""
@@ -413,10 +412,10 @@ The Smallest AI SDK allows you to clone your voice by uploading an audio file. T
 
 ##### Add Synchronously
 ```python
-from smallest import Smallest
+from smallestai.waves import WavesClient
 
 def main():
-    client = Smallest(api_key="SMALLEST_API_KEY")
+    client = WavesClient(api_key="SMALLEST_API_KEY")
     res = client.add_voice(display_name="My Voice", file_path="my_voice.wav")
     print(res)
 
@@ -427,10 +426,10 @@ if __name__ == "__main__":
 ##### Add Asynchronously
 ```python
 import asyncio
-from smallest import AsyncSmallest
+from smallestai.wavws import AsyncWavesClient
 
 async def main():
-    client = AsyncSmallest(api_key="SMALLEST_API_KEY")
+    client = AsyncWavesClient(api_key="SMALLEST_API_KEY")
     res = await client.add_voice(display_name="My Voice", file_path="my_voice.wav")
     print(res)
 
@@ -443,10 +442,10 @@ The Smallest AI SDK allows you to delete your cloned voice. This feature is avai
 
 ##### Delete Synchronously
 ```python
-from smallest import Smallest
+from smallestai.waves import WavesClient
 
 def main():
-    client = Smallest(api_key="SMALLEST_API_KEY")
+    client = WavesClient(api_key="SMALLEST_API_KEY")
     res = client.delete_voice(voice_id="voice_id")
     print(res)
 
@@ -457,10 +456,10 @@ if __name__ == "__main__":
 ##### Delete Asynchronously
 ```python
 import asyncio
-from smallest import AsyncSmallest
+from smallestai.waves import AsyncWavesClient
 
 async def main():
-    client = AsyncSmallest(api_key="SMALLEST_API_KEY")
+    client = AsyncWavesClient(api_key="SMALLEST_API_KEY")
     res = await client.delete_voice(voice_id="voice_id")
     print(res)
 
