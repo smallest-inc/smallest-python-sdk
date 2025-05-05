@@ -55,7 +55,7 @@ def add_wav_header(frame_input: bytes, sample_rate: int = 24000, sample_width: i
 
 
 def preprocess_text(text: str) -> str:
-    text = text.replace("\n", " ").replace("\t", " ").replace("—", " ").replace("-", " ").replace("–", " ")
+    text = text.replace("\n", " ").replace("\t", " ")
     text = re.sub(r'\s+', ' ', text)
     return text.strip()
 
