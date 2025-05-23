@@ -11,7 +11,8 @@ from smallestai.waves.utils import (
 from smallestai.waves.models import (
     TTSLanguages_lightning,
     TTSLanguages_lightning_large,
-    TTSLanguages_lightning_v2
+    TTSLanguages_lightning_v2,
+    TTSModels
 )
 
 
@@ -52,7 +53,7 @@ def test_get_smallest_languages(model, expected_languages):
         assert get_smallest_languages(model) == expected_languages
 
 @pytest.mark.parametrize("expected_models", [
-    ['lightning', 'lightning-large', 'lightning-v2']
+    TTSModels,
 ])
 def test_get_smallest_models(expected_models):
     assert get_smallest_models() == expected_models
