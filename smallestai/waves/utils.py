@@ -6,7 +6,7 @@ from pydub import AudioSegment
 from dataclasses import dataclass
 
 from smallestai.waves.exceptions import ValidationError
-from smallestai.waves.models import TTSModels, TTSLanguages
+from smallestai.waves.models import TTSModels, TTSLanguages_lightning, TTSLanguages_lightning_large, TTSLanguages_lightning_v2
 
 
 API_BASE_URL = "https://waves-api.smallest.ai/api/v1"
@@ -90,8 +90,15 @@ def chunk_text(text: str, chunk_size: int = 250) -> List[str]:
     return chunks
 
 
-def get_smallest_languages() -> List[str]:
-    return TTSLanguages
+def get_smallest_languages(model: str = 'lightning') -> List[str]:
+    if model == 'lightning':
+        return TTSLanguages_lightning
+    elif model == 'lightning-large':
+        return TTSLanguages_lightning_large
+    elif model == 'lightning-v2':
+        return TTSLanguages_lightning_v2
+    else:
+        raise ValidationError(f"Invalid model: {model}. Must be one of {TTSModels}")
 
 def get_smallest_models() -> List[str]:
     return TTSModels

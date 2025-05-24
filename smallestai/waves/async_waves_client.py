@@ -89,9 +89,9 @@ class AsyncWavesClient:
         return False
     
 
-    def get_languages(self) -> List[str]:
+    def get_languages(self, model="lightning") -> List[str]:
         """Returns a list of available languages."""
-        return get_smallest_languages()
+        return get_smallest_languages(model)
 
     def get_cloned_voices(self) -> str:
         """Returns a list of your cloned voices."""
@@ -176,7 +176,7 @@ class AsyncWavesClient:
             validate_input(text, opts.model, opts.sample_rate, opts.speed, opts.consistency, opts.similarity, opts.enhancement)
 
             self.chunk_size = 250
-            if opts.model == 'lightning-large':
+            if opts.model == 'lightning-large' or opts.model == "lightning-v2":
                 self.chunk_size = 140
 
             chunks = chunk_text(text, self.chunk_size)
@@ -192,7 +192,7 @@ class AsyncWavesClient:
                         "model": opts.model
                     }
                     
-                    if opts.model == "lightning-large":
+                    if opts.model == "lightning-large" or opts.model == "lightning-v2":
                         if opts.consistency is not None:
                             payload["consistency"] = opts.consistency
                         if opts.similarity is not None:
