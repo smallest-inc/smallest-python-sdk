@@ -1,13 +1,12 @@
 import os
 import json
-import wave
 import copy
 import requests
-from typing import Optional, Union, List, Iterator
+from typing import Optional, Union, List
 
 from smallestai.waves.exceptions import TTSError, APIError
-from smallestai.waves.utils import (TTSOptions, validate_input, preprocess_text, add_wav_header, chunk_text,
-get_smallest_languages, get_smallest_models, ALLOWED_AUDIO_EXTENSIONS, API_BASE_URL)
+from smallestai.waves.utils import (TTSOptions, validate_input, 
+                        get_smallest_languages, get_smallest_models, ALLOWED_AUDIO_EXTENSIONS, API_BASE_URL)
 
 class WavesClient:
     def __init__(
@@ -20,7 +19,8 @@ class WavesClient:
         consistency: Optional[float] = 0.5,
         similarity: Optional[float] = 0.0,
         enhancement: Optional[int] = 1,
-        add_wav_header: Optional[bool] = True
+        language: Optional[str] = "en",
+        output_format: Optional[str] = "wav"
     ) -> None:
         """
         Smallest Instance for text-to-speech synthesis.
@@ -37,7 +37,8 @@ class WavesClient:
         - consistency (float): This parameter controls word repetition and skipping. Decrease it to prevent skipped words, and increase it to prevent repetition. Only supported in `lightning-large` model. Range - [0, 1]
         - similarity (float): This parameter controls the similarity between the synthesized audio and the reference audio. Increase it to make the speech more similar to the reference audio. Only supported in `lightning-large` model. Range - [0, 1]
         - enhancement (int): Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model. Range - [0, 2].
-        - add_wav_header (bool): Whether to add a WAV header to the output audio.
+        - language (str): The language for synthesis. Default is "en".
+        - output_format (str): The output audio format. Options: "pcm", "mp3", "wav", "mulaw". Default is "pcm".
 
         Methods:
         - get_languages: Returns a list of available languages for synthesis.
@@ -58,11 +59,12 @@ class WavesClient:
             sample_rate=sample_rate,
             voice_id=voice_id,
             api_key=self.api_key,
-            add_wav_header=add_wav_header,
             speed=speed,
             consistency=consistency,
             similarity=similarity,
-            enhancement=enhancement
+            enhancement=enhancement,
+            language=language,
+            output_format=output_format
         )
     
         
@@ -107,17 +109,13 @@ class WavesClient:
     def synthesize(
             self,
             text: str,
-            stream: Optional[bool] = False,
-            save_as: Optional[str] = None,
             **kwargs
-        ) -> Union[bytes, None, Iterator[bytes]]:
+        ) -> Union[bytes]:
         """
         Synthesize speech from the provided text.
 
         - text (str): The text to be converted to speech.
         - stream (Optional[bool]): If True, returns an iterator yielding audio chunks instead of a full byte array.
-        - save_as (Optional[str]): If provided, the synthesized audio will be saved to this file path.
-                                   The file must have a .wav extension.
         - kwargs: Additional optional parameters to override `__init__` options for this call.
 
         Returns:
@@ -127,7 +125,7 @@ class WavesClient:
             - Otherwise, returns the synthesized audio content as bytes.
 
         Raises:
-        - TTSError: If the provided file name does not have a .wav extension when `save_as` is specified.
+        - TTSError: If the provided file name does not have a .wav or .mp3 extension when `save_as` is specified.
         - APIError: If the API request fails or returns an error.
         """
         opts = copy.deepcopy(self.opts)
@@ -140,64 +138,38 @@ class WavesClient:
         for key, value in kwargs.items():
             setattr(opts, key, value)
 
-        text = preprocess_text(text)
         validate_input(text, opts.model, opts.sample_rate, opts.speed, opts.consistency, opts.similarity, opts.enhancement)
 
-        self.chunk_size = 250
+        payload = {
+            "text": text,
+            "voice_id": opts.voice_id,
+            "sample_rate": opts.sample_rate,
+            "speed": opts.speed,
+            "consistency": opts.consistency,
+            "similarity": opts.similarity,
+            "enhancement": opts.enhancement,
+            "language": opts.language,
+            "output_format": opts.output_format
+        }
+
         if opts.model == "lightning-large" or opts.model == "lightning-v2":
-            self.chunk_size = 140
+            if opts.consistency is not None:
+                payload["consistency"] = opts.consistency
+            if opts.similarity is not None:
+                payload["similarity"] = opts.similarity
+            if opts.enhancement is not None:
+                payload["enhancement"] = opts.enhancement
+                
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
 
-        chunks = chunk_text(text, self.chunk_size)
-
-        def audio_stream():
-            for chunk in chunks:
-                payload = {
-                    "text": chunk,
-                    "sample_rate": opts.sample_rate,
-                    "voice_id": opts.voice_id,
-                    "add_wav_header": False,
-                    "speed": opts.speed,
-                }
-
-                if opts.model == "lightning-large" or opts.model == "lightning-v2":
-                    if opts.consistency is not None:
-                        payload["consistency"] = opts.consistency
-                    if opts.similarity is not None:
-                        payload["similarity"] = opts.similarity
-                    if opts.enhancement is not None:
-                        payload["enhancement"] = opts.enhancement
-
-                headers = {
-                    "Authorization": f"Bearer {self.api_key}",
-                    "Content-Type": "application/json",
-                }
-
-                res = requests.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers)
-                if res.status_code != 200:
-                    raise APIError(f"Failed to synthesize speech: {res.text}. Please check if you have set the correct API key. For more information, visit https://waves.smallest.ai/")
-
-                yield res.content
-            
-        if stream:
-            return audio_stream()
-        
-        audio_content = b"".join(audio_stream())
-
-        if save_as:
-            if not save_as.endswith(".wav"):
-                raise TTSError("Invalid file name. Extension must be .wav")
-            
-            with wave.open(save_as, "wb") as wf:
-                wf.setnchannels(1)
-                wf.setsampwidth(2)
-                wf.setframerate(opts.sample_rate)
-                wf.writeframes(audio_content)
-            return None
-        
-        if opts.add_wav_header:
-            return add_wav_header(audio_content, opts.sample_rate)
-    
-        return audio_content
+        res = requests.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers)
+        if res.status_code != 200:
+            raise APIError(f"Failed to synthesize speech: {res.text}. Please check if you have set the correct API key. For more information, visit https://waves.smallest.ai/")
+                
+        return res.content
     
     
     def add_voice(self, display_name: str, file_path: str) -> str:
