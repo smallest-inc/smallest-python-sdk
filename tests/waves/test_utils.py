@@ -1,59 +1,52 @@
 import pytest
-import re
-import jiwer
+from smallestai.waves.utils import validate_input, get_smallest_languages, get_smallest_models
+from smallestai.waves.exceptions import ValidationError
+from smallestai.waves.models import TTSModels, TTSLanguages_lightning, TTSLanguages_lightning_large, TTSLanguages_lightning_v2
 
-from smallestai.waves.utils import (
-    preprocess_text,
-    chunk_text,
-    get_smallest_languages,
-    get_smallest_models
-)
-from smallestai.waves.models import (
-    TTSLanguages_lightning,
-    TTSLanguages_lightning_large,
-    TTSLanguages_lightning_v2,
-    TTSModels
-)
+def test_validate_input_valid():
+    """Tests that validate_input passes with valid parameters."""
+    validate_input(text="hello world", model="lightning", sample_rate=16000, speed=1.0)
+    validate_input(
+        text="test",
+        model="lightning-large",
+        sample_rate=24000,
+        speed=2.0,
+        consistency=0.5,
+        similarity=0.5,
+        enhancement=1
+    )
 
+def test_validate_input_invalid():
+    """Tests that validate_input raises ValidationError for invalid parameters."""
+    with pytest.raises(ValidationError, match="Text cannot be empty"):
+        validate_input(text="", model="lightning", sample_rate=16000, speed=1.0)
 
-@pytest.mark.parametrize("input_text, expected_output", [
-    (
-        "Wow! The jubilant child, bursting with glee, $99.99     exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky. \n\n\n",
-        "Wow! The jubilant child, bursting with glee, $99.99 exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky."
-    ),
-    # can add more tests here
-])
-def test_preprocess_text(input_text, expected_output):
-    assert preprocess_text(input_text) == expected_output
+    with pytest.raises(ValidationError, match="Invalid model"):
+        validate_input(text="test", model="invalid-model", sample_rate=16000, speed=1.0)
 
+    with pytest.raises(ValidationError, match="Invalid sample rate"):
+        validate_input(text="test", model="lightning", sample_rate=7000, speed=1.0)
 
-@pytest.mark.parametrize("input_text, expected_output", [
-    (
-        "Wow! The jubilant child, bursting with glee, exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky.",
-        [
-            "Wow! The jubilant child, bursting with glee, exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky.",
-        ]
-    ),
-    # Add more test cases here as needed
-])
-def test_split_into_chunks(input_text, expected_output):
-    assert chunk_text(input_text) == expected_output
+    with pytest.raises(ValidationError, match="Invalid speed"):
+        validate_input(text="test", model="lightning", sample_rate=16000, speed=3.0)
 
+    with pytest.raises(ValidationError, match="Invalid consistency"):
+        validate_input(text="test", model="lightning-large", sample_rate=16000, speed=1.0, consistency=1.1)
 
-@pytest.mark.parametrize("model, expected_languages", [
-    ('lightning', TTSLanguages_lightning),
-    ('lightning-large', TTSLanguages_lightning_large),
-    ('lightning-v2', TTSLanguages_lightning_v2),
-    (None, TTSLanguages_lightning),  # Test default parameter
-])
-def test_get_smallest_languages(model, expected_languages):
-    if model is None:
-        assert get_smallest_languages() == expected_languages
-    else:
-        assert get_smallest_languages(model) == expected_languages
+    with pytest.raises(ValidationError, match="Invalid similarity"):
+        validate_input(text="test", model="lightning-large", sample_rate=16000, speed=1.0, similarity=-0.1)
+        
+    with pytest.raises(ValidationError, match="Invalid enhancement"):
+        validate_input(text="test", model="lightning-large", sample_rate=16000, speed=1.0, enhancement=3)
 
-@pytest.mark.parametrize("expected_models", [
-    TTSModels,
-])
-def test_get_smallest_models(expected_models):
-    assert get_smallest_models() == expected_models
+def test_get_smallest_languages():
+    """Tests the get_smallest_languages function."""
+    assert get_smallest_languages("lightning") == TTSLanguages_lightning
+    assert get_smallest_languages("lightning-large") == TTSLanguages_lightning_large
+    assert get_smallest_languages("lightning-v2") == TTSLanguages_lightning_v2
+    with pytest.raises(ValidationError, match="Invalid model"):
+        get_smallest_languages("invalid-model")
+
+def test_get_smallest_models():
+    """Tests the get_smallest_models function."""
+    assert get_smallest_models() == TTSModels
