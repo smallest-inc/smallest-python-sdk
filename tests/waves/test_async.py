@@ -1,105 +1,95 @@
 import os
-import jiwer
-import httpx
 import pytest
-import wave
+import pytest_asyncio
+import jiwer
 import re
-from deepgram import DeepgramClient, DeepgramClientOptions, PrerecordedOptions, FileSource
+import aiohttp
+from unittest.mock import patch, Mock
+from dotenv import load_dotenv
 
 from smallestai.waves.async_waves_client import AsyncWavesClient
+from smallestai.waves.exceptions import TTSError, APIError
 
-from dotenv import load_dotenv
+# Load environment variables from .env file
 load_dotenv()
 
-REFERENCE = "Wow! The jubilant child, bursting with glee, exclaimed, 'Look at those magnificent, vibrant balloons!' as they danced under the shimmering, rainbow-hued sky."
+SMALLEST_API_KEY = os.getenv("SMALLEST_API_KEY")
+DEEPGRAM_API_KEY = os.getenv("DEEPGRAM_API_KEY")
 
+# Text normalization for WER calculation
+def normalize_text(text):
+    text = text.lower()
+    text = re.sub(r"[^\w\s]", "", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
 
-transforms = jiwer.Compose(
-    [
-        jiwer.ExpandCommonEnglishContractions(),
-        jiwer.RemoveEmptyStrings(),
-        jiwer.ToLowerCase(),
-        jiwer.RemoveMultipleSpaces(),
-        jiwer.Strip(),
-        jiwer.RemovePunctuation(),
-        jiwer.ReduceToListOfListOfWords(),
-    ]
-)
-
-def get_tts_client():
-    return AsyncWavesClient(api_key=os.environ.get("SMALLEST_API_KEY"))
-
-config: DeepgramClientOptions = DeepgramClientOptions(api_key=os.environ.get("DEEPGRAM_API_KEY"),)
-
-deepgram: DeepgramClient = DeepgramClient("", config)
-
-options: PrerecordedOptions = PrerecordedOptions(
-            model="nova-2-general",
-            smart_format=True,
-            utterances=True,
-            punctuate=True,
-        )
-
-def transcribe(buffer_data):
-    payload: FileSource = {
-        "buffer": buffer_data,
-    }
-    response = deepgram.listen.rest.v("1").transcribe_file(
-            payload, options, timeout=httpx.Timeout(300.0, connect=10.0)
-        )
+# Helper to get transcription from Deepgram
+async def get_transcription(audio_bytes: bytes) -> str:
+    if not DEEPGRAM_API_KEY:
+        pytest.skip("DEEPGRAM_API_KEY not set")
+        
+    url = "https://api.deepgram.com/v1/listen?model=nova-2&punctuate=true"
+    headers = {"Authorization": f"Token {DEEPGRAM_API_KEY}", "Content-Type": "audio/wav"}
     
-    return response["results"]["channels"][0]["alternatives"][0]["transcript"]
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, headers=headers, data=audio_bytes) as response:
+            response.raise_for_status()
+            res_json = await response.json()
+            return res_json["results"]["channels"][0]["alternatives"][0]["transcript"]
+
+@pytest_asyncio.fixture
+async def async_client():
+    if not SMALLEST_API_KEY:
+        pytest.skip("SMALLEST_API_KEY not set")
+    client = AsyncWavesClient(api_key=SMALLEST_API_KEY)
+    yield client
+
+def test_async_client_initialization_no_key():
+    with patch.dict(os.environ, {"SMALLEST_API_KEY": ""}):
+        with pytest.raises(TTSError):
+            AsyncWavesClient()
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("reference_text", [REFERENCE])
-async def test_synthesize_save(reference_text):
-    file_path = "test_async_save.wav"
-    try:
-        tts = get_tts_client()
-        async with tts as client:
-            await client.synthesize(reference_text, save_as=file_path)
-        with open(file_path, "rb") as file:
-            buffer_data = file.read()
-
-        hypothesis = transcribe(buffer_data)
-        wer = jiwer.wer(
-            reference_text,
-            hypothesis,
-            reference_transform=transforms,
-            hypothesis_transform=transforms,
-        )
-        assert wer <= 0.2
-    finally:
-        if os.path.exists(file_path):
-            os.remove(file_path)
-
+async def test_async_synthesize_and_verify_wer(async_client):
+    """Tests async synthesize method and verifies output with Deepgram ASR."""
+    text = "Hello world, this is a test of the Smallest AI asynchronous text to speech client."
+    
+    audio_bytes = await async_client.synthesize(text=text, output_format="wav")
+    
+    assert audio_bytes is not None
+    assert isinstance(audio_bytes, bytes)
+  
+    transcribed_text = await get_transcription(audio_bytes)
+    
+    original_normalized = normalize_text(text)
+    transcribed_normalized = normalize_text(transcribed_text)
+    
+    wer = jiwer.wer(original_normalized, transcribed_normalized)
+    
+    print(f"\nOriginal: '{original_normalized}'")
+    print(f"Transcribed: '{transcribed_normalized}'")
+    print(f"Word Error Rate (WER): {wer}")
+    
+    assert wer < 0.1
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("reference_text", [REFERENCE])
-async def test_synthesize(reference_text):
-    file_path = "test_async.wav"
-    try:
-        tts = get_tts_client()
-        async with tts as client:
-            audio_bytes = await client.synthesize(reference_text)
+async def test_async_synthesize_invalid_kwargs(async_client):
+    """Tests that async synthesize raises an error for invalid kwargs."""
+    with pytest.raises(ValueError, match="Invalid parameter\\(s\\) in kwargs"):
+        await async_client.synthesize("test", invalid_param="some_value")
 
-            with wave.open(file_path, "wb") as file:
-                file.setnchannels(1)
-                file.setsampwidth(2)
-                file.setframerate(24000)
-                file.writeframes(audio_bytes)
+@pytest.mark.asyncio
+async def test_async_delete_voice_failure(async_client):
+    """Tests async delete_voice failure case."""
+    # This requires mocking the session inside the client
+    await async_client._ensure_session()
+    with patch.object(async_client.session, 'delete') as mock_delete:
+        mock_response = Mock()
+        mock_response.status = 404
+        async def mock_text():
+            return "Not Found"
+        mock_response.text = mock_text
+        mock_delete.return_value.__aenter__.return_value = mock_response
 
-        with open(file_path, "rb") as file:
-            buffer_data = file.read()
-
-        hypothesis = transcribe(buffer_data)
-        wer = jiwer.wer(
-            reference_text,
-            hypothesis,
-            reference_transform=transforms,
-            hypothesis_transform=transforms,
-        )
-        assert wer <= 0.2
-    finally:
-        if os.path.exists(file_path):
-            os.remove(file_path)
+        with pytest.raises(APIError, match="Failed to delete voice"):
+            await async_client.delete_voice("non_existent_voice_id")

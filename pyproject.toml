@@ -1,6 +1,6 @@
 [project]
 name = "smallestai"
-version = "3.1.0"
+version = "4.0.0"
 description = "Official Python client for the Smallest AI API"
 authors = [
     {name = "Smallest", email = "support@smallest.ai"},
@@ -19,6 +19,7 @@ dependencies = [
     "aiofiles",
     "requests",
     "pydub",
+    "websocket-client",
     "urllib3 >= 1.25.3, < 3.0.0",
     "python-dateutil >= 2.8.2",
     "pydantic >= 2",

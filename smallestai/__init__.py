@@ -84,7 +84,7 @@ from smallestai.atoms import (
 from smallestai.waves import (
     WavesClient,
     AsyncWavesClient,
-    TextToAudioStream
+    WavesStreamingTTS
 )
 
 from smallestai.atoms import __all__ as atoms_all
