@@ -19,13 +19,12 @@ from typing_extensions import Annotated
 from pydantic import Field, StrictBytes, StrictStr
 from typing import Tuple, Union
 from typing_extensions import Annotated
-from smallestai.atoms.models.create_knowledge_base201_response import CreateKnowledgeBase201Response
-from smallestai.atoms.models.create_knowledge_base_request import CreateKnowledgeBaseRequest
-from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
-from smallestai.atoms.models.get_knowledge_base_by_id200_response import GetKnowledgeBaseById200Response
-from smallestai.atoms.models.get_knowledge_base_items200_response import GetKnowledgeBaseItems200Response
-from smallestai.atoms.models.get_knowledge_bases200_response import GetKnowledgeBases200Response
-from smallestai.atoms.models.upload_text_to_knowledge_base_request import UploadTextToKnowledgeBaseRequest
+from smallestai.atoms.models.agent_id_delete200_response import AgentIdDelete200Response
+from smallestai.atoms.models.api_response import ApiResponse
+from smallestai.atoms.models.knowledgebase_id_get200_response import KnowledgebaseIdGet200Response
+from smallestai.atoms.models.knowledgebase_id_items_upload_text_post_request import KnowledgebaseIdItemsUploadTextPostRequest
+from smallestai.atoms.models.knowledgebase_post201_response import KnowledgebasePost201Response
+from smallestai.atoms.models.knowledgebase_post_request import KnowledgebasePostRequest
 
 from smallestai.atoms.api_client import ApiClient, RequestSerialized
 from smallestai.atoms.api_response import ApiResponse
@@ -46,9 +45,8 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def create_knowledge_base(
+    def knowledgebase_get(
         self,
-        create_knowledge_base_request: CreateKnowledgeBaseRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -61,13 +59,11 @@ class KnowledgeBaseApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> CreateKnowledgeBase201Response:
-        """Create a knowledge base
+    ) -> ApiResponse:
+        """Get all knowledge bases
 
-        Create a knowledge base
+        Get all knowledge bases
 
-        :param create_knowledge_base_request: (required)
-        :type create_knowledge_base_request: CreateKnowledgeBaseRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -90,8 +86,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._create_knowledge_base_serialize(
-            create_knowledge_base_request=create_knowledge_base_request,
+        _param = self._knowledgebase_get_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -99,8 +94,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CreateKnowledgeBase201Response",
-            '400': "BadRequestErrorResponse",
+            '200': "ApiResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
         }
@@ -116,9 +110,8 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def create_knowledge_base_with_http_info(
+    def knowledgebase_get_with_http_info(
         self,
-        create_knowledge_base_request: CreateKnowledgeBaseRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -131,13 +124,11 @@ class KnowledgeBaseApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[CreateKnowledgeBase201Response]:
-        """Create a knowledge base
+    ) -> ApiResponse[ApiResponse]:
+        """Get all knowledge bases
 
-        Create a knowledge base
+        Get all knowledge bases
 
-        :param create_knowledge_base_request: (required)
-        :type create_knowledge_base_request: CreateKnowledgeBaseRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -160,8 +151,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._create_knowledge_base_serialize(
-            create_knowledge_base_request=create_knowledge_base_request,
+        _param = self._knowledgebase_get_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -169,8 +159,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CreateKnowledgeBase201Response",
-            '400': "BadRequestErrorResponse",
+            '200': "ApiResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
         }
@@ -186,9 +175,8 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def create_knowledge_base_without_preload_content(
+    def knowledgebase_get_without_preload_content(
         self,
-        create_knowledge_base_request: CreateKnowledgeBaseRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -202,12 +190,10 @@ class KnowledgeBaseApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """Create a knowledge base
+        """Get all knowledge bases
 
-        Create a knowledge base
+        Get all knowledge bases
 
-        :param create_knowledge_base_request: (required)
-        :type create_knowledge_base_request: CreateKnowledgeBaseRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -230,8 +216,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._create_knowledge_base_serialize(
-            create_knowledge_base_request=create_knowledge_base_request,
+        _param = self._knowledgebase_get_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -239,8 +224,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CreateKnowledgeBase201Response",
-            '400': "BadRequestErrorResponse",
+            '200': "ApiResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
         }
@@ -251,9 +235,8 @@ class KnowledgeBaseApi:
         return response_data.response
 
 
-    def _create_knowledge_base_serialize(
+    def _knowledgebase_get_serialize(
         self,
-        create_knowledge_base_request,
         _request_auth,
         _content_type,
         _headers,
@@ -279,8 +262,6 @@ class KnowledgeBaseApi:
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if create_knowledge_base_request is not None:
-            _body_params = create_knowledge_base_request
 
 
         # set the HTTP header `Accept`
@@ -291,19 +272,6 @@ class KnowledgeBaseApi:
                 ]
             )
 
-        # set the HTTP header `Content-Type`
-        if _content_type:
-            _header_params['Content-Type'] = _content_type
-        else:
-            _default_content_type = (
-                self.api_client.select_header_content_type(
-                    [
-                        'application/json'
-                    ]
-                )
-            )
-            if _default_content_type is not None:
-                _header_params['Content-Type'] = _default_content_type
 
         # authentication setting
         _auth_settings: List[str] = [
@@ -311,7 +279,7 @@ class KnowledgeBaseApi:
         ]
 
         return self.api_client.param_serialize(
-            method='POST',
+            method='GET',
             resource_path='/knowledgebase',
             path_params=_path_params,
             query_params=_query_params,
@@ -329,7 +297,7 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def delete_knowledge_base(
+    def knowledgebase_id_delete(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
         _request_timeout: Union[
@@ -344,7 +312,7 @@ class KnowledgeBaseApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> DeleteAgent200Response:
+    ) -> AgentIdDelete200Response:
         """Delete a knowledge base
 
         Delete a knowledge base
@@ -373,7 +341,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._delete_knowledge_base_serialize(
+        _param = self._knowledgebase_id_delete_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -382,7 +350,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
+            '200': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -399,7 +367,7 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def delete_knowledge_base_with_http_info(
+    def knowledgebase_id_delete_with_http_info(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
         _request_timeout: Union[
@@ -414,7 +382,7 @@ class KnowledgeBaseApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[DeleteAgent200Response]:
+    ) -> ApiResponse[AgentIdDelete200Response]:
         """Delete a knowledge base
 
         Delete a knowledge base
@@ -443,7 +411,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._delete_knowledge_base_serialize(
+        _param = self._knowledgebase_id_delete_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -452,7 +420,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
+            '200': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -469,7 +437,7 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def delete_knowledge_base_without_preload_content(
+    def knowledgebase_id_delete_without_preload_content(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
         _request_timeout: Union[
@@ -513,7 +481,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._delete_knowledge_base_serialize(
+        _param = self._knowledgebase_id_delete_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -522,7 +490,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
+            '200': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -534,7 +502,7 @@ class KnowledgeBaseApi:
         return response_data.response
 
 
-    def _delete_knowledge_base_serialize(
+    def _knowledgebase_id_delete_serialize(
         self,
         id,
         _request_auth,
@@ -599,292 +567,7 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def delete_knowledge_base_item(
-        self,
-        knowledge_base_id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
-        knowledge_base_item_id: Annotated[StrictStr, Field(description="The ID of the knowledge base item")],
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> DeleteAgent200Response:
-        """Delete a knowledge base item
-
-        Delete a knowledge base item
-
-        :param knowledge_base_id: The ID of the knowledge base (required)
-        :type knowledge_base_id: str
-        :param knowledge_base_item_id: The ID of the knowledge base item (required)
-        :type knowledge_base_item_id: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._delete_knowledge_base_item_serialize(
-            knowledge_base_id=knowledge_base_id,
-            knowledge_base_item_id=knowledge_base_item_id,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
-            '400': "BadRequestErrorResponse",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
-
-
-    @validate_call
-    def delete_knowledge_base_item_with_http_info(
-        self,
-        knowledge_base_id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
-        knowledge_base_item_id: Annotated[StrictStr, Field(description="The ID of the knowledge base item")],
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[DeleteAgent200Response]:
-        """Delete a knowledge base item
-
-        Delete a knowledge base item
-
-        :param knowledge_base_id: The ID of the knowledge base (required)
-        :type knowledge_base_id: str
-        :param knowledge_base_item_id: The ID of the knowledge base item (required)
-        :type knowledge_base_item_id: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._delete_knowledge_base_item_serialize(
-            knowledge_base_id=knowledge_base_id,
-            knowledge_base_item_id=knowledge_base_item_id,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
-            '400': "BadRequestErrorResponse",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def delete_knowledge_base_item_without_preload_content(
-        self,
-        knowledge_base_id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
-        knowledge_base_item_id: Annotated[StrictStr, Field(description="The ID of the knowledge base item")],
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Delete a knowledge base item
-
-        Delete a knowledge base item
-
-        :param knowledge_base_id: The ID of the knowledge base (required)
-        :type knowledge_base_id: str
-        :param knowledge_base_item_id: The ID of the knowledge base item (required)
-        :type knowledge_base_item_id: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._delete_knowledge_base_item_serialize(
-            knowledge_base_id=knowledge_base_id,
-            knowledge_base_item_id=knowledge_base_item_id,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
-            '400': "BadRequestErrorResponse",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
-
-
-    def _delete_knowledge_base_item_serialize(
-        self,
-        knowledge_base_id,
-        knowledge_base_item_id,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
-
-        # process the path parameters
-        if knowledge_base_id is not None:
-            _path_params['knowledgeBaseId'] = knowledge_base_id
-        if knowledge_base_item_id is not None:
-            _path_params['knowledgeBaseItemId'] = knowledge_base_item_id
-        # process the query parameters
-        # process the header parameters
-        # process the form parameters
-        # process the body parameter
-
-
-        # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json'
-                ]
-            )
-
-
-        # authentication setting
-        _auth_settings: List[str] = [
-            'BearerAuth'
-        ]
-
-        return self.api_client.param_serialize(
-            method='DELETE',
-            resource_path='/knowledgebase/{knowledgeBaseId}/items/{knowledgeBaseItemId}',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
-            body=_body_params,
-            post_params=_form_params,
-            files=_files,
-            auth_settings=_auth_settings,
-            collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
-
-
-
-
-    @validate_call
-    def get_knowledge_base_by_id(
+    def knowledgebase_id_get(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
         _request_timeout: Union[
@@ -899,7 +582,7 @@ class KnowledgeBaseApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetKnowledgeBaseById200Response:
+    ) -> KnowledgebaseIdGet200Response:
         """Get a knowledge base
 
         Get a knowledge base
@@ -928,7 +611,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_knowledge_base_by_id_serialize(
+        _param = self._knowledgebase_id_get_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -937,7 +620,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetKnowledgeBaseById200Response",
+            '200': "KnowledgebaseIdGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -954,7 +637,7 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def get_knowledge_base_by_id_with_http_info(
+    def knowledgebase_id_get_with_http_info(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
         _request_timeout: Union[
@@ -969,7 +652,7 @@ class KnowledgeBaseApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[GetKnowledgeBaseById200Response]:
+    ) -> ApiResponse[KnowledgebaseIdGet200Response]:
         """Get a knowledge base
 
         Get a knowledge base
@@ -998,7 +681,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_knowledge_base_by_id_serialize(
+        _param = self._knowledgebase_id_get_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1007,7 +690,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetKnowledgeBaseById200Response",
+            '200': "KnowledgebaseIdGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1024,7 +707,7 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def get_knowledge_base_by_id_without_preload_content(
+    def knowledgebase_id_get_without_preload_content(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
         _request_timeout: Union[
@@ -1068,7 +751,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_knowledge_base_by_id_serialize(
+        _param = self._knowledgebase_id_get_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1077,7 +760,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetKnowledgeBaseById200Response",
+            '200': "KnowledgebaseIdGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1089,7 +772,7 @@ class KnowledgeBaseApi:
         return response_data.response
 
 
-    def _get_knowledge_base_by_id_serialize(
+    def _knowledgebase_id_get_serialize(
         self,
         id,
         _request_auth,
@@ -1154,7 +837,7 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def get_knowledge_base_items(
+    def knowledgebase_id_items_get(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
         _request_timeout: Union[
@@ -1169,7 +852,7 @@ class KnowledgeBaseApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetKnowledgeBaseItems200Response:
+    ) -> ApiResponse:
         """Get all knowledge base items
 
         Get all knowledge base items
@@ -1198,7 +881,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_knowledge_base_items_serialize(
+        _param = self._knowledgebase_id_items_get_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1207,7 +890,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetKnowledgeBaseItems200Response",
+            '200': "ApiResponse",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1224,7 +907,7 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def get_knowledge_base_items_with_http_info(
+    def knowledgebase_id_items_get_with_http_info(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
         _request_timeout: Union[
@@ -1239,7 +922,7 @@ class KnowledgeBaseApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[GetKnowledgeBaseItems200Response]:
+    ) -> ApiResponse[ApiResponse]:
         """Get all knowledge base items
 
         Get all knowledge base items
@@ -1268,7 +951,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_knowledge_base_items_serialize(
+        _param = self._knowledgebase_id_items_get_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1277,7 +960,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetKnowledgeBaseItems200Response",
+            '200': "ApiResponse",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1294,7 +977,7 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def get_knowledge_base_items_without_preload_content(
+    def knowledgebase_id_items_get_without_preload_content(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
         _request_timeout: Union[
@@ -1338,7 +1021,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_knowledge_base_items_serialize(
+        _param = self._knowledgebase_id_items_get_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1347,7 +1030,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetKnowledgeBaseItems200Response",
+            '200': "ApiResponse",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1359,7 +1042,7 @@ class KnowledgeBaseApi:
         return response_data.response
 
 
-    def _get_knowledge_base_items_serialize(
+    def _knowledgebase_id_items_get_serialize(
         self,
         id,
         _request_auth,
@@ -1424,259 +1107,7 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def get_knowledge_bases(
-        self,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetKnowledgeBases200Response:
-        """Get all knowledge bases
-
-        Get all knowledge bases
-
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._get_knowledge_bases_serialize(
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetKnowledgeBases200Response",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
-
-
-    @validate_call
-    def get_knowledge_bases_with_http_info(
-        self,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[GetKnowledgeBases200Response]:
-        """Get all knowledge bases
-
-        Get all knowledge bases
-
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._get_knowledge_bases_serialize(
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetKnowledgeBases200Response",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def get_knowledge_bases_without_preload_content(
-        self,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Get all knowledge bases
-
-        Get all knowledge bases
-
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._get_knowledge_bases_serialize(
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetKnowledgeBases200Response",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
-
-
-    def _get_knowledge_bases_serialize(
-        self,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
-
-        # process the path parameters
-        # process the query parameters
-        # process the header parameters
-        # process the form parameters
-        # process the body parameter
-
-
-        # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json'
-                ]
-            )
-
-
-        # authentication setting
-        _auth_settings: List[str] = [
-            'BearerAuth'
-        ]
-
-        return self.api_client.param_serialize(
-            method='GET',
-            resource_path='/knowledgebase',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
-            body=_body_params,
-            post_params=_form_params,
-            files=_files,
-            auth_settings=_auth_settings,
-            collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
-
-
-
-
-    @validate_call
-    def upload_media_to_knowledge_base(
+    def knowledgebase_id_items_upload_media_post(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
         media: Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]],
@@ -1692,7 +1123,7 @@ class KnowledgeBaseApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> DeleteAgent200Response:
+    ) -> AgentIdDelete200Response:
         """Upload a media to a knowledge base
 
         Upload a media to a knowledge base
@@ -1723,7 +1154,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._upload_media_to_knowledge_base_serialize(
+        _param = self._knowledgebase_id_items_upload_media_post_serialize(
             id=id,
             media=media,
             _request_auth=_request_auth,
@@ -1733,7 +1164,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "DeleteAgent200Response",
+            '201': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1750,7 +1181,7 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def upload_media_to_knowledge_base_with_http_info(
+    def knowledgebase_id_items_upload_media_post_with_http_info(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
         media: Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]],
@@ -1766,7 +1197,7 @@ class KnowledgeBaseApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[DeleteAgent200Response]:
+    ) -> ApiResponse[AgentIdDelete200Response]:
         """Upload a media to a knowledge base
 
         Upload a media to a knowledge base
@@ -1797,7 +1228,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._upload_media_to_knowledge_base_serialize(
+        _param = self._knowledgebase_id_items_upload_media_post_serialize(
             id=id,
             media=media,
             _request_auth=_request_auth,
@@ -1807,7 +1238,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "DeleteAgent200Response",
+            '201': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1824,7 +1255,7 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def upload_media_to_knowledge_base_without_preload_content(
+    def knowledgebase_id_items_upload_media_post_without_preload_content(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
         media: Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]],
@@ -1871,7 +1302,7 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._upload_media_to_knowledge_base_serialize(
+        _param = self._knowledgebase_id_items_upload_media_post_serialize(
             id=id,
             media=media,
             _request_auth=_request_auth,
@@ -1881,7 +1312,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "DeleteAgent200Response",
+            '201': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1893,7 +1324,7 @@ class KnowledgeBaseApi:
         return response_data.response
 
 
-    def _upload_media_to_knowledge_base_serialize(
+    def _knowledgebase_id_items_upload_media_post_serialize(
         self,
         id,
         media,
@@ -1974,10 +1405,10 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def upload_text_to_knowledge_base(
+    def knowledgebase_id_items_upload_text_post(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
-        upload_text_to_knowledge_base_request: UploadTextToKnowledgeBaseRequest,
+        knowledgebase_id_items_upload_text_post_request: KnowledgebaseIdItemsUploadTextPostRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1990,15 +1421,15 @@ class KnowledgeBaseApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> DeleteAgent200Response:
+    ) -> AgentIdDelete200Response:
         """Upload a text to a knowledge base
 
         Upload a text to a knowledge base
 
         :param id: The ID of the knowledge base (required)
         :type id: str
-        :param upload_text_to_knowledge_base_request: (required)
-        :type upload_text_to_knowledge_base_request: UploadTextToKnowledgeBaseRequest
+        :param knowledgebase_id_items_upload_text_post_request: (required)
+        :type knowledgebase_id_items_upload_text_post_request: KnowledgebaseIdItemsUploadTextPostRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2021,9 +1452,9 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._upload_text_to_knowledge_base_serialize(
+        _param = self._knowledgebase_id_items_upload_text_post_serialize(
             id=id,
-            upload_text_to_knowledge_base_request=upload_text_to_knowledge_base_request,
+            knowledgebase_id_items_upload_text_post_request=knowledgebase_id_items_upload_text_post_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2031,7 +1462,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "DeleteAgent200Response",
+            '201': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -2048,10 +1479,10 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def upload_text_to_knowledge_base_with_http_info(
+    def knowledgebase_id_items_upload_text_post_with_http_info(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
-        upload_text_to_knowledge_base_request: UploadTextToKnowledgeBaseRequest,
+        knowledgebase_id_items_upload_text_post_request: KnowledgebaseIdItemsUploadTextPostRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2064,15 +1495,15 @@ class KnowledgeBaseApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[DeleteAgent200Response]:
+    ) -> ApiResponse[AgentIdDelete200Response]:
         """Upload a text to a knowledge base
 
         Upload a text to a knowledge base
 
         :param id: The ID of the knowledge base (required)
         :type id: str
-        :param upload_text_to_knowledge_base_request: (required)
-        :type upload_text_to_knowledge_base_request: UploadTextToKnowledgeBaseRequest
+        :param knowledgebase_id_items_upload_text_post_request: (required)
+        :type knowledgebase_id_items_upload_text_post_request: KnowledgebaseIdItemsUploadTextPostRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2095,9 +1526,9 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._upload_text_to_knowledge_base_serialize(
+        _param = self._knowledgebase_id_items_upload_text_post_serialize(
             id=id,
-            upload_text_to_knowledge_base_request=upload_text_to_knowledge_base_request,
+            knowledgebase_id_items_upload_text_post_request=knowledgebase_id_items_upload_text_post_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2105,7 +1536,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "DeleteAgent200Response",
+            '201': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -2122,10 +1553,10 @@ class KnowledgeBaseApi:
 
 
     @validate_call
-    def upload_text_to_knowledge_base_without_preload_content(
+    def knowledgebase_id_items_upload_text_post_without_preload_content(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
-        upload_text_to_knowledge_base_request: UploadTextToKnowledgeBaseRequest,
+        knowledgebase_id_items_upload_text_post_request: KnowledgebaseIdItemsUploadTextPostRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2145,8 +1576,8 @@ class KnowledgeBaseApi:
 
         :param id: The ID of the knowledge base (required)
         :type id: str
-        :param upload_text_to_knowledge_base_request: (required)
-        :type upload_text_to_knowledge_base_request: UploadTextToKnowledgeBaseRequest
+        :param knowledgebase_id_items_upload_text_post_request: (required)
+        :type knowledgebase_id_items_upload_text_post_request: KnowledgebaseIdItemsUploadTextPostRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2169,9 +1600,9 @@ class KnowledgeBaseApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._upload_text_to_knowledge_base_serialize(
+        _param = self._knowledgebase_id_items_upload_text_post_serialize(
             id=id,
-            upload_text_to_knowledge_base_request=upload_text_to_knowledge_base_request,
+            knowledgebase_id_items_upload_text_post_request=knowledgebase_id_items_upload_text_post_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2179,7 +1610,7 @@ class KnowledgeBaseApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "DeleteAgent200Response",
+            '201': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -2191,10 +1622,10 @@ class KnowledgeBaseApi:
         return response_data.response
 
 
-    def _upload_text_to_knowledge_base_serialize(
+    def _knowledgebase_id_items_upload_text_post_serialize(
         self,
         id,
-        upload_text_to_knowledge_base_request,
+        knowledgebase_id_items_upload_text_post_request,
         _request_auth,
         _content_type,
         _headers,
@@ -2222,8 +1653,8 @@ class KnowledgeBaseApi:
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if upload_text_to_knowledge_base_request is not None:
-            _body_params = upload_text_to_knowledge_base_request
+        if knowledgebase_id_items_upload_text_post_request is not None:
+            _body_params = knowledgebase_id_items_upload_text_post_request
 
 
         # set the HTTP header `Accept`
@@ -2256,6 +1687,574 @@ class KnowledgeBaseApi:
         return self.api_client.param_serialize(
             method='POST',
             resource_path='/knowledgebase/{id}/items/upload-text',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def knowledgebase_knowledge_base_id_items_knowledge_base_item_id_delete(
+        self,
+        knowledge_base_id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
+        knowledge_base_item_id: Annotated[StrictStr, Field(description="The ID of the knowledge base item")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> AgentIdDelete200Response:
+        """Delete a knowledge base item
+
+        Delete a knowledge base item
+
+        :param knowledge_base_id: The ID of the knowledge base (required)
+        :type knowledge_base_id: str
+        :param knowledge_base_item_id: The ID of the knowledge base item (required)
+        :type knowledge_base_item_id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._knowledgebase_knowledge_base_id_items_knowledge_base_item_id_delete_serialize(
+            knowledge_base_id=knowledge_base_id,
+            knowledge_base_item_id=knowledge_base_item_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdDelete200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def knowledgebase_knowledge_base_id_items_knowledge_base_item_id_delete_with_http_info(
+        self,
+        knowledge_base_id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
+        knowledge_base_item_id: Annotated[StrictStr, Field(description="The ID of the knowledge base item")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[AgentIdDelete200Response]:
+        """Delete a knowledge base item
+
+        Delete a knowledge base item
+
+        :param knowledge_base_id: The ID of the knowledge base (required)
+        :type knowledge_base_id: str
+        :param knowledge_base_item_id: The ID of the knowledge base item (required)
+        :type knowledge_base_item_id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._knowledgebase_knowledge_base_id_items_knowledge_base_item_id_delete_serialize(
+            knowledge_base_id=knowledge_base_id,
+            knowledge_base_item_id=knowledge_base_item_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdDelete200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def knowledgebase_knowledge_base_id_items_knowledge_base_item_id_delete_without_preload_content(
+        self,
+        knowledge_base_id: Annotated[StrictStr, Field(description="The ID of the knowledge base")],
+        knowledge_base_item_id: Annotated[StrictStr, Field(description="The ID of the knowledge base item")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Delete a knowledge base item
+
+        Delete a knowledge base item
+
+        :param knowledge_base_id: The ID of the knowledge base (required)
+        :type knowledge_base_id: str
+        :param knowledge_base_item_id: The ID of the knowledge base item (required)
+        :type knowledge_base_item_id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._knowledgebase_knowledge_base_id_items_knowledge_base_item_id_delete_serialize(
+            knowledge_base_id=knowledge_base_id,
+            knowledge_base_item_id=knowledge_base_item_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdDelete200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _knowledgebase_knowledge_base_id_items_knowledge_base_item_id_delete_serialize(
+        self,
+        knowledge_base_id,
+        knowledge_base_item_id,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        if knowledge_base_id is not None:
+            _path_params['knowledgeBaseId'] = knowledge_base_id
+        if knowledge_base_item_id is not None:
+            _path_params['knowledgeBaseItemId'] = knowledge_base_item_id
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'BearerAuth'
+        ]
+
+        return self.api_client.param_serialize(
+            method='DELETE',
+            resource_path='/knowledgebase/{knowledgeBaseId}/items/{knowledgeBaseItemId}',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def knowledgebase_post(
+        self,
+        knowledgebase_post_request: KnowledgebasePostRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> KnowledgebasePost201Response:
+        """Create a knowledge base
+
+        Create a knowledge base
+
+        :param knowledgebase_post_request: (required)
+        :type knowledgebase_post_request: KnowledgebasePostRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._knowledgebase_post_serialize(
+            knowledgebase_post_request=knowledgebase_post_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '201': "KnowledgebasePost201Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def knowledgebase_post_with_http_info(
+        self,
+        knowledgebase_post_request: KnowledgebasePostRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[KnowledgebasePost201Response]:
+        """Create a knowledge base
+
+        Create a knowledge base
+
+        :param knowledgebase_post_request: (required)
+        :type knowledgebase_post_request: KnowledgebasePostRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._knowledgebase_post_serialize(
+            knowledgebase_post_request=knowledgebase_post_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '201': "KnowledgebasePost201Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def knowledgebase_post_without_preload_content(
+        self,
+        knowledgebase_post_request: KnowledgebasePostRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Create a knowledge base
+
+        Create a knowledge base
+
+        :param knowledgebase_post_request: (required)
+        :type knowledgebase_post_request: KnowledgebasePostRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._knowledgebase_post_serialize(
+            knowledgebase_post_request=knowledgebase_post_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '201': "KnowledgebasePost201Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _knowledgebase_post_serialize(
+        self,
+        knowledgebase_post_request,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+        if knowledgebase_post_request is not None:
+            _body_params = knowledgebase_post_request
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+        # set the HTTP header `Content-Type`
+        if _content_type:
+            _header_params['Content-Type'] = _content_type
+        else:
+            _default_content_type = (
+                self.api_client.select_header_content_type(
+                    [
+                        'application/json'
+                    ]
+                )
+            )
+            if _default_content_type is not None:
+                _header_params['Content-Type'] = _default_content_type
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'BearerAuth'
+        ]
+
+        return self.api_client.param_serialize(
+            method='POST',
+            resource_path='/knowledgebase',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,

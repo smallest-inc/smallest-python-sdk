@@ -16,8 +16,8 @@ from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
-from smallestai.atoms.models.start_outbound_call200_response import StartOutboundCall200Response
-from smallestai.atoms.models.start_outbound_call_request import StartOutboundCallRequest
+from smallestai.atoms.models.conversation_outbound_post200_response import ConversationOutboundPost200Response
+from smallestai.atoms.models.conversation_outbound_post_request import ConversationOutboundPostRequest
 
 from smallestai.atoms.api_client import ApiClient, RequestSerialized
 from smallestai.atoms.api_response import ApiResponse
@@ -38,9 +38,9 @@ class CallsApi:
 
 
     @validate_call
-    def start_outbound_call(
+    def conversation_outbound_post(
         self,
-        start_outbound_call_request: StartOutboundCallRequest,
+        conversation_outbound_post_request: ConversationOutboundPostRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -53,13 +53,13 @@ class CallsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> StartOutboundCall200Response:
+    ) -> ConversationOutboundPost200Response:
         """Start an outbound call
 
         Initiates an outbound conversation with a specified agent and phone number.
 
-        :param start_outbound_call_request: (required)
-        :type start_outbound_call_request: StartOutboundCallRequest
+        :param conversation_outbound_post_request: (required)
+        :type conversation_outbound_post_request: ConversationOutboundPostRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -82,8 +82,8 @@ class CallsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._start_outbound_call_serialize(
-            start_outbound_call_request=start_outbound_call_request,
+        _param = self._conversation_outbound_post_serialize(
+            conversation_outbound_post_request=conversation_outbound_post_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -91,7 +91,7 @@ class CallsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "StartOutboundCall200Response",
+            '200': "ConversationOutboundPost200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -108,9 +108,9 @@ class CallsApi:
 
 
     @validate_call
-    def start_outbound_call_with_http_info(
+    def conversation_outbound_post_with_http_info(
         self,
-        start_outbound_call_request: StartOutboundCallRequest,
+        conversation_outbound_post_request: ConversationOutboundPostRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -123,13 +123,13 @@ class CallsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[StartOutboundCall200Response]:
+    ) -> ApiResponse[ConversationOutboundPost200Response]:
         """Start an outbound call
 
         Initiates an outbound conversation with a specified agent and phone number.
 
-        :param start_outbound_call_request: (required)
-        :type start_outbound_call_request: StartOutboundCallRequest
+        :param conversation_outbound_post_request: (required)
+        :type conversation_outbound_post_request: ConversationOutboundPostRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -152,8 +152,8 @@ class CallsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._start_outbound_call_serialize(
-            start_outbound_call_request=start_outbound_call_request,
+        _param = self._conversation_outbound_post_serialize(
+            conversation_outbound_post_request=conversation_outbound_post_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -161,7 +161,7 @@ class CallsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "StartOutboundCall200Response",
+            '200': "ConversationOutboundPost200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -178,9 +178,9 @@ class CallsApi:
 
 
     @validate_call
-    def start_outbound_call_without_preload_content(
+    def conversation_outbound_post_without_preload_content(
         self,
-        start_outbound_call_request: StartOutboundCallRequest,
+        conversation_outbound_post_request: ConversationOutboundPostRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -198,8 +198,8 @@ class CallsApi:
 
         Initiates an outbound conversation with a specified agent and phone number.
 
-        :param start_outbound_call_request: (required)
-        :type start_outbound_call_request: StartOutboundCallRequest
+        :param conversation_outbound_post_request: (required)
+        :type conversation_outbound_post_request: ConversationOutboundPostRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -222,8 +222,8 @@ class CallsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._start_outbound_call_serialize(
-            start_outbound_call_request=start_outbound_call_request,
+        _param = self._conversation_outbound_post_serialize(
+            conversation_outbound_post_request=conversation_outbound_post_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -231,7 +231,7 @@ class CallsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "StartOutboundCall200Response",
+            '200': "ConversationOutboundPost200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -243,9 +243,9 @@ class CallsApi:
         return response_data.response
 
 
-    def _start_outbound_call_serialize(
+    def _conversation_outbound_post_serialize(
         self,
-        start_outbound_call_request,
+        conversation_outbound_post_request,
         _request_auth,
         _content_type,
         _headers,
@@ -271,8 +271,8 @@ class CallsApi:
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if start_outbound_call_request is not None:
-            _body_params = start_outbound_call_request
+        if conversation_outbound_post_request is not None:
+            _body_params = conversation_outbound_post_request
 
 
         # set the HTTP header `Accept`

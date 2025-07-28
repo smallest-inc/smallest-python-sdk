@@ -39,7 +39,7 @@ def main():
             "similarity": 0,
             "enhancement": 1
         },
-        "slmModel": "electron-v1"
+        "slmModel": "electron"
     }
     
     response = atoms_client.create_agent(create_agent_request=new_agent_request)

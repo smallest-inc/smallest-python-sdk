@@ -16,9 +16,9 @@ from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
-from smallestai.atoms.models.create_agent_from_template200_response import CreateAgentFromTemplate200Response
+from smallestai.atoms.models.agent_from_template_post200_response import AgentFromTemplatePost200Response
+from smallestai.atoms.models.agent_template_get200_response import AgentTemplateGet200Response
 from smallestai.atoms.models.create_agent_from_template_request import CreateAgentFromTemplateRequest
-from smallestai.atoms.models.get_agent_templates200_response import GetAgentTemplates200Response
 
 from smallestai.atoms.api_client import ApiClient, RequestSerialized
 from smallestai.atoms.api_response import ApiResponse
@@ -39,7 +39,7 @@ class AgentTemplatesApi:
 
 
     @validate_call
-    def create_agent_from_template(
+    def agent_from_template_post(
         self,
         create_agent_from_template_request: CreateAgentFromTemplateRequest,
         _request_timeout: Union[
@@ -54,7 +54,7 @@ class AgentTemplatesApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> CreateAgentFromTemplate200Response:
+    ) -> AgentFromTemplatePost200Response:
         """Create agent from template
 
         We have created templates for some common use cases. You can use these templates to create an agent. For getting list of templates, you can use the /agent/template endpoint. It will give you the list of templates with their description and id. You can pass the id of the template in the request body to create an agent from the template.
@@ -83,7 +83,7 @@ class AgentTemplatesApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._create_agent_from_template_serialize(
+        _param = self._agent_from_template_post_serialize(
             create_agent_from_template_request=create_agent_from_template_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -92,7 +92,7 @@ class AgentTemplatesApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CreateAgentFromTemplate200Response",
+            '200': "AgentFromTemplatePost200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -109,7 +109,7 @@ class AgentTemplatesApi:
 
 
     @validate_call
-    def create_agent_from_template_with_http_info(
+    def agent_from_template_post_with_http_info(
         self,
         create_agent_from_template_request: CreateAgentFromTemplateRequest,
         _request_timeout: Union[
@@ -124,7 +124,7 @@ class AgentTemplatesApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[CreateAgentFromTemplate200Response]:
+    ) -> ApiResponse[AgentFromTemplatePost200Response]:
         """Create agent from template
 
         We have created templates for some common use cases. You can use these templates to create an agent. For getting list of templates, you can use the /agent/template endpoint. It will give you the list of templates with their description and id. You can pass the id of the template in the request body to create an agent from the template.
@@ -153,7 +153,7 @@ class AgentTemplatesApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._create_agent_from_template_serialize(
+        _param = self._agent_from_template_post_serialize(
             create_agent_from_template_request=create_agent_from_template_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -162,7 +162,7 @@ class AgentTemplatesApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CreateAgentFromTemplate200Response",
+            '200': "AgentFromTemplatePost200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -179,7 +179,7 @@ class AgentTemplatesApi:
 
 
     @validate_call
-    def create_agent_from_template_without_preload_content(
+    def agent_from_template_post_without_preload_content(
         self,
         create_agent_from_template_request: CreateAgentFromTemplateRequest,
         _request_timeout: Union[
@@ -223,7 +223,7 @@ class AgentTemplatesApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._create_agent_from_template_serialize(
+        _param = self._agent_from_template_post_serialize(
             create_agent_from_template_request=create_agent_from_template_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -232,7 +232,7 @@ class AgentTemplatesApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "CreateAgentFromTemplate200Response",
+            '200': "AgentFromTemplatePost200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -244,7 +244,7 @@ class AgentTemplatesApi:
         return response_data.response
 
 
-    def _create_agent_from_template_serialize(
+    def _agent_from_template_post_serialize(
         self,
         create_agent_from_template_request,
         _request_auth,
@@ -322,7 +322,7 @@ class AgentTemplatesApi:
 
 
     @validate_call
-    def get_agent_templates(
+    def agent_template_get(
         self,
         _request_timeout: Union[
             None,
@@ -336,7 +336,7 @@ class AgentTemplatesApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetAgentTemplates200Response:
+    ) -> AgentTemplateGet200Response:
         """Get agent templates
 
 
@@ -362,7 +362,7 @@ class AgentTemplatesApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_agent_templates_serialize(
+        _param = self._agent_template_get_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -370,7 +370,7 @@ class AgentTemplatesApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetAgentTemplates200Response",
+            '200': "AgentTemplateGet200Response",
             '401': "UnauthorizedErrorReponse",
             '400': "BadRequestErrorResponse",
             '500': "InternalServerErrorResponse",
@@ -387,7 +387,7 @@ class AgentTemplatesApi:
 
 
     @validate_call
-    def get_agent_templates_with_http_info(
+    def agent_template_get_with_http_info(
         self,
         _request_timeout: Union[
             None,
@@ -401,7 +401,7 @@ class AgentTemplatesApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[GetAgentTemplates200Response]:
+    ) -> ApiResponse[AgentTemplateGet200Response]:
         """Get agent templates
 
 
@@ -427,7 +427,7 @@ class AgentTemplatesApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_agent_templates_serialize(
+        _param = self._agent_template_get_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -435,7 +435,7 @@ class AgentTemplatesApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetAgentTemplates200Response",
+            '200': "AgentTemplateGet200Response",
             '401': "UnauthorizedErrorReponse",
             '400': "BadRequestErrorResponse",
             '500': "InternalServerErrorResponse",
@@ -452,7 +452,7 @@ class AgentTemplatesApi:
 
 
     @validate_call
-    def get_agent_templates_without_preload_content(
+    def agent_template_get_without_preload_content(
         self,
         _request_timeout: Union[
             None,
@@ -492,7 +492,7 @@ class AgentTemplatesApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_agent_templates_serialize(
+        _param = self._agent_template_get_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -500,7 +500,7 @@ class AgentTemplatesApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetAgentTemplates200Response",
+            '200': "AgentTemplateGet200Response",
             '401': "UnauthorizedErrorReponse",
             '400': "BadRequestErrorResponse",
             '500': "InternalServerErrorResponse",
@@ -512,7 +512,7 @@ class AgentTemplatesApi:
         return response_data.response
 
 
-    def _get_agent_templates_serialize(
+    def _agent_template_get_serialize(
         self,
         _request_auth,
         _content_type,

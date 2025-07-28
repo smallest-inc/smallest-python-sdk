@@ -16,7 +16,7 @@ from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
-from smallestai.atoms.models.get_organization200_response import GetOrganization200Response
+from smallestai.atoms.models.organization_get200_response import OrganizationGet200Response
 
 from smallestai.atoms.api_client import ApiClient, RequestSerialized
 from smallestai.atoms.api_response import ApiResponse
@@ -37,7 +37,7 @@ class OrganizationApi:
 
 
     @validate_call
-    def get_organization(
+    def organization_get(
         self,
         _request_timeout: Union[
             None,
@@ -51,7 +51,7 @@ class OrganizationApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetOrganization200Response:
+    ) -> OrganizationGet200Response:
         """Get organization details
 
 
@@ -77,7 +77,7 @@ class OrganizationApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_organization_serialize(
+        _param = self._organization_get_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -85,7 +85,7 @@ class OrganizationApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetOrganization200Response",
+            '200': "OrganizationGet200Response",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
         }
@@ -101,7 +101,7 @@ class OrganizationApi:
 
 
     @validate_call
-    def get_organization_with_http_info(
+    def organization_get_with_http_info(
         self,
         _request_timeout: Union[
             None,
@@ -115,7 +115,7 @@ class OrganizationApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[GetOrganization200Response]:
+    ) -> ApiResponse[OrganizationGet200Response]:
         """Get organization details
 
 
@@ -141,7 +141,7 @@ class OrganizationApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_organization_serialize(
+        _param = self._organization_get_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -149,7 +149,7 @@ class OrganizationApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetOrganization200Response",
+            '200': "OrganizationGet200Response",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
         }
@@ -165,7 +165,7 @@ class OrganizationApi:
 
 
     @validate_call
-    def get_organization_without_preload_content(
+    def organization_get_without_preload_content(
         self,
         _request_timeout: Union[
             None,
@@ -205,7 +205,7 @@ class OrganizationApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_organization_serialize(
+        _param = self._organization_get_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -213,7 +213,7 @@ class OrganizationApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetOrganization200Response",
+            '200': "OrganizationGet200Response",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
         }
@@ -224,7 +224,7 @@ class OrganizationApi:
         return response_data.response
 
 
-    def _get_organization_serialize(
+    def _organization_get_serialize(
         self,
         _request_auth,
         _content_type,

@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 **language** | [**UpdateAgentRequestLanguage**](UpdateAgentRequestLanguage.md) |  | [optional] 
 **synthesizer** | [**UpdateAgentRequestSynthesizer**](UpdateAgentRequestSynthesizer.md) |  | [optional] 
 **global_knowledge_base_id** | **str** |  | [optional] 
-**slm_model** | **str** |  | [optional] [default to 'electron-v1']
+**slm_model** | **str** |  | [optional] [default to 'electron']
 **default_variables** | **object** | The default variables to use for the agent. These variables will be used if no variables are provided when initiating a conversation with the agent. | [optional] 
 **telephony_product_id** | **str** | The telephony product ID of the agent. This is the product ID of the telephony product that will be used to make the outbound call. You can buy telephone number and assign it to the agent. | [optional] 
 

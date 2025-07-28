@@ -22,7 +22,9 @@ from smallestai.atoms.api.campaigns_api import CampaignsApi
 from smallestai.atoms.api.knowledge_base_api import KnowledgeBaseApi
 from smallestai.atoms.api.logs_api import LogsApi
 from smallestai.atoms.api.organization_api import OrganizationApi
+from smallestai.atoms.api.phone_numbers_api import PhoneNumbersApi
 from smallestai.atoms.api.user_api import UserApi
+from smallestai.atoms.api.webhooks_api import WebhooksApi
 
 # import ApiClient
 from smallestai.atoms.api_response import ApiResponse
@@ -34,149 +36,271 @@ from smallestai.atoms.exceptions import ApiValueError
 from smallestai.atoms.exceptions import ApiKeyError
 from smallestai.atoms.exceptions import ApiAttributeError
 from smallestai.atoms.exceptions import ApiException
+from smallestai.atoms.atoms_client import AtomsClient
 
 # import models into sdk package
+from smallestai.atoms.models.agent_agent_id_webhook_subscriptions_delete200_response import AgentAgentIdWebhookSubscriptionsDelete200Response
+from smallestai.atoms.models.agent_agent_id_webhook_subscriptions_get200_response import AgentAgentIdWebhookSubscriptionsGet200Response
+from smallestai.atoms.models.agent_agent_id_webhook_subscriptions_get404_response import AgentAgentIdWebhookSubscriptionsGet404Response
+from smallestai.atoms.models.agent_agent_id_webhook_subscriptions_post201_response import AgentAgentIdWebhookSubscriptionsPost201Response
+from smallestai.atoms.models.agent_agent_id_webhook_subscriptions_post400_response import AgentAgentIdWebhookSubscriptionsPost400Response
+from smallestai.atoms.models.agent_agent_id_webhook_subscriptions_post_request import AgentAgentIdWebhookSubscriptionsPostRequest
 from smallestai.atoms.models.agent_dto import AgentDTO
 from smallestai.atoms.models.agent_dto_language import AgentDTOLanguage
 from smallestai.atoms.models.agent_dto_synthesizer import AgentDTOSynthesizer
 from smallestai.atoms.models.agent_dto_synthesizer_voice_config import AgentDTOSynthesizerVoiceConfig
+from smallestai.atoms.models.agent_from_template_post200_response import AgentFromTemplatePost200Response
+from smallestai.atoms.models.agent_get200_response import AgentGet200Response
+from smallestai.atoms.models.agent_id_delete200_response import AgentIdDelete200Response
+from smallestai.atoms.models.agent_id_get200_response import AgentIdGet200Response
+from smallestai.atoms.models.agent_id_patch200_response import AgentIdPatch200Response
+from smallestai.atoms.models.agent_id_patch_request import AgentIdPatchRequest
+from smallestai.atoms.models.agent_id_patch_request_language import AgentIdPatchRequestLanguage
+from smallestai.atoms.models.agent_id_patch_request_synthesizer import AgentIdPatchRequestSynthesizer
+from smallestai.atoms.models.agent_id_patch_request_synthesizer_voice_config import AgentIdPatchRequestSynthesizerVoiceConfig
+from smallestai.atoms.models.agent_id_patch_request_synthesizer_voice_config_one_of import AgentIdPatchRequestSynthesizerVoiceConfigOneOf
+from smallestai.atoms.models.agent_id_patch_request_synthesizer_voice_config_one_of1 import AgentIdPatchRequestSynthesizerVoiceConfigOneOf1
+from smallestai.atoms.models.agent_id_workflow_get200_response import AgentIdWorkflowGet200Response
+from smallestai.atoms.models.agent_id_workflow_get200_response_data import AgentIdWorkflowGet200ResponseData
+from smallestai.atoms.models.agent_id_workflow_get200_response_data_edges_inner import AgentIdWorkflowGet200ResponseDataEdgesInner
+from smallestai.atoms.models.agent_id_workflow_get200_response_data_edges_inner_data import AgentIdWorkflowGet200ResponseDataEdgesInnerData
+from smallestai.atoms.models.agent_id_workflow_get200_response_data_edges_inner_marker_end import AgentIdWorkflowGet200ResponseDataEdgesInnerMarkerEnd
+from smallestai.atoms.models.agent_id_workflow_get200_response_data_nodes_inner import AgentIdWorkflowGet200ResponseDataNodesInner
+from smallestai.atoms.models.agent_id_workflow_get200_response_data_nodes_inner_data import AgentIdWorkflowGet200ResponseDataNodesInnerData
+from smallestai.atoms.models.agent_id_workflow_get200_response_data_nodes_inner_data_variables import AgentIdWorkflowGet200ResponseDataNodesInnerDataVariables
+from smallestai.atoms.models.agent_id_workflow_get200_response_data_nodes_inner_data_variables_data_inner import AgentIdWorkflowGet200ResponseDataNodesInnerDataVariablesDataInner
+from smallestai.atoms.models.agent_id_workflow_get200_response_data_nodes_inner_position import AgentIdWorkflowGet200ResponseDataNodesInnerPosition
+from smallestai.atoms.models.agent_id_workflow_get404_response import AgentIdWorkflowGet404Response
+from smallestai.atoms.models.agent_template_get200_response import AgentTemplateGet200Response
+from smallestai.atoms.models.agent_template_get200_response_data_inner import AgentTemplateGet200ResponseDataInner
 from smallestai.atoms.models.api_response import ApiResponse
+from smallestai.atoms.models.audience_get200_response import AudienceGet200Response
+from smallestai.atoms.models.audience_get200_response_data_inner import AudienceGet200ResponseDataInner
+from smallestai.atoms.models.audience_id_delete200_response import AudienceIdDelete200Response
+from smallestai.atoms.models.audience_id_delete400_response import AudienceIdDelete400Response
+from smallestai.atoms.models.audience_id_get200_response import AudienceIdGet200Response
+from smallestai.atoms.models.audience_id_get400_response import AudienceIdGet400Response
+from smallestai.atoms.models.audience_id_get403_response import AudienceIdGet403Response
+from smallestai.atoms.models.audience_id_get404_response import AudienceIdGet404Response
+from smallestai.atoms.models.audience_id_members_delete200_response import AudienceIdMembersDelete200Response
+from smallestai.atoms.models.audience_id_members_delete200_response_data import AudienceIdMembersDelete200ResponseData
+from smallestai.atoms.models.audience_id_members_delete_request import AudienceIdMembersDeleteRequest
+from smallestai.atoms.models.audience_id_members_get200_response import AudienceIdMembersGet200Response
+from smallestai.atoms.models.audience_id_members_get200_response_data import AudienceIdMembersGet200ResponseData
+from smallestai.atoms.models.audience_id_members_get200_response_data_members_inner import AudienceIdMembersGet200ResponseDataMembersInner
+from smallestai.atoms.models.audience_id_members_get400_response import AudienceIdMembersGet400Response
+from smallestai.atoms.models.audience_id_members_get500_response import AudienceIdMembersGet500Response
+from smallestai.atoms.models.audience_id_members_post200_response import AudienceIdMembersPost200Response
+from smallestai.atoms.models.audience_id_members_post200_response_data_inner import AudienceIdMembersPost200ResponseDataInner
+from smallestai.atoms.models.audience_id_members_post200_response_data_inner_data import AudienceIdMembersPost200ResponseDataInnerData
+from smallestai.atoms.models.audience_id_members_post400_response import AudienceIdMembersPost400Response
+from smallestai.atoms.models.audience_id_members_post403_response import AudienceIdMembersPost403Response
+from smallestai.atoms.models.audience_id_members_post_request import AudienceIdMembersPostRequest
+from smallestai.atoms.models.audience_id_members_search_get200_response import AudienceIdMembersSearchGet200Response
+from smallestai.atoms.models.audience_id_members_search_get200_response_data import AudienceIdMembersSearchGet200ResponseData
+from smallestai.atoms.models.audience_id_members_search_get200_response_data_search_info import AudienceIdMembersSearchGet200ResponseDataSearchInfo
+from smallestai.atoms.models.audience_id_members_search_get400_response import AudienceIdMembersSearchGet400Response
+from smallestai.atoms.models.audience_id_members_search_get500_response import AudienceIdMembersSearchGet500Response
+from smallestai.atoms.models.audience_post200_response import AudiencePost200Response
+from smallestai.atoms.models.audience_post200_response_data import AudiencePost200ResponseData
+from smallestai.atoms.models.audience_post400_response import AudiencePost400Response
 from smallestai.atoms.models.bad_request_error_response import BadRequestErrorResponse
-from smallestai.atoms.models.create_agent_from_template200_response import CreateAgentFromTemplate200Response
+from smallestai.atoms.models.campaign_get200_response import CampaignGet200Response
+from smallestai.atoms.models.campaign_get200_response_data_inner import CampaignGet200ResponseDataInner
+from smallestai.atoms.models.campaign_get_request import CampaignGetRequest
+from smallestai.atoms.models.campaign_id_get200_response import CampaignIdGet200Response
+from smallestai.atoms.models.campaign_post200_response_inner import CampaignPost200ResponseInner
+from smallestai.atoms.models.campaign_post_request import CampaignPostRequest
+from smallestai.atoms.models.conversation_id_get200_response import ConversationIdGet200Response
+from smallestai.atoms.models.conversation_id_get200_response_data import ConversationIdGet200ResponseData
+from smallestai.atoms.models.conversation_outbound_post200_response import ConversationOutboundPost200Response
+from smallestai.atoms.models.conversation_outbound_post200_response_data import ConversationOutboundPost200ResponseData
+from smallestai.atoms.models.conversation_outbound_post_request import ConversationOutboundPostRequest
 from smallestai.atoms.models.create_agent_from_template_request import CreateAgentFromTemplateRequest
 from smallestai.atoms.models.create_agent_request import CreateAgentRequest
 from smallestai.atoms.models.create_agent_request_language import CreateAgentRequestLanguage
 from smallestai.atoms.models.create_agent_request_language_synthesizer import CreateAgentRequestLanguageSynthesizer
 from smallestai.atoms.models.create_agent_request_language_synthesizer_voice_config import CreateAgentRequestLanguageSynthesizerVoiceConfig
-from smallestai.atoms.models.create_campaign201_response import CreateCampaign201Response
-from smallestai.atoms.models.create_campaign201_response_data import CreateCampaign201ResponseData
-from smallestai.atoms.models.create_campaign_request import CreateCampaignRequest
-from smallestai.atoms.models.create_knowledge_base201_response import CreateKnowledgeBase201Response
-from smallestai.atoms.models.create_knowledge_base_request import CreateKnowledgeBaseRequest
-from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
-from smallestai.atoms.models.get_agent_by_id200_response import GetAgentById200Response
-from smallestai.atoms.models.get_agent_templates200_response import GetAgentTemplates200Response
-from smallestai.atoms.models.get_agent_templates200_response_data_inner import GetAgentTemplates200ResponseDataInner
-from smallestai.atoms.models.get_agents200_response import GetAgents200Response
-from smallestai.atoms.models.get_agents200_response_data import GetAgents200ResponseData
-from smallestai.atoms.models.get_campaign_by_id200_response import GetCampaignById200Response
-from smallestai.atoms.models.get_campaign_by_id200_response_data import GetCampaignById200ResponseData
-from smallestai.atoms.models.get_campaigns200_response import GetCampaigns200Response
-from smallestai.atoms.models.get_campaigns200_response_data_inner import GetCampaigns200ResponseDataInner
-from smallestai.atoms.models.get_campaigns200_response_data_inner_agent import GetCampaigns200ResponseDataInnerAgent
-from smallestai.atoms.models.get_campaigns200_response_data_inner_audience import GetCampaigns200ResponseDataInnerAudience
-from smallestai.atoms.models.get_campaigns_request import GetCampaignsRequest
-from smallestai.atoms.models.get_conversation_logs200_response import GetConversationLogs200Response
-from smallestai.atoms.models.get_conversation_logs200_response_data import GetConversationLogs200ResponseData
-from smallestai.atoms.models.get_current_user200_response import GetCurrentUser200Response
-from smallestai.atoms.models.get_current_user200_response_data import GetCurrentUser200ResponseData
-from smallestai.atoms.models.get_knowledge_base_by_id200_response import GetKnowledgeBaseById200Response
-from smallestai.atoms.models.get_knowledge_base_items200_response import GetKnowledgeBaseItems200Response
-from smallestai.atoms.models.get_knowledge_bases200_response import GetKnowledgeBases200Response
-from smallestai.atoms.models.get_organization200_response import GetOrganization200Response
-from smallestai.atoms.models.get_organization200_response_data import GetOrganization200ResponseData
-from smallestai.atoms.models.get_organization200_response_data_members_inner import GetOrganization200ResponseDataMembersInner
-from smallestai.atoms.models.get_organization200_response_data_subscription import GetOrganization200ResponseDataSubscription
 from smallestai.atoms.models.internal_server_error_response import InternalServerErrorResponse
-from smallestai.atoms.models.knowledge_base_dto import KnowledgeBaseDTO
-from smallestai.atoms.models.knowledge_base_item_dto import KnowledgeBaseItemDTO
-from smallestai.atoms.models.start_outbound_call200_response import StartOutboundCall200Response
-from smallestai.atoms.models.start_outbound_call200_response_data import StartOutboundCall200ResponseData
-from smallestai.atoms.models.start_outbound_call_request import StartOutboundCallRequest
+from smallestai.atoms.models.knowledgebase_id_get200_response import KnowledgebaseIdGet200Response
+from smallestai.atoms.models.knowledgebase_id_get200_response_data import KnowledgebaseIdGet200ResponseData
+from smallestai.atoms.models.knowledgebase_id_items_upload_text_post_request import KnowledgebaseIdItemsUploadTextPostRequest
+from smallestai.atoms.models.knowledgebase_post201_response import KnowledgebasePost201Response
+from smallestai.atoms.models.knowledgebase_post_request import KnowledgebasePostRequest
+from smallestai.atoms.models.organization_get200_response import OrganizationGet200Response
+from smallestai.atoms.models.organization_get200_response_data import OrganizationGet200ResponseData
+from smallestai.atoms.models.organization_get200_response_data_members_inner import OrganizationGet200ResponseDataMembersInner
+from smallestai.atoms.models.organization_get200_response_data_subscription import OrganizationGet200ResponseDataSubscription
+from smallestai.atoms.models.product_phone_numbers_get200_response import ProductPhoneNumbersGet200Response
+from smallestai.atoms.models.product_phone_numbers_get200_response_data_inner import ProductPhoneNumbersGet200ResponseDataInner
+from smallestai.atoms.models.product_phone_numbers_get200_response_data_inner_attributes import ProductPhoneNumbersGet200ResponseDataInnerAttributes
 from smallestai.atoms.models.unauthorized_error_reponse import UnauthorizedErrorReponse
-from smallestai.atoms.models.update_agent200_response import UpdateAgent200Response
-from smallestai.atoms.models.update_agent_request import UpdateAgentRequest
-from smallestai.atoms.models.update_agent_request_language import UpdateAgentRequestLanguage
-from smallestai.atoms.models.update_agent_request_synthesizer import UpdateAgentRequestSynthesizer
-from smallestai.atoms.models.update_agent_request_synthesizer_voice_config import UpdateAgentRequestSynthesizerVoiceConfig
-from smallestai.atoms.models.update_agent_request_synthesizer_voice_config_one_of import UpdateAgentRequestSynthesizerVoiceConfigOneOf
-from smallestai.atoms.models.update_agent_request_synthesizer_voice_config_one_of1 import UpdateAgentRequestSynthesizerVoiceConfigOneOf1
-from smallestai.atoms.models.upload_text_to_knowledge_base_request import UploadTextToKnowledgeBaseRequest
-
-from smallestai.atoms.atoms_client import AtomsClient
+from smallestai.atoms.models.user_get200_response import UserGet200Response
+from smallestai.atoms.models.user_get200_response_data import UserGet200ResponseData
+from smallestai.atoms.models.webhook import Webhook
+from smallestai.atoms.models.webhook_agent import WebhookAgent
+from smallestai.atoms.models.webhook_event import WebhookEvent
+from smallestai.atoms.models.webhook_get200_response import WebhookGet200Response
+from smallestai.atoms.models.webhook_get200_response_data import WebhookGet200ResponseData
+from smallestai.atoms.models.webhook_id_delete404_response import WebhookIdDelete404Response
+from smallestai.atoms.models.webhook_post201_response import WebhookPost201Response
+from smallestai.atoms.models.webhook_post_request import WebhookPostRequest
+from smallestai.atoms.models.webhook_post_request_events_inner import WebhookPostRequestEventsInner
+from smallestai.atoms.models.webhook_subscription import WebhookSubscription
+from smallestai.atoms.models.webhook_subscription_populated import WebhookSubscriptionPopulated
 
 __all__ = [
-    # APIs
-    'AgentTemplatesApi',
-    'AgentsApi',
-    'CallsApi',
-    'CampaignsApi',
-    'KnowledgeBaseApi',
-    'LogsApi',
-    'OrganizationApi',
-    'UserApi',
+    # API Classes
+    "AgentTemplatesApi",
+    "AgentsApi",
+    "CallsApi",
+    "CampaignsApi",
+    "KnowledgeBaseApi",
+    "LogsApi",
+    "OrganizationApi",
+    "PhoneNumbersApi",
+    "UserApi",
+    "WebhooksApi",
     
-    # Core classes
-    'ApiResponse',
-    'ApiClient',
-    'Configuration',
+    # Core Classes
+    "ApiResponse",
+    "ApiClient",
+    "Configuration",
+    "AtomsClient",
     
     # Exceptions
-    'OpenApiException',
-    'ApiTypeError',
-    'ApiValueError',
-    'ApiKeyError',
-    'ApiAttributeError',
-    'ApiException',
+    "OpenApiException",
+    "ApiTypeError",
+    "ApiValueError",
+    "ApiKeyError",
+    "ApiAttributeError",
+    "ApiException",
     
-    # Models
-    'AgentDTO',
-    'AgentDTOLanguage',
-    'AgentDTOSynthesizer',
-    'AgentDTOSynthesizerVoiceConfig',
-    'ApiResponse',
-    'BadRequestErrorResponse',
-    'CreateAgentFromTemplate200Response',
-    'CreateAgentFromTemplateRequest',
-    'CreateAgentRequest',
-    'CreateAgentRequestLanguage',
-    'CreateAgentRequestLanguageSynthesizer',
-    'CreateAgentRequestLanguageSynthesizerVoiceConfig',
-    'CreateCampaign201Response',
-    'CreateCampaign201ResponseData',
-    'CreateCampaignRequest',
-    'CreateKnowledgeBase201Response',
-    'CreateKnowledgeBaseRequest',
-    'DeleteAgent200Response',
-    'GetAgentById200Response',
-    'GetAgentTemplates200Response',
-    'GetAgentTemplates200ResponseDataInner',
-    'GetAgents200Response',
-    'GetAgents200ResponseData',
-    'GetCampaignById200Response',
-    'GetCampaignById200ResponseData',
-    'GetCampaigns200Response',
-    'GetCampaigns200ResponseDataInner',
-    'GetCampaigns200ResponseDataInnerAgent',
-    'GetCampaigns200ResponseDataInnerAudience',
-    'GetCampaignsRequest',
-    'GetConversationLogs200Response',
-    'GetConversationLogs200ResponseData',
-    'GetCurrentUser200Response',
-    'GetCurrentUser200ResponseData',
-    'GetKnowledgeBaseById200Response',
-    'GetKnowledgeBaseItems200Response',
-    'GetKnowledgeBases200Response',
-    'GetOrganization200Response',
-    'GetOrganization200ResponseData',
-    'GetOrganization200ResponseDataMembersInner',
-    'GetOrganization200ResponseDataSubscription',
-    'InternalServerErrorResponse',
-    'KnowledgeBaseDTO',
-    'KnowledgeBaseItemDTO',
-    'StartOutboundCall200Response',
-    'StartOutboundCall200ResponseData',
-    'StartOutboundCallRequest',
-    'UnauthorizedErrorReponse',
-    'UpdateAgent200Response',
-    'UpdateAgentRequest',
-    'UpdateAgentRequestLanguage',
-    'UpdateAgentRequestSynthesizer',
-    'UpdateAgentRequestSynthesizerVoiceConfig',
-    'UpdateAgentRequestSynthesizerVoiceConfigOneOf',
-    'UpdateAgentRequestSynthesizerVoiceConfigOneOf1',
-    'UploadTextToKnowledgeBaseRequest',
+    # Agent Models
+    "AgentDTO",
+    "AgentDTOLanguage",
+    "AgentDTOSynthesizer",
+    "AgentDTOSynthesizerVoiceConfig",
+    "AgentFromTemplatePost200Response",
+    "AgentGet200Response",
+    "AgentIdDelete200Response",
+    "AgentIdGet200Response",
+    "AgentIdPatch200Response",
+    "AgentIdPatchRequest",
+    "AgentIdPatchRequestLanguage",
+    "AgentIdPatchRequestSynthesizer",
+    "AgentIdPatchRequestSynthesizerVoiceConfig",
+    "AgentIdPatchRequestSynthesizerVoiceConfigOneOf",
+    "AgentIdPatchRequestSynthesizerVoiceConfigOneOf1",
+    "AgentIdWorkflowGet200Response",
+    "AgentIdWorkflowGet200ResponseData",
+    "AgentIdWorkflowGet200ResponseDataEdgesInner",
+    "AgentIdWorkflowGet200ResponseDataEdgesInnerData",
+    "AgentIdWorkflowGet200ResponseDataEdgesInnerMarkerEnd",
+    "AgentIdWorkflowGet200ResponseDataNodesInner",
+    "AgentIdWorkflowGet200ResponseDataNodesInnerData",
+    "AgentIdWorkflowGet200ResponseDataNodesInnerDataVariables",
+    "AgentIdWorkflowGet200ResponseDataNodesInnerDataVariablesDataInner",
+    "AgentIdWorkflowGet200ResponseDataNodesInnerPosition",
+    "AgentIdWorkflowGet404Response",
+    "AgentTemplateGet200Response",
+    "AgentTemplateGet200ResponseDataInner",
+    "CreateAgentFromTemplateRequest",
+    "CreateAgentRequest",
+    "CreateAgentRequestLanguage",
+    "CreateAgentRequestLanguageSynthesizer",
+    "CreateAgentRequestLanguageSynthesizerVoiceConfig",
     
-    # Main Client
-    'AtomsClient'
+    # Webhook Models
+    "AgentAgentIdWebhookSubscriptionsDelete200Response",
+    "AgentAgentIdWebhookSubscriptionsGet200Response",
+    "AgentAgentIdWebhookSubscriptionsGet404Response",
+    "AgentAgentIdWebhookSubscriptionsPost201Response",
+    "AgentAgentIdWebhookSubscriptionsPost400Response",
+    "AgentAgentIdWebhookSubscriptionsPostRequest",
+    "Webhook",
+    "WebhookAgent",
+    "WebhookEvent",
+    "WebhookGet200Response",
+    "WebhookGet200ResponseData",
+    "WebhookIdDelete404Response",
+    "WebhookPost201Response",
+    "WebhookPostRequest",
+    "WebhookPostRequestEventsInner",
+    "WebhookSubscription",
+    "WebhookSubscriptionPopulated",
+    
+    # Audience Models
+    "AudienceGet200Response",
+    "AudienceGet200ResponseDataInner",
+    "AudienceIdDelete200Response",
+    "AudienceIdDelete400Response",
+    "AudienceIdGet200Response",
+    "AudienceIdGet400Response",
+    "AudienceIdGet403Response",
+    "AudienceIdGet404Response",
+    "AudienceIdMembersDelete200Response",
+    "AudienceIdMembersDelete200ResponseData",
+    "AudienceIdMembersDeleteRequest",
+    "AudienceIdMembersGet200Response",
+    "AudienceIdMembersGet200ResponseData",
+    "AudienceIdMembersGet200ResponseDataMembersInner",
+    "AudienceIdMembersGet400Response",
+    "AudienceIdMembersGet500Response",
+    "AudienceIdMembersPost200Response",
+    "AudienceIdMembersPost200ResponseDataInner",
+    "AudienceIdMembersPost200ResponseDataInnerData",
+    "AudienceIdMembersPost400Response",
+    "AudienceIdMembersPost403Response",
+    "AudienceIdMembersPostRequest",
+    "AudienceIdMembersSearchGet200Response",
+    "AudienceIdMembersSearchGet200ResponseData",
+    "AudienceIdMembersSearchGet200ResponseDataSearchInfo",
+    "AudienceIdMembersSearchGet400Response",
+    "AudienceIdMembersSearchGet500Response",
+    "AudiencePost200Response",
+    "AudiencePost200ResponseData",
+    "AudiencePost400Response",
+    
+    # Campaign Models
+    "CampaignGet200Response",
+    "CampaignGet200ResponseDataInner",
+    "CampaignGetRequest",
+    "CampaignIdGet200Response",
+    "CampaignPost200ResponseInner",
+    "CampaignPostRequest",
+    
+    # Conversation Models
+    "ConversationIdGet200Response",
+    "ConversationIdGet200ResponseData",
+    "ConversationOutboundPost200Response",
+    "ConversationOutboundPost200ResponseData",
+    "ConversationOutboundPostRequest",
+    
+    # Knowledge Base Models
+    "KnowledgebaseIdGet200Response",
+    "KnowledgebaseIdGet200ResponseData",
+    "KnowledgebaseIdItemsUploadTextPostRequest",
+    "KnowledgebasePost201Response",
+    "KnowledgebasePostRequest",
+    
+    # Organization Models
+    "OrganizationGet200Response",
+    "OrganizationGet200ResponseData",
+    "OrganizationGet200ResponseDataMembersInner",
+    "OrganizationGet200ResponseDataSubscription",
+    
+    # Phone Numbers Models
+    "ProductPhoneNumbersGet200Response",
+    "ProductPhoneNumbersGet200ResponseDataInner",
+    "ProductPhoneNumbersGet200ResponseDataInnerAttributes",
+    
+    # User Models
+    "UserGet200Response",
+    "UserGet200ResponseData",
+    
+    # Error Response Models
+    "BadRequestErrorResponse",
+    "InternalServerErrorResponse",
+    "UnauthorizedErrorReponse",
 ]

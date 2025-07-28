@@ -18,7 +18,7 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from smallestai.atoms.models.agent_dto_language import AgentDTOLanguage
 from smallestai.atoms.models.agent_dto_synthesizer import AgentDTOSynthesizer
@@ -29,9 +29,10 @@ class AgentDTO(BaseModel):
     """
     AgentDTO
     """ # noqa: E501
-    id: StrictStr = Field(description="The ID of the agent", alias="_id")
-    name: StrictStr = Field(description="The name of the agent")
+    id: Optional[StrictStr] = Field(default=None, description="The ID of the agent", alias="_id")
+    name: Optional[StrictStr] = Field(default=None, description="The name of the agent")
     description: Optional[StrictStr] = Field(default=None, description="The description of the agent")
+    background_sound: Optional[StrictBool] = Field(default=None, description="Whether ambient background sound is enabled during calls", alias="backgroundSound")
     organization: Optional[StrictStr] = Field(default=None, description="The organization ID of the agent")
     workflow_id: Optional[StrictStr] = Field(default=None, description="The workflow ID of the agent", alias="workflowId")
     created_by: Optional[StrictStr] = Field(default=None, description="The user ID of the user who created the agent", alias="createdBy")
@@ -42,7 +43,7 @@ class AgentDTO(BaseModel):
     default_variables: Optional[Dict[str, Any]] = Field(default=None, description="The default variables to use for the agent. These variables will be used if no variables are provided when initiating a conversation with the agent.", alias="defaultVariables")
     created_at: Optional[datetime] = Field(default=None, description="The date and time when the agent was created", alias="createdAt")
     updated_at: Optional[datetime] = Field(default=None, description="The date and time when the agent was last updated", alias="updatedAt")
-    __properties: ClassVar[List[str]] = ["_id", "name", "description", "organization", "workflowId", "createdBy", "globalKnowledgeBaseId", "language", "synthesizer", "slmModel", "defaultVariables", "createdAt", "updatedAt"]
+    __properties: ClassVar[List[str]] = ["_id", "name", "description", "backgroundSound", "organization", "workflowId", "createdBy", "globalKnowledgeBaseId", "language", "synthesizer", "slmModel", "defaultVariables", "createdAt", "updatedAt"]
 
     @field_validator('slm_model')
     def slm_model_validate_enum(cls, value):
@@ -50,8 +51,8 @@ class AgentDTO(BaseModel):
         if value is None:
             return value
 
-        if value not in set(['electron-v1', 'electron-v2', 'gpt-4o-mini']):
-            raise ValueError("must be one of enum values ('electron-v1', 'electron-v2', 'gpt-4o-mini')")
+        if value not in set(['electron', 'gpt-4o']):
+            raise ValueError("must be one of enum values ('electron', 'gpt-4o')")
         return value
 
     model_config = ConfigDict(
@@ -114,6 +115,7 @@ class AgentDTO(BaseModel):
             "_id": obj.get("_id"),
             "name": obj.get("name"),
             "description": obj.get("description"),
+            "backgroundSound": obj.get("backgroundSound"),
             "organization": obj.get("organization"),
             "workflowId": obj.get("workflowId"),
             "createdBy": obj.get("createdBy"),

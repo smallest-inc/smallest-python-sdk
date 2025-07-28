@@ -17,24 +17,24 @@ import json
 import pprint
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
 from typing import Any, List, Optional
-from smallestai.atoms.models.update_agent_request_synthesizer_voice_config_one_of import UpdateAgentRequestSynthesizerVoiceConfigOneOf
-from smallestai.atoms.models.update_agent_request_synthesizer_voice_config_one_of1 import UpdateAgentRequestSynthesizerVoiceConfigOneOf1
+from smallestai.atoms.models.agent_id_patch_request_synthesizer_voice_config_one_of import AgentIdPatchRequestSynthesizerVoiceConfigOneOf
+from smallestai.atoms.models.agent_id_patch_request_synthesizer_voice_config_one_of1 import AgentIdPatchRequestSynthesizerVoiceConfigOneOf1
 from pydantic import StrictStr, Field
 from typing import Union, List, Set, Optional, Dict
 from typing_extensions import Literal, Self
 
-CREATEAGENTREQUESTLANGUAGESYNTHESIZERVOICECONFIG_ONE_OF_SCHEMAS = ["UpdateAgentRequestSynthesizerVoiceConfigOneOf", "UpdateAgentRequestSynthesizerVoiceConfigOneOf1"]
+CREATEAGENTREQUESTLANGUAGESYNTHESIZERVOICECONFIG_ONE_OF_SCHEMAS = ["AgentIdPatchRequestSynthesizerVoiceConfigOneOf", "AgentIdPatchRequestSynthesizerVoiceConfigOneOf1"]
 
 class CreateAgentRequestLanguageSynthesizerVoiceConfig(BaseModel):
     """
     CreateAgentRequestLanguageSynthesizerVoiceConfig
     """
-    # data type: UpdateAgentRequestSynthesizerVoiceConfigOneOf
-    oneof_schema_1_validator: Optional[UpdateAgentRequestSynthesizerVoiceConfigOneOf] = None
-    # data type: UpdateAgentRequestSynthesizerVoiceConfigOneOf1
-    oneof_schema_2_validator: Optional[UpdateAgentRequestSynthesizerVoiceConfigOneOf1] = None
-    actual_instance: Optional[Union[UpdateAgentRequestSynthesizerVoiceConfigOneOf, UpdateAgentRequestSynthesizerVoiceConfigOneOf1]] = None
-    one_of_schemas: Set[str] = { "UpdateAgentRequestSynthesizerVoiceConfigOneOf", "UpdateAgentRequestSynthesizerVoiceConfigOneOf1" }
+    # data type: AgentIdPatchRequestSynthesizerVoiceConfigOneOf
+    oneof_schema_1_validator: Optional[AgentIdPatchRequestSynthesizerVoiceConfigOneOf] = None
+    # data type: AgentIdPatchRequestSynthesizerVoiceConfigOneOf1
+    oneof_schema_2_validator: Optional[AgentIdPatchRequestSynthesizerVoiceConfigOneOf1] = None
+    actual_instance: Optional[Union[AgentIdPatchRequestSynthesizerVoiceConfigOneOf, AgentIdPatchRequestSynthesizerVoiceConfigOneOf1]] = None
+    one_of_schemas: Set[str] = { "AgentIdPatchRequestSynthesizerVoiceConfigOneOf", "AgentIdPatchRequestSynthesizerVoiceConfigOneOf1" }
 
     model_config = ConfigDict(
         validate_assignment=True,
@@ -57,22 +57,22 @@ class CreateAgentRequestLanguageSynthesizerVoiceConfig(BaseModel):
         instance = CreateAgentRequestLanguageSynthesizerVoiceConfig.model_construct()
         error_messages = []
         match = 0
-        # validate data type: UpdateAgentRequestSynthesizerVoiceConfigOneOf
-        if not isinstance(v, UpdateAgentRequestSynthesizerVoiceConfigOneOf):
-            error_messages.append(f"Error! Input type `{type(v)}` is not `UpdateAgentRequestSynthesizerVoiceConfigOneOf`")
+        # validate data type: AgentIdPatchRequestSynthesizerVoiceConfigOneOf
+        if not isinstance(v, AgentIdPatchRequestSynthesizerVoiceConfigOneOf):
+            error_messages.append(f"Error! Input type `{type(v)}` is not `AgentIdPatchRequestSynthesizerVoiceConfigOneOf`")
         else:
             match += 1
-        # validate data type: UpdateAgentRequestSynthesizerVoiceConfigOneOf1
-        if not isinstance(v, UpdateAgentRequestSynthesizerVoiceConfigOneOf1):
-            error_messages.append(f"Error! Input type `{type(v)}` is not `UpdateAgentRequestSynthesizerVoiceConfigOneOf1`")
+        # validate data type: AgentIdPatchRequestSynthesizerVoiceConfigOneOf1
+        if not isinstance(v, AgentIdPatchRequestSynthesizerVoiceConfigOneOf1):
+            error_messages.append(f"Error! Input type `{type(v)}` is not `AgentIdPatchRequestSynthesizerVoiceConfigOneOf1`")
         else:
             match += 1
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when setting `actual_instance` in CreateAgentRequestLanguageSynthesizerVoiceConfig with oneOf schemas: UpdateAgentRequestSynthesizerVoiceConfigOneOf, UpdateAgentRequestSynthesizerVoiceConfigOneOf1. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when setting `actual_instance` in CreateAgentRequestLanguageSynthesizerVoiceConfig with oneOf schemas: AgentIdPatchRequestSynthesizerVoiceConfigOneOf, AgentIdPatchRequestSynthesizerVoiceConfigOneOf1. Details: " + ", ".join(error_messages))
         elif match == 0:
             # no match
-            raise ValueError("No match found when setting `actual_instance` in CreateAgentRequestLanguageSynthesizerVoiceConfig with oneOf schemas: UpdateAgentRequestSynthesizerVoiceConfigOneOf, UpdateAgentRequestSynthesizerVoiceConfigOneOf1. Details: " + ", ".join(error_messages))
+            raise ValueError("No match found when setting `actual_instance` in CreateAgentRequestLanguageSynthesizerVoiceConfig with oneOf schemas: AgentIdPatchRequestSynthesizerVoiceConfigOneOf, AgentIdPatchRequestSynthesizerVoiceConfigOneOf1. Details: " + ", ".join(error_messages))
         else:
             return v
 
@@ -87,25 +87,25 @@ class CreateAgentRequestLanguageSynthesizerVoiceConfig(BaseModel):
         error_messages = []
         match = 0
 
-        # deserialize data into UpdateAgentRequestSynthesizerVoiceConfigOneOf
+        # deserialize data into AgentIdPatchRequestSynthesizerVoiceConfigOneOf
         try:
-            instance.actual_instance = UpdateAgentRequestSynthesizerVoiceConfigOneOf.from_json(json_str)
+            instance.actual_instance = AgentIdPatchRequestSynthesizerVoiceConfigOneOf.from_json(json_str)
             match += 1
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
-        # deserialize data into UpdateAgentRequestSynthesizerVoiceConfigOneOf1
+        # deserialize data into AgentIdPatchRequestSynthesizerVoiceConfigOneOf1
         try:
-            instance.actual_instance = UpdateAgentRequestSynthesizerVoiceConfigOneOf1.from_json(json_str)
+            instance.actual_instance = AgentIdPatchRequestSynthesizerVoiceConfigOneOf1.from_json(json_str)
             match += 1
         except (ValidationError, ValueError) as e:
             error_messages.append(str(e))
 
         if match > 1:
             # more than 1 match
-            raise ValueError("Multiple matches found when deserializing the JSON string into CreateAgentRequestLanguageSynthesizerVoiceConfig with oneOf schemas: UpdateAgentRequestSynthesizerVoiceConfigOneOf, UpdateAgentRequestSynthesizerVoiceConfigOneOf1. Details: " + ", ".join(error_messages))
+            raise ValueError("Multiple matches found when deserializing the JSON string into CreateAgentRequestLanguageSynthesizerVoiceConfig with oneOf schemas: AgentIdPatchRequestSynthesizerVoiceConfigOneOf, AgentIdPatchRequestSynthesizerVoiceConfigOneOf1. Details: " + ", ".join(error_messages))
         elif match == 0:
             # no match
-            raise ValueError("No match found when deserializing the JSON string into CreateAgentRequestLanguageSynthesizerVoiceConfig with oneOf schemas: UpdateAgentRequestSynthesizerVoiceConfigOneOf, UpdateAgentRequestSynthesizerVoiceConfigOneOf1. Details: " + ", ".join(error_messages))
+            raise ValueError("No match found when deserializing the JSON string into CreateAgentRequestLanguageSynthesizerVoiceConfig with oneOf schemas: AgentIdPatchRequestSynthesizerVoiceConfigOneOf, AgentIdPatchRequestSynthesizerVoiceConfigOneOf1. Details: " + ", ".join(error_messages))
         else:
             return instance
 
@@ -119,7 +119,7 @@ class CreateAgentRequestLanguageSynthesizerVoiceConfig(BaseModel):
         else:
             return json.dumps(self.actual_instance)
 
-    def to_dict(self) -> Optional[Union[Dict[str, Any], UpdateAgentRequestSynthesizerVoiceConfigOneOf, UpdateAgentRequestSynthesizerVoiceConfigOneOf1]]:
+    def to_dict(self) -> Optional[Union[Dict[str, Any], AgentIdPatchRequestSynthesizerVoiceConfigOneOf, AgentIdPatchRequestSynthesizerVoiceConfigOneOf1]]:
         """Returns the dict representation of the actual instance"""
         if self.actual_instance is None:
             return None

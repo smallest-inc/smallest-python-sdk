@@ -17,13 +17,14 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
 from pydantic import Field, StrictStr
+from typing import List
 from typing_extensions import Annotated
-from smallestai.atoms.models.create_campaign201_response import CreateCampaign201Response
-from smallestai.atoms.models.create_campaign_request import CreateCampaignRequest
-from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
-from smallestai.atoms.models.get_campaign_by_id200_response import GetCampaignById200Response
-from smallestai.atoms.models.get_campaigns200_response import GetCampaigns200Response
-from smallestai.atoms.models.get_campaigns_request import GetCampaignsRequest
+from smallestai.atoms.models.agent_id_delete200_response import AgentIdDelete200Response
+from smallestai.atoms.models.campaign_get200_response import CampaignGet200Response
+from smallestai.atoms.models.campaign_get_request import CampaignGetRequest
+from smallestai.atoms.models.campaign_id_get200_response import CampaignIdGet200Response
+from smallestai.atoms.models.campaign_post200_response_inner import CampaignPost200ResponseInner
+from smallestai.atoms.models.campaign_post_request import CampaignPostRequest
 
 from smallestai.atoms.api_client import ApiClient, RequestSerialized
 from smallestai.atoms.api_response import ApiResponse
@@ -44,290 +45,7 @@ class CampaignsApi:
 
 
     @validate_call
-    def create_campaign(
-        self,
-        create_campaign_request: CreateCampaignRequest,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> CreateCampaign201Response:
-        """Create a campaign
-
-        Create a campaign
-
-        :param create_campaign_request: (required)
-        :type create_campaign_request: CreateCampaignRequest
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._create_campaign_serialize(
-            create_campaign_request=create_campaign_request,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CreateCampaign201Response",
-            '400': "BadRequestErrorResponse",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
-
-
-    @validate_call
-    def create_campaign_with_http_info(
-        self,
-        create_campaign_request: CreateCampaignRequest,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[CreateCampaign201Response]:
-        """Create a campaign
-
-        Create a campaign
-
-        :param create_campaign_request: (required)
-        :type create_campaign_request: CreateCampaignRequest
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._create_campaign_serialize(
-            create_campaign_request=create_campaign_request,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CreateCampaign201Response",
-            '400': "BadRequestErrorResponse",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def create_campaign_without_preload_content(
-        self,
-        create_campaign_request: CreateCampaignRequest,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Create a campaign
-
-        Create a campaign
-
-        :param create_campaign_request: (required)
-        :type create_campaign_request: CreateCampaignRequest
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._create_campaign_serialize(
-            create_campaign_request=create_campaign_request,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CreateCampaign201Response",
-            '400': "BadRequestErrorResponse",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
-
-
-    def _create_campaign_serialize(
-        self,
-        create_campaign_request,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
-
-        # process the path parameters
-        # process the query parameters
-        # process the header parameters
-        # process the form parameters
-        # process the body parameter
-        if create_campaign_request is not None:
-            _body_params = create_campaign_request
-
-
-        # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json'
-                ]
-            )
-
-        # set the HTTP header `Content-Type`
-        if _content_type:
-            _header_params['Content-Type'] = _content_type
-        else:
-            _default_content_type = (
-                self.api_client.select_header_content_type(
-                    [
-                        'application/json'
-                    ]
-                )
-            )
-            if _default_content_type is not None:
-                _header_params['Content-Type'] = _default_content_type
-
-        # authentication setting
-        _auth_settings: List[str] = [
-            'BearerAuth'
-        ]
-
-        return self.api_client.param_serialize(
-            method='POST',
-            resource_path='/campaign',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
-            body=_body_params,
-            post_params=_form_params,
-            files=_files,
-            auth_settings=_auth_settings,
-            collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
-
-
-
-
-    @validate_call
-    def delete_campaign(
+    def campaign_delete(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the campaign")],
         _request_timeout: Union[
@@ -342,7 +60,7 @@ class CampaignsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> DeleteAgent200Response:
+    ) -> AgentIdDelete200Response:
         """Delete a campaign
 
         Delete a campaign
@@ -371,7 +89,7 @@ class CampaignsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._delete_campaign_serialize(
+        _param = self._campaign_delete_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -380,7 +98,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
+            '200': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -397,7 +115,7 @@ class CampaignsApi:
 
 
     @validate_call
-    def delete_campaign_with_http_info(
+    def campaign_delete_with_http_info(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the campaign")],
         _request_timeout: Union[
@@ -412,7 +130,7 @@ class CampaignsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[DeleteAgent200Response]:
+    ) -> ApiResponse[AgentIdDelete200Response]:
         """Delete a campaign
 
         Delete a campaign
@@ -441,7 +159,7 @@ class CampaignsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._delete_campaign_serialize(
+        _param = self._campaign_delete_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -450,7 +168,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
+            '200': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -467,7 +185,7 @@ class CampaignsApi:
 
 
     @validate_call
-    def delete_campaign_without_preload_content(
+    def campaign_delete_without_preload_content(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the campaign")],
         _request_timeout: Union[
@@ -511,7 +229,7 @@ class CampaignsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._delete_campaign_serialize(
+        _param = self._campaign_delete_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -520,7 +238,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
+            '200': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -532,7 +250,7 @@ class CampaignsApi:
         return response_data.response
 
 
-    def _delete_campaign_serialize(
+    def _campaign_delete_serialize(
         self,
         id,
         _request_auth,
@@ -580,7 +298,7 @@ class CampaignsApi:
 
         return self.api_client.param_serialize(
             method='DELETE',
-            resource_path='/campaign/{id}',
+            resource_path='/campaign',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -597,9 +315,9 @@ class CampaignsApi:
 
 
     @validate_call
-    def get_campaign_by_id(
+    def campaign_get(
         self,
-        id: Annotated[StrictStr, Field(description="The ID of the campaign")],
+        campaign_get_request: CampaignGetRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -612,13 +330,13 @@ class CampaignsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetCampaignById200Response:
-        """Get a campaign
+    ) -> CampaignGet200Response:
+        """Retrieve all campaigns
 
-        Get a campaign
+        Get all campaigns
 
-        :param id: The ID of the campaign (required)
-        :type id: str
+        :param campaign_get_request: (required)
+        :type campaign_get_request: CampaignGetRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -641,8 +359,8 @@ class CampaignsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_campaign_by_id_serialize(
-            id=id,
+        _param = self._campaign_get_serialize(
+            campaign_get_request=campaign_get_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -650,7 +368,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetCampaignById200Response",
+            '200': "CampaignGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -667,9 +385,9 @@ class CampaignsApi:
 
 
     @validate_call
-    def get_campaign_by_id_with_http_info(
+    def campaign_get_with_http_info(
         self,
-        id: Annotated[StrictStr, Field(description="The ID of the campaign")],
+        campaign_get_request: CampaignGetRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -682,213 +400,13 @@ class CampaignsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[GetCampaignById200Response]:
-        """Get a campaign
-
-        Get a campaign
-
-        :param id: The ID of the campaign (required)
-        :type id: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._get_campaign_by_id_serialize(
-            id=id,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetCampaignById200Response",
-            '400': "BadRequestErrorResponse",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def get_campaign_by_id_without_preload_content(
-        self,
-        id: Annotated[StrictStr, Field(description="The ID of the campaign")],
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Get a campaign
-
-        Get a campaign
-
-        :param id: The ID of the campaign (required)
-        :type id: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._get_campaign_by_id_serialize(
-            id=id,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetCampaignById200Response",
-            '400': "BadRequestErrorResponse",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
-
-
-    def _get_campaign_by_id_serialize(
-        self,
-        id,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
-
-        # process the path parameters
-        if id is not None:
-            _path_params['id'] = id
-        # process the query parameters
-        # process the header parameters
-        # process the form parameters
-        # process the body parameter
-
-
-        # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json'
-                ]
-            )
-
-
-        # authentication setting
-        _auth_settings: List[str] = [
-            'BearerAuth'
-        ]
-
-        return self.api_client.param_serialize(
-            method='GET',
-            resource_path='/campaign/{id}',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
-            body=_body_params,
-            post_params=_form_params,
-            files=_files,
-            auth_settings=_auth_settings,
-            collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
-
-
-
-
-    @validate_call
-    def get_campaigns(
-        self,
-        get_campaigns_request: GetCampaignsRequest,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetCampaigns200Response:
+    ) -> ApiResponse[CampaignGet200Response]:
         """Retrieve all campaigns
 
         Get all campaigns
 
-        :param get_campaigns_request: (required)
-        :type get_campaigns_request: GetCampaignsRequest
+        :param campaign_get_request: (required)
+        :type campaign_get_request: CampaignGetRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -911,8 +429,8 @@ class CampaignsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_campaigns_serialize(
-            get_campaigns_request=get_campaigns_request,
+        _param = self._campaign_get_serialize(
+            campaign_get_request=campaign_get_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -920,77 +438,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetCampaigns200Response",
-            '400': "BadRequestErrorResponse",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
-
-
-    @validate_call
-    def get_campaigns_with_http_info(
-        self,
-        get_campaigns_request: GetCampaignsRequest,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[GetCampaigns200Response]:
-        """Retrieve all campaigns
-
-        Get all campaigns
-
-        :param get_campaigns_request: (required)
-        :type get_campaigns_request: GetCampaignsRequest
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._get_campaigns_serialize(
-            get_campaigns_request=get_campaigns_request,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetCampaigns200Response",
+            '200': "CampaignGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1007,9 +455,9 @@ class CampaignsApi:
 
 
     @validate_call
-    def get_campaigns_without_preload_content(
+    def campaign_get_without_preload_content(
         self,
-        get_campaigns_request: GetCampaignsRequest,
+        campaign_get_request: CampaignGetRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1027,8 +475,8 @@ class CampaignsApi:
 
         Get all campaigns
 
-        :param get_campaigns_request: (required)
-        :type get_campaigns_request: GetCampaignsRequest
+        :param campaign_get_request: (required)
+        :type campaign_get_request: CampaignGetRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1051,8 +499,8 @@ class CampaignsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_campaigns_serialize(
-            get_campaigns_request=get_campaigns_request,
+        _param = self._campaign_get_serialize(
+            campaign_get_request=campaign_get_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1060,7 +508,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetCampaigns200Response",
+            '200': "CampaignGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1072,9 +520,9 @@ class CampaignsApi:
         return response_data.response
 
 
-    def _get_campaigns_serialize(
+    def _campaign_get_serialize(
         self,
-        get_campaigns_request,
+        campaign_get_request,
         _request_auth,
         _content_type,
         _headers,
@@ -1100,8 +548,8 @@ class CampaignsApi:
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if get_campaigns_request is not None:
-            _body_params = get_campaigns_request
+        if campaign_get_request is not None:
+            _body_params = campaign_get_request
 
 
         # set the HTTP header `Accept`
@@ -1150,7 +598,7 @@ class CampaignsApi:
 
 
     @validate_call
-    def pause_campaign(
+    def campaign_id_get(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the campaign")],
         _request_timeout: Union[
@@ -1165,10 +613,10 @@ class CampaignsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> DeleteAgent200Response:
-        """Pause a campaign
+    ) -> CampaignIdGet200Response:
+        """Get a campaign
 
-        Pause a campaign
+        Get a campaign
 
         :param id: The ID of the campaign (required)
         :type id: str
@@ -1194,7 +642,7 @@ class CampaignsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._pause_campaign_serialize(
+        _param = self._campaign_id_get_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1203,7 +651,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
+            '200': "CampaignIdGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1220,7 +668,7 @@ class CampaignsApi:
 
 
     @validate_call
-    def pause_campaign_with_http_info(
+    def campaign_id_get_with_http_info(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the campaign")],
         _request_timeout: Union[
@@ -1235,10 +683,10 @@ class CampaignsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[DeleteAgent200Response]:
-        """Pause a campaign
+    ) -> ApiResponse[CampaignIdGet200Response]:
+        """Get a campaign
 
-        Pause a campaign
+        Get a campaign
 
         :param id: The ID of the campaign (required)
         :type id: str
@@ -1264,7 +712,7 @@ class CampaignsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._pause_campaign_serialize(
+        _param = self._campaign_id_get_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1273,7 +721,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
+            '200': "CampaignIdGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1290,7 +738,7 @@ class CampaignsApi:
 
 
     @validate_call
-    def pause_campaign_without_preload_content(
+    def campaign_id_get_without_preload_content(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the campaign")],
         _request_timeout: Union[
@@ -1306,9 +754,9 @@ class CampaignsApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """Pause a campaign
+        """Get a campaign
 
-        Pause a campaign
+        Get a campaign
 
         :param id: The ID of the campaign (required)
         :type id: str
@@ -1334,7 +782,7 @@ class CampaignsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._pause_campaign_serialize(
+        _param = self._campaign_id_get_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1343,7 +791,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
+            '200': "CampaignIdGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1355,7 +803,7 @@ class CampaignsApi:
         return response_data.response
 
 
-    def _pause_campaign_serialize(
+    def _campaign_id_get_serialize(
         self,
         id,
         _request_auth,
@@ -1402,8 +850,8 @@ class CampaignsApi:
         ]
 
         return self.api_client.param_serialize(
-            method='POST',
-            resource_path='/campaign/{id}/pause',
+            method='GET',
+            resource_path='/campaign/{id}',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -1420,7 +868,7 @@ class CampaignsApi:
 
 
     @validate_call
-    def start_campaign(
+    def campaign_id_start_post(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the campaign")],
         _request_timeout: Union[
@@ -1435,7 +883,7 @@ class CampaignsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> DeleteAgent200Response:
+    ) -> AgentIdDelete200Response:
         """Start a campaign
 
         Start a campaign
@@ -1464,7 +912,7 @@ class CampaignsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._start_campaign_serialize(
+        _param = self._campaign_id_start_post_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1473,7 +921,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "DeleteAgent200Response",
+            '200': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1490,7 +938,7 @@ class CampaignsApi:
 
 
     @validate_call
-    def start_campaign_with_http_info(
+    def campaign_id_start_post_with_http_info(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the campaign")],
         _request_timeout: Union[
@@ -1505,7 +953,7 @@ class CampaignsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[DeleteAgent200Response]:
+    ) -> ApiResponse[AgentIdDelete200Response]:
         """Start a campaign
 
         Start a campaign
@@ -1534,7 +982,7 @@ class CampaignsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._start_campaign_serialize(
+        _param = self._campaign_id_start_post_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1543,7 +991,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "DeleteAgent200Response",
+            '200': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1560,7 +1008,7 @@ class CampaignsApi:
 
 
     @validate_call
-    def start_campaign_without_preload_content(
+    def campaign_id_start_post_without_preload_content(
         self,
         id: Annotated[StrictStr, Field(description="The ID of the campaign")],
         _request_timeout: Union[
@@ -1604,7 +1052,7 @@ class CampaignsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._start_campaign_serialize(
+        _param = self._campaign_id_start_post_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1613,7 +1061,7 @@ class CampaignsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "DeleteAgent200Response",
+            '200': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1625,7 +1073,7 @@ class CampaignsApi:
         return response_data.response
 
 
-    def _start_campaign_serialize(
+    def _campaign_id_start_post_serialize(
         self,
         id,
         _request_auth,
@@ -1674,6 +1122,559 @@ class CampaignsApi:
         return self.api_client.param_serialize(
             method='POST',
             resource_path='/campaign/{id}/start',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def campaign_id_stop_post(
+        self,
+        id: Annotated[StrictStr, Field(description="The ID of the campaign")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> AgentIdDelete200Response:
+        """Stop a campaign
+
+        Stop a campaign
+
+        :param id: The ID of the campaign (required)
+        :type id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._campaign_id_stop_post_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdDelete200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def campaign_id_stop_post_with_http_info(
+        self,
+        id: Annotated[StrictStr, Field(description="The ID of the campaign")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[AgentIdDelete200Response]:
+        """Stop a campaign
+
+        Stop a campaign
+
+        :param id: The ID of the campaign (required)
+        :type id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._campaign_id_stop_post_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdDelete200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def campaign_id_stop_post_without_preload_content(
+        self,
+        id: Annotated[StrictStr, Field(description="The ID of the campaign")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Stop a campaign
+
+        Stop a campaign
+
+        :param id: The ID of the campaign (required)
+        :type id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._campaign_id_stop_post_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdDelete200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _campaign_id_stop_post_serialize(
+        self,
+        id,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        if id is not None:
+            _path_params['id'] = id
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'BearerAuth'
+        ]
+
+        return self.api_client.param_serialize(
+            method='POST',
+            resource_path='/campaign/{id}/stop',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def campaign_post(
+        self,
+        campaign_post_request: CampaignPostRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> List[CampaignPost200ResponseInner]:
+        """Create a campaign
+
+        Create a campaign
+
+        :param campaign_post_request: (required)
+        :type campaign_post_request: CampaignPostRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._campaign_post_serialize(
+            campaign_post_request=campaign_post_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "List[CampaignPost200ResponseInner]",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def campaign_post_with_http_info(
+        self,
+        campaign_post_request: CampaignPostRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[List[CampaignPost200ResponseInner]]:
+        """Create a campaign
+
+        Create a campaign
+
+        :param campaign_post_request: (required)
+        :type campaign_post_request: CampaignPostRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._campaign_post_serialize(
+            campaign_post_request=campaign_post_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "List[CampaignPost200ResponseInner]",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def campaign_post_without_preload_content(
+        self,
+        campaign_post_request: CampaignPostRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Create a campaign
+
+        Create a campaign
+
+        :param campaign_post_request: (required)
+        :type campaign_post_request: CampaignPostRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._campaign_post_serialize(
+            campaign_post_request=campaign_post_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "List[CampaignPost200ResponseInner]",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _campaign_post_serialize(
+        self,
+        campaign_post_request,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+        if campaign_post_request is not None:
+            _body_params = campaign_post_request
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+        # set the HTTP header `Content-Type`
+        if _content_type:
+            _header_params['Content-Type'] = _content_type
+        else:
+            _default_content_type = (
+                self.api_client.select_header_content_type(
+                    [
+                        'application/json'
+                    ]
+                )
+            )
+            if _default_content_type is not None:
+                _header_params['Content-Type'] = _default_content_type
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'BearerAuth'
+        ]
+
+        return self.api_client.param_serialize(
+            method='POST',
+            resource_path='/campaign',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,

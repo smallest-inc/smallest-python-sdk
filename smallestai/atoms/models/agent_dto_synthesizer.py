@@ -28,7 +28,7 @@ class AgentDTOSynthesizer(BaseModel):
     The synthesizer (TTS) configuration of the agent
     """ # noqa: E501
     voice_config: Optional[AgentDTOSynthesizerVoiceConfig] = Field(default=None, alias="voiceConfig")
-    speed: Optional[Union[StrictFloat, StrictInt]] = 1.2
+    speed: Optional[Union[StrictFloat, StrictInt]] = Field(default=1.2, description="The speed of the synthesizer")
     consistency: Optional[Union[StrictFloat, StrictInt]] = Field(default=0.5, description="The consistency of the synthesizer")
     similarity: Optional[Union[StrictFloat, StrictInt]] = Field(default=0, description="The similarity of the synthesizer")
     enhancement: Optional[Union[StrictFloat, StrictInt]] = Field(default=1, description="The enhancement of the synthesizer")
