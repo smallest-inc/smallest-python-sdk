@@ -82,4 +82,4 @@ from smallestai.waves import __all__ as waves_all
 
 __all__ = atoms_all + waves_all
 
-__version__ = "4.0.0"
+__version__ = "4.0.1"
