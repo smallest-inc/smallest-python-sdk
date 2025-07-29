@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms.models.internal_server_error_response import InternalServerErrorResponse
+from atoms.models.internal_server_error_response import InternalServerErrorResponse
 
 # TODO update the JSON string below
 json = "{}"
@@ -25,6 +25,6 @@ internal_server_error_response_dict = internal_server_error_response_instance.to
 # create an instance of InternalServerErrorResponse from a dict
 internal_server_error_response_from_dict = InternalServerErrorResponse.from_dict(internal_server_error_response_dict)
 ```
-
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
 

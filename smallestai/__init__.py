@@ -14,8 +14,6 @@ from smallestai.atoms import (
     LogsApi,
     OrganizationApi,
     UserApi,
-    PhoneNumbersApi,
-    WebhooksApi,
     ApiResponse,
     ApiClient,
     Configuration,

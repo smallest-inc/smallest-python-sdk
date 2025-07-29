@@ -7,13 +7,13 @@ The language configuration of the agent
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **enabled** | **str** | The language of the agent | [optional] 
-**switching** | **bool** | Whether the agent can switch between languages | [optional] 
+**switching** | [**AgentDTOLanguageSwitching**](AgentDTOLanguageSwitching.md) |  | [optional] 
 **supported** | **List[str]** | The supported languages of the agent | [optional] 
 
 ## Example
 
 ```python
-from smallestai.atoms.models.agent_dto_language import AgentDTOLanguage
+from atoms.models.agent_dto_language import AgentDTOLanguage
 
 # TODO update the JSON string below
 json = "{}"
@@ -27,6 +27,6 @@ agent_dto_language_dict = agent_dto_language_instance.to_dict()
 # create an instance of AgentDTOLanguage from a dict
 agent_dto_language_from_dict = AgentDTOLanguage.from_dict(agent_dto_language_dict)
 ```
-
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
 

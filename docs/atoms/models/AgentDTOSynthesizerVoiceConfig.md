@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms.models.agent_dto_synthesizer_voice_config import AgentDTOSynthesizerVoiceConfig
+from atoms.models.agent_dto_synthesizer_voice_config import AgentDTOSynthesizerVoiceConfig
 
 # TODO update the JSON string below
 json = "{}"
@@ -27,6 +27,6 @@ agent_dto_synthesizer_voice_config_dict = agent_dto_synthesizer_voice_config_ins
 # create an instance of AgentDTOSynthesizerVoiceConfig from a dict
 agent_dto_synthesizer_voice_config_from_dict = AgentDTOSynthesizerVoiceConfig.from_dict(agent_dto_synthesizer_voice_config_dict)
 ```
-
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
 

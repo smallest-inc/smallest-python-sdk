@@ -22,9 +22,7 @@ from smallestai.atoms.api.campaigns_api import CampaignsApi
 from smallestai.atoms.api.knowledge_base_api import KnowledgeBaseApi
 from smallestai.atoms.api.logs_api import LogsApi
 from smallestai.atoms.api.organization_api import OrganizationApi
-from smallestai.atoms.api.phone_numbers_api import PhoneNumbersApi
 from smallestai.atoms.api.user_api import UserApi
-from smallestai.atoms.api.webhooks_api import WebhooksApi
 
 # import ApiClient
 from smallestai.atoms.api_response import ApiResponse
@@ -161,9 +159,7 @@ __all__ = [
     "KnowledgeBaseApi",
     "LogsApi",
     "OrganizationApi",
-    "PhoneNumbersApi",
     "UserApi",
-    "WebhooksApi",
     
     # Core Classes
     "ApiResponse",
