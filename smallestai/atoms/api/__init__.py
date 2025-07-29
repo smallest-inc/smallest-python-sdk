@@ -9,4 +9,3 @@ from smallestai.atoms.api.knowledge_base_api import KnowledgeBaseApi
 from smallestai.atoms.api.logs_api import LogsApi
 from smallestai.atoms.api.organization_api import OrganizationApi
 from smallestai.atoms.api.user_api import UserApi
-

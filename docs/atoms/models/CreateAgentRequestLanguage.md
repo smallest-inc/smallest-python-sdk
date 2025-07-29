@@ -6,8 +6,8 @@ Language configuration for the agent. You can enable or disable language switchi
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**enabled** | **str** | The language of the agent. You can choose from the list of supported languages. | [optional] 
-**switching** | **bool** | Whether to enable language switching for the agent. If enabled, the agent will be able to switch between languages based on the user&#39;s language. | [optional] [default to False]
+**enabled** | **str** | The language of the agent. You can choose from the list of supported languages. | [optional] [default to 'en']
+**switching** | [**AgentIdPatchRequestLanguageSwitching**](AgentIdPatchRequestLanguageSwitching.md) |  | [optional] 
 **synthesizer** | [**CreateAgentRequestLanguageSynthesizer**](CreateAgentRequestLanguageSynthesizer.md) |  | [optional] 
 **speed** | **float** |  | [optional] [default to 1.2]
 **consistency** | **float** |  | [optional] [default to 0.5]
@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms.models.create_agent_request_language import CreateAgentRequestLanguage
+from atoms.models.create_agent_request_language import CreateAgentRequestLanguage
 
 # TODO update the JSON string below
 json = "{}"
@@ -31,6 +31,6 @@ create_agent_request_language_dict = create_agent_request_language_instance.to_d
 # create an instance of CreateAgentRequestLanguage from a dict
 create_agent_request_language_from_dict = CreateAgentRequestLanguage.from_dict(create_agent_request_language_dict)
 ```
-
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
 

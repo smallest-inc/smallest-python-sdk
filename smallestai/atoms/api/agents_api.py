@@ -16,15 +16,21 @@ from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
-from pydantic import StrictInt, StrictStr
+from pydantic import Field, StrictInt, StrictStr
 from typing import Optional
-from smallestai.atoms.models.create_agent_from_template200_response import CreateAgentFromTemplate200Response
+from typing_extensions import Annotated
+from smallestai.atoms.models.agent_agent_id_webhook_subscriptions_delete200_response import AgentAgentIdWebhookSubscriptionsDelete200Response
+from smallestai.atoms.models.agent_agent_id_webhook_subscriptions_get200_response import AgentAgentIdWebhookSubscriptionsGet200Response
+from smallestai.atoms.models.agent_agent_id_webhook_subscriptions_post201_response import AgentAgentIdWebhookSubscriptionsPost201Response
+from smallestai.atoms.models.agent_agent_id_webhook_subscriptions_post_request import AgentAgentIdWebhookSubscriptionsPostRequest
+from smallestai.atoms.models.agent_from_template_post200_response import AgentFromTemplatePost200Response
+from smallestai.atoms.models.agent_get200_response import AgentGet200Response
+from smallestai.atoms.models.agent_id_delete200_response import AgentIdDelete200Response
+from smallestai.atoms.models.agent_id_get200_response import AgentIdGet200Response
+from smallestai.atoms.models.agent_id_patch200_response import AgentIdPatch200Response
+from smallestai.atoms.models.agent_id_patch_request import AgentIdPatchRequest
+from smallestai.atoms.models.agent_id_workflow_get200_response import AgentIdWorkflowGet200Response
 from smallestai.atoms.models.create_agent_request import CreateAgentRequest
-from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
-from smallestai.atoms.models.get_agent_by_id200_response import GetAgentById200Response
-from smallestai.atoms.models.get_agents200_response import GetAgents200Response
-from smallestai.atoms.models.update_agent200_response import UpdateAgent200Response
-from smallestai.atoms.models.update_agent_request import UpdateAgentRequest
 
 from smallestai.atoms.api_client import ApiClient, RequestSerialized
 from smallestai.atoms.api_response import ApiResponse
@@ -45,9 +51,9 @@ class AgentsApi:
 
 
     @validate_call
-    def create_agent(
+    def agent_agent_id_webhook_subscriptions_delete(
         self,
-        create_agent_request: CreateAgentRequest,
+        agent_id: Annotated[StrictStr, Field(description="The ID of the agent to filter subscriptions by")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -60,13 +66,13 @@ class AgentsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> CreateAgentFromTemplate200Response:
-        """Create a new agent
+    ) -> AgentAgentIdWebhookSubscriptionsDelete200Response:
+        """Delete webhook subscriptions for an agent
 
-        You can create a new agent by passing the name of the agent in the request body.
+        Delete webhook subscriptions for a given agent ID
 
-        :param create_agent_request: (required)
-        :type create_agent_request: CreateAgentRequest
+        :param agent_id: The ID of the agent to filter subscriptions by (required)
+        :type agent_id: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -89,8 +95,8 @@ class AgentsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._create_agent_serialize(
-            create_agent_request=create_agent_request,
+        _param = self._agent_agent_id_webhook_subscriptions_delete_serialize(
+            agent_id=agent_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -98,9 +104,10 @@ class AgentsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CreateAgentFromTemplate200Response",
+            '200': "AgentAgentIdWebhookSubscriptionsDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
+            '404': "AgentAgentIdWebhookSubscriptionsGet404Response",
             '500': "InternalServerErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -115,9 +122,9 @@ class AgentsApi:
 
 
     @validate_call
-    def create_agent_with_http_info(
+    def agent_agent_id_webhook_subscriptions_delete_with_http_info(
         self,
-        create_agent_request: CreateAgentRequest,
+        agent_id: Annotated[StrictStr, Field(description="The ID of the agent to filter subscriptions by")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -130,13 +137,13 @@ class AgentsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[CreateAgentFromTemplate200Response]:
-        """Create a new agent
+    ) -> ApiResponse[AgentAgentIdWebhookSubscriptionsDelete200Response]:
+        """Delete webhook subscriptions for an agent
 
-        You can create a new agent by passing the name of the agent in the request body.
+        Delete webhook subscriptions for a given agent ID
 
-        :param create_agent_request: (required)
-        :type create_agent_request: CreateAgentRequest
+        :param agent_id: The ID of the agent to filter subscriptions by (required)
+        :type agent_id: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -159,8 +166,8 @@ class AgentsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._create_agent_serialize(
-            create_agent_request=create_agent_request,
+        _param = self._agent_agent_id_webhook_subscriptions_delete_serialize(
+            agent_id=agent_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -168,9 +175,10 @@ class AgentsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CreateAgentFromTemplate200Response",
+            '200': "AgentAgentIdWebhookSubscriptionsDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
+            '404': "AgentAgentIdWebhookSubscriptionsGet404Response",
             '500': "InternalServerErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -185,9 +193,9 @@ class AgentsApi:
 
 
     @validate_call
-    def create_agent_without_preload_content(
+    def agent_agent_id_webhook_subscriptions_delete_without_preload_content(
         self,
-        create_agent_request: CreateAgentRequest,
+        agent_id: Annotated[StrictStr, Field(description="The ID of the agent to filter subscriptions by")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -201,12 +209,12 @@ class AgentsApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """Create a new agent
+        """Delete webhook subscriptions for an agent
 
-        You can create a new agent by passing the name of the agent in the request body.
+        Delete webhook subscriptions for a given agent ID
 
-        :param create_agent_request: (required)
-        :type create_agent_request: CreateAgentRequest
+        :param agent_id: The ID of the agent to filter subscriptions by (required)
+        :type agent_id: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -229,8 +237,8 @@ class AgentsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._create_agent_serialize(
-            create_agent_request=create_agent_request,
+        _param = self._agent_agent_id_webhook_subscriptions_delete_serialize(
+            agent_id=agent_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -238,9 +246,10 @@ class AgentsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': "CreateAgentFromTemplate200Response",
+            '200': "AgentAgentIdWebhookSubscriptionsDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
+            '404': "AgentAgentIdWebhookSubscriptionsGet404Response",
             '500': "InternalServerErrorResponse",
         }
         response_data = self.api_client.call_api(
@@ -250,9 +259,9 @@ class AgentsApi:
         return response_data.response
 
 
-    def _create_agent_serialize(
+    def _agent_agent_id_webhook_subscriptions_delete_serialize(
         self,
-        create_agent_request,
+        agent_id,
         _request_auth,
         _content_type,
         _headers,
@@ -274,12 +283,573 @@ class AgentsApi:
         _body_params: Optional[bytes] = None
 
         # process the path parameters
+        if agent_id is not None:
+            _path_params['agentId'] = agent_id
         # process the query parameters
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if create_agent_request is not None:
-            _body_params = create_agent_request
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'BearerAuth'
+        ]
+
+        return self.api_client.param_serialize(
+            method='DELETE',
+            resource_path='/agent/{agentId}/webhook-subscriptions',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def agent_agent_id_webhook_subscriptions_get(
+        self,
+        agent_id: Annotated[StrictStr, Field(description="The ID of the agent")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> AgentAgentIdWebhookSubscriptionsGet200Response:
+        """Get webhook subscriptions for an agent
+
+        Retrieve webhook subscriptions for a given agent ID
+
+        :param agent_id: The ID of the agent (required)
+        :type agent_id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_agent_id_webhook_subscriptions_get_serialize(
+            agent_id=agent_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentAgentIdWebhookSubscriptionsGet200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '404': "AgentAgentIdWebhookSubscriptionsGet404Response",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def agent_agent_id_webhook_subscriptions_get_with_http_info(
+        self,
+        agent_id: Annotated[StrictStr, Field(description="The ID of the agent")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[AgentAgentIdWebhookSubscriptionsGet200Response]:
+        """Get webhook subscriptions for an agent
+
+        Retrieve webhook subscriptions for a given agent ID
+
+        :param agent_id: The ID of the agent (required)
+        :type agent_id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_agent_id_webhook_subscriptions_get_serialize(
+            agent_id=agent_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentAgentIdWebhookSubscriptionsGet200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '404': "AgentAgentIdWebhookSubscriptionsGet404Response",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def agent_agent_id_webhook_subscriptions_get_without_preload_content(
+        self,
+        agent_id: Annotated[StrictStr, Field(description="The ID of the agent")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Get webhook subscriptions for an agent
+
+        Retrieve webhook subscriptions for a given agent ID
+
+        :param agent_id: The ID of the agent (required)
+        :type agent_id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_agent_id_webhook_subscriptions_get_serialize(
+            agent_id=agent_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentAgentIdWebhookSubscriptionsGet200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '404': "AgentAgentIdWebhookSubscriptionsGet404Response",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _agent_agent_id_webhook_subscriptions_get_serialize(
+        self,
+        agent_id,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        if agent_id is not None:
+            _path_params['agentId'] = agent_id
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'BearerAuth'
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/agent/{agentId}/webhook-subscriptions',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def agent_agent_id_webhook_subscriptions_post(
+        self,
+        agent_id: Annotated[StrictStr, Field(description="The ID of the agent to create subscriptions for")],
+        agent_agent_id_webhook_subscriptions_post_request: AgentAgentIdWebhookSubscriptionsPostRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> AgentAgentIdWebhookSubscriptionsPost201Response:
+        """Create webhook subscriptions for an agent
+
+        Create webhook subscriptions for a specific agent with selected event types
+
+        :param agent_id: The ID of the agent to create subscriptions for (required)
+        :type agent_id: str
+        :param agent_agent_id_webhook_subscriptions_post_request: (required)
+        :type agent_agent_id_webhook_subscriptions_post_request: AgentAgentIdWebhookSubscriptionsPostRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_agent_id_webhook_subscriptions_post_serialize(
+            agent_id=agent_id,
+            agent_agent_id_webhook_subscriptions_post_request=agent_agent_id_webhook_subscriptions_post_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '201': "AgentAgentIdWebhookSubscriptionsPost201Response",
+            '400': "AgentAgentIdWebhookSubscriptionsPost400Response",
+            '401': "UnauthorizedErrorReponse",
+            '404': "AgentAgentIdWebhookSubscriptionsGet404Response",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def agent_agent_id_webhook_subscriptions_post_with_http_info(
+        self,
+        agent_id: Annotated[StrictStr, Field(description="The ID of the agent to create subscriptions for")],
+        agent_agent_id_webhook_subscriptions_post_request: AgentAgentIdWebhookSubscriptionsPostRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[AgentAgentIdWebhookSubscriptionsPost201Response]:
+        """Create webhook subscriptions for an agent
+
+        Create webhook subscriptions for a specific agent with selected event types
+
+        :param agent_id: The ID of the agent to create subscriptions for (required)
+        :type agent_id: str
+        :param agent_agent_id_webhook_subscriptions_post_request: (required)
+        :type agent_agent_id_webhook_subscriptions_post_request: AgentAgentIdWebhookSubscriptionsPostRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_agent_id_webhook_subscriptions_post_serialize(
+            agent_id=agent_id,
+            agent_agent_id_webhook_subscriptions_post_request=agent_agent_id_webhook_subscriptions_post_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '201': "AgentAgentIdWebhookSubscriptionsPost201Response",
+            '400': "AgentAgentIdWebhookSubscriptionsPost400Response",
+            '401': "UnauthorizedErrorReponse",
+            '404': "AgentAgentIdWebhookSubscriptionsGet404Response",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def agent_agent_id_webhook_subscriptions_post_without_preload_content(
+        self,
+        agent_id: Annotated[StrictStr, Field(description="The ID of the agent to create subscriptions for")],
+        agent_agent_id_webhook_subscriptions_post_request: AgentAgentIdWebhookSubscriptionsPostRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Create webhook subscriptions for an agent
+
+        Create webhook subscriptions for a specific agent with selected event types
+
+        :param agent_id: The ID of the agent to create subscriptions for (required)
+        :type agent_id: str
+        :param agent_agent_id_webhook_subscriptions_post_request: (required)
+        :type agent_agent_id_webhook_subscriptions_post_request: AgentAgentIdWebhookSubscriptionsPostRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_agent_id_webhook_subscriptions_post_serialize(
+            agent_id=agent_id,
+            agent_agent_id_webhook_subscriptions_post_request=agent_agent_id_webhook_subscriptions_post_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '201': "AgentAgentIdWebhookSubscriptionsPost201Response",
+            '400': "AgentAgentIdWebhookSubscriptionsPost400Response",
+            '401': "UnauthorizedErrorReponse",
+            '404': "AgentAgentIdWebhookSubscriptionsGet404Response",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _agent_agent_id_webhook_subscriptions_post_serialize(
+        self,
+        agent_id,
+        agent_agent_id_webhook_subscriptions_post_request,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        if agent_id is not None:
+            _path_params['agentId'] = agent_id
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+        if agent_agent_id_webhook_subscriptions_post_request is not None:
+            _body_params = agent_agent_id_webhook_subscriptions_post_request
 
 
         # set the HTTP header `Accept`
@@ -311,7 +881,7 @@ class AgentsApi:
 
         return self.api_client.param_serialize(
             method='POST',
-            resource_path='/agent',
+            resource_path='/agent/{agentId}/webhook-subscriptions',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -328,544 +898,7 @@ class AgentsApi:
 
 
     @validate_call
-    def delete_agent(
-        self,
-        id: StrictStr,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> DeleteAgent200Response:
-        """Delete an agent
-
-
-        :param id: (required)
-        :type id: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._delete_agent_serialize(
-            id=id,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
-            '400': "BadRequestErrorResponse",
-            '401': "ApiResponse",
-            '403': "ApiResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
-
-
-    @validate_call
-    def delete_agent_with_http_info(
-        self,
-        id: StrictStr,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[DeleteAgent200Response]:
-        """Delete an agent
-
-
-        :param id: (required)
-        :type id: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._delete_agent_serialize(
-            id=id,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
-            '400': "BadRequestErrorResponse",
-            '401': "ApiResponse",
-            '403': "ApiResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def delete_agent_without_preload_content(
-        self,
-        id: StrictStr,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Delete an agent
-
-
-        :param id: (required)
-        :type id: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._delete_agent_serialize(
-            id=id,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "DeleteAgent200Response",
-            '400': "BadRequestErrorResponse",
-            '401': "ApiResponse",
-            '403': "ApiResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
-
-
-    def _delete_agent_serialize(
-        self,
-        id,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
-
-        # process the path parameters
-        if id is not None:
-            _path_params['id'] = id
-        # process the query parameters
-        # process the header parameters
-        # process the form parameters
-        # process the body parameter
-
-
-        # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json'
-                ]
-            )
-
-
-        # authentication setting
-        _auth_settings: List[str] = [
-            'BearerAuth'
-        ]
-
-        return self.api_client.param_serialize(
-            method='DELETE',
-            resource_path='/agent/{id}',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
-            body=_body_params,
-            post_params=_form_params,
-            files=_files,
-            auth_settings=_auth_settings,
-            collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
-
-
-
-
-    @validate_call
-    def get_agent_by_id(
-        self,
-        id: StrictStr,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetAgentById200Response:
-        """Get agent by ID
-
-        Agents are the main entities in the system. Agents are used to create conversations. You can create workflow for an agent and configure it for different use cases. You can also create custom workflows for an agent.
-
-        :param id: (required)
-        :type id: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._get_agent_by_id_serialize(
-            id=id,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetAgentById200Response",
-            '400': "BadRequestErrorResponse",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
-
-
-    @validate_call
-    def get_agent_by_id_with_http_info(
-        self,
-        id: StrictStr,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[GetAgentById200Response]:
-        """Get agent by ID
-
-        Agents are the main entities in the system. Agents are used to create conversations. You can create workflow for an agent and configure it for different use cases. You can also create custom workflows for an agent.
-
-        :param id: (required)
-        :type id: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._get_agent_by_id_serialize(
-            id=id,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetAgentById200Response",
-            '400': "BadRequestErrorResponse",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def get_agent_by_id_without_preload_content(
-        self,
-        id: StrictStr,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Get agent by ID
-
-        Agents are the main entities in the system. Agents are used to create conversations. You can create workflow for an agent and configure it for different use cases. You can also create custom workflows for an agent.
-
-        :param id: (required)
-        :type id: str
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._get_agent_by_id_serialize(
-            id=id,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetAgentById200Response",
-            '400': "BadRequestErrorResponse",
-            '401': "UnauthorizedErrorReponse",
-            '500': "InternalServerErrorResponse",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
-
-
-    def _get_agent_by_id_serialize(
-        self,
-        id,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
-
-        # process the path parameters
-        if id is not None:
-            _path_params['id'] = id
-        # process the query parameters
-        # process the header parameters
-        # process the form parameters
-        # process the body parameter
-
-
-        # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json'
-                ]
-            )
-
-
-        # authentication setting
-        _auth_settings: List[str] = [
-            'BearerAuth'
-        ]
-
-        return self.api_client.param_serialize(
-            method='GET',
-            resource_path='/agent/{id}',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
-            body=_body_params,
-            post_params=_form_params,
-            files=_files,
-            auth_settings=_auth_settings,
-            collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
-
-
-
-
-    @validate_call
-    def get_agents(
+    def agent_get(
         self,
         page: Optional[StrictInt] = None,
         offset: Optional[StrictInt] = None,
@@ -882,7 +915,7 @@ class AgentsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetAgents200Response:
+    ) -> AgentGet200Response:
         """Get all agents
 
         Agents are the main entities in the system. Agents are used to create conversations. You can create workflow for an agent and configure it for different use cases. You can also create custom workflows for an agent. This API will give you the list of agents created by organization you are a part of.
@@ -915,7 +948,7 @@ class AgentsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_agents_serialize(
+        _param = self._agent_get_serialize(
             page=page,
             offset=offset,
             search=search,
@@ -926,7 +959,7 @@ class AgentsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetAgents200Response",
+            '200': "AgentGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -943,7 +976,7 @@ class AgentsApi:
 
 
     @validate_call
-    def get_agents_with_http_info(
+    def agent_get_with_http_info(
         self,
         page: Optional[StrictInt] = None,
         offset: Optional[StrictInt] = None,
@@ -960,7 +993,7 @@ class AgentsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[GetAgents200Response]:
+    ) -> ApiResponse[AgentGet200Response]:
         """Get all agents
 
         Agents are the main entities in the system. Agents are used to create conversations. You can create workflow for an agent and configure it for different use cases. You can also create custom workflows for an agent. This API will give you the list of agents created by organization you are a part of.
@@ -993,7 +1026,7 @@ class AgentsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_agents_serialize(
+        _param = self._agent_get_serialize(
             page=page,
             offset=offset,
             search=search,
@@ -1004,7 +1037,7 @@ class AgentsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetAgents200Response",
+            '200': "AgentGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1021,7 +1054,7 @@ class AgentsApi:
 
 
     @validate_call
-    def get_agents_without_preload_content(
+    def agent_get_without_preload_content(
         self,
         page: Optional[StrictInt] = None,
         offset: Optional[StrictInt] = None,
@@ -1071,7 +1104,7 @@ class AgentsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_agents_serialize(
+        _param = self._agent_get_serialize(
             page=page,
             offset=offset,
             search=search,
@@ -1082,7 +1115,7 @@ class AgentsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetAgents200Response",
+            '200': "AgentGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -1094,7 +1127,7 @@ class AgentsApi:
         return response_data.response
 
 
-    def _get_agents_serialize(
+    def _agent_get_serialize(
         self,
         page,
         offset,
@@ -1171,10 +1204,9 @@ class AgentsApi:
 
 
     @validate_call
-    def update_agent(
+    def agent_id_delete(
         self,
         id: StrictStr,
-        update_agent_request: UpdateAgentRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1187,14 +1219,12 @@ class AgentsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> UpdateAgent200Response:
-        """Update an agent
+    ) -> AgentIdDelete200Response:
+        """Delete an agent
 
 
         :param id: (required)
         :type id: str
-        :param update_agent_request: (required)
-        :type update_agent_request: UpdateAgentRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1217,9 +1247,8 @@ class AgentsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._update_agent_serialize(
+        _param = self._agent_id_delete_serialize(
             id=id,
-            update_agent_request=update_agent_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1227,10 +1256,10 @@ class AgentsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "UpdateAgent200Response",
+            '200': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "ApiResponse",
-            '500': "InternalServerErrorResponse",
+            '403': "ApiResponse",
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -1244,10 +1273,9 @@ class AgentsApi:
 
 
     @validate_call
-    def update_agent_with_http_info(
+    def agent_id_delete_with_http_info(
         self,
         id: StrictStr,
-        update_agent_request: UpdateAgentRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1260,14 +1288,12 @@ class AgentsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[UpdateAgent200Response]:
-        """Update an agent
+    ) -> ApiResponse[AgentIdDelete200Response]:
+        """Delete an agent
 
 
         :param id: (required)
         :type id: str
-        :param update_agent_request: (required)
-        :type update_agent_request: UpdateAgentRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1290,9 +1316,8 @@ class AgentsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._update_agent_serialize(
+        _param = self._agent_id_delete_serialize(
             id=id,
-            update_agent_request=update_agent_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1300,10 +1325,10 @@ class AgentsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "UpdateAgent200Response",
+            '200': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "ApiResponse",
-            '500': "InternalServerErrorResponse",
+            '403': "ApiResponse",
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -1317,10 +1342,9 @@ class AgentsApi:
 
 
     @validate_call
-    def update_agent_without_preload_content(
+    def agent_id_delete_without_preload_content(
         self,
         id: StrictStr,
-        update_agent_request: UpdateAgentRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1334,13 +1358,11 @@ class AgentsApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """Update an agent
+        """Delete an agent
 
 
         :param id: (required)
         :type id: str
-        :param update_agent_request: (required)
-        :type update_agent_request: UpdateAgentRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1363,9 +1385,8 @@ class AgentsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._update_agent_serialize(
+        _param = self._agent_id_delete_serialize(
             id=id,
-            update_agent_request=update_agent_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1373,10 +1394,10 @@ class AgentsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "UpdateAgent200Response",
+            '200': "AgentIdDelete200Response",
             '400': "BadRequestErrorResponse",
             '401': "ApiResponse",
-            '500': "InternalServerErrorResponse",
+            '403': "ApiResponse",
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -1385,10 +1406,9 @@ class AgentsApi:
         return response_data.response
 
 
-    def _update_agent_serialize(
+    def _agent_id_delete_serialize(
         self,
         id,
-        update_agent_request,
         _request_auth,
         _content_type,
         _headers,
@@ -1416,8 +1436,558 @@ class AgentsApi:
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if update_agent_request is not None:
-            _body_params = update_agent_request
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'BearerAuth'
+        ]
+
+        return self.api_client.param_serialize(
+            method='DELETE',
+            resource_path='/agent/{id}',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def agent_id_get(
+        self,
+        id: StrictStr,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> AgentIdGet200Response:
+        """Get agent by ID
+
+        Agents are the main entities in the system. Agents are used to create conversations. You can create workflow for an agent and configure it for different use cases. You can also create custom workflows for an agent.
+
+        :param id: (required)
+        :type id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_id_get_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdGet200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def agent_id_get_with_http_info(
+        self,
+        id: StrictStr,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[AgentIdGet200Response]:
+        """Get agent by ID
+
+        Agents are the main entities in the system. Agents are used to create conversations. You can create workflow for an agent and configure it for different use cases. You can also create custom workflows for an agent.
+
+        :param id: (required)
+        :type id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_id_get_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdGet200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def agent_id_get_without_preload_content(
+        self,
+        id: StrictStr,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Get agent by ID
+
+        Agents are the main entities in the system. Agents are used to create conversations. You can create workflow for an agent and configure it for different use cases. You can also create custom workflows for an agent.
+
+        :param id: (required)
+        :type id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_id_get_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdGet200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _agent_id_get_serialize(
+        self,
+        id,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        if id is not None:
+            _path_params['id'] = id
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'BearerAuth'
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/agent/{id}',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def agent_id_patch(
+        self,
+        id: StrictStr,
+        agent_id_patch_request: AgentIdPatchRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> AgentIdPatch200Response:
+        """Update an agent
+
+
+        :param id: (required)
+        :type id: str
+        :param agent_id_patch_request: (required)
+        :type agent_id_patch_request: AgentIdPatchRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_id_patch_serialize(
+            id=id,
+            agent_id_patch_request=agent_id_patch_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdPatch200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "ApiResponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def agent_id_patch_with_http_info(
+        self,
+        id: StrictStr,
+        agent_id_patch_request: AgentIdPatchRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[AgentIdPatch200Response]:
+        """Update an agent
+
+
+        :param id: (required)
+        :type id: str
+        :param agent_id_patch_request: (required)
+        :type agent_id_patch_request: AgentIdPatchRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_id_patch_serialize(
+            id=id,
+            agent_id_patch_request=agent_id_patch_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdPatch200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "ApiResponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def agent_id_patch_without_preload_content(
+        self,
+        id: StrictStr,
+        agent_id_patch_request: AgentIdPatchRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Update an agent
+
+
+        :param id: (required)
+        :type id: str
+        :param agent_id_patch_request: (required)
+        :type agent_id_patch_request: AgentIdPatchRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_id_patch_serialize(
+            id=id,
+            agent_id_patch_request=agent_id_patch_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdPatch200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "ApiResponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _agent_id_patch_serialize(
+        self,
+        id,
+        agent_id_patch_request,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        if id is not None:
+            _path_params['id'] = id
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+        if agent_id_patch_request is not None:
+            _body_params = agent_id_patch_request
 
 
         # set the HTTP header `Accept`
@@ -1450,6 +2020,562 @@ class AgentsApi:
         return self.api_client.param_serialize(
             method='PATCH',
             resource_path='/agent/{id}',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def agent_id_workflow_get(
+        self,
+        id: Annotated[StrictStr, Field(description="The ID of the agent")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> AgentIdWorkflowGet200Response:
+        """Get agent workflow
+
+        Retrieve the workflow configuration for a specific agent. The workflow contains nodes and edges that define the conversation flow and logic for the agent.
+
+        :param id: The ID of the agent (required)
+        :type id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_id_workflow_get_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdWorkflowGet200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '404': "AgentIdWorkflowGet404Response",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def agent_id_workflow_get_with_http_info(
+        self,
+        id: Annotated[StrictStr, Field(description="The ID of the agent")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[AgentIdWorkflowGet200Response]:
+        """Get agent workflow
+
+        Retrieve the workflow configuration for a specific agent. The workflow contains nodes and edges that define the conversation flow and logic for the agent.
+
+        :param id: The ID of the agent (required)
+        :type id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_id_workflow_get_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdWorkflowGet200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '404': "AgentIdWorkflowGet404Response",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def agent_id_workflow_get_without_preload_content(
+        self,
+        id: Annotated[StrictStr, Field(description="The ID of the agent")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Get agent workflow
+
+        Retrieve the workflow configuration for a specific agent. The workflow contains nodes and edges that define the conversation flow and logic for the agent.
+
+        :param id: The ID of the agent (required)
+        :type id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_id_workflow_get_serialize(
+            id=id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "AgentIdWorkflowGet200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '404': "AgentIdWorkflowGet404Response",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _agent_id_workflow_get_serialize(
+        self,
+        id,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        if id is not None:
+            _path_params['id'] = id
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'BearerAuth'
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/agent/{id}/workflow',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def agent_post(
+        self,
+        create_agent_request: CreateAgentRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> AgentFromTemplatePost200Response:
+        """Create a new agent
+
+        You can create a new agent by passing the name of the agent in the request body.
+
+        :param create_agent_request: (required)
+        :type create_agent_request: CreateAgentRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_post_serialize(
+            create_agent_request=create_agent_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '201': "AgentFromTemplatePost200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def agent_post_with_http_info(
+        self,
+        create_agent_request: CreateAgentRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[AgentFromTemplatePost200Response]:
+        """Create a new agent
+
+        You can create a new agent by passing the name of the agent in the request body.
+
+        :param create_agent_request: (required)
+        :type create_agent_request: CreateAgentRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_post_serialize(
+            create_agent_request=create_agent_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '201': "AgentFromTemplatePost200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def agent_post_without_preload_content(
+        self,
+        create_agent_request: CreateAgentRequest,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Create a new agent
+
+        You can create a new agent by passing the name of the agent in the request body.
+
+        :param create_agent_request: (required)
+        :type create_agent_request: CreateAgentRequest
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._agent_post_serialize(
+            create_agent_request=create_agent_request,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '201': "AgentFromTemplatePost200Response",
+            '400': "BadRequestErrorResponse",
+            '401': "UnauthorizedErrorReponse",
+            '500': "InternalServerErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _agent_post_serialize(
+        self,
+        create_agent_request,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+        if create_agent_request is not None:
+            _body_params = create_agent_request
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+        # set the HTTP header `Content-Type`
+        if _content_type:
+            _header_params['Content-Type'] = _content_type
+        else:
+            _default_content_type = (
+                self.api_client.select_header_content_type(
+                    [
+                        'application/json'
+                    ]
+                )
+            )
+            if _default_content_type is not None:
+                _header_params['Content-Type'] = _default_content_type
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'BearerAuth'
+        ]
+
+        return self.api_client.param_serialize(
+            method='POST',
+            resource_path='/agent',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,

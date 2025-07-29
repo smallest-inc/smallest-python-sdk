@@ -1,13 +1,13 @@
 import pytest
 from smallestai.atoms.atoms_client import AtomsClient
+from smallestai.atoms.models.agent_template_get200_response import AgentTemplateGet200Response
+from smallestai.atoms.models.agent_from_template_post200_response import AgentFromTemplatePost200Response
 from smallestai.atoms.models.create_agent_from_template_request import CreateAgentFromTemplateRequest
-from smallestai.atoms.models.get_agent_templates200_response import GetAgentTemplates200Response
-from smallestai.atoms.models.create_agent_from_template200_response import CreateAgentFromTemplate200Response
 
 def test_get_agent_templates(atoms_client, global_state):
     """Test getting list of agent templates"""
     response = atoms_client.get_agent_templates()
-    assert isinstance(response, GetAgentTemplates200Response)
+    assert isinstance(response, AgentTemplateGet200Response)
 
 def test_create_agent_from_template(atoms_client, global_state):
     """Test creating an agent from a template"""
@@ -19,4 +19,4 @@ def test_create_agent_from_template(atoms_client, global_state):
     )
     
     response = atoms_client.create_agent_from_template(create_agent_from_template_request=request)
-    assert isinstance(response, CreateAgentFromTemplate200Response) 
+    assert isinstance(response, AgentFromTemplatePost200Response) 

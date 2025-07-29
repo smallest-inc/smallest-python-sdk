@@ -10,36 +10,46 @@ import uuid
 GLOBAL_STATE = {}
 
 def create_knowledge_bases(base_url, headers):
+    # Base knowledge base payload
+    base_kb_payload = {
+        "name": "Test Knowledge Base",
+        "description": "Knowledge base for testing"
+    }
+    
     resp = requests.post(
         f"{base_url}/knowledgebase",
         headers=headers,
-        json={
-            "name": "Test Knowledge Base",
-            "description": "Knowledge base for testing"
-        }
+        json=base_kb_payload
     )
+    print(resp.json())
     resp.raise_for_status()
     base_knowledge_base_id = resp.json()["data"]
     time.sleep(0.2)
 
+    # First upload payload
+    first_upload_payload = {
+        "title": "Test Knowledge Base Item",
+        "content": "This is a test knowledge base item"
+    }
+    
     resp = requests.post(
         f"{base_url}/knowledgebase/{base_knowledge_base_id}/items/upload-text",
         headers=headers,
-        json={
-            "title": "Test Knowledge Base Item",
-            "content": "This is a test knowledge base item",
-        }
+        json=first_upload_payload
     )
     resp.raise_for_status()
     time.sleep(0.2)
 
+    # Second upload payload
+    second_upload_payload = {
+        "title": "Temporary Test Knowledge Base Item",
+        "content": "This is a temporary test knowledge base item"
+    }
+    
     resp = requests.post(
         f"{base_url}/knowledgebase/{base_knowledge_base_id}/items/upload-text",
         headers=headers,
-        json={
-            "title": "Temporary Test Knowledge Base Item",
-            "content": "This is a temporary test knowledge base item",
-        }
+        json=second_upload_payload
     )
     resp.raise_for_status()
     time.sleep(0.2)
@@ -55,13 +65,16 @@ def create_knowledge_bases(base_url, headers):
     
     temp_item_id = items[0]["_id"]
 
+    # Temporary knowledge base payload
+    temp_kb_payload = {
+        "name": "Temporary Knowledge Base",
+        "description": "Temporary knowledge base for delete testing"
+    }
+    
     resp = requests.post(
         f"{base_url}/knowledgebase",
         headers=headers,
-        json={
-            "name": "Temporary Knowledge Base",
-            "description": "Temporary knowledge base for delete testing"
-        }
+        json=temp_kb_payload
     )
     resp.raise_for_status()
     time.sleep(0.2)
@@ -77,58 +90,70 @@ def create_knowledge_bases(base_url, headers):
     }
 
 def create_agents(base_url, headers, knowledge_base_id):
+    # Base agent payload
+    base_agent_payload = {
+        "name": "Test Agent",
+        "description": "Base agent for testing",
+        # "language": {
+        #     "enabled": "en",
+        #     "synthesizer": {
+        #         "voiceConfig": {
+        #             "model": "waves_lightning_large",
+        #             "voiceId": "nyah"
+        #         },
+        #         "speed": 1.2,
+        #         "consistency": 0.5,
+        #         "similarity": 0,
+        #         "enhancement": 1
+        #     },
+        #     "speed": 1.2,
+        #     "consistency": 0.5,
+        #     "similarity": 0,
+        #     "enhancement": 1
+        # },
+        "slmModel": "electron",
+        "globalKnowledgeBaseId": knowledge_base_id
+    }
+    
     resp = requests.post(
         f"{base_url}/agent",
         headers=headers,
-        json={
-            "name": "Test Agent",
-            "description": "Base agent for testing",
-            "language": {
-                "enabled": "en",
-                "switching": False
-            },
-            "synthesizer": {
-                "voiceConfig": {
-                    "model": "waves_lightning_large",
-                    "voiceId": "nyah"
-                },
-                "speed": 1.2,
-                "consistency": 0.5,
-                "similarity": 0,
-                "enhancement": 1
-            },
-            "slmModel": "electron-v1",
-            "globalKnowledgeBaseId": knowledge_base_id
-        }
+        json=base_agent_payload
     )
     print(resp.json())
     resp.raise_for_status()
     base_agent_id = resp.json()["data"]
     time.sleep(0.2)
 
+    # Temporary agent payload
+    temp_agent_payload = {
+        "name": "Temporary Test Agent",
+        "description": "Temporary agent for delete testing",
+        # "language": {
+        #     "enabled": "en",
+        #     "synthesizer": {
+        #         "voiceConfig": {
+        #             "model": "waves_lightning_large",
+        #             "voiceId": "nyah"
+        #         },
+        #         "speed": 1.2,
+        #         "consistency": 0.5,
+        #         "similarity": 0,
+        #         "enhancement": 1
+        #     },
+        #     "speed": 1.2,
+        #     "consistency": 0.5,
+        #     "similarity": 0,
+        #     "enhancement": 1
+        # },
+        "slmModel": "electron",
+        "globalKnowledgeBaseId": knowledge_base_id
+    }
+    
     resp = requests.post(
         f"{base_url}/agent",
         headers=headers,
-        json={
-            "name": "Temporary Test Agent",
-            "description": "Temporary agent for delete testing",
-            "language": {
-                "enabled": "en",
-                "switching": False
-            },
-            "synthesizer": {
-                "voiceConfig": {
-                    "model": "waves_lightning_large",
-                    "voiceId": "nyah"
-                },
-                "speed": 1.2,
-                "consistency": 0.5,
-                "similarity": 0,
-                "enhancement": 1
-            },
-            "slmModel": "electron-v1",
-            "globalKnowledgeBaseId": knowledge_base_id
-        }
+        json=temp_agent_payload
     )
     resp.raise_for_status()
     temp_agent_id = resp.json()["data"]
@@ -171,29 +196,35 @@ def create_audience(base_url, headers):
             print("Error creating audience")
 
 def create_campaign(base_url, headers):
+    # Base campaign payload
+    base_campaign_payload = {
+        "name": f"Test {uuid.uuid4().hex[:8]}",
+        "description": "Base campaign for testing",
+        "agentId": GLOBAL_STATE["base_agent"]["id"],
+        "audienceId": GLOBAL_STATE["audience"]["id"]
+    }
+    
     resp = requests.post(
         f"{base_url}/campaign",
         headers=headers,
-        json={
-            "name": f"Test {uuid.uuid4().hex[:8]}",
-            "description": "Base campaign for testing",
-            "agentId": GLOBAL_STATE["base_agent"]["id"],
-            "audienceId": GLOBAL_STATE["audience"]["id"]
-        }
+        json=base_campaign_payload
     )
     resp.raise_for_status()
     base_campaign_id = resp.json()["data"]["_id"]
     time.sleep(0.2)
 
+    # Temporary campaign payload
+    temp_campaign_payload = {
+        "name": f"Temporary Test {uuid.uuid4().hex[:8]}",
+        "description": "Temporary campaign for delete testing",
+        "agentId": GLOBAL_STATE["base_agent"]["id"],
+        "audienceId": GLOBAL_STATE["audience"]["id"]
+    }
+    
     resp = requests.post(
         f"{base_url}/campaign",
         headers=headers,
-        json={
-            "name": f"Temporary Test {uuid.uuid4().hex[:8]}",
-            "description": "Temporary campaign for delete testing",
-            "agentId": GLOBAL_STATE["base_agent"]["id"],
-            "audienceId": GLOBAL_STATE["audience"]["id"]
-        }
+        json=temp_campaign_payload
     )
     resp.raise_for_status()
     temp_campaign_id = resp.json()["data"]["_id"]
@@ -216,13 +247,16 @@ def fetch_agent_template(base_url, headers):
     return {"id": templates[0]["id"]}
 
 def start_call(base_url, headers):
+    # Outbound call payload
+    outbound_call_payload = {
+        "agentId": GLOBAL_STATE["base_agent"]["id"],
+        "phoneNumber": "+919666666666"
+    }
+    
     resp = requests.post(
         f"{base_url}/conversation/outbound",
         headers=headers,
-        json={
-            "agentId": GLOBAL_STATE["base_agent"]["id"],
-            "phoneNumber": "+919666666666"
-        }
+        json=outbound_call_payload
     )
     resp.raise_for_status()
     base_call_id = resp.json()["data"]["conversationId"]

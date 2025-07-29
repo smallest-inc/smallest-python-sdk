@@ -18,7 +18,7 @@ from typing_extensions import Annotated
 
 from pydantic import Field, StrictStr
 from typing_extensions import Annotated
-from smallestai.atoms.models.get_conversation_logs200_response import GetConversationLogs200Response
+from smallestai.atoms.models.conversation_id_get200_response import ConversationIdGet200Response
 
 from smallestai.atoms.api_client import ApiClient, RequestSerialized
 from smallestai.atoms.api_response import ApiResponse
@@ -39,7 +39,7 @@ class LogsApi:
 
 
     @validate_call
-    def get_conversation_logs(
+    def conversation_id_get(
         self,
         id: Annotated[StrictStr, Field(description="The callId of the conversation. You can get the callId from the conversation logs.")],
         _request_timeout: Union[
@@ -54,7 +54,7 @@ class LogsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetConversationLogs200Response:
+    ) -> ConversationIdGet200Response:
         """Get conversation logs
 
 
@@ -82,7 +82,7 @@ class LogsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_conversation_logs_serialize(
+        _param = self._conversation_id_get_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -91,7 +91,7 @@ class LogsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetConversationLogs200Response",
+            '200': "ConversationIdGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -108,7 +108,7 @@ class LogsApi:
 
 
     @validate_call
-    def get_conversation_logs_with_http_info(
+    def conversation_id_get_with_http_info(
         self,
         id: Annotated[StrictStr, Field(description="The callId of the conversation. You can get the callId from the conversation logs.")],
         _request_timeout: Union[
@@ -123,7 +123,7 @@ class LogsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[GetConversationLogs200Response]:
+    ) -> ApiResponse[ConversationIdGet200Response]:
         """Get conversation logs
 
 
@@ -151,7 +151,7 @@ class LogsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_conversation_logs_serialize(
+        _param = self._conversation_id_get_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -160,7 +160,7 @@ class LogsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetConversationLogs200Response",
+            '200': "ConversationIdGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -177,7 +177,7 @@ class LogsApi:
 
 
     @validate_call
-    def get_conversation_logs_without_preload_content(
+    def conversation_id_get_without_preload_content(
         self,
         id: Annotated[StrictStr, Field(description="The callId of the conversation. You can get the callId from the conversation logs.")],
         _request_timeout: Union[
@@ -220,7 +220,7 @@ class LogsApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_conversation_logs_serialize(
+        _param = self._conversation_id_get_serialize(
             id=id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -229,7 +229,7 @@ class LogsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetConversationLogs200Response",
+            '200': "ConversationIdGet200Response",
             '400': "BadRequestErrorResponse",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
@@ -241,7 +241,7 @@ class LogsApi:
         return response_data.response
 
 
-    def _get_conversation_logs_serialize(
+    def _conversation_id_get_serialize(
         self,
         id,
         _request_auth,

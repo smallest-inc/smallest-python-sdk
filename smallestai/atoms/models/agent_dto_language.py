@@ -17,8 +17,9 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
+from smallestai.atoms.models.agent_dto_language_switching import AgentDTOLanguageSwitching
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -27,9 +28,19 @@ class AgentDTOLanguage(BaseModel):
     The language configuration of the agent
     """ # noqa: E501
     enabled: Optional[StrictStr] = Field(default=None, description="The language of the agent")
-    switching: Optional[StrictBool] = Field(default=None, description="Whether the agent can switch between languages")
+    switching: Optional[AgentDTOLanguageSwitching] = None
     supported: Optional[List[StrictStr]] = Field(default=None, description="The supported languages of the agent")
     __properties: ClassVar[List[str]] = ["enabled", "switching", "supported"]
+
+    @field_validator('enabled')
+    def enabled_validate_enum(cls, value):
+        """Validates the enum"""
+        if value is None:
+            return value
+
+        if value not in set(['en', 'hi', 'ta', 'kn']):
+            raise ValueError("must be one of enum values ('en', 'hi', 'ta', 'kn')")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -70,6 +81,9 @@ class AgentDTOLanguage(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of switching
+        if self.switching:
+            _dict['switching'] = self.switching.to_dict()
         return _dict
 
     @classmethod
@@ -83,7 +97,7 @@ class AgentDTOLanguage(BaseModel):
 
         _obj = cls.model_validate({
             "enabled": obj.get("enabled"),
-            "switching": obj.get("switching"),
+            "switching": AgentDTOLanguageSwitching.from_dict(obj["switching"]) if obj.get("switching") is not None else None,
             "supported": obj.get("supported")
         })
         return _obj

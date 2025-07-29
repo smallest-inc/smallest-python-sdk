@@ -7,22 +7,22 @@ from smallestai.atoms.api.agents_api import AgentsApi
 from smallestai.atoms.api.knowledge_base_api import KnowledgeBaseApi
 from smallestai.atoms.api.calls_api import CallsApi
 from smallestai.atoms.models.create_agent_request import CreateAgentRequest
-from smallestai.atoms.models.update_agent_request import UpdateAgentRequest
-from smallestai.atoms.models.create_knowledge_base_request import CreateKnowledgeBaseRequest
-from smallestai.atoms.models.upload_text_to_knowledge_base_request import UploadTextToKnowledgeBaseRequest
-from smallestai.atoms.models.start_outbound_call_request import StartOutboundCallRequest
+from smallestai.atoms.models.agent_id_patch_request import AgentIdPatchRequest
+from smallestai.atoms.models.knowledgebase_post_request import KnowledgebasePostRequest
+from smallestai.atoms.models.knowledgebase_id_items_upload_text_post_request import KnowledgebaseIdItemsUploadTextPostRequest
+from smallestai.atoms.models.conversation_outbound_post_request import ConversationOutboundPostRequest
 from smallestai.atoms.api_client import ApiClient
 from smallestai.atoms.api.user_api import UserApi
 from smallestai.atoms.api.organization_api import OrganizationApi
-from smallestai.atoms.models.get_current_user200_response import GetCurrentUser200Response
-from smallestai.atoms.models.get_organization200_response import GetOrganization200Response
+from smallestai.atoms.models.user_get200_response import UserGet200Response
+from smallestai.atoms.models.organization_get200_response import OrganizationGet200Response
 from smallestai.atoms.api.campaigns_api import CampaignsApi
-from smallestai.atoms.models.create_campaign_request import CreateCampaignRequest
-from smallestai.atoms.models.get_campaigns_request import GetCampaignsRequest
+from smallestai.atoms.models.campaign_post_request import CampaignPostRequest
+from smallestai.atoms.models.campaign_get_request import CampaignGetRequest
 from smallestai.atoms.api.agent_templates_api import AgentTemplatesApi
 from smallestai.atoms.models.create_agent_from_template_request import CreateAgentFromTemplateRequest
 from smallestai.atoms.api.logs_api import LogsApi
-from smallestai.atoms.models.get_conversation_logs200_response import GetConversationLogs200Response
+from smallestai.atoms.models.conversation_id_get200_response import ConversationIdGet200Response
 
 class AtomsClient:
     def __init__(self, configuration=None) -> None:
@@ -39,6 +39,7 @@ class AtomsClient:
         self.agent_templates_api = AgentTemplatesApi(self.api_client)
         self.logs_api = LogsApi(self.api_client)
 
+    # Agent Methods
     @validate_call
     def create_agent(
         self,
@@ -56,7 +57,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.agents_api.create_agent(
+        return self.agents_api.agent_post(
             create_agent_request=create_agent_request,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
@@ -82,7 +83,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.agents_api.delete_agent(
+        return self.agents_api.agent_id_delete(
             id=id,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
@@ -108,7 +109,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.agents_api.get_agent_by_id(
+        return self.agents_api.agent_id_get(
             id=id,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
@@ -136,7 +137,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.agents_api.get_agents(
+        return self.agents_api.agent_get(
             page=page,
             offset=offset,
             search=search,
@@ -151,7 +152,7 @@ class AtomsClient:
     def update_agent(
         self,
         id: StrictStr,
-        update_agent_request: UpdateAgentRequest,
+        agent_id_patch_request: AgentIdPatchRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -165,9 +166,35 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.agents_api.update_agent(
+        return self.agents_api.agent_id_patch(
             id=id,
-            update_agent_request=update_agent_request,
+            agent_id_patch_request=agent_id_patch_request,
+            _request_timeout=_request_timeout,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+    @validate_call
+    def get_agent_workflow(
+        self,
+        id: StrictStr,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ):
+        return self.agents_api.agent_id_workflow_get(
+            id=id,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -179,15 +206,15 @@ class AtomsClient:
     @validate_call
     def create_knowledge_base(
         self,
-        create_knowledge_base_request: CreateKnowledgeBaseRequest,
+        knowledgebase_post_request: KnowledgebasePostRequest,
         _request_timeout: Union[None, Annotated[StrictFloat, Field(gt=0)], Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]]] = None,
         _request_auth: Optional[Dict[StrictStr, Any]] = None,
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.knowledge_base_api.create_knowledge_base(
-            create_knowledge_base_request=create_knowledge_base_request,
+        return self.knowledge_base_api.knowledgebase_post(
+            knowledgebase_post_request=knowledgebase_post_request,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -205,7 +232,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.knowledge_base_api.delete_knowledge_base(
+        return self.knowledge_base_api.knowledgebase_id_delete(
             id=id,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
@@ -224,7 +251,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.knowledge_base_api.get_knowledge_base_by_id(
+        return self.knowledge_base_api.knowledgebase_id_get(
             id=id,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
@@ -242,7 +269,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.knowledge_base_api.get_knowledge_bases(
+        return self.knowledge_base_api.knowledgebase_get(
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -254,16 +281,16 @@ class AtomsClient:
     def upload_text_to_knowledge_base(
         self,
         id: StrictStr,
-        upload_text_to_knowledge_base_request: UploadTextToKnowledgeBaseRequest,
+        knowledgebase_id_items_upload_text_post_request: KnowledgebaseIdItemsUploadTextPostRequest,
         _request_timeout: Union[None, Annotated[StrictFloat, Field(gt=0)], Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]]] = None,
         _request_auth: Optional[Dict[StrictStr, Any]] = None,
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.knowledge_base_api.upload_text_to_knowledge_base(
+        return self.knowledge_base_api.knowledgebase_id_items_upload_text_post(
             id=id,
-            upload_text_to_knowledge_base_request=upload_text_to_knowledge_base_request,
+            knowledgebase_id_items_upload_text_post_request=knowledgebase_id_items_upload_text_post_request,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -282,7 +309,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.knowledge_base_api.upload_media_to_knowledge_base(
+        return self.knowledge_base_api.knowledgebase_id_items_upload_media_post(
             id=id,
             media=media,
             _request_timeout=_request_timeout,
@@ -302,7 +329,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.knowledge_base_api.get_knowledge_base_items(
+        return self.knowledge_base_api.knowledgebase_id_items_get(
             id=id,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
@@ -322,7 +349,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.knowledge_base_api.delete_knowledge_base_item(
+        return self.knowledge_base_api.knowledgebase_knowledge_base_id_items_knowledge_base_item_id_delete(
             knowledge_base_id=knowledge_base_id,
             knowledge_base_item_id=knowledge_base_item_id,
             _request_timeout=_request_timeout,
@@ -336,15 +363,15 @@ class AtomsClient:
     @validate_call
     def start_outbound_call(
         self,
-        start_outbound_call_request: StartOutboundCallRequest,
+        conversation_outbound_post_request: ConversationOutboundPostRequest,
         _request_timeout: Union[None, Annotated[StrictFloat, Field(gt=0)], Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]]] = None,
         _request_auth: Optional[Dict[StrictStr, Any]] = None,
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.calls_api.start_outbound_call(
-            start_outbound_call_request=start_outbound_call_request,
+        return self.calls_api.conversation_outbound_post(
+            conversation_outbound_post_request=conversation_outbound_post_request,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -361,8 +388,8 @@ class AtomsClient:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetCurrentUser200Response:
-        return self.user_api.get_current_user(
+    ) -> UserGet200Response:
+        return self.user_api.user_get(
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -379,8 +406,8 @@ class AtomsClient:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetOrganization200Response:
-        return self.organization_api.get_organization(
+    ) -> OrganizationGet200Response:
+        return self.organization_api.organization_get(
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -392,15 +419,15 @@ class AtomsClient:
     @validate_call
     def create_campaign(
         self,
-        create_campaign_request: CreateCampaignRequest,
+        campaign_post_request: CampaignPostRequest,
         _request_timeout: Union[None, Annotated[StrictFloat, Field(gt=0)], Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]]] = None,
         _request_auth: Optional[Dict[StrictStr, Any]] = None,
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.campaigns_api.create_campaign(
-            create_campaign_request=create_campaign_request,
+        return self.campaigns_api.campaign_post(
+            campaign_post_request=campaign_post_request,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -418,7 +445,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.campaigns_api.delete_campaign(
+        return self.campaigns_api.campaign_id_delete(
             id=id,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
@@ -437,7 +464,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.campaigns_api.get_campaign_by_id(
+        return self.campaigns_api.campaign_id_get(
             id=id,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
@@ -449,15 +476,15 @@ class AtomsClient:
     @validate_call
     def get_campaigns(
         self,
-        get_campaigns_request: GetCampaignsRequest,
+        campaign_get_request: CampaignGetRequest,
         _request_timeout: Union[None, Annotated[StrictFloat, Field(gt=0)], Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]]] = None,
         _request_auth: Optional[Dict[StrictStr, Any]] = None,
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.campaigns_api.get_campaigns(
-            get_campaigns_request=get_campaigns_request,
+        return self.campaigns_api.campaign_get(
+            campaign_get_request=campaign_get_request,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -475,7 +502,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.campaigns_api.start_campaign(
+        return self.campaigns_api.campaign_id_start_post(
             id=id,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
@@ -494,7 +521,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.campaigns_api.pause_campaign(
+        return self.campaigns_api.campaign_id_pause_post(
             id=id,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
@@ -513,7 +540,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.agent_templates_api.get_agent_templates(
+        return self.agent_templates_api.agent_template_get(
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -531,7 +558,7 @@ class AtomsClient:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ):
-        return self.agent_templates_api.create_agent_from_template(
+        return self.agent_templates_api.agent_from_template_post(
             create_agent_from_template_request=create_agent_from_template_request,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,
@@ -540,6 +567,7 @@ class AtomsClient:
             _host_index=_host_index
         )
 
+    # Logs Methods
     @validate_call
     def get_conversation_logs(
         self,
@@ -549,8 +577,8 @@ class AtomsClient:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetConversationLogs200Response:
-        return self.logs_api.get_conversation_logs(
+    ) -> ConversationIdGet200Response:
+        return self.logs_api.conversation_id_get(
             id=id,
             _request_timeout=_request_timeout,
             _request_auth=_request_auth,

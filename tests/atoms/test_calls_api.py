@@ -1,16 +1,12 @@
 import pytest
 from smallestai.atoms.atoms_client import AtomsClient
-from smallestai.atoms.models.start_outbound_call_request import StartOutboundCallRequest
-from smallestai.atoms.models.start_outbound_call200_response import StartOutboundCall200Response
+from smallestai.atoms.models.conversation_outbound_post_request import ConversationOutboundPostRequest
+from smallestai.atoms.models.conversation_outbound_post200_response import ConversationOutboundPost200Response
 
 def test_start_outbound_call(atoms_client, global_state):
-    
-    request = StartOutboundCallRequest(
+    request = ConversationOutboundPostRequest(
         agentId=global_state["base_agent"]["id"],
-        phoneNumber="+919666666666",
+        phoneNumber="+919789384444"
     )
-    
-    response = atoms_client.start_outbound_call(start_outbound_call_request=request)
-    print(response)
-    
-    assert isinstance(response, StartOutboundCall200Response) 
+    response = atoms_client.start_outbound_call(conversation_outbound_post_request=request)
+    assert isinstance(response, ConversationOutboundPost200Response) 

@@ -16,7 +16,7 @@ from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
-from smallestai.atoms.models.get_current_user200_response import GetCurrentUser200Response
+from smallestai.atoms.models.user_get200_response import UserGet200Response
 
 from smallestai.atoms.api_client import ApiClient, RequestSerialized
 from smallestai.atoms.api_response import ApiResponse
@@ -37,7 +37,7 @@ class UserApi:
 
 
     @validate_call
-    def get_current_user(
+    def user_get(
         self,
         _request_timeout: Union[
             None,
@@ -51,7 +51,7 @@ class UserApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetCurrentUser200Response:
+    ) -> UserGet200Response:
         """Get user details
 
 
@@ -77,7 +77,7 @@ class UserApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_current_user_serialize(
+        _param = self._user_get_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -85,7 +85,7 @@ class UserApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetCurrentUser200Response",
+            '200': "UserGet200Response",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
         }
@@ -101,7 +101,7 @@ class UserApi:
 
 
     @validate_call
-    def get_current_user_with_http_info(
+    def user_get_with_http_info(
         self,
         _request_timeout: Union[
             None,
@@ -115,7 +115,7 @@ class UserApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[GetCurrentUser200Response]:
+    ) -> ApiResponse[UserGet200Response]:
         """Get user details
 
 
@@ -141,7 +141,7 @@ class UserApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_current_user_serialize(
+        _param = self._user_get_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -149,7 +149,7 @@ class UserApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetCurrentUser200Response",
+            '200': "UserGet200Response",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
         }
@@ -165,7 +165,7 @@ class UserApi:
 
 
     @validate_call
-    def get_current_user_without_preload_content(
+    def user_get_without_preload_content(
         self,
         _request_timeout: Union[
             None,
@@ -205,7 +205,7 @@ class UserApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._get_current_user_serialize(
+        _param = self._user_get_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -213,7 +213,7 @@ class UserApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetCurrentUser200Response",
+            '200': "UserGet200Response",
             '401': "UnauthorizedErrorReponse",
             '500': "InternalServerErrorResponse",
         }
@@ -224,7 +224,7 @@ class UserApi:
         return response_data.response
 
 
-    def _get_current_user_serialize(
+    def _user_get_serialize(
         self,
         _request_auth,
         _content_type,

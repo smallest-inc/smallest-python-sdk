@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from smallestai.atoms.models.bad_request_error_response import BadRequestErrorResponse
+from atoms.models.bad_request_error_response import BadRequestErrorResponse
 
 # TODO update the JSON string below
 json = "{}"
@@ -25,6 +25,6 @@ bad_request_error_response_dict = bad_request_error_response_instance.to_dict()
 # create an instance of BadRequestErrorResponse from a dict
 bad_request_error_response_from_dict = BadRequestErrorResponse.from_dict(bad_request_error_response_dict)
 ```
-
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
 

@@ -1,48 +1,47 @@
-from smallestai.atoms.models.create_knowledge_base_request import CreateKnowledgeBaseRequest
-from smallestai.atoms.models.create_knowledge_base201_response import CreateKnowledgeBase201Response
-from smallestai.atoms.models.get_knowledge_base_by_id200_response import GetKnowledgeBaseById200Response
-from smallestai.atoms.models.delete_agent200_response import DeleteAgent200Response
-from smallestai.atoms.models.api_response import ApiResponse
-from smallestai.atoms.models.upload_text_to_knowledge_base_request import UploadTextToKnowledgeBaseRequest
-from smallestai.atoms.models.get_knowledge_base_items200_response import GetKnowledgeBaseItems200Response
-from smallestai.atoms.models.get_knowledge_bases200_response import GetKnowledgeBases200Response
+from smallestai.atoms.models.knowledgebase_post_request import KnowledgebasePostRequest
+from smallestai.atoms.models.knowledgebase_post201_response import KnowledgebasePost201Response
+from smallestai.atoms.models.knowledgebase_id_get200_response import KnowledgebaseIdGet200Response
+from smallestai.atoms.models.knowledgebase_get200_response import KnowledgebaseGet200Response
+from smallestai.atoms.models.knowledgebase_id_items_get200_response import KnowledgebaseIdItemsGet200Response
+from smallestai.atoms.models.agent_id_delete200_response import AgentIdDelete200Response
+from smallestai.atoms.models.knowledgebase_id_items_upload_text_post_request import KnowledgebaseIdItemsUploadTextPostRequest
 
 def test_create_knowledge_base(atoms_client):
-    request = CreateKnowledgeBaseRequest(
+    request = KnowledgebasePostRequest(
         name="Test Knowledge Base",
         description="Test knowledge base description"
     )
-    response = atoms_client.create_knowledge_base(create_knowledge_base_request=request)
-    assert isinstance(response, CreateKnowledgeBase201Response)
+    response = atoms_client.create_knowledge_base(knowledgebase_post_request=request)
+    assert isinstance(response, KnowledgebasePost201Response)
 
 def test_get_knowledge_base_by_id(atoms_client, global_state):
     response = atoms_client.get_knowledge_base_by_id(id=global_state["base_knowledge_base"]["id"])
-    assert isinstance(response, GetKnowledgeBaseById200Response)
+    assert isinstance(response, KnowledgebaseIdGet200Response)
 
 def test_get_knowledge_bases(atoms_client):
     response = atoms_client.get_knowledge_bases()
-    assert isinstance(response, GetKnowledgeBases200Response)
+    assert isinstance(response, KnowledgebaseGet200Response)
 
 def test_delete_knowledge_base(atoms_client, global_state):
     response = atoms_client.delete_knowledge_base(id=global_state["temp_knowledge_base"]["id"])
-    assert isinstance(response, DeleteAgent200Response)
+    assert isinstance(response, AgentIdDelete200Response)
 
 def test_get_knowledge_base_items(atoms_client, global_state):
     response = atoms_client.get_knowledge_base_items(
         id=global_state["base_knowledge_base"]["id"]
     )
-    assert isinstance(response, GetKnowledgeBaseItems200Response)
+    assert isinstance(response, KnowledgebaseIdItemsGet200Response)
 
 def test_upload_text_to_knowledge_base(atoms_client, global_state):
-    request = UploadTextToKnowledgeBaseRequest(
+    request = KnowledgebaseIdItemsUploadTextPostRequest(
         title="Test Upload Item",
         content="This is a test text to upload to the knowledge base"
     )
     response = atoms_client.upload_text_to_knowledge_base(
         id=global_state["base_knowledge_base"]["id"],
-        upload_text_to_knowledge_base_request=request
+        knowledgebase_id_items_upload_text_post_request=request
     )
-    assert isinstance(response, DeleteAgent200Response)
+    assert isinstance(response, AgentIdDelete200Response)
 
 def test_upload_media_to_knowledge_base(atoms_client, global_state):
     test_content = b"Test media content"
@@ -51,7 +50,7 @@ def test_upload_media_to_knowledge_base(atoms_client, global_state):
         id=global_state["base_knowledge_base"]["id"],
         media=test_content
     )
-    assert isinstance(response, DeleteAgent200Response)
+    assert isinstance(response, AgentIdDelete200Response)
 
 def test_delete_knowledge_base_item(atoms_client, global_state):
    
@@ -59,4 +58,4 @@ def test_delete_knowledge_base_item(atoms_client, global_state):
         knowledge_base_id=global_state["base_knowledge_base"]["id"],
         knowledge_base_item_id=global_state["temp_knowledge_base_item_id"]
     )
-    assert isinstance(response, DeleteAgent200Response) 
+    assert isinstance(response, AgentIdDelete200Response)

@@ -1,0 +1,40 @@
+# CampaignIdGet200ResponseData
+
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**id** | **str** | The unique identifier for the campaign | [optional] 
+**name** | **str** | The name of the campaign | [optional] 
+**description** | **str** | The description of the campaign | [optional] 
+**organization** | **str** | The ID of the organization | [optional] 
+**agent_id** | **str** | The ID of the agent | [optional] 
+**created_by** | **str** | The ID of the user who created the campaign | [optional] 
+**audience_id** | **str** | The ID of the audience | [optional] 
+**participants_count** | **int** | The number of participants in the campaign | [optional] 
+**created_at** | **datetime** | The date and time when the campaign was created | [optional] 
+**updated_at** | **datetime** | The date and time when the campaign was last updated | [optional] 
+**is_campaign_in_progress** | **bool** | Whether the campaign is in progress | [optional] 
+**is_campaign_completed** | **bool** | Whether the campaign is completed | [optional] 
+
+## Example
+
+```python
+from atoms.models.campaign_id_get200_response_data import CampaignIdGet200ResponseData
+
+# TODO update the JSON string below
+json = "{}"
+# create an instance of CampaignIdGet200ResponseData from a JSON string
+campaign_id_get200_response_data_instance = CampaignIdGet200ResponseData.from_json(json)
+# print the JSON string representation of the object
+print(CampaignIdGet200ResponseData.to_json())
+
+# convert the object into a dict
+campaign_id_get200_response_data_dict = campaign_id_get200_response_data_instance.to_dict()
+# create an instance of CampaignIdGet200ResponseData from a dict
+campaign_id_get200_response_data_from_dict = CampaignIdGet200ResponseData.from_dict(campaign_id_get200_response_data_dict)
+```
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+

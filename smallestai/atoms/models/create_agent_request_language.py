@@ -17,9 +17,10 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing_extensions import Annotated
+from smallestai.atoms.models.agent_id_patch_request_language_switching import AgentIdPatchRequestLanguageSwitching
 from smallestai.atoms.models.create_agent_request_language_synthesizer import CreateAgentRequestLanguageSynthesizer
 from typing import Optional, Set
 from typing_extensions import Self
@@ -28,8 +29,8 @@ class CreateAgentRequestLanguage(BaseModel):
     """
     Language configuration for the agent. You can enable or disable language switching for the agent. This will be used to determine the language of the agent.
     """ # noqa: E501
-    enabled: Optional[StrictStr] = Field(default=None, description="The language of the agent. You can choose from the list of supported languages.")
-    switching: Optional[StrictBool] = Field(default=False, description="Whether to enable language switching for the agent. If enabled, the agent will be able to switch between languages based on the user's language.")
+    enabled: Optional[StrictStr] = Field(default='en', description="The language of the agent. You can choose from the list of supported languages.")
+    switching: Optional[AgentIdPatchRequestLanguageSwitching] = None
     synthesizer: Optional[CreateAgentRequestLanguageSynthesizer] = None
     speed: Optional[Union[StrictFloat, StrictInt]] = 1.2
     consistency: Optional[Union[Annotated[float, Field(le=1, strict=True, ge=0)], Annotated[int, Field(le=1, strict=True, ge=0)]]] = 0.5
@@ -43,8 +44,8 @@ class CreateAgentRequestLanguage(BaseModel):
         if value is None:
             return value
 
-        if value not in set(['en', 'hi']):
-            raise ValueError("must be one of enum values ('en', 'hi')")
+        if value not in set(['en', 'hi', 'ta', 'kn']):
+            raise ValueError("must be one of enum values ('en', 'hi', 'ta', 'kn')")
         return value
 
     @field_validator('enhancement')
@@ -96,6 +97,9 @@ class CreateAgentRequestLanguage(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of switching
+        if self.switching:
+            _dict['switching'] = self.switching.to_dict()
         # override the default output from pydantic by calling `to_dict()` of synthesizer
         if self.synthesizer:
             _dict['synthesizer'] = self.synthesizer.to_dict()
@@ -111,8 +115,8 @@ class CreateAgentRequestLanguage(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "enabled": obj.get("enabled"),
-            "switching": obj.get("switching") if obj.get("switching") is not None else False,
+            "enabled": obj.get("enabled") if obj.get("enabled") is not None else 'en',
+            "switching": AgentIdPatchRequestLanguageSwitching.from_dict(obj["switching"]) if obj.get("switching") is not None else None,
             "synthesizer": CreateAgentRequestLanguageSynthesizer.from_dict(obj["synthesizer"]) if obj.get("synthesizer") is not None else None,
             "speed": obj.get("speed") if obj.get("speed") is not None else 1.2,
             "consistency": obj.get("consistency") if obj.get("consistency") is not None else 0.5,
