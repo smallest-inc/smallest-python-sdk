@@ -21,6 +21,7 @@ def create_knowledge_bases(base_url, headers):
         headers=headers,
         json=base_kb_payload
     )
+    print(resp.json())
     resp.raise_for_status()
     base_knowledge_base_id = resp.json()["data"]
     time.sleep(0.2)

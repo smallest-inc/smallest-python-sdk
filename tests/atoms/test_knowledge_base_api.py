@@ -1,8 +1,9 @@
 from smallestai.atoms.models.knowledgebase_post_request import KnowledgebasePostRequest
 from smallestai.atoms.models.knowledgebase_post201_response import KnowledgebasePost201Response
 from smallestai.atoms.models.knowledgebase_id_get200_response import KnowledgebaseIdGet200Response
+from smallestai.atoms.models.knowledgebase_get200_response import KnowledgebaseGet200Response
+from smallestai.atoms.models.knowledgebase_id_items_get200_response import KnowledgebaseIdItemsGet200Response
 from smallestai.atoms.models.agent_id_delete200_response import AgentIdDelete200Response
-from smallestai.atoms.models.api_response import ApiResponse
 from smallestai.atoms.models.knowledgebase_id_items_upload_text_post_request import KnowledgebaseIdItemsUploadTextPostRequest
 
 def test_create_knowledge_base(atoms_client):
@@ -19,7 +20,7 @@ def test_get_knowledge_base_by_id(atoms_client, global_state):
 
 def test_get_knowledge_bases(atoms_client):
     response = atoms_client.get_knowledge_bases()
-    assert isinstance(response, ApiResponse)
+    assert isinstance(response, KnowledgebaseGet200Response)
 
 def test_delete_knowledge_base(atoms_client, global_state):
     response = atoms_client.delete_knowledge_base(id=global_state["temp_knowledge_base"]["id"])
@@ -29,7 +30,7 @@ def test_get_knowledge_base_items(atoms_client, global_state):
     response = atoms_client.get_knowledge_base_items(
         id=global_state["base_knowledge_base"]["id"]
     )
-    assert isinstance(response, ApiResponse)
+    assert isinstance(response, KnowledgebaseIdItemsGet200Response)
 
 def test_upload_text_to_knowledge_base(atoms_client, global_state):
     request = KnowledgebaseIdItemsUploadTextPostRequest(

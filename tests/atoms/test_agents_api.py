@@ -12,23 +12,23 @@ def test_create_agent(atoms_client, global_state):
     request = CreateAgentRequest(
         name="Test Agent",
         description="Test agent description",
-        language={
-            "enabled": "en",
-            "synthesizer": {
-                "voiceConfig": {
-                    "model": "waves_lightning_large",
-                    "voiceId": "nyah"
-                },
-                "speed": 1.2,
-                "consistency": 0.5,
-                "similarity": 0,
-                "enhancement": 1
-            },
-            "speed": 1.2,
-            "consistency": 0.5,
-            "similarity": 0,
-            "enhancement": 1
-        },
+        # language={
+        #     "enabled": "en",
+        #     "synthesizer": {
+        #         "voiceConfig": {
+        #             "model": "waves_lightning_large",
+        #             "voiceId": "nyah"
+        #         },
+        #         "speed": 1.2,
+        #         "consistency": 0.5,
+        #         "similarity": 0,
+        #         "enhancement": 1
+        #     },
+        #     "speed": 1.2,
+        #     "consistency": 0.5,
+        #     "similarity": 0,
+        #     "enhancement": 1
+        # },
         slm_model="electron",
         global_knowledge_base_id=global_state["base_knowledge_base"]["id"]
     )

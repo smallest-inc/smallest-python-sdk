@@ -18,26 +18,24 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
-class CampaignPost200ResponseInner(BaseModel):
+class AudienceGet200ResponseDataInner(BaseModel):
     """
-    CampaignPost200ResponseInner
+    AudienceGet200ResponseDataInner
     """ # noqa: E501
-    id: Optional[StrictStr] = Field(default=None, description="The unique identifier for the campaign", alias="_id")
-    name: Optional[StrictStr] = Field(default=None, description="The name of the campaign")
-    description: Optional[StrictStr] = Field(default=None, description="The description of the campaign")
-    organization: Optional[StrictStr] = Field(default=None, description="The ID of the organization")
-    agent_id: Optional[StrictStr] = Field(default=None, description="The ID of the agent", alias="agentId")
-    created_by: Optional[StrictStr] = Field(default=None, description="The ID of the user who created the campaign", alias="createdBy")
-    audience_id: Optional[StrictStr] = Field(default=None, description="The ID of the audience", alias="audienceId")
-    participants_count: Optional[StrictInt] = Field(default=None, description="The number of participants in the campaign", alias="participantsCount")
-    created_at: Optional[datetime] = Field(default=None, description="The date and time when the campaign was created", alias="createdAt")
-    updated_at: Optional[datetime] = Field(default=None, description="The date and time when the campaign was last updated", alias="updatedAt")
-    __properties: ClassVar[List[str]] = ["_id", "name", "description", "organization", "agentId", "createdBy", "audienceId", "participantsCount", "createdAt", "updatedAt"]
+    id: Optional[StrictStr] = Field(default=None, description="The unique identifier for the audience", alias="_id")
+    name: Optional[StrictStr] = Field(default=None, description="The name of the audience")
+    description: Optional[StrictStr] = Field(default=None, description="The description of the audience")
+    phone_number_column_name: Optional[StrictStr] = Field(default=None, description="The name of the column in the CSV that contains phone numbers", alias="phoneNumberColumnName")
+    organization: Optional[StrictStr] = Field(default=None, description="The organization ID")
+    created_by: Optional[StrictStr] = Field(default=None, description="The user ID who created the audience", alias="createdBy")
+    created_at: Optional[datetime] = Field(default=None, description="The date and time when the audience was created", alias="createdAt")
+    updated_at: Optional[datetime] = Field(default=None, description="The date and time when the audience was last updated", alias="updatedAt")
+    __properties: ClassVar[List[str]] = ["_id", "name", "description", "phoneNumberColumnName", "organization", "createdBy", "createdAt", "updatedAt"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -57,7 +55,7 @@ class CampaignPost200ResponseInner(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of CampaignPost200ResponseInner from a JSON string"""
+        """Create an instance of AudienceGet200ResponseDataInner from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -82,7 +80,7 @@ class CampaignPost200ResponseInner(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of CampaignPost200ResponseInner from a dict"""
+        """Create an instance of AudienceGet200ResponseDataInner from a dict"""
         if obj is None:
             return None
 
@@ -93,11 +91,9 @@ class CampaignPost200ResponseInner(BaseModel):
             "_id": obj.get("_id"),
             "name": obj.get("name"),
             "description": obj.get("description"),
+            "phoneNumberColumnName": obj.get("phoneNumberColumnName"),
             "organization": obj.get("organization"),
-            "agentId": obj.get("agentId"),
             "createdBy": obj.get("createdBy"),
-            "audienceId": obj.get("audienceId"),
-            "participantsCount": obj.get("participantsCount"),
             "createdAt": obj.get("createdAt"),
             "updatedAt": obj.get("updatedAt")
         })

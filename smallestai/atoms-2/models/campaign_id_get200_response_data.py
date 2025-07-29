@@ -23,9 +23,9 @@ from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
-class CampaignGet200ResponseDataInner(BaseModel):
+class CampaignIdGet200ResponseData(BaseModel):
     """
-    CampaignGet200ResponseDataInner
+    CampaignIdGet200ResponseData
     """ # noqa: E501
     id: Optional[StrictStr] = Field(default=None, description="The unique identifier for the campaign", alias="_id")
     name: Optional[StrictStr] = Field(default=None, description="The name of the campaign")
@@ -59,7 +59,7 @@ class CampaignGet200ResponseDataInner(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of CampaignGet200ResponseDataInner from a JSON string"""
+        """Create an instance of CampaignIdGet200ResponseData from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -84,7 +84,7 @@ class CampaignGet200ResponseDataInner(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of CampaignGet200ResponseDataInner from a dict"""
+        """Create an instance of CampaignIdGet200ResponseData from a dict"""
         if obj is None:
             return None
 

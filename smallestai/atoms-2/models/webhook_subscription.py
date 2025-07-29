@@ -18,41 +18,31 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional, Union
+from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
-class KnowledgebaseIdGet200ResponseData(BaseModel):
+class WebhookSubscription(BaseModel):
     """
-    KnowledgebaseIdGet200ResponseData
+    WebhookSubscription
     """ # noqa: E501
-    id: StrictStr = Field(alias="_id")
-    item_type: StrictStr = Field(alias="itemType")
-    metadata: Optional[Dict[str, Any]] = None
-    knowledge_base_id: StrictStr = Field(alias="knowledgeBaseId")
-    processing_status: StrictStr = Field(alias="processingStatus")
-    content_type: Optional[StrictStr] = Field(default=None, alias="contentType")
-    size: Optional[Union[StrictFloat, StrictInt]] = None
-    key: Optional[StrictStr] = None
-    title: Optional[StrictStr] = None
-    content: Optional[StrictStr] = None
-    created_at: datetime = Field(alias="createdAt")
-    updated_at: datetime = Field(alias="updatedAt")
-    __properties: ClassVar[List[str]] = ["_id", "itemType", "metadata", "knowledgeBaseId", "processingStatus", "contentType", "size", "key", "title", "content", "createdAt", "updatedAt"]
+    id: Optional[StrictStr] = Field(default=None, description="The unique identifier for the subscription", alias="_id")
+    webhook_id: Optional[StrictStr] = Field(default=None, description="The ID of the webhook", alias="webhookId")
+    agent_id: Optional[StrictStr] = Field(default=None, description="The ID of the agent", alias="agentId")
+    event_type: Optional[StrictStr] = Field(default=None, description="The type of event subscribed to", alias="eventType")
+    created_at: Optional[datetime] = Field(default=None, description="The date and time when the subscription was created", alias="createdAt")
+    updated_at: Optional[datetime] = Field(default=None, description="The date and time when the subscription was last updated", alias="updatedAt")
+    __properties: ClassVar[List[str]] = ["_id", "webhookId", "agentId", "eventType", "createdAt", "updatedAt"]
 
-    @field_validator('item_type')
-    def item_type_validate_enum(cls, value):
+    @field_validator('event_type')
+    def event_type_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['file', 'text']):
-            raise ValueError("must be one of enum values ('file', 'text')")
-        return value
+        if value is None:
+            return value
 
-    @field_validator('processing_status')
-    def processing_status_validate_enum(cls, value):
-        """Validates the enum"""
-        if value not in set(['pending', 'processing', 'completed', 'failed']):
-            raise ValueError("must be one of enum values ('pending', 'processing', 'completed', 'failed')")
+        if value not in set(['pre-conversation', 'post-conversation']):
+            raise ValueError("must be one of enum values ('pre-conversation', 'post-conversation')")
         return value
 
     model_config = ConfigDict(
@@ -73,7 +63,7 @@ class KnowledgebaseIdGet200ResponseData(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of KnowledgebaseIdGet200ResponseData from a JSON string"""
+        """Create an instance of WebhookSubscription from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -98,7 +88,7 @@ class KnowledgebaseIdGet200ResponseData(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of KnowledgebaseIdGet200ResponseData from a dict"""
+        """Create an instance of WebhookSubscription from a dict"""
         if obj is None:
             return None
 
@@ -107,15 +97,9 @@ class KnowledgebaseIdGet200ResponseData(BaseModel):
 
         _obj = cls.model_validate({
             "_id": obj.get("_id"),
-            "itemType": obj.get("itemType"),
-            "metadata": obj.get("metadata"),
-            "knowledgeBaseId": obj.get("knowledgeBaseId"),
-            "processingStatus": obj.get("processingStatus"),
-            "contentType": obj.get("contentType"),
-            "size": obj.get("size"),
-            "key": obj.get("key"),
-            "title": obj.get("title"),
-            "content": obj.get("content"),
+            "webhookId": obj.get("webhookId"),
+            "agentId": obj.get("agentId"),
+            "eventType": obj.get("eventType"),
             "createdAt": obj.get("createdAt"),
             "updatedAt": obj.get("updatedAt")
         })

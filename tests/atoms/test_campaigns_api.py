@@ -2,7 +2,7 @@ import pytest
 from smallestai.atoms.atoms_client import AtomsClient
 from smallestai.atoms.models.campaign_post_request import CampaignPostRequest
 from smallestai.atoms.models.campaign_get_request import CampaignGetRequest
-from smallestai.atoms.models.campaign_post200_response_inner import CampaignPost200ResponseInner
+from smallestai.atoms.models.campaign_post201_response import CampaignPost201Response
 from smallestai.atoms.models.campaign_id_get200_response import CampaignIdGet200Response
 from smallestai.atoms.models.campaign_get200_response import CampaignGet200Response
 from smallestai.atoms.models.agent_id_delete200_response import AgentIdDelete200Response
@@ -13,11 +13,10 @@ def test_create_campaign(atoms_client, global_state):
         name="Test Campaign",
         description="Test campaign description",
         agentId=global_state["base_agent"]["id"],
-        audienceId=global_state["base_audience"]["id"]
+        audienceId=global_state["audience"]["id"]
     )
     response = atoms_client.create_campaign(campaign_post_request=request)
-    assert isinstance(response, list)  # Returns List[CampaignPost200ResponseInner]
-    assert all(isinstance(item, CampaignPost200ResponseInner) for item in response)
+    assert isinstance(response, CampaignPost201Response)  # Returns List[CampaignPost201Response]
 
 def test_get_campaigns(atoms_client):
     request = CampaignGetRequest()

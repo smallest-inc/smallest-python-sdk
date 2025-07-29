@@ -36,7 +36,7 @@ from smallestai.atoms import (
     CreateAgentRequestLanguage,
     CreateAgentRequestLanguageSynthesizer,
     CreateAgentRequestLanguageSynthesizerVoiceConfig,
-    CampaignPost200ResponseInner,
+    CampaignPost201Response,
     CampaignPostRequest,
     CampaignGetRequest,
     AgentIdDelete200Response,
