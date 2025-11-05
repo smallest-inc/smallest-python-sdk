@@ -6,8 +6,8 @@ import aiofiles
 import requests
 from typing import Optional, Union, List
 
-from smallestai.waves.exceptions import TTSError, APIError
-from smallestai.waves.utils import (TTSOptions, validate_input,
+from smallestai.waves.exceptions import InvalidError, APIError
+from smallestai.waves.utils import (TTSOptions, validate_input, validate_asr_input,
                      get_smallest_languages, get_smallest_models, ALLOWED_AUDIO_EXTENSIONS, API_BASE_URL)
 
 
@@ -52,7 +52,7 @@ class AsyncWavesClient:
         """
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY")
         if not self.api_key:
-            raise TTSError()
+            raise InvalidError()
         if model == "lightning-large" and voice_id is None:
             voice_id = "lakshya"
 
@@ -150,7 +150,7 @@ class AsyncWavesClient:
             - Otherwise, returns the synthesized audio content as bytes.
 
         Raises:
-        - TTSError: If the provided file name does not have a .wav or .mp3 extension when `save_as` is specified.
+        - InvalidError: If the provided file name does not have a .wav or .mp3 extension when `save_as` is specified.
         - APIError: If the API request fails or returns an error.
         - ValueError: If an unexpected parameter is passed in `kwargs`.
         """
@@ -223,17 +223,17 @@ class AsyncWavesClient:
         - str: The response from the API as a formatted JSON string.
 
         Raises:
-        - TTSError: If the file does not exist or is not a valid audio file.
+        - InvalidError: If the file does not exist or is not a valid audio file.
         - APIError: If the API request fails or returns an error.
         """
         url = f"{API_BASE_URL}/lightning-large/add_voice"
 
         if not os.path.exists(file_path):
-            raise TTSError("Invalid file path. File does not exist.")
+            raise InvalidError("Invalid file path. File does not exist.")
 
         file_extension = os.path.splitext(file_path)[1].lower()
         if file_extension not in ALLOWED_AUDIO_EXTENSIONS:
-            raise TTSError(f"Invalid file type. Supported formats are: {ALLOWED_AUDIO_EXTENSIONS}")
+            raise InvalidError(f"Invalid file type. Supported formats are: {ALLOWED_AUDIO_EXTENSIONS}")
 
         headers = {
             'Authorization': f"Bearer {self.api_key}",
@@ -255,7 +255,7 @@ class AsyncWavesClient:
                 if res.status != 200:
                     raise APIError(f"Failed to add voice: {await res.text()}. For more information, visit https://waves.smallest.ai/")
 
-                return json.dumps(await res.json(), indent=4, ensure_ascii=False)
+                return await res.json()
         
         finally:
             if should_cleanup and self.session:
@@ -290,7 +290,60 @@ class AsyncWavesClient:
                 if res.status != 200:
                     raise APIError(f"Failed to delete voice: {await res.text()}. For more information, visit https://waves.smallest.ai/")
 
-                return json.dumps(await res.json(), indent=4, ensure_ascii=False)
+                return await res.json()
+        finally:
+            if should_cleanup and self.session:
+                await self.session.close()
+                self.session = None
+                
+    async def transcribe(
+        self,
+        file_path: str,
+        language: Optional[str] = "en",
+        word_timestamps: Optional[bool] = False,
+        age_detection: Optional[bool] = False,
+        gender_detection: Optional[bool] = False,
+        emotion_detection: Optional[bool] = False,
+        model: Optional[str] = "lightning"
+    ) -> dict:
+        validate_asr_input(file_path, model, language)
+
+        url = f"{API_BASE_URL}/speech-to-text"
+        headers = {
+            'Authorization': f"Bearer {self.api_key}",
+        }
+
+        should_cleanup = await self._ensure_session()
+
+        try:
+            file_extension = os.path.splitext(file_path)[1].lower()
+            content_type = f"audio/{file_extension[1:]}" if file_extension else "application/octet-stream"
+
+            async with aiofiles.open(file_path, 'rb') as f:
+                file_data = await f.read()
+
+            form = aiohttp.FormData()
+            form.add_field(
+                'file',
+                file_data,
+                filename=os.path.basename(file_path),
+                content_type=content_type
+            )
+            # Send options as multipart form fields (not query params)
+            form.add_field('model', model)
+            form.add_field('language', language)
+            form.add_field('word_timestamps', str(bool(word_timestamps)).lower())
+            form.add_field('age_detection', str(bool(age_detection)).lower())
+            form.add_field('gender_detection', str(bool(gender_detection)).lower())
+            form.add_field('emotion_detection', str(bool(emotion_detection)).lower())
+
+            async with self.session.post(url, headers=headers, data=form) as res:
+                if res.status != 200:
+                    raise APIError(
+                        f"Failed to transcribe audio: {await res.text()}. "
+                        "For more information, visit https://waves-docs.smallest.ai/v4.0.0/content/api-references/asr-post-api"
+                    )
+                return await res.json()
         finally:
             if should_cleanup and self.session:
                 await self.session.close()

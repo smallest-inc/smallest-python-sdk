@@ -1,9 +1,10 @@
+import os
 from typing import List
 from typing import Optional
 from dataclasses import dataclass
 
 from smallestai.waves.exceptions import ValidationError
-from smallestai.waves.models import TTSModels, TTSLanguages_lightning, TTSLanguages_lightning_large, TTSLanguages_lightning_v2
+from smallestai.waves.models import TTSModels, TTSLanguages_lightning, TTSLanguages_lightning_large, TTSLanguages_lightning_v2, ASRModels, ASRLanguages_lightning
 
 
 API_BASE_URL = "https://waves-api.smallest.ai/api/v1"
@@ -25,7 +26,24 @@ class TTSOptions:
     enhancement: int
     language: str
     output_format: str
+    
+@dataclass
+class ASROptions:
+    model: str
+    api_key: str
+    language: str
+    word_timestamps: bool
+    age_detection: bool
+    gender_detection: bool
+    emotion_detection: bool
 
+def validate_asr_input(file_path: str, model: str, language: str):
+    if not os.path.isfile(file_path):
+        raise ValidationError("Invalid file path. File does not exist.")
+    if model not in ASRModels:
+        raise ValidationError(f"Invalid model: {model}. Must be one of {ASRModels}")
+    if language not in ASRLanguages_lightning:
+        raise ValidationError(f"Invalid language: {language}. Must be one of {ASRLanguages_lightning}")
 
 def validate_input(text: str, model: str, sample_rate: int, speed: float, consistency: Optional[float] = None, similarity: Optional[float] = None, enhancement: Optional[int] = None):
     if not text:

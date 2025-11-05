@@ -4,8 +4,8 @@ import copy
 import requests
 from typing import Optional, Union, List
 
-from smallestai.waves.exceptions import TTSError, APIError
-from smallestai.waves.utils import (TTSOptions, validate_input, 
+from smallestai.waves.exceptions import InvalidError, APIError
+from smallestai.waves.utils import (TTSOptions, validate_input, validate_asr_input,
                         get_smallest_languages, get_smallest_models, ALLOWED_AUDIO_EXTENSIONS, API_BASE_URL)
 
 class WavesClient:
@@ -48,7 +48,7 @@ class WavesClient:
         """
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY")
         if not self.api_key:
-            raise TTSError()
+            raise InvalidError()
         if model == "lightning-large" and voice_id is None:
             voice_id = "lakshya"
 
@@ -125,7 +125,7 @@ class WavesClient:
             - Otherwise, returns the synthesized audio content as bytes.
 
         Raises:
-        - TTSError: If the provided file name does not have a .wav or .mp3 extension when `save_as` is specified.
+        - InvalidError: If the provided file name does not have a .wav or .mp3 extension when `save_as` is specified.
         - APIError: If the API request fails or returns an error.
         """
         opts = copy.deepcopy(self.opts)
@@ -184,15 +184,15 @@ class WavesClient:
         - str: The response from the API as a formatted JSON string.
 
         Raises:
-        - TTSError: If the file does not exist or is not a valid audio file.
+        - InvalidError: If the file does not exist or is not a valid audio file.
         - APIError: If the API request fails or returns an error.
         """
         if not os.path.isfile(file_path):
-            raise TTSError("Invalid file path. File does not exist.")
+            raise InvalidError("Invalid file path. File does not exist.")
         
         file_extension = os.path.splitext(file_path)[1].lower()
         if file_extension not in ALLOWED_AUDIO_EXTENSIONS:
-            raise TTSError(f"Invalid file type. Supported formats are: {ALLOWED_AUDIO_EXTENSIONS}")
+            raise InvalidError(f"Invalid file type. Supported formats are: {ALLOWED_AUDIO_EXTENSIONS}")
         
         url = f"{API_BASE_URL}/lightning-large/add_voice"
         payload = {'displayName': display_name}
@@ -206,8 +206,8 @@ class WavesClient:
         response = requests.post(url, headers=headers, data=payload, files=files)
         if response.status_code != 200:
             raise APIError(f"Failed to add voice: {response.text}. For more information, visit https://waves.smallest.ai/")
-        
-        return json.dumps(response.json(), indent=4, ensure_ascii=False)
+
+        return response.json()
 
 
     def delete_voice(self, voice_id: str) -> str:
@@ -234,4 +234,41 @@ class WavesClient:
         if response.status_code != 200:
             raise APIError(f"Failed to delete voice: {response.text}. For more information, visit https://waves.smallest.ai/")
         
-        return json.dumps(response.json(), indent=4, ensure_ascii=False)
+        return response.json()
+    
+    def transcribe(
+        self,
+        file_path: str,
+        language: Optional[str] = "en",
+        word_timestamps: Optional[bool] = False,
+        age_detection: Optional[bool] = False,
+        gender_detection: Optional[bool] = False,
+        emotion_detection: Optional[bool] = False,
+        model: Optional[str] = "lightning"
+    ) -> dict:
+        validate_asr_input(file_path, model, language)
+
+        url = f"{API_BASE_URL}/speech-to-text"
+        headers = {
+            'Authorization': f"Bearer {self.api_key}",
+        }
+        payload = {
+            'model': model,
+            'language': language,
+            'word_timestamps': str(bool(word_timestamps)).lower(),
+            'age_detection': str(bool(age_detection)).lower(),
+            'gender_detection': str(bool(gender_detection)).lower(),
+            'emotion_detection': str(bool(emotion_detection)).lower()
+        }
+
+        file_extension = os.path.splitext(file_path)[1].lower()
+        content_type = f"audio/{file_extension[1:]}" if file_extension else "application/octet-stream"
+
+        with open(file_path, 'rb') as f:
+            files = {'file': (os.path.basename(file_path), f, content_type)}
+            response = requests.post(url, headers=headers, files=files, data=payload)
+
+        if response.status_code != 200:
+            raise APIError(f"Failed to transcribe audio: {response.text}. For more information, visit https://waves-docs.smallest.ai/v4.0.0/content/api-references/asr-post-api")
+
+        return response.json()
