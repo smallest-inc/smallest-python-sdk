@@ -6,3 +6,11 @@ TTSModels = [
     "lightning-large",
     "lightning-v2"
 ]
+ASRLanguages_lightning = [
+    "it", "es", "en", "pt", "hi", "de", "fr", "uk", "ru", "kn", "ml", "pl",
+    "mr", "gu", "cs", "sk", "te", "or", "nl", "bn", "lv", "et", "ro", "pa",
+    "fi", "sv", "bg", "ta", "hu", "da", "lt", "mt", "multi"
+]
+ASRModels = [
+    "lightning"
+]
