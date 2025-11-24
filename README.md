@@ -21,7 +21,7 @@ Smallest AI offers an end to end Voice AI suite for developers trying to build r
 
 With this sdk, you can easily interact with both Waves and Atoms from any Python 3.9+ application, by utilising WavesClient and AtomsClient classes respectively. Currently, the WavesClient supports direct synthesis and the ability to synthesize streamed LLM output, both synchronously and asynchronously. AtomsClient provides a simpler way of interacting with all our API's to develop and run agentic workflows. 
 
-To learn how to use our API's, check out our documentation for [Atoms](https://atoms-docs.smallest.ai/introduction) and [Waves](https://waves-docs.smallest.ai/content/introduction/)
+To learn how to use our API's, check out our documentation for [Atoms](https://atoms-docs.smallest.ai/introduction) and [Waves](https://waves-docs.smallest.ai/content/introduction/introduction)
 
 ## Table of Contents
 
