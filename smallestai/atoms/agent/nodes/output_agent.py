@@ -24,7 +24,6 @@ from smallestai.atoms.agent.events import (
     SDKAgentSpeakEvent,
     SDKAgentTranscriptUpdateEvent,
     SDKEvent,
-    SDKSystemControlInterruptEvent,
     SDKSystemInitEvent,
     SDKSystemLLMRequestEvent,
     SDKSystemUpdateOutputAgentSettingsEvent,
@@ -55,22 +54,19 @@ class OutputAgentNode(Node):
                         yield chunk.content
     """
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, is_interruptible: bool = True):
         """
         Initialize output agent node.
 
         Args:
             name: Node name
         """
-        super().__init__(name)
-        self._current_task: Optional[asyncio.Task] = None
-        self._interrupt_flag = asyncio.Event()
+        super().__init__(name, is_interruptible)
         self.settings = OutputAgentSettings()
         self.context = ContextManager()
 
     async def start(self, init_event: SDKSystemInitEvent, task_manager: TaskManager):
         """Start the node"""
-        self.settings = init_event.output_agent_settings or OutputAgentSettings()
         await super().start(init_event, task_manager)
 
     async def _update_settings(self, settings: Dict[str, Any]):
@@ -85,19 +81,18 @@ class OutputAgentNode(Node):
 
         Handles:
         - LLMRequestEvent -> Start generation
-        - ControlInterruptEvent -> Cancel generation
         """
+
+        await super().process_event(event)
+
         if isinstance(event, SDKSystemLLMRequestEvent):
             await self._handle_llm_request()
         elif isinstance(event, SDKAgentTranscriptUpdateEvent):
             self.context.add_message({"role": event.role, "content": event.content})
         elif isinstance(event, SDKSystemUpdateOutputAgentSettingsEvent):
             await self._update_settings(event.settings)
-        elif (
-            isinstance(event, SDKSystemControlInterruptEvent)
-            and self.settings.interruptible
-        ):
-            await self._handle_interrupt()
+
+        await self.send_event(event)
 
     async def speak(self, text: str):
         """Send the given text"""
@@ -114,55 +109,12 @@ class OutputAgentNode(Node):
 
         Cancels any existing generation task before starting new one.
         """
-        if self._current_task and not self._current_task.done():
-            logger.debug(f"[{self.name}] Cancelling existing generation task")
-            self._current_task.cancel()
-            try:
-                await self._current_task
-            except asyncio.CancelledError:
-                pass
-
-        self._current_task = asyncio.create_task(self._stream_response())
-
-    async def _handle_interrupt(self):
-        """Handle interrupt by canceling current generation."""
-        logger.info(f"[{self.name}] Interrupt received, canceling generation")
-        self._interrupt_flag.set()
-
-        if self._current_task and not self._current_task.done():
-            self._current_task.cancel()
-            try:
-                await self._current_task
-            except asyncio.CancelledError:
-                pass
-
-    async def _stream_response(self):
-        """
-        Stream response chunks downstream.
-
-        Emits:
-        - LLMResponseStartEvent at start
-        - LLMResponseChunkEvent for each chunk
-        - LLMResponseEndEvent at end (even on error/interrupt)
-        - LLMErrorEvent on error
-        """
-        self._interrupt_flag.clear()
-
         try:
             await self.send_event(SDKAgentLLMResponseStartEvent())
 
             async for chunk in self.generate_response():
-                if self._interrupt_flag.is_set():
-                    logger.info(f"[{self.name}] Generation interrupted by flag")
-                    break
-
-                # Emit chunk
                 chunk_event = SDKAgentLLMResponseChunkEvent(text=chunk)
                 await self.send_event(chunk_event)
-
-        except asyncio.CancelledError:
-            logger.info(f"[{self.name}] Generation task cancelled")
-            raise
 
         except Exception as e:
             logger.exception(f"[{self.name}] Error during generation: {e}")
@@ -172,7 +124,6 @@ class OutputAgentNode(Node):
             await self.send_event(error_event)
 
         finally:
-            # Always emit end event
             await self.send_event(SDKAgentLLMResponseEndEvent())
             logger.debug(f"[{self.name}] Generation completed")
 

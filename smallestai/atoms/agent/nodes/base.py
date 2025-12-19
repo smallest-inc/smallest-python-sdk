@@ -9,7 +9,11 @@ from typing import Optional, Set
 
 from loguru import logger
 
-from smallestai.atoms.agent.events import SDKEvent, SDKSystemInitEvent
+from smallestai.atoms.agent.events import (
+    SDKEvent,
+    SDKSystemControlInterruptEvent,
+    SDKSystemInitEvent,
+)
 from smallestai.atoms.agent.task_manager import TaskManager
 
 
@@ -26,7 +30,7 @@ class Node:
     - Sink: special node that outputs to WebSocket
     """
 
-    def __init__(self, name: Optional[str] = None):
+    def __init__(self, name: Optional[str] = None, is_interruptible: bool = False):
         """
         Initialize the node.
 
@@ -48,6 +52,13 @@ class Node:
         self._task_manager: Optional[TaskManager] = None
 
         self._process_event_task: Optional[asyncio.Task] = None
+
+        self._is_interruptible = is_interruptible
+
+    @property
+    def is_interruptible(self) -> bool:
+        """Get whether this node is interruptible"""
+        return self._is_interruptible
 
     @property
     def task_manager(self) -> Optional[TaskManager]:
@@ -109,7 +120,21 @@ class Node:
         """
         for child in self._children:
             logger.trace(f"[{self.name}] Sending event to {child.name}")
-            await child.queue_event(event)
+            if isinstance(event, SDKSystemControlInterruptEvent):
+                await child.process_event(event)
+            else:
+                await child.queue_event(event)
+
+    async def _handle_interrupt(self):
+        """Handle interrupt"""
+
+        logger.critical(f"[{self.name}] Handling interrupt")
+
+        await self.__cancel_process_event_task()
+        self._queue = asyncio.Queue()
+        await self.__create_process_event_task()
+
+        logger.critical(f"[{self.name}] Interrupt handled")
 
     async def process_event(self, event: SDKEvent):
         """
@@ -118,7 +143,11 @@ class Node:
         Args:
             event: The event to process
         """
-        pass
+        logger.critical(
+            f"[{self.name}] Processing event {event} is_interruptible: {self.is_interruptible}"
+        )
+        if isinstance(event, SDKSystemControlInterruptEvent) and self.is_interruptible:
+            await self._handle_interrupt()
 
     async def __process_event_handler_loop(self):
         """Process event handler loop"""
@@ -130,9 +159,6 @@ class Node:
                     break
 
                 await self.process_event(event)
-        except asyncio.CancelledError:
-            logger.debug(f"[{self.name}] Processing loop cancelled")
-            raise
         except Exception as e:
             logger.exception(f"[{self.name}] Unexpected error in processing loop: {e}")
 

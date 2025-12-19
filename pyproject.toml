@@ -41,6 +41,7 @@ dependencies = [
     "typer>=0.20.0",
     "uvicorn>=0.32.0",
     "websockets>=14.0",
+    "openai>=2.14.0",
 ]
 
 [project.optional-dependencies]
@@ -70,3 +71,6 @@ include = ["smallest*"]
 
 [project.scripts]
 smallestai = "smallestai.cli.main:main"
+
+[tool.uv.workspace]
+members = ["examples/tool_calling-1"]
