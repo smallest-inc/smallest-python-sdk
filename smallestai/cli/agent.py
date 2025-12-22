@@ -7,6 +7,7 @@ import questionary
 import typer
 from rich.console import Console
 from rich.panel import Panel
+from rich.table import Table
 
 from smallestai.cli.lib.atoms import AtomsAPIClient
 from smallestai.cli.lib.auth import AuthClient
@@ -198,5 +199,211 @@ def initialise_agent_app(
                 console.print("[red]Failed to connect to agent[/red]")
 
         asyncio.run(run())
+
+    @app.command("builds")
+    def list_builds(
+        limit: int = typer.Option(
+            50, "--limit", "-l", help="Number of builds to fetch"
+        ),
+        offset: int = typer.Option(0, "--offset", "-o", help="Offset for pagination"),
+    ):
+        """
+        List all builds for the current agent.
+        """
+        asyncio.run(async_list_builds(limit, offset))
+
+    async def async_list_builds(limit: int, offset: int):
+        """Async implementation of list builds command."""
+        agent_id = project_config.get_agent_id()
+
+        if not agent_id:
+            console.print(
+                "[red]Agent not initialized. Run 'smallestai agent init' first.[/red]"
+            )
+            return
+
+        credentials = auth_client.get_credentials()
+        if not credentials or not credentials.get("access_token"):
+            console.print(
+                "[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]"
+            )
+            raise typer.Exit(1)
+
+        access_token = credentials["access_token"]
+
+        console.print(f"[dim]Fetching builds for agent: {agent_id}[/dim]")
+
+        try:
+            result = await atoms_client.list_agent_builds(
+                agent_id=agent_id,
+                api_key=access_token,
+                limit=limit,
+                offset=offset,
+            )
+
+            if not result.builds:
+                console.print("[yellow]No builds found for this agent.[/yellow]")
+                return
+
+            table = Table(title="Agent Builds")
+            table.add_column("Build ID", style="cyan")
+            table.add_column("Status", style="magenta")
+            table.add_column("Created At", style="dim")
+
+            for build in result.builds:
+                status_style = {
+                    "SUCCEEDED": "[green]SUCCEEDED[/green]",
+                    "BUILD_FAILED": "[red]BUILD_FAILED[/red]",
+                    "DEPLOY_FAILED": "[red]DEPLOY_FAILED[/red]",
+                    "PENDING": "[yellow]PENDING[/yellow]",
+                    "BUILDING": "[yellow]BUILDING[/yellow]",
+                    "DEPLOYING": "[yellow]DEPLOYING[/yellow]",
+                }.get(build.status, build.status)
+
+                table.add_row(
+                    build.id,
+                    status_style,
+                    build.created_at,
+                )
+
+            console.print(table)
+            console.print(
+                f"[dim]Showing {len(result.builds)} of {result.pagination.total} builds[/dim]"
+            )
+
+        except Exception as e:
+            console.print(f"[red]Error fetching builds: {e}[/red]")
+
+    @app.command("build")
+    def get_build(
+        build_id: str = typer.Argument(..., help="The build ID to fetch"),
+    ):
+        """
+        Get details of a specific build.
+        """
+        asyncio.run(async_get_build(build_id))
+
+    async def async_get_build(build_id: str):
+        """Async implementation of get build command."""
+        agent_id = project_config.get_agent_id()
+
+        if not agent_id:
+            console.print(
+                "[red]Agent not initialized. Run 'smallestai agent init' first.[/red]"
+            )
+            return
+
+        credentials = auth_client.get_credentials()
+        if not credentials or not credentials.get("access_token"):
+            console.print(
+                "[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]"
+            )
+            raise typer.Exit(1)
+
+        access_token = credentials["access_token"]
+
+        console.print(f"[dim]Fetching build: {build_id}[/dim]")
+
+        try:
+            build = await atoms_client.get_agent_build(
+                agent_id=agent_id,
+                build_id=build_id,
+                api_key=access_token,
+            )
+
+            status_style = {
+                "SUCCEEDED": "[green]SUCCEEDED[/green]",
+                "BUILD_FAILED": "[red]BUILD_FAILED[/red]",
+                "DEPLOY_FAILED": "[red]DEPLOY_FAILED[/red]",
+                "PENDING": "[yellow]PENDING[/yellow]",
+                "BUILDING": "[yellow]BUILDING[/yellow]",
+                "DEPLOYING": "[yellow]DEPLOYING[/yellow]",
+            }.get(build.status, build.status)
+
+            console.print(
+                Panel(
+                    f"[bold]Build ID:[/bold] {build.id}\n"
+                    f"[bold]Agent ID:[/bold] {build.agent_id}\n"
+                    f"[bold]Status:[/bold] {status_style}\n"
+                    f"[bold]Error Message:[/bold] {build.error_message or '-'}\n"
+                    f"[bold]Created At:[/bold] {build.created_at}\n"
+                    f"[bold]Updated At:[/bold] {build.updated_at}",
+                    title="Build Details",
+                    border_style="blue",
+                )
+            )
+
+            if build.build_logs:
+                console.print("\n[bold]Build Logs:[/bold]")
+                for log in build.build_logs:
+                    console.print(f"  {log}")
+
+        except Exception as e:
+            console.print(f"[red]Error fetching build: {e}[/red]")
+
+    # @app.command("logs")
+    # def stream_build(
+    #     build_id: str = typer.Argument(..., help="The build ID to stream logs for"),
+    # ):
+    #     """
+    #     Stream build logs in real-time using Server-Sent Events.
+    #     """
+    #     asyncio.run(async_stream_build(build_id))
+
+    # async def async_stream_build(build_id: str):
+    #     """Async implementation of stream build command."""
+    #     agent_id = project_config.get_agent_id()
+
+    #     if not agent_id:
+    #         console.print(
+    #             "[red]Agent not initialized. Run 'smallestai agent init' first.[/red]"
+    #         )
+    #         return
+
+    #     credentials = auth_client.get_credentials()
+    #     if not credentials or not credentials.get("access_token"):
+    #         console.print(
+    #             "[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]"
+    #         )
+    #         raise typer.Exit(1)
+
+    #     access_token = credentials["access_token"]
+
+    #     console.print(f"[bold cyan]Streaming logs for build: {build_id}[/bold cyan]")
+    #     console.print("[dim]Press Ctrl+C to stop streaming[/dim]\n")
+
+    #     try:
+    #         async for event in atoms_client.stream_agent_build(
+    #             agent_id=agent_id,
+    #             build_id=build_id,
+    #             api_key=access_token,
+    #         ):
+    #             event_type = event.get("type")
+
+    #             if event_type == "log":
+    #                 console.print(f"[dim]LOG:[/dim] {event.get('message', '')}")
+    #             elif event_type == "status":
+    #                 status = event.get("status", "")
+    #                 status_style = {
+    #                     "SUCCEEDED": "[green]SUCCEEDED[/green]",
+    #                     "BUILD_FAILED": "[red]BUILD_FAILED[/red]",
+    #                     "DEPLOY_FAILED": "[red]DEPLOY_FAILED[/red]",
+    #                     "PENDING": "[yellow]PENDING[/yellow]",
+    #                     "BUILDING": "[yellow]BUILDING[/yellow]",
+    #                     "DEPLOYING": "[yellow]DEPLOYING[/yellow]",
+    #                 }.get(status, status)
+    #                 console.print(f"[bold]STATUS:[/bold] {status_style}")
+
+    #                 if status in ["SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED"]:
+    #                     console.print("\n[bold]Build stream ended.[/bold]")
+    #                     break
+    #             elif event_type == "error":
+    #                 console.print(f"[red]ERROR:[/red] {event.get('message', '')}")
+    #                 break
+
+    #     except KeyboardInterrupt:
+    #         console.print("\n[yellow]Streaming stopped by user.[/yellow]")
+    #     except Exception as e:
+    #         console.print(f"[red]Error streaming build logs: {e}[/red]")
 
     return app

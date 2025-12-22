@@ -48,6 +48,67 @@ class CreateAgentBuildAPIResponse(BaseModel):
     errors: Optional[List[str]] = Field(default=None)
 
 
+class AgentBuildDetail(BaseModel):
+    id: str
+    agent_id: str = Field(..., alias="agentId")
+    status: str
+    image_uri: Optional[str] = Field(default=None, alias="imageUri")
+    websocket_url: Optional[str] = Field(default=None, alias="websocketUrl")
+    error_message: Optional[str] = Field(default=None, alias="errorMessage")
+    build_logs: Optional[List[str]] = Field(default=None, alias="buildLogs")
+    created_at: str = Field(..., alias="createdAt")
+    updated_at: str = Field(..., alias="updatedAt")
+
+
+class GetAgentBuildData(BaseModel):
+    build: AgentBuildDetail
+
+
+class GetAgentBuildAPIResponse(BaseModel):
+    status: bool
+    data: Optional[GetAgentBuildData] = Field(default=None)
+    errors: Optional[List[str]] = Field(default=None)
+
+
+class AgentBuildListItem(BaseModel):
+    id: str
+    agent_id: str = Field(..., alias="agentId")
+    status: str
+    image_uri: Optional[str] = Field(default=None, alias="imageUri")
+    websocket_url: Optional[str] = Field(default=None, alias="websocketUrl")
+    error_message: Optional[str] = Field(default=None, alias="errorMessage")
+    created_at: str = Field(..., alias="createdAt")
+    updated_at: str = Field(..., alias="updatedAt")
+
+
+class Pagination(BaseModel):
+    limit: int
+    offset: int
+    total: int
+
+
+class ListAgentBuildsData(BaseModel):
+    builds: List[AgentBuildListItem]
+    pagination: Pagination
+
+
+class ListAgentBuildsAPIResponse(BaseModel):
+    status: bool
+    data: Optional[ListAgentBuildsData] = Field(default=None)
+    errors: Optional[List[str]] = Field(default=None)
+
+
+class DeleteAgentDeploymentData(BaseModel):
+    message: str
+    agent_id: str = Field(..., alias="agentId")
+
+
+class DeleteAgentDeploymentAPIResponse(BaseModel):
+    status: bool
+    data: Optional[DeleteAgentDeploymentData] = Field(default=None)
+    errors: Optional[List[str]] = Field(default=None)
+
+
 class AtomsAPIClient:
     def __init__(self):
         # self.base_url = "https://atoms-api.smallest.ai"
@@ -138,3 +199,87 @@ class AtomsAPIClient:
                 raise Exception(create_agent_build_response.errors)
 
             return create_agent_build_response.data
+
+    async def list_agent_builds(
+        self,
+        agent_id: str,
+        api_key: str,
+        limit: int = 50,
+        offset: int = 0,
+    ) -> ListAgentBuildsData:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{self.base_url}/api/v1/sdk/agents/{agent_id}/builds",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                },
+                params={
+                    "limit": limit,
+                    "offset": offset,
+                },
+            )
+
+            response.raise_for_status()
+
+            list_builds_response = ListAgentBuildsAPIResponse.model_validate(
+                response.json()
+            )
+
+            if (
+                list_builds_response.status is False
+                or list_builds_response.data is None
+            ):
+                raise Exception(list_builds_response.errors)
+
+            return list_builds_response.data
+
+    async def get_agent_build(
+        self,
+        agent_id: str,
+        build_id: str,
+        api_key: str,
+    ) -> AgentBuildDetail:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{self.base_url}/api/v1/sdk/agents/{agent_id}/builds/{build_id}",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                },
+            )
+
+            response.raise_for_status()
+
+            get_build_response = GetAgentBuildAPIResponse.model_validate(
+                response.json()
+            )
+
+            if get_build_response.status is False or get_build_response.data is None:
+                raise Exception(get_build_response.errors)
+
+            return get_build_response.data.build
+
+    # async def stream_agent_build(
+    #     self,
+    #     agent_id: str,
+    #     build_id: str,
+    #     api_key: str,
+    # ):
+    #     """
+    #     Stream build logs using Server-Sent Events.
+    #     Yields tuples of (event_type, data) where event_type is 'log', 'status', or 'error'.
+    #     """
+    #     async with httpx.AsyncClient(timeout=None) as client:
+    #         async with client.stream(
+    #             "GET",
+    #             f"{self.base_url}/api/v1/sdk/agents/{agent_id}/builds/{build_id}/stream",
+    #             headers={
+    #                 "Authorization": f"Bearer {api_key}",
+    #             },
+    #         ) as response:
+    #             response.raise_for_status()
+    #             async for line in response.aiter_lines():
+    #                 if line.startswith("data: "):
+    #                     import json
+
+    #                     data = json.loads(line[6:])
+    #                     yield data
