@@ -1,7 +1,0 @@
-[project]
-name = "tool-calling-example-1"
-version = "0.1.0"
-description = "Tool calling example using decorator pattern - 1"
-requires-python = ">=3.9"
-
-dependencies = ["loguru>=0.7.3", "openai>=1.0.0", "pytz>=2024.1"]

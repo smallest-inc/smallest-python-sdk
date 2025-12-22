@@ -37,9 +37,21 @@ class AgentsAPIResponse(BaseModel):
     errors: Optional[List[str]] = Field(default=None)
 
 
+class AgentBuild(BaseModel):
+    build_id: str = Field(..., alias="buildId")
+    message: str = Field(..., alias="message")
+
+
+class CreateAgentBuildAPIResponse(BaseModel):
+    status: bool
+    data: Optional[AgentBuild] = Field(default=None)
+    errors: Optional[List[str]] = Field(default=None)
+
+
 class AtomsAPIClient:
     def __init__(self):
-        self.base_url = "https://atoms-api.smallest.ai"
+        # self.base_url = "https://atoms-api.smallest.ai"
+        self.base_url = "http://localhost:4001"
 
     async def get_agents(
         self,
@@ -82,9 +94,47 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            account_details_response = AccountDetailsAPIResponse.model_validate(response.json())
+            account_details_response = AccountDetailsAPIResponse.model_validate(
+                response.json()
+            )
 
-            if account_details_response.status is False or account_details_response.data is None:
+            if (
+                account_details_response.status is False
+                or account_details_response.data is None
+            ):
                 raise Exception(account_details_response.errors)
 
             return account_details_response.data
+
+    async def create_agent_build(
+        self,
+        agent_id: str,
+        entry_point_file_name: str,
+        agent_code_zip: str,
+        api_key: str,
+    ):
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{self.base_url}/api/v1/sdk/agents/{agent_id}/builds",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                },
+                json={
+                    "entryPointFileName": entry_point_file_name,
+                    "agentCodeZip": agent_code_zip,
+                },
+            )
+
+            response.raise_for_status()
+
+            create_agent_build_response = CreateAgentBuildAPIResponse.model_validate(
+                response.json()
+            )
+
+            if (
+                create_agent_build_response.status is False
+                or create_agent_build_response.data is None
+            ):
+                raise Exception(create_agent_build_response.errors)
+
+            return create_agent_build_response.data

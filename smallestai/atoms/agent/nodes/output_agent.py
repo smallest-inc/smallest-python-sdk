@@ -8,9 +8,8 @@ Features:
 - Subclass implements generate_response()
 """
 
-import asyncio
 from abc import abstractmethod
-from typing import Any, AsyncIterator, Dict, Optional
+from typing import Any, AsyncIterator, Dict
 
 from loguru import logger
 
