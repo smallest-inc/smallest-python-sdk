@@ -211,6 +211,9 @@ def initialise_agent_app(
 
     @app.command("builds")
     def list_builds(
+        build_id: str = typer.Argument(
+            None, help="Optional build ID to manage directly"
+        ),
         limit: int = typer.Option(
             50, "--limit", "-l", help="Number of builds to fetch"
         ),
@@ -218,10 +221,12 @@ def initialise_agent_app(
     ):
         """
         List all builds for the current agent and manage them interactively.
-        """
-        asyncio.run(async_list_builds(limit, offset))
 
-    async def async_list_builds(limit: int, offset: int):
+        If a build_id is provided, directly manage that specific build.
+        """
+        asyncio.run(async_list_builds(build_id, limit, offset))
+
+    async def async_list_builds(build_id: str | None, limit: int, offset: int):
         """Async implementation of list builds command."""
         agent_id = project_config.get_agent_id()
 
@@ -240,9 +245,19 @@ def initialise_agent_app(
 
         access_token = credentials["access_token"]
 
-        console.print(f"[dim]Fetching builds for agent: {agent_id}[/dim]")
-
         try:
+            if build_id:
+                console.print(f"[dim]Fetching build: {build_id}[/dim]")
+                build = await atoms_client.get_agent_build(
+                    agent_id=agent_id,
+                    build_id=build_id,
+                    api_key=access_token,
+                )
+                await _manage_build(agent_id, build, access_token)
+                return
+
+            console.print(f"[dim]Fetching builds for agent: {agent_id}[/dim]")
+
             result = await atoms_client.list_agent_builds(
                 agent_id=agent_id,
                 api_key=access_token,
@@ -280,10 +295,9 @@ def initialise_agent_app(
                 f"[dim]Showing {len(result.builds)} of {result.pagination.total} builds[/dim]\n"
             )
 
-            # Interactive build selection
             choices = [
                 questionary.Choice(
-                    title=f"{build.id[:12]}... | {build.status} | {'LIVE' if build.is_live else '-'} | {build.created_at}",
+                    title=f"{build.id[:12]}... | {build.status.value} | {'LIVE' if build.is_live else '-'} | {build.created_at}",
                     value=build,
                 )
                 for build in result.builds
@@ -304,27 +318,46 @@ def initialise_agent_app(
                 console.print("[dim]Exiting...[/dim]")
                 return
 
-            if selected_build.status == AgentBuildStatus.SUCCEEDED:
-                if selected_build.is_live:
-                    action_choices = [
-                        questionary.Choice(title="Make Unlive", value="unlive"),
-                        questionary.Choice(title="View Details", value="details"),
-                        questionary.Choice(title="Cancel", value=None),
-                    ]
-                else:
-                    action_choices = [
-                        questionary.Choice(title="Make Live", value="live"),
-                        questionary.Choice(title="View Details", value="details"),
-                        questionary.Choice(title="Cancel", value=None),
-                    ]
+            await _manage_build(agent_id, selected_build, access_token)
+
+        except Exception as e:
+            console.print(f"[red]Error: {e}[/red]")
+
+    async def _manage_build(agent_id: str, build, access_token: str):
+        """Show action menu and manage a specific build."""
+        status_color = AGENT_BUILD_STATUS_COLORS[build.status]
+        status_text = f"[{status_color}]{build.status.value.upper()}[/{status_color}]"
+        is_live = getattr(build, "is_live", None)
+        live_text = "[green]✓ LIVE[/green]" if is_live else "-"
+
+        console.print(
+            Panel(
+                f"[bold]Build ID:[/bold] {build.id}\n"
+                f"[bold]Agent ID:[/bold] {build.agent_id}\n"
+                f"[bold]Status:[/bold] {status_text}\n"
+                f"[bold]Live:[/bold] {live_text}\n"
+                f"[bold]Error Message:[/bold] {getattr(build, 'error_message', None) or '-'}\n"
+                f"[bold]Created At:[/bold] {build.created_at}\n"
+                f"[bold]Updated At:[/bold] {build.updated_at}",
+                title="Build Details",
+                border_style="blue",
+            )
+        )
+
+        if build.status == AgentBuildStatus.SUCCEEDED:
+            if is_live:
+                action_choices = [
+                    questionary.Choice(title="Make Unlive", value="unlive"),
+                    questionary.Choice(title="Cancel", value=None),
+                ]
             else:
                 action_choices = [
-                    questionary.Choice(title="View Details", value="details"),
+                    questionary.Choice(title="Make Live", value="live"),
                     questionary.Choice(title="Cancel", value=None),
                 ]
 
             selected_action = await questionary.select(
-                message=f"What would you like to do with build {selected_build.id[:12]}...?",
+                message=f"What would you like to do with build {build.id[:12]}...?",
                 choices=action_choices,
                 pointer="> ",
             ).ask_async()
@@ -337,117 +370,24 @@ def initialise_agent_app(
                 console.print("[yellow]Setting build as live...[/yellow]")
                 await atoms_client.update_agent_build(
                     agent_id=agent_id,
-                    build_id=selected_build.id,
+                    build_id=build.id,
                     api_key=access_token,
                     is_live=True,
                 )
                 console.print(
-                    f"[bold green]✓ Build {selected_build.id[:12]}... is now LIVE![/bold green]"
+                    f"[bold green]✓ Build {build.id[:12]}... is now LIVE![/bold green]"
                 )
             elif selected_action == "unlive":
                 console.print("[yellow]Removing build from live...[/yellow]")
                 await atoms_client.update_agent_build(
                     agent_id=agent_id,
-                    build_id=selected_build.id,
+                    build_id=build.id,
                     api_key=access_token,
                     is_live=False,
                 )
                 console.print(
-                    f"[bold green]✓ Build {selected_build.id[:12]}... is no longer live.[/bold green]"
+                    f"[bold green]✓ Build {build.id[:12]}... is no longer live.[/bold green]"
                 )
-            elif selected_action == "details":
-                build_details = await atoms_client.get_agent_build(
-                    agent_id=agent_id,
-                    build_id=selected_build.id,
-                    api_key=access_token,
-                )
-
-                status_color = AGENT_BUILD_STATUS_COLORS[build_details.status]
-                status_text = f"[{status_color}]{build_details.status.value.upper()}[/{status_color}]"
-
-                console.print(
-                    Panel(
-                        f"[bold]Build ID:[/bold] {build_details.id}\n"
-                        f"[bold]Agent ID:[/bold] {build_details.agent_id}\n"
-                        f"[bold]Status:[/bold] {status_text}\n"
-                        f"[bold]Error Message:[/bold] {build_details.error_message or '-'}\n"
-                        f"[bold]Created At:[/bold] {build_details.created_at}\n"
-                        f"[bold]Updated At:[/bold] {build_details.updated_at}",
-                        title="Build Details",
-                        border_style="blue",
-                    )
-                )
-
-                # if build_details.build_logs:
-                #     console.print("\n[bold]Build Logs:[/bold]")
-                #     for log in build_details.build_logs:
-                #         console.print(f"  {log}")
-
-        except Exception as e:
-            console.print(f"[red]Error fetching builds: {e}[/red]")
-
-    @app.command("build")
-    def get_build(
-        build_id: str = typer.Argument(..., help="The build ID to fetch"),
-    ):
-        """
-        Get details of a specific build.
-        """
-        asyncio.run(async_get_build(build_id))
-
-    async def async_get_build(build_id: str):
-        """Async implementation of get build command."""
-        agent_id = project_config.get_agent_id()
-
-        if not agent_id:
-            console.print(
-                "[red]Agent not initialized. Run 'smallestai agent init' first.[/red]"
-            )
-            return
-
-        credentials = auth_client.get_credentials()
-        if not credentials or not credentials.get("access_token"):
-            console.print(
-                "[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]"
-            )
-            raise typer.Exit(1)
-
-        access_token = credentials["access_token"]
-
-        console.print(f"[dim]Fetching build: {build_id}[/dim]")
-
-        try:
-            build = await atoms_client.get_agent_build(
-                agent_id=agent_id,
-                build_id=build_id,
-                api_key=access_token,
-            )
-
-            status_color = AGENT_BUILD_STATUS_COLORS[build.status]
-            status_text = (
-                f"[{status_color}]{build.status.value.upper()}[/{status_color}]"
-            )
-
-            console.print(
-                Panel(
-                    f"[bold]Build ID:[/bold] {build.id}\n"
-                    f"[bold]Agent ID:[/bold] {build.agent_id}\n"
-                    f"[bold]Status:[/bold] {status_text}\n"
-                    f"[bold]Error Message:[/bold] {build.error_message or '-'}\n"
-                    f"[bold]Created At:[/bold] {build.created_at}\n"
-                    f"[bold]Updated At:[/bold] {build.updated_at}",
-                    title="Build Details",
-                    border_style="blue",
-                )
-            )
-
-            # if build.build_logs:
-            #     console.print("\n[bold]Build Logs:[/bold]")
-            #     for log in build.build_logs:
-            #         console.print(f"  {log}")
-
-        except Exception as e:
-            console.print(f"[red]Error fetching build: {e}[/red]")
 
     # @app.command("logs")
     # def stream_build(
