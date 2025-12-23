@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import List, Optional
 
 import httpx
@@ -5,6 +6,15 @@ from pydantic import BaseModel, Field
 from rich.console import Console
 
 console = Console()
+
+
+class AgentBuildStatus(str, Enum):
+    QUEUED = "QUEUED"
+    BUILDING = "BUILDING"
+    BUILD_FAILED = "BUILD_FAILED"
+    DEPLOYING = "DEPLOYING"
+    DEPLOY_FAILED = "DEPLOY_FAILED"
+    SUCCEEDED = "SUCCEEDED"
 
 
 class AccountDetailsData(BaseModel):
@@ -51,7 +61,7 @@ class CreateAgentBuildAPIResponse(BaseModel):
 class AgentBuildDetail(BaseModel):
     id: str
     agent_id: str = Field(..., alias="agentId")
-    status: str
+    status: AgentBuildStatus
     image_uri: Optional[str] = Field(default=None, alias="imageUri")
     websocket_url: Optional[str] = Field(default=None, alias="websocketUrl")
     error_message: Optional[str] = Field(default=None, alias="errorMessage")
@@ -73,10 +83,11 @@ class GetAgentBuildAPIResponse(BaseModel):
 class AgentBuildListItem(BaseModel):
     id: str
     agent_id: str = Field(..., alias="agentId")
-    status: str
+    status: AgentBuildStatus
     image_uri: Optional[str] = Field(default=None, alias="imageUri")
     websocket_url: Optional[str] = Field(default=None, alias="websocketUrl")
     error_message: Optional[str] = Field(default=None, alias="errorMessage")
+    is_live: Optional[bool] = Field(default=None, alias="isLive")
     created_at: str = Field(..., alias="createdAt")
     updated_at: str = Field(..., alias="updatedAt")
 
@@ -106,6 +117,16 @@ class DeleteAgentDeploymentData(BaseModel):
 class DeleteAgentDeploymentAPIResponse(BaseModel):
     status: bool
     data: Optional[DeleteAgentDeploymentData] = Field(default=None)
+    errors: Optional[List[str]] = Field(default=None)
+
+
+class UpdateAgentBuildData(BaseModel):
+    message: str
+
+
+class UpdateAgentBuildAPIResponse(BaseModel):
+    status: bool
+    data: Optional[UpdateAgentBuildData] = Field(default=None)
     errors: Optional[List[str]] = Field(default=None)
 
 
@@ -257,6 +278,38 @@ class AtomsAPIClient:
                 raise Exception(get_build_response.errors)
 
             return get_build_response.data.build
+
+    async def update_agent_build(
+        self,
+        agent_id: str,
+        build_id: str,
+        api_key: str,
+        is_live: bool,
+    ) -> UpdateAgentBuildData:
+        async with httpx.AsyncClient() as client:
+            response = await client.patch(
+                f"{self.base_url}/api/v1/sdk/agents/{agent_id}/builds/{build_id}",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                },
+                json={
+                    "isLive": is_live,
+                },
+            )
+
+            response.raise_for_status()
+
+            update_build_response = UpdateAgentBuildAPIResponse.model_validate(
+                response.json()
+            )
+
+            if (
+                update_build_response.status is False
+                or update_build_response.data is None
+            ):
+                raise Exception(update_build_response.errors)
+
+            return update_build_response.data
 
     # async def stream_agent_build(
     #     self,

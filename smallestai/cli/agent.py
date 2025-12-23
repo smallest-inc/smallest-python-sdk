@@ -9,11 +9,20 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from smallestai.cli.lib.atoms import AtomsAPIClient
+from smallestai.cli.lib.atoms import AgentBuildStatus, AtomsAPIClient
 from smallestai.cli.lib.auth import AuthClient
 from smallestai.cli.lib.chat import ChatClient, chat_loop
 from smallestai.cli.lib.project_config import ProjectConfig
 from smallestai.cli.utils import create_zip_from_directory
+
+AGENT_BUILD_STATUS_COLORS = {
+    AgentBuildStatus.SUCCEEDED: "green",
+    AgentBuildStatus.BUILD_FAILED: "red",
+    AgentBuildStatus.DEPLOY_FAILED: "red",
+    AgentBuildStatus.QUEUED: "yellow",
+    AgentBuildStatus.BUILDING: "yellow",
+    AgentBuildStatus.DEPLOYING: "yellow",
+}
 
 console = Console()
 
@@ -208,7 +217,7 @@ def initialise_agent_app(
         offset: int = typer.Option(0, "--offset", "-o", help="Offset for pagination"),
     ):
         """
-        List all builds for the current agent.
+        List all builds for the current agent and manage them interactively.
         """
         asyncio.run(async_list_builds(limit, offset))
 
@@ -248,28 +257,131 @@ def initialise_agent_app(
             table = Table(title="Agent Builds")
             table.add_column("Build ID", style="cyan")
             table.add_column("Status", style="magenta")
+            table.add_column("Live", style="green")
             table.add_column("Created At", style="dim")
 
             for build in result.builds:
-                status_style = {
-                    "SUCCEEDED": "[green]SUCCEEDED[/green]",
-                    "BUILD_FAILED": "[red]BUILD_FAILED[/red]",
-                    "DEPLOY_FAILED": "[red]DEPLOY_FAILED[/red]",
-                    "PENDING": "[yellow]PENDING[/yellow]",
-                    "BUILDING": "[yellow]BUILDING[/yellow]",
-                    "DEPLOYING": "[yellow]DEPLOYING[/yellow]",
-                }.get(build.status, build.status)
+                status_color = AGENT_BUILD_STATUS_COLORS[build.status]
+                status_text = (
+                    f"[{status_color}]{build.status.value.upper()}[/{status_color}]"
+                )
+
+                live_indicator = "[green]✓ LIVE[/green]" if build.is_live else "-"
 
                 table.add_row(
                     build.id,
-                    status_style,
+                    status_text,
+                    live_indicator,
                     build.created_at,
                 )
 
             console.print(table)
             console.print(
-                f"[dim]Showing {len(result.builds)} of {result.pagination.total} builds[/dim]"
+                f"[dim]Showing {len(result.builds)} of {result.pagination.total} builds[/dim]\n"
             )
+
+            # Interactive build selection
+            choices = [
+                questionary.Choice(
+                    title=f"{build.id[:12]}... | {build.status} | {'LIVE' if build.is_live else '-'} | {build.created_at}",
+                    value=build,
+                )
+                for build in result.builds
+            ]
+            choices.append(questionary.Choice(title="Cancel", value="cancel"))
+
+            selected_build = await questionary.select(
+                message="Select a build to manage (or Cancel to exit)",
+                choices=choices,
+                pointer="> ",
+            ).ask_async()
+
+            if not selected_build:
+                console.print("[dim]No build selected.[/dim]")
+                return
+
+            if selected_build == "cancel":
+                console.print("[dim]Exiting...[/dim]")
+                return
+
+            if selected_build.status == AgentBuildStatus.SUCCEEDED:
+                if selected_build.is_live:
+                    action_choices = [
+                        questionary.Choice(title="Make Unlive", value="unlive"),
+                        questionary.Choice(title="View Details", value="details"),
+                        questionary.Choice(title="Cancel", value=None),
+                    ]
+                else:
+                    action_choices = [
+                        questionary.Choice(title="Make Live", value="live"),
+                        questionary.Choice(title="View Details", value="details"),
+                        questionary.Choice(title="Cancel", value=None),
+                    ]
+            else:
+                action_choices = [
+                    questionary.Choice(title="View Details", value="details"),
+                    questionary.Choice(title="Cancel", value=None),
+                ]
+
+            selected_action = await questionary.select(
+                message=f"What would you like to do with build {selected_build.id[:12]}...?",
+                choices=action_choices,
+                pointer="> ",
+            ).ask_async()
+
+            if not selected_action:
+                console.print("[dim]No action selected.[/dim]")
+                return
+
+            if selected_action == "live":
+                console.print("[yellow]Setting build as live...[/yellow]")
+                await atoms_client.update_agent_build(
+                    agent_id=agent_id,
+                    build_id=selected_build.id,
+                    api_key=access_token,
+                    is_live=True,
+                )
+                console.print(
+                    f"[bold green]✓ Build {selected_build.id[:12]}... is now LIVE![/bold green]"
+                )
+            elif selected_action == "unlive":
+                console.print("[yellow]Removing build from live...[/yellow]")
+                await atoms_client.update_agent_build(
+                    agent_id=agent_id,
+                    build_id=selected_build.id,
+                    api_key=access_token,
+                    is_live=False,
+                )
+                console.print(
+                    f"[bold green]✓ Build {selected_build.id[:12]}... is no longer live.[/bold green]"
+                )
+            elif selected_action == "details":
+                build_details = await atoms_client.get_agent_build(
+                    agent_id=agent_id,
+                    build_id=selected_build.id,
+                    api_key=access_token,
+                )
+
+                status_color = AGENT_BUILD_STATUS_COLORS[build_details.status]
+                status_text = f"[{status_color}]{build_details.status.value.upper()}[/{status_color}]"
+
+                console.print(
+                    Panel(
+                        f"[bold]Build ID:[/bold] {build_details.id}\n"
+                        f"[bold]Agent ID:[/bold] {build_details.agent_id}\n"
+                        f"[bold]Status:[/bold] {status_text}\n"
+                        f"[bold]Error Message:[/bold] {build_details.error_message or '-'}\n"
+                        f"[bold]Created At:[/bold] {build_details.created_at}\n"
+                        f"[bold]Updated At:[/bold] {build_details.updated_at}",
+                        title="Build Details",
+                        border_style="blue",
+                    )
+                )
+
+                # if build_details.build_logs:
+                #     console.print("\n[bold]Build Logs:[/bold]")
+                #     for log in build_details.build_logs:
+                #         console.print(f"  {log}")
 
         except Exception as e:
             console.print(f"[red]Error fetching builds: {e}[/red]")
@@ -311,20 +423,16 @@ def initialise_agent_app(
                 api_key=access_token,
             )
 
-            status_style = {
-                "SUCCEEDED": "[green]SUCCEEDED[/green]",
-                "BUILD_FAILED": "[red]BUILD_FAILED[/red]",
-                "DEPLOY_FAILED": "[red]DEPLOY_FAILED[/red]",
-                "PENDING": "[yellow]PENDING[/yellow]",
-                "BUILDING": "[yellow]BUILDING[/yellow]",
-                "DEPLOYING": "[yellow]DEPLOYING[/yellow]",
-            }.get(build.status, build.status)
+            status_color = AGENT_BUILD_STATUS_COLORS[build.status]
+            status_text = (
+                f"[{status_color}]{build.status.value.upper()}[/{status_color}]"
+            )
 
             console.print(
                 Panel(
                     f"[bold]Build ID:[/bold] {build.id}\n"
                     f"[bold]Agent ID:[/bold] {build.agent_id}\n"
-                    f"[bold]Status:[/bold] {status_style}\n"
+                    f"[bold]Status:[/bold] {status_text}\n"
                     f"[bold]Error Message:[/bold] {build.error_message or '-'}\n"
                     f"[bold]Created At:[/bold] {build.created_at}\n"
                     f"[bold]Updated At:[/bold] {build.updated_at}",
@@ -333,10 +441,10 @@ def initialise_agent_app(
                 )
             )
 
-            if build.build_logs:
-                console.print("\n[bold]Build Logs:[/bold]")
-                for log in build.build_logs:
-                    console.print(f"  {log}")
+            # if build.build_logs:
+            #     console.print("\n[bold]Build Logs:[/bold]")
+            #     for log in build.build_logs:
+            #         console.print(f"  {log}")
 
         except Exception as e:
             console.print(f"[red]Error fetching build: {e}[/red]")
