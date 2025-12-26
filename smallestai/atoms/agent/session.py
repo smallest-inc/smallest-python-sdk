@@ -8,8 +8,10 @@ Supports building graphs from edges with validation:
 """
 
 import asyncio
+import inspect
 import json
-from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
+from dataclasses import dataclass
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Set, Tuple
 
 from fastapi import WebSocket, WebSocketDisconnect
 from loguru import logger
@@ -23,6 +25,12 @@ from smallestai.atoms.agent.events import (
 )
 from smallestai.atoms.agent.nodes import Node
 from smallestai.atoms.agent.task_manager import TaskManager, TaskManagerParams
+
+
+@dataclass
+class EventHandler:
+    name: str
+    handlers: List[Any]
 
 
 class SessionConfig(BaseModel):
@@ -131,6 +139,11 @@ class AgentSession:
 
         self._shutdown_event = asyncio.Event()
         self._cleanup_complete = asyncio.Event()
+
+        self._event_tasks: Set[asyncio.Task] = set()
+        self._event_handlers: Dict[str, EventHandler] = {}
+
+        self._register_event_handler("on_event_received")
 
     async def initialize(self):
         """Initialize the session"""
@@ -276,6 +289,9 @@ class AgentSession:
                 try:
                     event = self.codec.decode(data)
                     await self.root.queue_event(event)
+
+                    await self._call_event_handler("on_event_received", event)
+
                 except Exception as e:
                     logger.error(f"Error in receive loop: {e}", exc_info=True)
         except WebSocketDisconnect:
@@ -307,6 +323,11 @@ class AgentSession:
         logger.info(f"[{self.name}] Starting cleanup")
         self._running = False
 
+        for task in self._event_tasks:
+            if self.task_manager:
+                await self.task_manager.cancel_task(task)
+        self._event_tasks.clear()
+
         await self.stop()
 
         try:
@@ -335,6 +356,83 @@ class AgentSession:
         """Wait until the session is complete and cleaned up."""
         await self._cleanup_complete.wait()
         logger.info(f"[{self.name}] Session complete")
+
+    def on_event(self, event_name: str):
+        """Decorator for registering event handlers.
+        Args:
+            event_name: The name of the event to handle.
+        Returns:
+            The decorator function that registers the handler.
+        """
+
+        def decorator(handler):
+            self.add_event_handler(event_name, handler)
+            return handler
+
+        return decorator
+
+    def add_event_handler(self, event_name: str, handler):
+        """Add an event handler for the specified event.
+        Args:
+            event_name: The name of the event to handle.
+            handler: The function to call when the event occurs.
+                Can be sync or async.
+        """
+        if event_name in self._event_handlers:
+            self._event_handlers[event_name].handlers.append(handler)
+        else:
+            logger.warning(f"Event handler {event_name} not registered")
+
+    def _register_event_handler(self, event_name: str):
+        """Register an event handler type.
+        Args:
+            event_name: The name of the event type to register.
+            sync: Whether this event handler will be executed in a task.
+        """
+        if event_name not in self._event_handlers:
+            self._event_handlers[event_name] = EventHandler(
+                name=event_name, handlers=[]
+            )
+        else:
+            logger.warning(f"Event handler {event_name} already registered")
+
+    async def _run_handler(self, event_name: str, handler, *args, **kwargs):
+        """Execute all handlers for an event.
+        Args:
+            event_name: The event name for this handler.
+            handler: The handler function to run.
+            *args: Positional arguments to pass to handlers.
+            **kwargs: Keyword arguments to pass to handlers.
+        """
+        try:
+            if inspect.iscoroutinefunction(handler):
+                await handler(self, *args, **kwargs)
+            else:
+                handler(self, *args, **kwargs)
+        except Exception as e:
+            logger.exception(f"Exception in event handler {event_name}: {e}")
+
+    async def _call_event_handler(self, event_name: str, *args, **kwargs):
+        """Call all registered handlers for the specified event.
+        Args:
+            event_name: The name of the event to trigger.
+            *args: Positional arguments to pass to event handlers.
+            **kwargs: Keyword arguments to pass to event handlers.
+        """
+        if event_name not in self._event_handlers:
+            logger.warning(f"Event handler {event_name} not registered")
+            return
+
+        event_handler = self._event_handlers[event_name]
+
+        for handler in event_handler.handlers:
+            if self.task_manager:
+                task_name = f"{self.name}::{event_name}::{handler.__name__}::handler"
+                task = self.task_manager.create_task(
+                    self._run_handler(event_name, handler, *args, **kwargs),
+                    name=task_name,
+                )
+                self._event_tasks.add(task)
 
     def __repr__(self):
         return f"<AgentSession: {self.name} ({len(self.nodes)} nodes)>"

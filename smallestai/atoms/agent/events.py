@@ -2,7 +2,6 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, ClassVar, Dict, List, Literal, Optional, Tuple
 
-from loguru import logger
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -81,6 +80,7 @@ class EventType(str, Enum):
     SYSTEM_USER_STOPPED_SPEAKING = "system.user.stopped_speaking"
     SYSTEM_CONTROL_INTERRUPT = "system.control.interrupt"
     SYSTEM_UPDATE_OUTPUT_AGENT_SETTINGS = "system.output_agent.update_settings"
+    SYSTEM_USER_JOINED = "system.user.joined"
 
     # agent events
     AGENT_BASE = "agent.base"
@@ -111,7 +111,9 @@ class SDKAgentEvent(SDKEvent, type=EventType.AGENT_BASE.value):
     pass
 
 
-class SDKAgentTranscriptUpdateEvent(SDKAgentEvent, type=EventType.AGENT_TRANSCRIPT_UPDATE.value):
+class SDKAgentTranscriptUpdateEvent(
+    SDKAgentEvent, type=EventType.AGENT_TRANSCRIPT_UPDATE.value
+):
     role: Literal["user", "assistant"]
     content: str
 
@@ -163,7 +165,9 @@ class SDKAgentTransferConversationEvent(
 ):
     transfer_call_number: str
     transfer_options: TransferOption
-    on_hold_music: Optional[Literal["ringtone", "relaxing_sound", "uplifting_beats", "none"]]
+    on_hold_music: Optional[
+        Literal["ringtone", "relaxing_sound", "uplifting_beats", "none"]
+    ]
 
 
 class SDKSystemInitEvent(SDKSystemEvent, type=EventType.SYSTEM_INIT.value):
@@ -176,6 +180,10 @@ class SDKSystemUpdateOutputAgentSettingsEvent(
     SDKSystemEvent, type=EventType.SYSTEM_UPDATE_OUTPUT_AGENT_SETTINGS.value
 ):
     settings: Dict[str, Any]
+
+
+class SDKSystemUserJoinedEvent(SDKSystemEvent, type=EventType.SYSTEM_USER_JOINED.value):
+    pass
 
 
 class SDKSystemUserStartedSpeakingEvent(
@@ -196,7 +204,9 @@ class SDKSystemLLMRequestEvent(SDKSystemEvent, type=EventType.SYSTEM_LLM_REQUEST
     extra_params: Dict[str, Any] = Field(default_factory=dict)
 
 
-class SDKSystemControlInterruptEvent(SDKSystemEvent, type=EventType.SYSTEM_CONTROL_INTERRUPT.value):
+class SDKSystemControlInterruptEvent(
+    SDKSystemEvent, type=EventType.SYSTEM_CONTROL_INTERRUPT.value
+):
     pass
 
 
@@ -208,29 +218,41 @@ class SDKAgentErrorEvent(SDKAgentEvent, type=EventType.AGENT_ERROR.value):
     message: str
 
 
-class SDKAgentLLMResponseStartEvent(SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_START.value):
+class SDKAgentLLMResponseStartEvent(
+    SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_START.value
+):
     """Streaming response started."""
 
     request_id: Optional[str] = None
 
 
-class SDKAgentLLMResponseChunkEvent(SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_CHUNK.value):
+class SDKAgentLLMResponseChunkEvent(
+    SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_CHUNK.value
+):
     text: str
 
 
-class SDKAgentLLMResponseEndEvent(SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_END.value):
+class SDKAgentLLMResponseEndEvent(
+    SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_END.value
+):
     pass
 
 
-class SDKAgentControlInterruptEvent(SDKAgentEvent, type=EventType.AGENT_CONTROL_INTERRUPT.value):
+class SDKAgentControlInterruptEvent(
+    SDKAgentEvent, type=EventType.AGENT_CONTROL_INTERRUPT.value
+):
     pass
 
 
-class SDKAgentControlMuteUserEvent(SDKAgentEvent, type=EventType.AGENT_CONTROL_MUTE_USER.value):
+class SDKAgentControlMuteUserEvent(
+    SDKAgentEvent, type=EventType.AGENT_CONTROL_MUTE_USER.value
+):
     pass
 
 
-class SDKAgentControlUnmuteUserEvent(SDKAgentEvent, type=EventType.AGENT_CONTROL_UNMUTE_USER.value):
+class SDKAgentControlUnmuteUserEvent(
+    SDKAgentEvent, type=EventType.AGENT_CONTROL_UNMUTE_USER.value
+):
     pass
 
 

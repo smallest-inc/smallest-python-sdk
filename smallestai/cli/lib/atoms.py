@@ -147,7 +147,7 @@ class AtomsAPIClient:
     ):
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"{self.base_url}/api/v1/agent?page={page}&offset={offset}&sortField={sort_field}&sortOrder={sort_order}",
+                f"{self.base_url}/api/v1/agent?page={page}&offset={offset}&sortField={sort_field}&sortOrder={sort_order}&type=single_prompt",
                 headers={
                     "Authorization": f"Bearer {access_token}",
                 },

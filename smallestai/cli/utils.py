@@ -3,6 +3,7 @@ import io
 import zipfile
 from pathlib import Path
 
+from loguru import logger
 from rich.console import Console
 
 console = Console()
@@ -175,6 +176,8 @@ def create_zip_from_directory(directory: Path):
 
                 if should_exclude(file_path, relative_path):
                     continue
+
+                console.print(f"[dim]Adding file: {relative_path}[/dim]")
 
                 zip_file.write(file_path, relative_path)
 

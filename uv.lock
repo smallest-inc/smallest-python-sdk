@@ -2300,7 +2300,7 @@ wheels = [
 
 [[package]]
 name = "smallestai"
-version = "4.1.5"
+version = "4.1.7"
 source = { editable = "." }
 dependencies = [
     { name = "aiofiles" },
