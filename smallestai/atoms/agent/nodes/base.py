@@ -128,13 +128,9 @@ class Node:
     async def _handle_interrupt(self):
         """Handle interrupt"""
 
-        logger.critical(f"[{self.name}] Handling interrupt")
-
         await self.__cancel_process_event_task()
         self._queue = asyncio.Queue()
         await self.__create_process_event_task()
-
-        logger.critical(f"[{self.name}] Interrupt handled")
 
     async def process_event(self, event: SDKEvent):
         """
@@ -143,9 +139,7 @@ class Node:
         Args:
             event: The event to process
         """
-        logger.critical(
-            f"[{self.name}] Processing event {event} is_interruptible: {self.is_interruptible}"
-        )
+
         if isinstance(event, SDKSystemControlInterruptEvent) and self.is_interruptible:
             await self._handle_interrupt()
 
