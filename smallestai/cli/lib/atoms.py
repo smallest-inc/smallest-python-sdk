@@ -132,8 +132,7 @@ class UpdateAgentBuildAPIResponse(BaseModel):
 
 class AtomsAPIClient:
     def __init__(self):
-        # self.base_url = "https://atoms-api.smallest.ai"
-        self.base_url = "http://localhost:4001"
+        self.base_url = "https://atoms-api.smallest.ai"
 
     async def get_agents(
         self,
