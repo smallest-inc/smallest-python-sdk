@@ -176,17 +176,14 @@ def initialise_agent_app(
             console.print(f"[red]Error deploying agent {e}[/red]")
 
     @app.command()
-    def chat(
-        port: int = typer.Argument(8080, help="WebSocket server port"),
-        host: str = typer.Option(
-            "localhost", "--host", "-h", help="WebSocket server host"
-        ),
-    ):
+    def chat():
         """
         Start a chat session with an Atoms SDK agent.
 
         Connect to a WebSocket server running an Atoms SDK agent and chat interactively.
         """
+        host = "localhost"
+        port = 8080
         ws_url = f"ws://{host}:{port}/ws"
 
         console.print(

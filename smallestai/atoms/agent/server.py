@@ -87,8 +87,6 @@ class AtomsApp:
     def __init__(
         self,
         setup_handler: Callable[[AgentSession], Awaitable[None]],
-        host: str = "0.0.0.0",
-        port: int = 8080,
     ):
         """
         Initialize Atoms WebSocket server.
@@ -98,8 +96,8 @@ class AtomsApp:
             host: Host to bind to
             port: Port to listen on
         """
-        self.host = host
-        self.port = port
+        self._host = "0.0.0.0"
+        self._port = 8080
         self.setup_handler = setup_handler
 
         self.app = FastAPI(title="Atoms SDK Server", version="0.1.0")
@@ -155,11 +153,11 @@ class AtomsApp:
             **kwargs: Additional arguments to pass to uvicorn.run()
         """
         config = {
-            "host": self.host,
-            "port": self.port,
+            "host": self._host,
+            "port": self._port,
             "log_level": "info",
             **kwargs,
         }
 
-        logger.info(f"Starting Atoms SDK server on ws://{self.host}:{self.port}/ws")
+        logger.info(f"Starting Atoms SDK server on ws://{self._host}:{self._port}/ws")
         uvicorn.run(self.app, **config)
