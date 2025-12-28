@@ -344,7 +344,7 @@ def initialise_agent_app(
         if build.status == AgentBuildStatus.SUCCEEDED:
             if is_live:
                 action_choices = [
-                    questionary.Choice(title="Make Unlive", value="unlive"),
+                    questionary.Choice(title="Take Down", value="take_down"),
                     questionary.Choice(title="Cancel", value=None),
                 ]
             else:
@@ -374,8 +374,8 @@ def initialise_agent_app(
                 console.print(
                     f"[bold green]✓ Build {build.id[:12]}... is now LIVE![/bold green]"
                 )
-            elif selected_action == "unlive":
-                console.print("[yellow]Removing build from live...[/yellow]")
+            elif selected_action == "take_down":
+                console.print("[yellow]Taking down build...[/yellow]")
                 await atoms_client.update_agent_build(
                     agent_id=agent_id,
                     build_id=build.id,
@@ -383,7 +383,7 @@ def initialise_agent_app(
                     is_live=False,
                 )
                 console.print(
-                    f"[bold green]✓ Build {build.id[:12]}... is no longer live.[/bold green]"
+                    f"[bold green]✓ Build {build.id[:12]}... has been taken down.[/bold green]"
                 )
 
     # @app.command("logs")
