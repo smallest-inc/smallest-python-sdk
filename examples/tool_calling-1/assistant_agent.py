@@ -1,15 +1,17 @@
 """Assistant agent with tool calling capabilities."""
 
+import os
 from typing import List
 
-from loguru import logger
+from dotenv import load_dotenv
 
 from smallestai.atoms.agent.clients.openai import OpenAIClient
 from smallestai.atoms.agent.clients.types import ToolCall, ToolResult
 from smallestai.atoms.agent.events import SDKAgentEndCallEvent
 from smallestai.atoms.agent.nodes import OutputAgentNode
-from smallestai.atoms.agent.tools.decorator import function_tool
-from smallestai.atoms.agent.tools.registry import ToolRegistry
+from smallestai.atoms.agent.tools import ToolRegistry, function_tool
+
+load_dotenv()
 
 
 class AssistantAgent(OutputAgentNode):
@@ -17,7 +19,9 @@ class AssistantAgent(OutputAgentNode):
 
     def __init__(self):
         super().__init__(name="assistant-agent")
-        self.llm = OpenAIClient(model="gpt-4o", temperature=0.7)
+        self.llm = OpenAIClient(
+            model="gpt-4o", temperature=0.7, api_key=os.getenv("OPENAI_API_KEY")
+        )
 
         # Initialize tool registry
         self.tool_registry = ToolRegistry()
