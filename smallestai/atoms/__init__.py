@@ -150,6 +150,12 @@ from smallestai.atoms.models.webhook_post_request_events_inner import WebhookPos
 from smallestai.atoms.models.webhook_subscription import WebhookSubscription
 from smallestai.atoms.models.webhook_subscription_populated import WebhookSubscriptionPopulated
 
+# Modular Classes
+from smallestai.atoms.call import Call
+from smallestai.atoms.audience import Audience
+from smallestai.atoms.campaign import Campaign
+from smallestai.atoms.kb import KB
+
 __all__ = [
     # API Classes
     "AgentTemplatesApi",
@@ -165,7 +171,12 @@ __all__ = [
     "ApiResponse",
     "ApiClient",
     "Configuration",
+    "Configuration",
     "AtomsClient",
+    "Call",
+    "Audience",
+    "Campaign",
+    "KB",
     
     # Exceptions
     "OpenApiException",
