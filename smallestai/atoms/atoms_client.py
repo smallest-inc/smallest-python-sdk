@@ -66,57 +66,42 @@ class AtomsClient:
             _host_index=_host_index
         )
 
-    @validate_call
     def delete_agent(
         self,
-        id: StrictStr,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+        id: str,
+        **kwargs
     ):
-        return self.agents_api.agent_id_delete(
-            id=id,
-            _request_timeout=_request_timeout,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+        """
+        Delete (archive) an agent by ID.
+        
+        Note: Backend uses /agent/{id}/archive endpoint.
+        """
+        import requests
+        url = f"{self._get_base_url()}/agent/{id}/archive"
+        headers = self._get_auth_headers()
+        
+        response = requests.delete(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
 
-    @validate_call
     def get_agent_by_id(
         self,
-        id: StrictStr,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ):
-        return self.agents_api.agent_id_get(
-            id=id,
-            _request_timeout=_request_timeout,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+        id: str,
+        **kwargs
+    ) -> Dict[str, Any]:
+        """
+        Get agent by ID with full details.
+        
+        Returns:
+            Dict with agent details including globalKnowledgeBaseId
+        """
+        import requests
+        url = f"{self._get_base_url()}/agent/{id}"
+        headers = self._get_auth_headers()
+        
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
 
     @validate_call
     def get_agents(
@@ -454,24 +439,24 @@ class AtomsClient:
             _host_index=_host_index
         )
 
-    @validate_call
     def get_campaign_by_id(
         self,
-        id: StrictStr,
-        _request_timeout: Union[None, Annotated[StrictFloat, Field(gt=0)], Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]]] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ):
-        return self.campaigns_api.campaign_id_get(
-            id=id,
-            _request_timeout=_request_timeout,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+        id: str,
+        **kwargs
+    ) -> Dict[str, Any]:
+        """
+        Get campaign by ID with full status and metrics.
+        
+        Returns:
+            Dict with campaign details, status, and metrics
+        """
+        import requests
+        url = f"{self._get_base_url()}/campaign/{id}"
+        headers = self._get_auth_headers()
+        
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
 
     @validate_call
     def get_campaigns(
@@ -492,24 +477,24 @@ class AtomsClient:
             _host_index=_host_index
         )
 
-    @validate_call
     def start_campaign(
         self,
-        id: StrictStr,
-        _request_timeout: Union[None, Annotated[StrictFloat, Field(gt=0)], Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]]] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ):
-        return self.campaigns_api.campaign_id_start_post(
-            id=id,
-            _request_timeout=_request_timeout,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
+        id: str,
+        **kwargs
+    ) -> Dict[str, Any]:
+        """
+        Start a campaign by ID.
+        
+        Returns:
+            Dict with message, taskId, and campaignId
+        """
+        import requests
+        url = f"{self._get_base_url()}/campaign/{id}/start"
+        headers = self._get_auth_headers()
+        
+        response = requests.post(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
 
     @validate_call
     def pause_campaign(
@@ -586,3 +571,490 @@ class AtomsClient:
             _headers=_headers,
             _host_index=_host_index
         )
+
+    # ================================================================
+    # Call Analytics Methods (using direct HTTP calls for JSON response)
+    # ================================================================
+    
+    def get_call(self, call_id: str) -> Dict[str, Any]:
+        """
+        Get details for a single call by call ID.
+        
+        Args:
+            call_id: The call ID (e.g., "CALL-1768155029217-0bae45")
+        
+        Returns:
+            Dict with status and data containing call details including:
+            - callId, duration, status, type
+            - transcript, recordingUrl, recordingDualUrl
+            - from, to, events, callCost
+        """
+        import requests
+        import os
+        api_key = os.environ.get("SMALLEST_API_KEY", "")
+        url = f"{self.api_client.configuration.host}/conversation/{call_id}"
+        
+        response = requests.get(url, headers={"Authorization": f"Bearer {api_key}"})
+        response.raise_for_status()
+        return response.json()
+    
+    def get_calls(
+        self,
+        agent_id: Optional[str] = None,
+        campaign_id: Optional[str] = None,
+        page: int = 1,
+        limit: int = 10,
+        status: Optional[str] = None,
+        call_type: Optional[str] = None,
+        search: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Get paginated list of calls with optional filters.
+        
+        Args:
+            agent_id: Filter by agent ID
+            campaign_id: Filter by campaign ID
+            page: Page number (default: 1)
+            limit: Results per page (default: 10)
+            status: Filter by status (completed, failed, in_progress, etc.)
+            call_type: Filter by type (telephony_inbound, telephony_outbound, chat)
+            search: Search by callId, fromNumber, or toNumber
+        
+        Returns:
+            Dict with status and data containing paginated call logs
+        """
+        import requests
+        import os
+        api_key = os.environ.get("SMALLEST_API_KEY", "")
+        url = f"{self.api_client.configuration.host}/conversation"
+        
+        params = {"page": page, "limit": limit}
+        if agent_id:
+            params["agentIds"] = agent_id
+        if campaign_id:
+            params["campaignIds"] = campaign_id
+        if status:
+            params["statusFilter"] = status
+        if call_type:
+            params["callTypes"] = call_type
+        if search:
+            params["search"] = search
+        
+        response = requests.get(url, headers={"Authorization": f"Bearer {api_key}"}, params=params)
+        response.raise_for_status()
+        return response.json()
+    
+    def search_calls(self, call_ids: List[str]) -> Dict[str, Any]:
+        """
+        Search for multiple calls by their call IDs.
+        
+        Args:
+            call_ids: List of call IDs to fetch (max 100)
+        
+        Returns:
+            Dict with status and data containing matching call logs
+        """
+        import requests
+        import os
+        api_key = os.environ.get("SMALLEST_API_KEY", "")
+        url = f"{self.api_client.configuration.host}/conversation/search"
+        
+        response = requests.post(
+            url,
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            json={"callIds": call_ids}
+        )
+        response.raise_for_status()
+        return response.json()
+
+    # ================================================================
+    # Post-Call Analytics Methods
+    # ================================================================
+    
+    def get_post_call_config(self, agent_id: str) -> Dict[str, Any]:
+        """
+        Get post-call analytics configuration for an agent.
+        
+        Args:
+            agent_id: The agent ID
+        
+        Returns:
+            Dict with status and data containing:
+            - summaryPrompt: Custom prompt for generating call summaries
+            - dispositionMetrics: List of configured disposition metrics
+        """
+        import requests
+        import os
+        api_key = os.environ.get("SMALLEST_API_KEY", "")
+        url = f"{self.api_client.configuration.host}/agent/{agent_id}/post-call-analytics"
+        
+        response = requests.get(url, headers={"Authorization": f"Bearer {api_key}"})
+        response.raise_for_status()
+        return response.json()
+    
+    def set_post_call_config(
+        self,
+        agent_id: str,
+        summary_prompt: str = None,
+        disposition_metrics: List[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Set post-call analytics configuration for an agent.
+        
+        Args:
+            agent_id: The agent ID
+            summary_prompt: Custom prompt for generating call summaries
+            disposition_metrics: List of disposition metrics to track. Each metric should have:
+                - identifier: Unique ID (e.g., "customer_status")
+                - dispositionMetricPrompt: Question to extract this data
+                - dispositionValues: Dict with "type" key (STRING, BOOLEAN, INTEGER, ENUM, DATETIME)
+                - choices: List of options (required only for ENUM type)
+        
+        Returns:
+            Dict with status and updated configuration
+        
+        Example:
+            client.set_post_call_config(
+                agent_id="123",
+                summary_prompt="Summarize the key outcomes of this call.",
+                disposition_metrics=[
+                    {
+                        "identifier": "customer_status",
+                        "dispositionMetricPrompt": "What is the customer's interest level?",
+                        "dispositionValues": {"type": "ENUM"},
+                        "choices": ["Interested", "Not Interested", "Callback"]
+                    },
+                    {
+                        "identifier": "customer_name",
+                        "dispositionMetricPrompt": "What is the customer's name?",
+                        "dispositionValues": {"type": "STRING"}
+                    }
+                ]
+            )
+        """
+        import requests
+        import os
+        api_key = os.environ.get("SMALLEST_API_KEY", "")
+        url = f"{self.api_client.configuration.host}/agent/{agent_id}/post-call-analytics"
+        
+        payload = {}
+        if summary_prompt is not None:
+            payload["summaryPrompt"] = summary_prompt
+        if disposition_metrics is not None:
+            payload["dispositionMetrics"] = disposition_metrics
+        
+        response = requests.post(
+            url,
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            json=payload
+        )
+        response.raise_for_status()
+        return response.json()
+
+    # ================================================================
+    # Audience Methods (using direct HTTP calls)
+    # ================================================================
+    
+    def _get_auth_headers(self) -> Dict[str, str]:
+        """Get authorization headers for direct API calls."""
+        import os
+        api_key = os.environ.get("SMALLEST_API_KEY", "")
+        return {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+    
+    def _get_base_url(self) -> str:
+        """Get base API URL."""
+        return self.api_client.configuration.host
+    
+    def get_audiences(self) -> Dict[str, Any]:
+        """
+        Get all audiences for the organization.
+        
+        Returns:
+            Dict with status and data containing list of audiences
+        """
+        import requests
+        url = f"{self._get_base_url()}/audience"
+        headers = self._get_auth_headers()
+        
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    
+    def get_audience_by_id(self, audience_id: str) -> Dict[str, Any]:
+        """
+        Get audience by ID.
+        
+        Args:
+            audience_id: The audience ID
+            
+        Returns:
+            Dict with status and audience data
+        """
+        import requests
+        url = f"{self._get_base_url()}/audience/{audience_id}"
+        headers = self._get_auth_headers()
+        
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    
+    def create_audience(
+        self,
+        name: str,
+        phone_numbers: List[str],
+        phone_number_column_name: str = "phoneNumber",
+        description: str = "",
+        names: Optional[List[Tuple[str, str]]] = None
+    ) -> Dict[str, Any]:
+        """
+        Create a new audience with phone numbers.
+        
+        Args:
+            name: Name of the audience
+            phone_numbers: List of phone numbers to add (e.g., ["+916366821717", "+919353662554"])
+            phone_number_column_name: Column name for phone numbers in CSV (default: "phoneNumber")
+            description: Optional description
+            names: Optional list of (firstName, lastName) tuples matching phone_numbers
+            
+        Returns:
+            Dict with status and created audience data including _id
+            
+        Example:
+            audience = client.create_audience(
+                name="My Audience",
+                phone_numbers=["+916366821717", "+919353662554"],
+                names=[("John", "Doe"), ("Jane", "Smith")]
+            )
+            audience_id = audience["data"]["_id"]
+        """
+        import requests
+        import io
+        
+        url = f"{self._get_base_url()}/audience"
+        headers = {"Authorization": self._get_auth_headers()["Authorization"]}
+        
+        # Build CSV content
+        csv_lines = ["firstName,lastName,phoneNumber"]
+        for i, phone in enumerate(phone_numbers):
+            if names and i < len(names):
+                first_name, last_name = names[i]
+            else:
+                first_name, last_name = "User", str(i + 1)
+            csv_lines.append(f"{first_name},{last_name},{phone}")
+        
+        csv_content = "\n".join(csv_lines)
+        
+        files = {'file': ('contacts.csv', csv_content.encode('utf-8'), 'text/csv')}
+        data = {
+            'name': name,
+            'phoneNumberColumnName': phone_number_column_name,
+            'description': description
+        }
+        
+        response = requests.post(url, headers=headers, files=files, data=data)
+        response.raise_for_status()
+        return response.json()
+    
+    def delete_audience(self, audience_id: str) -> Dict[str, Any]:
+        """
+        Delete an audience by ID.
+        
+        Args:
+            audience_id: The audience ID to delete
+            
+        Returns:
+            Dict with status
+        """
+        import requests
+        url = f"{self._get_base_url()}/audience/{audience_id}"
+        headers = self._get_auth_headers()
+        
+        response = requests.delete(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    
+    def get_audience_members(
+        self,
+        audience_id: str,
+        page: int = 1,
+        offset: int = 10
+    ) -> Dict[str, Any]:
+        """
+        Get members of an audience.
+        
+        Args:
+            audience_id: The audience ID
+            page: Page number (default: 1)
+            offset: Items per page (default: 10)
+            
+        Returns:
+            Dict with status and members data
+        """
+        import requests
+        url = f"{self._get_base_url()}/audience/{audience_id}/members"
+        headers = self._get_auth_headers()
+        params = {"page": str(page), "offset": str(offset)}
+        
+        response = requests.get(url, headers=headers, params=params)
+        response.raise_for_status()
+        return response.json()
+    
+    def add_audience_members(
+        self,
+        audience_id: str,
+        members: List[Dict[str, str]]
+    ) -> Dict[str, Any]:
+        """
+        Add members to an existing audience.
+        
+        Args:
+            audience_id: The audience ID
+            members: List of member dicts with phoneNumber and optional firstName, lastName
+            
+        Returns:
+            Dict with status and count of added/skipped members
+            
+        Example:
+            result = client.add_audience_members(
+                audience_id="123abc",
+                members=[
+                    {"phoneNumber": "+919353662554", "firstName": "New", "lastName": "User"}
+                ]
+            )
+        """
+        import requests
+        url = f"{self._get_base_url()}/audience/{audience_id}/members"
+        headers = self._get_auth_headers()
+        
+        response = requests.post(url, headers=headers, json={"members": members})
+        response.raise_for_status()
+        return response.json()
+    
+    # ================================================================
+    # Phone Number Methods
+    # ================================================================
+    
+    def get_phone_numbers(self) -> Dict[str, Any]:
+        """
+        Get all acquired phone numbers for the organization.
+        
+        Returns:
+            Dict with status and list of phone number products.
+            Each product has:
+            - _id: Phone number ID (use this in campaigns)
+            - attributes.phoneNumber: The actual phone number
+            - attributes.provider: Telephony provider
+            - agentId: Assigned agent ID (if any)
+            
+        Example:
+            numbers = client.get_phone_numbers()
+            for num in numbers["data"]:
+                print(f"ID: {num['_id']}, Phone: {num['attributes']['phoneNumber']}")
+        """
+        import requests
+        url = f"{self._get_base_url()}/product/phone-numbers"
+        headers = self._get_auth_headers()
+        
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
+
+    # ================================================================
+    # Simplified Wrapper Methods (cleaner API)
+    # ================================================================
+    
+    def new_agent(
+        self,
+        name: str,
+        prompt: str = None,
+        description: str = "",
+        kb_id: str = None,
+        background_sound: str = ""
+    ) -> Dict[str, Any]:
+        """
+        Create a new agent with simple parameters.
+        
+        Args:
+            name: Agent name
+            prompt: Global prompt for the agent
+            description: Agent description
+            kb_id: Knowledge base ID to link
+            background_sound: '', 'office', 'cafe', 'call_center', or 'static'
+        
+        Returns:
+            Dict with status and agent ID
+        """
+        from smallestai.atoms.models import CreateAgentRequest
+        
+        request = CreateAgentRequest(
+            name=name,
+            description=description,
+            global_prompt=prompt,
+            global_knowledge_base_id=kb_id,
+            background_sound=background_sound
+        )
+        return self.create_agent(create_agent_request=request)
+    
+    def new_campaign(
+        self,
+        name: str,
+        agent_id: str,
+        audience_id: str,
+        phone_ids: list,
+        description: str = "",
+        max_retries: int = 3,
+        retry_delay: int = 15
+    ) -> Dict[str, Any]:
+        """
+        Create a new campaign with simple parameters.
+        
+        Args:
+            name: Campaign name
+            agent_id: ID of the agent to use
+            audience_id: ID of the audience to call
+            phone_ids: List of outbound phone number IDs
+            description: Campaign description
+            max_retries: Max retry attempts (0-10)
+            retry_delay: Minutes between retries (1-1440)
+        
+        Returns:
+            Dict with campaign details
+        """
+        from smallestai.atoms.models import CampaignPostRequest
+        
+        request = CampaignPostRequest(
+            name=name,
+            description=description,
+            agent_id=agent_id,
+            audience_id=audience_id,
+            phone_number_ids=phone_ids,
+            max_retries=max_retries,
+            retry_delay=retry_delay
+        )
+        return self.create_campaign(campaign_post_request=request)
+    
+    def new_kb(
+        self,
+        name: str,
+        description: str = ""
+    ) -> Dict[str, Any]:
+        """
+        Create a new knowledge base with simple parameters.
+        
+        Args:
+            name: Knowledge base name
+            description: Knowledge base description
+        
+        Returns:
+            Dict with status and KB ID
+        """
+        from smallestai.atoms.models import KnowledgebasePostRequest
+        
+        request = KnowledgebasePostRequest(
+            name=name,
+            description=description
+        )
+        return self.create_knowledge_base(knowledgebase_post_request=request)
