@@ -49,7 +49,7 @@ class EventCodec:
         return json.dumps(
             {
                 "type": data.type,
-                **data.model_dump(mode="json"),
+                **data.model_dump(mode="json", by_alias=True),
             }
         ).encode()
 
