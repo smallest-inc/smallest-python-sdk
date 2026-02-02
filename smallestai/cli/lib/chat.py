@@ -174,11 +174,13 @@ class TransferOption(BaseModel):
 class SDKAgentTransferConversationEvent(
     SDKAgentEvent, type=EventType.AGENT_TRANSFER_CONVERSATION.value
 ):
-    transfer_call_number: str
-    transfer_options: TransferOption
+    model_config = ConfigDict(populate_by_name=True)
+
+    transfer_call_number: str = Field(alias="transferCallNumber")
+    transfer_options: TransferOption = Field(alias="transferOptions")
     on_hold_music: Optional[
         Literal["ringtone", "relaxing_sound", "uplifting_beats", "none"]
-    ]
+    ] = Field(default=None, alias="onHoldMusic")
 
 
 class SDKSystemInitEvent(SDKSystemEvent, type=EventType.SYSTEM_INIT.value):
@@ -293,7 +295,7 @@ class SDKCodec:
         return json.dumps(
             {
                 "type": data.type,
-                **data.model_dump(mode="json"),
+                **data.model_dump(mode="json", by_alias=True),
             }
         ).encode()
 
