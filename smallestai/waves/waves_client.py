@@ -1,75 +1,37 @@
 import os
 import json
-import copy
 import requests
-from typing import Optional, Union, List
+from typing import Optional, List
 
 from smallestai.waves.exceptions import InvalidError, APIError
-from smallestai.waves.utils import (TTSOptions, validate_input, validate_asr_input,
-                        get_smallest_languages, get_smallest_models, ALLOWED_AUDIO_EXTENSIONS, API_BASE_URL)
+from smallestai.waves.utils import (validate_tts_input, validate_stt_input,
+                        get_smallest_languages, get_tts_models, get_stt_models, ALLOWED_AUDIO_EXTENSIONS, API_BASE_URL,
+                        DEFAULT_SAMPLE_RATES)
+
 
 class WavesClient:
-    def __init__(
-        self,
-        api_key: str = None,
-        model: Optional[str] = "lightning",
-        sample_rate: Optional[int] = 24000,
-        voice_id: Optional[str] = "emily",
-        speed: Optional[float] = 1.0,
-        consistency: Optional[float] = 0.5,
-        similarity: Optional[float] = 0.0,
-        enhancement: Optional[int] = 1,
-        language: Optional[str] = "en",
-        output_format: Optional[str] = "wav"
-    ) -> None:
+    def __init__(self, api_key: str = None) -> None:
         """
-        Smallest Instance for text-to-speech synthesis.
-
-        This is a synchronous implementation of the text-to-speech functionality. 
-        For an asynchronous version, please refer to the AsyncSmallest Instance.
+        Waves Client for synchronous Text-to-Speech and Speech-to-Text.
+        For an asynchronous version, please refer to the AsyncWavesClient.
 
         Args:
-        - api_key (str): The API key for authentication, export it as 'SMALLEST_API_KEY' in your environment variables.
-        - model (TTSModels): The model to be used for synthesis.
-        - sample_rate (int): The sample rate for the audio output.
-        - voice_id (TTSVoices): The voice to be used for synthesis.
-        - speed (float): The speed of the speech synthesis.
-        - consistency (float): This parameter controls word repetition and skipping. Decrease it to prevent skipped words, and increase it to prevent repetition. Only supported in `lightning-large` model. Range - [0, 1]
-        - similarity (float): This parameter controls the similarity between the synthesized audio and the reference audio. Increase it to make the speech more similar to the reference audio. Only supported in `lightning-large` model. Range - [0, 1]
-        - enhancement (int): Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model. Range - [0, 2].
-        - language (str): The language for synthesis. Default is "en".
-        - output_format (str): The output audio format. Options: "pcm", "mp3", "wav", "mulaw". Default is "pcm".
+        - api_key (str): The API key for authentication. 
+                         Set via parameter or 'SMALLEST_API_KEY' environment variable.
 
         Methods:
-        - get_languages: Returns a list of available languages for synthesis.
-        - get_voices: Returns a list of available voices for synthesis.
-        - get_models: Returns a list of available models for synthesis.
-        - synthesize: Converts the provided text into speech and returns the audio content.
+        - synthesize: Converts text to speech.
+        - transcribe: Converts speech to text.
+        - get_languages: Returns available languages for a model.
+        - get_voices: Returns available voices for a model.
+        - get_models: Returns available TTS models.
         """
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY")
         if not self.api_key:
             raise InvalidError()
-        if model == "lightning-large" and voice_id is None:
-            voice_id = "lakshya"
 
-        self.chunk_size = 250
-        
-        self.opts = TTSOptions(
-            model=model,
-            sample_rate=sample_rate,
-            voice_id=voice_id,
-            api_key=self.api_key,
-            speed=speed,
-            consistency=consistency,
-            similarity=similarity,
-            enhancement=enhancement,
-            language=language,
-            output_format=output_format
-        )
-    
-        
-    def get_languages(self, model:str="lightning") -> List[str]:
-        """Returns a list of available languages."""
+    def get_languages(self, model: str = "lightning-v3.1") -> List[str]:
+        """Returns a list of available languages for a model (TTS or STT)."""
         return get_smallest_languages(model)
     
     def get_cloned_voices(self) -> str:
@@ -83,13 +45,9 @@ class WavesClient:
             raise APIError(f"Failed to get cloned voices: {res.text}. For more information, visit https://waves.smallest.ai/")
         
         return json.dumps(res.json(), indent=4, ensure_ascii=False)
-    
 
-    def get_voices(
-            self,
-            model: Optional[str] = "lightning"
-        ) -> str:
-        """Returns a list of available voices."""
+    def get_voices(self, model: str = "lightning-v3.1") -> str:
+        """Returns a list of available voices for a TTS model."""
         headers = {
             "Authorization": f"Bearer {self.api_key}",
         }
@@ -99,93 +57,105 @@ class WavesClient:
             raise APIError(f"Failed to get voices: {res.text}. For more information, visit https://waves.smallest.ai/")
         
         return json.dumps(res.json(), indent=4, ensure_ascii=False)
-    
 
-    def get_models(self) -> List[str]:
-        """Returns a list of available models."""
-        return get_smallest_models()
-    
-    
+    def get_tts_models(self) -> List[str]:
+        """Returns a list of available TTS models."""
+        return get_tts_models()
+
+    def get_stt_models(self) -> List[str]:
+        """Returns a list of available STT models."""
+        return get_stt_models()
+
     def synthesize(
             self,
             text: str,
-            **kwargs
-        ) -> Union[bytes]:
+            model: str = "lightning-v3.1",
+            voice_id: Optional[str] = None,
+            sample_rate: Optional[int] = None,
+            speed: float = 1.0,
+            language: str = "en",
+            output_format: str = "wav",
+            consistency: Optional[float] = 0.5,
+            similarity: Optional[float] = 0.0,
+            enhancement: Optional[int] = 1,
+            pronunciation_dicts: Optional[List[str]] = None
+        ) -> bytes:
         """
-        Synthesize speech from the provided text.
+        Synthesize speech from text.
 
-        - text (str): The text to be converted to speech.
-        - stream (Optional[bool]): If True, returns an iterator yielding audio chunks instead of a full byte array.
-        - kwargs: Additional optional parameters to override `__init__` options for this call.
+        Args:
+        - text (str): The text to convert to speech.
+        - model (str): TTS model. Options: "lightning-v3.1", "lightning-v2". Default: "lightning-v3.1".
+        - voice_id (str): Voice ID. Default: "sophia" for v3.1, "alice" for v2.
+        - sample_rate (int): Sample rate in Hz. Default: 44100 for v3.1, 24000 for v2.
+        - speed (float): Speech speed (0.5-2.0). Default: 1.0.
+        - language (str): Language code. Default: "en".
+        - output_format (str): Output format ("pcm", "mp3", "wav", "mulaw"). Default: "wav".
+        - consistency (float): Word repetition control (0-1). Only for lightning-v2. Default: 0.5.
+        - similarity (float): Reference audio similarity (0-1). Only for lightning-v2. Default: 0.0.
+        - enhancement (int): Quality enhancement (0-2). Only for lightning-v2. Default: 1.
+        - pronunciation_dicts (List[str]): Pronunciation dictionary IDs. Default: None.
 
         Returns:
-        - Union[bytes, None, Iterator[bytes]]: 
-            - If `stream=True`, returns an iterator yielding audio chunks.
-            - If `save_as` is provided, saves the file and returns None.
-            - Otherwise, returns the synthesized audio content as bytes.
+        - bytes: The synthesized audio content.
 
         Raises:
-        - InvalidError: If the provided file name does not have a .wav or .mp3 extension when `save_as` is specified.
-        - APIError: If the API request fails or returns an error.
+        - ValidationError: If input parameters are invalid.
+        - APIError: If the API request fails.
         """
-        opts = copy.deepcopy(self.opts)
-        valid_keys = set(vars(opts).keys())
+        if sample_rate is None:
+            sample_rate = DEFAULT_SAMPLE_RATES.get(model, 24000)
+        
+        if voice_id is None:
+            voice_id = "sophia" if model == "lightning-v3.1" else "alice"
 
-        invalid_keys = [key for key in kwargs if key not in valid_keys]
-        if invalid_keys:
-            raise ValueError(f"Invalid parameter(s) in kwargs: {', '.join(invalid_keys)}. Allowed parameters are: {', '.join(valid_keys)}")
-                                
-        for key, value in kwargs.items():
-            setattr(opts, key, value)
-
-        validate_input(text, opts.model, opts.sample_rate, opts.speed, opts.consistency, opts.similarity, opts.enhancement)
+        validate_tts_input(text, model, sample_rate, speed, consistency, similarity, enhancement)
 
         payload = {
             "text": text,
-            "voice_id": opts.voice_id,
-            "sample_rate": opts.sample_rate,
-            "speed": opts.speed,
-            "consistency": opts.consistency,
-            "similarity": opts.similarity,
-            "enhancement": opts.enhancement,
-            "language": opts.language,
-            "output_format": opts.output_format
+            "voice_id": voice_id,
+            "sample_rate": sample_rate,
+            "speed": speed,
+            "language": language,
+            "output_format": output_format
         }
 
-        if opts.model == "lightning-large" or opts.model == "lightning-v2":
-            if opts.consistency is not None:
-                payload["consistency"] = opts.consistency
-            if opts.similarity is not None:
-                payload["similarity"] = opts.similarity
-            if opts.enhancement is not None:
-                payload["enhancement"] = opts.enhancement
+        if model == "lightning-v2":
+            if consistency is not None:
+                payload["consistency"] = consistency
+            if similarity is not None:
+                payload["similarity"] = similarity
+            if enhancement is not None:
+                payload["enhancement"] = enhancement
+        
+        if pronunciation_dicts:
+            payload["pronunciation_dicts"] = pronunciation_dicts
                 
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
         }
 
-        res = requests.post(f"{API_BASE_URL}/{opts.model}/get_speech", json=payload, headers=headers)
+        res = requests.post(f"{API_BASE_URL}/{model}/get_speech", json=payload, headers=headers)
         if res.status_code != 200:
             raise APIError(f"Failed to synthesize speech: {res.text}. Please check if you have set the correct API key. For more information, visit https://waves.smallest.ai/")
                 
         return res.content
-    
-    
+
     def add_voice(self, display_name: str, file_path: str) -> str:
         """
-        Instantly clone your voice synchronously.
+        Instantly clone your voice from an audio file.
 
         Args:
-        - display_name (str): The display name for the new voice.
-        - file_path (str): The path to the reference audio file to be cloned.
+        - display_name (str): Display name for the new voice.
+        - file_path (str): Path to the reference audio file.
 
         Returns:
-        - str: The response from the API as a formatted JSON string.
+        - str: API response as JSON.
 
         Raises:
-        - InvalidError: If the file does not exist or is not a valid audio file.
-        - APIError: If the API request fails or returns an error.
+        - InvalidError: If the file is invalid.
+        - APIError: If the API request fails.
         """
         if not os.path.isfile(file_path):
             raise InvalidError("Invalid file path. File does not exist.")
@@ -209,19 +179,18 @@ class WavesClient:
 
         return response.json()
 
-
     def delete_voice(self, voice_id: str) -> str:
         """
-        Delete a cloned voice synchronously.
+        Delete a cloned voice.
 
         Args:
-        - voice_id (str): The ID of the voice to be deleted.
+        - voice_id (str): The voice ID to delete.
 
         Returns:
-        - str: The response from the API.
+        - str: API response.
 
         Raises:
-        - APIError: If the API request fails or returns an error.
+        - APIError: If the API request fails.
         """
         url = f"{API_BASE_URL}/lightning-large"
         payload = {'voiceId': voice_id}
@@ -239,36 +208,63 @@ class WavesClient:
     def transcribe(
         self,
         file_path: str,
-        language: Optional[str] = "en",
-        word_timestamps: Optional[bool] = False,
-        age_detection: Optional[bool] = False,
-        gender_detection: Optional[bool] = False,
-        emotion_detection: Optional[bool] = False,
-        model: Optional[str] = "lightning"
+        language: str = "en",
+        word_timestamps: bool = False,
+        diarize: bool = False,
+        age_detection: bool = False,
+        gender_detection: bool = False,
+        emotion_detection: bool = False,
+        model: str = "pulse"
     ) -> dict:
-        validate_asr_input(file_path, model, language)
+        """
+        Transcribe audio from a file.
 
-        url = f"{API_BASE_URL}/speech-to-text"
-        headers = {
-            'Authorization': f"Bearer {self.api_key}",
-        }
-        payload = {
+        Args:
+        - file_path (str): Path to the audio file.
+        - language (str): Language code. Use "multi" for auto-detection. Default: "en".
+        - word_timestamps (bool): Include word-level timestamps. Default: False.
+        - diarize (bool): Enable speaker diarization. Default: False.
+        - age_detection (bool): Predict speaker age. Default: False.
+        - gender_detection (bool): Predict speaker gender. Default: False.
+        - emotion_detection (bool): Predict speaker emotion. Default: False.
+        - model (str): STT model. Default: "pulse".
+
+        Returns:
+        - dict: Transcription result with transcript, words, utterances, and metadata.
+
+        Raises:
+        - ValidationError: If inputs are invalid.
+        - APIError: If the API request fails.
+        """
+        validate_stt_input(file_path, model, language)
+
+        params = {
             'model': model,
             'language': language,
             'word_timestamps': str(bool(word_timestamps)).lower(),
+            'diarize': str(bool(diarize)).lower(),
             'age_detection': str(bool(age_detection)).lower(),
             'gender_detection': str(bool(gender_detection)).lower(),
             'emotion_detection': str(bool(emotion_detection)).lower()
+        }
+        
+        url = f"{API_BASE_URL}/pulse/get_text"
+        headers = {
+            'Authorization': f"Bearer {self.api_key}",
         }
 
         file_extension = os.path.splitext(file_path)[1].lower()
         content_type = f"audio/{file_extension[1:]}" if file_extension else "application/octet-stream"
 
         with open(file_path, 'rb') as f:
-            files = {'file': (os.path.basename(file_path), f, content_type)}
-            response = requests.post(url, headers=headers, files=files, data=payload)
+            response = requests.post(
+                url,
+                headers={**headers, 'Content-Type': content_type},
+                params=params,
+                data=f.read()
+            )
 
         if response.status_code != 200:
-            raise APIError(f"Failed to transcribe audio: {response.text}. For more information, visit https://waves-docs.smallest.ai/v4.0.0/content/api-references/asr-post-api")
+            raise APIError(f"Failed to transcribe audio: {response.text}. For more information, visit https://waves-docs.smallest.ai/")
 
         return response.json()
