@@ -29,7 +29,7 @@ class CreateAgentRequest(BaseModel):
     """ # noqa: E501
     name: StrictStr
     description: Optional[StrictStr] = None
-    background_sound: Optional[StrictBool] = Field(default=False, description="Whether to add ambient background sound during calls. Currently provides office ambience by default. Additional sound options available upon request.", alias="backgroundSound")
+    background_sound: Optional[StrictStr] = Field(default=None, description="Background sound option: '', 'office', 'cafe', 'call_center', 'static'", alias="backgroundSound")
     language: Optional[CreateAgentRequestLanguage] = None
     global_knowledge_base_id: Optional[StrictStr] = Field(default=None, description="The global knowledge base ID of the agent. You can create a global knowledge base by using the /knowledgebase endpoint and assign it to the agent. The agent will use this knowledge base for its responses.", alias="globalKnowledgeBaseId")
     slm_model: Optional[StrictStr] = Field(default='electron', description="The LLM model to use for the agent. LLM model will be used to generate the response and take decisions based on the user's query.", alias="slmModel")

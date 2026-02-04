@@ -170,6 +170,14 @@ if __name__ == "__main__":
     main()
  ```   
 
+<Tip>
+  Knowledge Base helper supports **PDF uploads** (via `add_file` / `upload_media_to_knowledge_base`) and **URL scraping** (via `scrape_urls`). Text upload may not be available via API yet; if it fails, add text from the dashboard.
+</Tip>
+
+<Tip>
+  To add ambient noise to an agent, set `backgroundSound` when creating the agent. Supported options: `""` (none), `"office"`, `"cafe"`, `"call_center"`, `"static"`.
+</Tip>
+
 ### Configuring workflows to drive conversations
 
 An agent can be configured with a graph-based workflow to help it drive meaningful conversations. You can explore making one on our [platform](https://atoms.smallest.ai/dashboard/agents). Refer to our [documentation](https://atoms-docs.smallest.ai/deep-dive/workflow/what-is-a-workflow) for learning more extensively.
