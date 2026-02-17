@@ -224,7 +224,7 @@ if __name__ == "__main__":
 - `enhancement`: Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model. (default: False)
 - `add_wav_header`: Whether to add a WAV header to the output audio.
 
-These parameters are part of the `Smallest` instance. They can be set when creating the instance (as shown above). However, the `synthesize` function also accepts `kwargs`, allowing you to override these parameters for a specific synthesis request.
+These parameters are part of the `WavesClient` instance. They can be set when creating the instance (as shown above). However, the `synthesize` function also accepts `kwargs`, allowing you to override these parameters for a specific synthesis request.
 
 For example, you can modify the speech speed and sample rate just for a particular synthesis call:  
 ```py
@@ -262,10 +262,10 @@ If you are using a Jupyter Notebook, use the following approach to execute the a
 ```python
 import asyncio
 import aiofiles
-from smallest import AsyncSmallest
+from smallestai.waves import AsyncWavesClient
 
 async def main():
-    client = AsyncSmallest(api_key="SMALLEST_API_KEY")
+    client = AsyncWavesClient(api_key="SMALLEST_API_KEY")
     async with client as tts:
         audio_bytes = await tts.synthesize("Hello, this is a test of the async synthesis function.") 
         async with aiofiles.open("async_synthesize.wav", "wb") as f:
@@ -285,7 +285,7 @@ await main()
 - `enhancement`: Enhances speech quality at the cost of increased latency. Only supported in `lightning-large` model.
 - `add_wav_header`: Whether to add a WAV header to the output audio.
 
-These parameters are part of the `AsyncSmallest` instance. They can be set when creating the instance (as shown above). However, the `synthesize` function also accepts `kwargs`, allowing you to override any of these parameters on a per-request basis.  
+These parameters are part of the `AsyncWavesClient` instance. They can be set when creating the instance (as shown above). However, the `synthesize` function also accepts `kwargs`, allowing you to override any of these parameters on a per-request basis.  
 
 For example, you can modify the speech speed and sample rate just for a particular synthesis request:  
 ```py
@@ -298,115 +298,103 @@ audio_bytes = await tts.synthesize(
 
 #### LLM to Speech    
 
-The `TextToAudioStream` class provides real-time text-to-speech processing, converting streaming text into audio output. It's particularly useful for applications like voice assistants, live captioning, or interactive chatbots that require immediate audio feedback from text generation. Supports both synchronous and asynchronous TTS instance.
+The `WavesStreamingTTS` class provides real-time text-to-speech processing, converting streaming text into audio output over WebSocket. It's particularly useful for applications like voice assistants, live captioning, or interactive chatbots that require immediate audio feedback from text generation.
 
 ##### Stream through a WebSocket
 
 ```python
-import asyncio
-import websockets
+import os
 from groq import Groq
-from smallest import Smallest, TextToAudioStream  
+from smallestai.waves import WavesStreamingTTS, TTSConfig
 
-# Initialize Groq (LLM) and Smallest (TTS) instances
+# Configure TTS
+config = TTSConfig(
+    voice_id="emily",
+    api_key=os.environ.get("SMALLEST_API_KEY"),
+)
+
+# Initialize Groq (LLM) and WavesStreamingTTS instances
 llm = Groq(api_key="GROQ_API_KEY")
-tts = Smallest(api_key="SMALLEST_API_KEY")
-WEBSOCKET_URL = "wss://echo.websocket.events" # Mock WebSocket server
+tts = WavesStreamingTTS(config=config)
 
-# Async function to stream text generation from LLM
-async def generate_text(prompt):
+def generate_text(prompt):
+    """Generator for streaming text from Groq. You can use any LLM."""
     completion = llm.chat.completions.create(
         messages=[{"role": "user", "content": prompt}],
         model="llama3-8b-8192",
         stream=True,
     )
-
-    # Yield text as it is generated
     for chunk in completion:
         text = chunk.choices[0].delta.content
         if text:
             yield text
 
-# Main function to run the process
-async def main():
-    # Initialize the TTS processor
-    processor = TextToAudioStream(tts_instance=tts)
-
-    # Generate text from LLM
+def main():
     llm_output = generate_text("Explain text to speech like I am five in 5 sentences.")
 
-    # Stream the generated speech throught a websocket
-    async with websockets.connect(WEBSOCKET_URL) as ws:
-        print("Connected to WebSocket server.")
-
-        # Stream the generated speech
-        async for audio_chunk in processor.process(llm_output):
-            await ws.send(audio_chunk)  # Send audio chunk
-            echoed_data = await ws.recv()  # Receive the echoed message
-            print("Received from server:", echoed_data[:20], "...")  # Print first 20 bytes
-
-        print("WebSocket connection closed.")
+    # Stream LLM text through TTS and get audio chunks
+    for audio_chunk in tts.synthesize_streaming(llm_output):
+        print(f"Received audio chunk: {len(audio_chunk)} bytes")
+        # Send audio_chunk over a WebSocket, play it, or save it
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
 ```
 
 ##### Save to a File
 ```python
+import os
 import wave
-import asyncio
 from groq import Groq
-from smallest import Smallest, TextToAudioStream
+from smallestai.waves import WavesStreamingTTS, TTSConfig
+
+config = TTSConfig(
+    voice_id="emily",
+    api_key=os.environ.get("SMALLEST_API_KEY"),
+)
 
 llm = Groq(api_key="GROQ_API_KEY")
-tts = Smallest(api_key="SMALLEST_API_KEY")
+tts = WavesStreamingTTS(config=config)
 
-async def generate_text(prompt):
-    """Async generator for streaming text from Groq. You can use any LLM"""
+def generate_text(prompt):
+    """Generator for streaming text from Groq. You can use any LLM."""
     completion = llm.chat.completions.create(
-        messages=[
-            {
-                "role": "user",
-                "content": prompt,
-            }
-        ],
+        messages=[{"role": "user", "content": prompt}],
         model="llama3-8b-8192",
         stream=True,
     )
-
     for chunk in completion:
         text = chunk.choices[0].delta.content
         if text is not None:
             yield text
 
-async def save_audio_to_wav(file_path, processor, llm_output):
-    with wave.open(file_path, "wb") as wav_file:
+def main():
+    llm_output = generate_text("Explain text to speech like I am five in 5 sentences.")
+
+    # Save the streamed audio to a WAV file
+    with wave.open("llm_to_speech.wav", "wb") as wav_file:
         wav_file.setnchannels(1)
-        wav_file.setsampwidth(2) 
+        wav_file.setsampwidth(2)
         wav_file.setframerate(24000)
-        
-        async for audio_chunk in processor.process(llm_output):
+
+        for audio_chunk in tts.synthesize_streaming(llm_output):
             wav_file.writeframes(audio_chunk)
 
-async def main():
-    # Initialize the TTS processor with the TTS instance
-    processor = TextToAudioStream(tts_instance=tts)
-    
-    # Generate text asynchronously and process it
-    llm_output = generate_text("Explain text to speech like I am five in 5 sentences.")
-    
-    # As an example, save the generated audio to a WAV file.
-    await save_audio_to_wav("llm_to_speech.wav", processor, llm_output)
-
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
 ```
 
-**Parameters:**   
+**Parameters (`TTSConfig`):**   
 
-- `tts_instance`: Text-to-speech engine (Smallest or AsyncSmallest)
-- `queue_timeout`: Wait time for new text (seconds, default: 5.0)
-- `max_retries`: Number of retry attempts for failed synthesis (default: 3)
+- `voice_id` (str): Voice ID to use for synthesis
+- `api_key` (str): Your Smallest AI API key
+- `language` (str): Language code (default: "en")
+- `sample_rate` (int): Audio sample rate (default: 24000)
+- `speed` (float): Speech speed multiplier (default: 1.0)
+- `consistency` (float): Controls word repetition/skipping (default: 0.5)
+- `enhancement` (int): Enhances speech quality at the cost of latency (default: 1)
+- `similarity` (float): Similarity to reference audio (default: 0)
+- `max_buffer_flush_ms` (int): Max buffer flush time in ms (default: 0)
 
 **Output Format:**   
 The processor yields raw audio data chunks without WAV headers for streaming efficiency. These chunks can be:
@@ -421,10 +409,10 @@ The Smallest AI SDK allows you to clone your voice by uploading an audio file. T
 
 ##### Add Synchronously
 ```python
-from smallest import Smallest
+from smallestai.waves import WavesClient
 
 def main():
-    client = Smallest(api_key="SMALLEST_API_KEY")
+    client = WavesClient(api_key="SMALLEST_API_KEY")
     res = client.add_voice(display_name="My Voice", file_path="my_voice.wav")
     print(res)
 
@@ -435,10 +423,10 @@ if __name__ == "__main__":
 ##### Add Asynchronously
 ```python
 import asyncio
-from smallest import AsyncSmallest
+from smallestai.waves import AsyncWavesClient
 
 async def main():
-    client = AsyncSmallest(api_key="SMALLEST_API_KEY")
+    client = AsyncWavesClient(api_key="SMALLEST_API_KEY")
     res = await client.add_voice(display_name="My Voice", file_path="my_voice.wav")
     print(res)
 
@@ -451,10 +439,10 @@ The Smallest AI SDK allows you to delete your cloned voice. This feature is avai
 
 ##### Delete Synchronously
 ```python
-from smallest import Smallest
+from smallestai.waves import WavesClient
 
 def main():
-    client = Smallest(api_key="SMALLEST_API_KEY")
+    client = WavesClient(api_key="SMALLEST_API_KEY")
     res = client.delete_voice(voice_id="voice_id")
     print(res)
 
@@ -465,10 +453,10 @@ if __name__ == "__main__":
 ##### Delete Asynchronously
 ```python
 import asyncio
-from smallest import AsyncSmallest
+from smallestai.waves import AsyncWavesClient
 
 async def main():
-    client = AsyncSmallest(api_key="SMALLEST_API_KEY")
+    client = AsyncWavesClient(api_key="SMALLEST_API_KEY")
     res = await client.delete_voice(voice_id="voice_id")
     print(res)
 
@@ -479,9 +467,9 @@ if __name__ == "__main__":
 #### Available Methods
 
 ```python
-from smallest import Smallest
+from smallestai.waves import WavesClient
 
-client = Smallest(api_key="SMALLEST_API_KEY")
+client = WavesClient(api_key="SMALLEST_API_KEY")
 
 print(f"Available Languages: {client.get_languages()}")
 print(f"Available Voices: {client.get_voices(model='lightning')}")
