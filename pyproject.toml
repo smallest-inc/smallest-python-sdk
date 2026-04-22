@@ -20,7 +20,7 @@ keywords = [
     "atoms",
 ]
 dependencies = [
-    "aiohttp",
+    "aiohttp>=3.13.3",
     "aiofiles",
     "requests",
     "pydub",
