@@ -3,16 +3,31 @@ import base64
 import time
 import threading
 import queue
-from typing import Generator
+from typing import Generator, Optional
 from dataclasses import dataclass
 from websocket import WebSocketApp
 
 @dataclass
 class TTSConfig:
+    """Configuration for TTS WebSocket streaming.
+    
+    Attributes:
+        voice_id: The voice identifier to use for synthesis.
+        api_key: API key for authentication.
+        model: TTS model to use. Options: "lightning-v3.1", "lightning-v2". Default: "lightning-v3.1".
+        language: Language code. Default: "en".
+        sample_rate: Audio sample rate in Hz. Default: 44100 for v3.1, 24000 for v2.
+        speed: Speech speed multiplier (0.5-2.0). Default: 1.0.
+        consistency: Controls word repetition/skipping (0-1). Only for lightning-v2. Default: 0.5.
+        enhancement: Speech quality enhancement (0-2). Only for lightning-v2. Default: 1.
+        similarity: Reference audio similarity (0-1). Only for lightning-v2. Default: 0.
+        max_buffer_flush_ms: Buffer flush interval in ms. Default: 0.
+    """
     voice_id: str
     api_key: str
+    model: str = "lightning-v3.1"
     language: str = "en"
-    sample_rate: int = 24000
+    sample_rate: int = 44100
     speed: float = 1.0
     consistency: float = 0.5
     enhancement: int = 1
@@ -20,9 +35,27 @@ class TTSConfig:
     max_buffer_flush_ms: int = 0
 
 class WavesStreamingTTS:
+    """
+    Streaming Text-to-Speech client using WebSocket API.
+    
+    Supports both Lightning v2 and Lightning v3.1 models.
+    
+    Example:
+        config = TTSConfig(
+            voice_id="sophia",
+            api_key="your_api_key",
+            model="lightning-v3.1"
+        )
+        tts = WavesStreamingTTS(config)
+        
+        for audio_chunk in tts.synthesize("Hello, world!"):
+            # Process audio chunk
+            pass
+    """
+    
     def __init__(self, config: TTSConfig):
         self.config = config
-        self.ws_url = "wss://waves-api.smallest.ai/api/v1/lightning-v2/get_speech/stream"
+        self.ws_url = f"wss://waves-api.smallest.ai/api/v1/{config.model}/get_speech/stream"
         self.ws = None
         self.audio_queue = queue.Queue()
         self.error_queue = queue.Queue()
@@ -34,19 +67,23 @@ class WavesStreamingTTS:
         return [f"Authorization: Bearer {self.config.api_key}"]
     
     def _create_payload(self, text: str, continue_stream: bool = False, flush: bool = False):
-        return {
+        payload = {
             "voice_id": self.config.voice_id,
             "text": text,
             "language": self.config.language,
             "sample_rate": self.config.sample_rate,
             "speed": self.config.speed,
-            "consistency": self.config.consistency,
-            "similarity": self.config.similarity,
-            "enhancement": self.config.enhancement,
             "max_buffer_flush_ms": self.config.max_buffer_flush_ms,
             "continue": continue_stream,
             "flush": flush
         }
+        
+        if self.config.model == "lightning-v2":
+            payload["consistency"] = self.config.consistency
+            payload["similarity"] = self.config.similarity
+            payload["enhancement"] = self.config.enhancement
+        
+        return payload
     
     def _on_open(self, ws):
         self.is_connected = True
