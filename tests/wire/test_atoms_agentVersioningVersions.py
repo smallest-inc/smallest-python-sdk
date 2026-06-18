@@ -1,0 +1,91 @@
+from .conftest import get_client, verify_request_count
+
+
+def test_atoms_agentVersioningVersions_list_published_versions() -> None:
+    """Test listPublishedVersions endpoint with WireMock"""
+    test_id = "atoms.agent_versioning_versions.list_published_versions.0"
+    client = get_client(test_id)
+    client.atoms.agent_versioning_versions.list_published_versions(
+        id="60d0fe4f5311236168a109ca",
+    )
+    verify_request_count(test_id, "GET", "/agent/60d0fe4f5311236168a109ca/versions", None, 1)
+
+
+def test_atoms_agentVersioningVersions_diff_two_versions() -> None:
+    """Test diffTwoVersions endpoint with WireMock"""
+    test_id = "atoms.agent_versioning_versions.diff_two_versions.0"
+    client = get_client(test_id)
+    client.atoms.agent_versioning_versions.diff_two_versions(
+        id="60d0fe4f5311236168a109ca",
+        version_a="versionA",
+        version_b="versionB",
+    )
+    verify_request_count(
+        test_id,
+        "GET",
+        "/agent/60d0fe4f5311236168a109ca/versions/diff",
+        {"versionA": "versionA", "versionB": "versionB"},
+        1,
+    )
+
+
+def test_atoms_agentVersioningVersions_compare_metrics_between_two_versions() -> None:
+    """Test compareMetricsBetweenTwoVersions endpoint with WireMock"""
+    test_id = "atoms.agent_versioning_versions.compare_metrics_between_two_versions.0"
+    client = get_client(test_id)
+    client.atoms.agent_versioning_versions.compare_metrics_between_two_versions(
+        id="60d0fe4f5311236168a109ca",
+        version_a="versionA",
+        version_b="versionB",
+    )
+    verify_request_count(
+        test_id,
+        "GET",
+        "/agent/60d0fe4f5311236168a109ca/versions/compare-metrics",
+        {"versionA": "versionA", "versionB": "versionB"},
+        1,
+    )
+
+
+def test_atoms_agentVersioningVersions_get_version_detail() -> None:
+    """Test getVersionDetail endpoint with WireMock"""
+    test_id = "atoms.agent_versioning_versions.get_version_detail.0"
+    client = get_client(test_id)
+    client.atoms.agent_versioning_versions.get_version_detail(
+        id="60d0fe4f5311236168a109ca",
+        version_id="versionId",
+    )
+    verify_request_count(test_id, "GET", "/agent/60d0fe4f5311236168a109ca/versions/versionId", None, 1)
+
+
+def test_atoms_agentVersioningVersions_update_version_metadata_label_description_pin_only() -> None:
+    """Test updateVersionMetadataLabelDescriptionPinOnly endpoint with WireMock"""
+    test_id = "atoms.agent_versioning_versions.update_version_metadata_label_description_pin_only.0"
+    client = get_client(test_id)
+    client.atoms.agent_versioning_versions.update_version_metadata_label_description_pin_only(
+        id="60d0fe4f5311236168a109ca",
+        version_id="versionId",
+    )
+    verify_request_count(test_id, "PATCH", "/agent/60d0fe4f5311236168a109ca/versions/versionId", None, 1)
+
+
+def test_atoms_agentVersioningVersions_activate_a_version() -> None:
+    """Test activateAVersion endpoint with WireMock"""
+    test_id = "atoms.agent_versioning_versions.activate_a_version.0"
+    client = get_client(test_id)
+    client.atoms.agent_versioning_versions.activate_a_version(
+        id="60d0fe4f5311236168a109ca",
+        version_id="versionId",
+    )
+    verify_request_count(test_id, "PATCH", "/agent/60d0fe4f5311236168a109ca/versions/versionId/activate", None, 1)
+
+
+def test_atoms_agentVersioningVersions_test_call_with_version_config() -> None:
+    """Test testCallWithVersionConfig endpoint with WireMock"""
+    test_id = "atoms.agent_versioning_versions.test_call_with_version_config.0"
+    client = get_client(test_id)
+    client.atoms.agent_versioning_versions.test_call_with_version_config(
+        id="60d0fe4f5311236168a109ca",
+        version_id="versionId",
+    )
+    verify_request_count(test_id, "POST", "/agent/60d0fe4f5311236168a109ca/versions/versionId/test-call", None, 1)

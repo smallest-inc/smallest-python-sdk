@@ -1,9 +1,0 @@
-[project]
-name = "atoms-agent-tool-calling-example"
-version = "0.1.0"
-description = "Tool calling example using decorator pattern"
-readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "smallestai>=4.2.0",
-]

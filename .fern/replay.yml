@@ -1,0 +1,4 @@
+exclude:
+  - src/smallestai/waves/types/sample_rate.py
+  - .fern/replay.lock
+  - .fern/replay.yml

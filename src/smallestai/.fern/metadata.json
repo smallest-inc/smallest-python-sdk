@@ -1,0 +1,18 @@
+{
+  "cliVersion": "5.44.7",
+  "generatorName": "fernapi/fern-python-sdk",
+  "generatorVersion": "5.12.12",
+  "generatorConfig": {
+    "package_name": "smallestai",
+    "client": {
+      "class_name": "SmallestAI",
+      "filename": "client.py"
+    },
+    "pydantic_config": {
+      "skip_validation": true
+    },
+    "exclude_types_from_init_exports": true,
+    "should_generate_websocket_clients": true
+  },
+  "invokedBy": "manual"
+}

@@ -1,0 +1,2904 @@
+{
+  "mappings": [
+    {
+      "id": "78e6c94a-95cd-4ec4-90b2-428673927f08",
+      "name": "Get user details - default",
+      "request": {
+        "urlPathTemplate": "/user",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"firstName\": \"firstName\",\n    \"lastName\": \"lastName\",\n    \"userEmail\": \"userEmail\",\n    \"authProvider\": \"authProvider\",\n    \"isEmailVerified\": true,\n    \"organizationId\": \"organizationId\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "78e6c94a-95cd-4ec4-90b2-428673927f08",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "3142d983-0755-42b2-a57e-8e870c673b42",
+      "name": "Get organization details - default",
+      "request": {
+        "urlPathTemplate": "/organization",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"name\": \"name\",\n    \"members\": [\n      {}\n    ],\n    \"subscription\": {\n      \"planId\": \"planId\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "3142d983-0755-42b2-a57e-8e870c673b42",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "da8a2951-79f7-416e-bf27-49119c0d49d8",
+      "name": "Get agent templates - default",
+      "request": {
+        "urlPathTemplate": "/agent/template",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": [\n    {\n      \"id\": \"id\",\n      \"name\": \"name\",\n      \"description\": \"description\",\n      \"avatarUrl\": \"avatarUrl\",\n      \"referenceUrl\": \"referenceUrl\",\n      \"category\": \"category\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "da8a2951-79f7-416e-bf27-49119c0d49d8",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "76d25bd3-7ac5-4808-9644-28d5bf7109c7",
+      "name": "Create agent from template - default",
+      "request": {
+        "urlPathTemplate": "/agent/from-template",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": \"60d0fe4f5311236168a109ca\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "76d25bd3-7ac5-4808-9644-28d5bf7109c7",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "4c6f2d5f-bb4d-4f56-ac9a-4a357878d9c0",
+      "name": "Get all agents - default",
+      "request": {
+        "urlPathTemplate": "/agent",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"agents\": [\n      {\n        \"_resolvedConfig\": {\n          \"tools\": [\n            {\n              \"type\": \"end_call\",\n              \"name\": \"end_call\",\n              \"description\": \"End the conversation when the user is satisfied\",\n              \"transferNumber\": \"+1234567890\",\n              \"url\": \"https://api.example.com/orders\",\n              \"headers\": {\n                \"Authorization\": \"Bearer TOKEN\",\n                \"Content-Type\": \"application/json\"\n              },\n              \"headersArray\": [\n                {\n                  \"key\": \"Authorization\",\n                  \"value\": \"Bearer TOKEN\"\n                }\n              ],\n              \"queryParams\": [\n                {\n                  \"key\": \"id\",\n                  \"value\": \"{{order_id}}\"\n                }\n              ],\n              \"requestBody\": \"{\\\"customer_id\\\": \\\"{{customer_id}}\\\"}\",\n              \"responseVariables\": [\n                {\n                  \"variableName\": \"orderStatus\",\n                  \"jsonPath\": \"$.data.status\"\n                }\n              ],\n              \"variablesExtractionSchema\": [\n                {\n                  \"name\": \"customer_name\",\n                  \"description\": \"The customer's full name\",\n                  \"type\": \"text\",\n                  \"values\": [\n                    \"satisfied\",\n                    \"unsatisfied\",\n                    \"neutral\"\n                  ]\n                }\n              ],\n              \"knowledgeBaseId\": \"60d0fe4f5311236168a109ca\",\n              \"fillerPhrases\": [\n                \"Let me check that for you\",\n                \"One moment please\"\n              ]\n            }\n          ],\n          \"postCallAnalyticsConfig\": {\n            \"dispositionMetrics\": [\n              {\n                \"identifier\": \"call_resolved\",\n                \"dispositionMetricPrompt\": \"Was the customer issue resolved by the end of the call?\",\n                \"dispositionMetricType\": \"STRING\",\n                \"choices\": [\n                  \"resolved\",\n                  \"escalated\",\n                  \"callback_scheduled\",\n                  \"no_action\"\n                ]\n              }\n            ]\n          }\n        }\n      }\n    ],\n    \"total\": 1.1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "4c6f2d5f-bb4d-4f56-ac9a-4a357878d9c0",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "2db48bae-56df-4904-a47c-6f4c1db615eb",
+      "name": "Create a new agent - default",
+      "request": {
+        "urlPathTemplate": "/agent",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"status\": true,\n  \"data\": \"60d0fe4f5311236168a109ca\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "2db48bae-56df-4904-a47c-6f4c1db615eb",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "3a4b85e0-e24e-43f2-ae07-6655a8a2fa35",
+      "name": "Get agent by ID - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"name\": \"name\",\n    \"description\": \"description\",\n    \"backgroundSound\": \"\",\n    \"organization\": \"organization\",\n    \"workflowId\": \"workflowId\",\n    \"workflowType\": \"workflow_graph\",\n    \"createdBy\": \"createdBy\",\n    \"globalKnowledgeBaseId\": \"globalKnowledgeBaseId\",\n    \"language\": {\n      \"enabled\": \"en\",\n      \"supported\": [\n        \"supported\"\n      ]\n    },\n    \"synthesizer\": {\n      \"speed\": 1.1,\n      \"consistency\": 1.1,\n      \"similarity\": 1.1,\n      \"enhancement\": 1.1\n    },\n    \"slmModel\": \"electron\",\n    \"defaultVariables\": {\n      \"key\": \"value\"\n    },\n    \"preCallAPI\": {\n      \"isEnabled\": true,\n      \"url\": \"url\",\n      \"method\": \"GET\",\n      \"headers\": {\n        \"key\": \"value\"\n      },\n      \"body\": {\n        \"key\": \"value\"\n      },\n      \"timeout\": 1,\n      \"queryParams\": {\n        \"key\": \"value\"\n      },\n      \"responseVariables\": [\n        {\n          \"variableName\": \"variableName\",\n          \"jsonPath\": \"jsonPath\"\n        }\n      ]\n    },\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\",\n    \"activeVersionId\": \"activeVersionId\",\n    \"versionId\": \"versionId\",\n    \"_resolvedConfig\": {\n      \"prompt\": \"prompt\",\n      \"tools\": [\n        {\n          \"type\": \"end_call\",\n          \"name\": \"end_call\",\n          \"description\": \"End the conversation when the user is satisfied\",\n          \"transferNumber\": \"+1234567890\",\n          \"url\": \"https://api.example.com/orders\",\n          \"headers\": {\n            \"Authorization\": \"Bearer TOKEN\",\n            \"Content-Type\": \"application/json\"\n          },\n          \"headersArray\": [\n            {\n              \"key\": \"Authorization\",\n              \"value\": \"Bearer TOKEN\"\n            }\n          ],\n          \"queryParams\": [\n            {\n              \"key\": \"id\",\n              \"value\": \"{{order_id}}\"\n            }\n          ],\n          \"requestBody\": \"{\\\"customer_id\\\": \\\"{{customer_id}}\\\"}\",\n          \"responseVariables\": [\n            {\n              \"variableName\": \"orderStatus\",\n              \"jsonPath\": \"$.data.status\"\n            }\n          ],\n          \"variablesExtractionSchema\": [\n            {\n              \"name\": \"customer_name\",\n              \"description\": \"The customer's full name\",\n              \"type\": \"text\",\n              \"values\": [\n                \"satisfied\",\n                \"unsatisfied\",\n                \"neutral\"\n              ]\n            }\n          ],\n          \"knowledgeBaseId\": \"60d0fe4f5311236168a109ca\",\n          \"fillerPhrases\": [\n            \"Let me check that for you\",\n            \"One moment please\"\n          ]\n        }\n      ],\n      \"postCallAnalyticsConfig\": {\n        \"dispositionMetrics\": [\n          {\n            \"identifier\": \"call_resolved\",\n            \"dispositionMetricPrompt\": \"Was the customer issue resolved by the end of the call?\",\n            \"dispositionMetricType\": \"STRING\",\n            \"choices\": [\n              \"resolved\",\n              \"escalated\",\n              \"callback_scheduled\",\n              \"no_action\"\n            ]\n          }\n        ]\n      },\n      \"callDispositionConfig\": \"callDispositionConfig\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "3a4b85e0-e24e-43f2-ae07-6655a8a2fa35",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "a33efdf9-7088-4430-a630-f8ec40ade24a",
+      "name": "Update agent metadata - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": \"60d0fe4f5311236168a109ca\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "a33efdf9-7088-4430-a630-f8ec40ade24a",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "cddf84d6-172b-4e70-a447-ff5a1e67bc75",
+      "name": "Delete an agent - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/archive",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "cddf84d6-172b-4e70-a447-ff5a1e67bc75",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "e9ec225e-4952-4ccb-b5f8-291e0ac32a08",
+      "name": "Duplicate agent to another organization - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/duplicate",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"60d0fe4f5311236168a109cb\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "e9ec225e-4952-4ccb-b5f8-291e0ac32a08",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "24a71b84-4392-4201-9b9f-7e672c1a6662",
+      "name": "Get agent workflow - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/workflow",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"prompt\": \"prompt\",\n    \"tools\": [\n      {\n        \"type\": \"end_call\",\n        \"name\": \"end_call\",\n        \"description\": \"End the conversation when the user is satisfied\",\n        \"transferNumber\": \"+1234567890\",\n        \"url\": \"https://api.example.com/orders\",\n        \"headers\": {\n          \"Authorization\": \"Bearer TOKEN\",\n          \"Content-Type\": \"application/json\"\n        },\n        \"headersArray\": [\n          {\n            \"key\": \"Authorization\",\n            \"value\": \"Bearer TOKEN\"\n          }\n        ],\n        \"queryParams\": [\n          {\n            \"key\": \"id\",\n            \"value\": \"{{order_id}}\"\n          }\n        ],\n        \"requestBody\": \"{\\\"customer_id\\\": \\\"{{customer_id}}\\\"}\",\n        \"responseVariables\": [\n          {\n            \"variableName\": \"orderStatus\",\n            \"jsonPath\": \"$.data.status\"\n          }\n        ],\n        \"variablesExtractionSchema\": [\n          {\n            \"name\": \"customer_name\",\n            \"description\": \"The customer's full name\",\n            \"type\": \"text\",\n            \"values\": [\n              \"satisfied\",\n              \"unsatisfied\",\n              \"neutral\"\n            ]\n          }\n        ],\n        \"knowledgeBaseId\": \"60d0fe4f5311236168a109ca\",\n        \"fillerPhrases\": [\n          \"Let me check that for you\",\n          \"One moment please\"\n        ]\n      }\n    ],\n    \"type\": \"workflow_graph\",\n    \"data\": {\n      \"nodes\": [\n        {}\n      ],\n      \"edges\": [\n        {}\n      ]\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "24a71b84-4392-4201-9b9f-7e672c1a6662",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "de06022f-7d9d-422a-adbf-5c7248b41807",
+      "name": "Update workflow configuration - default",
+      "request": {
+        "urlPathTemplate": "/workflow/{id}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "\"\"",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "de06022f-7d9d-422a-adbf-5c7248b41807",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "19b7c248-5495-40b1-b83c-8df104b50a44",
+      "name": "Get all conversation logs - default",
+      "request": {
+        "urlPathTemplate": "/conversation",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "queryParameters": {
+          "agentIds": {
+            "equalTo": "60d0fe4f5311236168a109ca,60d0fe4f5311236168a109cb"
+          },
+          "campaignIds": {
+            "equalTo": "60d0fe4f5311236168a109ca,60d0fe4f5311236168a109cb"
+          },
+          "search": {
+            "equalTo": "+1234567890"
+          },
+          "statusFilter": {
+            "equalTo": "completed,failed"
+          },
+          "disconnectReasonFilter": {
+            "equalTo": "user_hangup,agent_hangup"
+          },
+          "callAttemptFilter": {
+            "equalTo": "initial"
+          },
+          "durationFilter": {
+            "equalTo": "0-30,30-60"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"logs\": [\n      {\n        \"_id\": \"60d0fe4f5311236168a109ca\",\n        \"callId\": \"CALL-1737000000000-abc123\",\n        \"duration\": 120,\n        \"from\": \"+15551234567\",\n        \"to\": \"+15559876543\",\n        \"agentId\": \"60d0fe4f5311236168a109ca\",\n        \"agentName\": \"Sales Agent\",\n        \"recordingUrl\": \"https://storage.example.com/recordings/call-123.mp3\",\n        \"recordingDualUrl\": \"https://storage.example.com/recordings/call-123-dual.mp3\",\n        \"disconnectionReason\": \"user_hangup\",\n        \"retryCount\": 0,\n        \"createdAt\": \"2025-01-15T10:30:00Z\",\n        \"dispositionMetrics\": {\n          \"interested\": \"yes\",\n          \"follow_up_needed\": \"no\"\n        }\n      }\n    ],\n    \"pagination\": {\n      \"total\": 150,\n      \"page\": 1,\n      \"limit\": 10,\n      \"hasMore\": true,\n      \"totalPages\": 15\n    },\n    \"dispositionMetricsConfig\": [\n      {}\n    ]\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "19b7c248-5495-40b1-b83c-8df104b50a44",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "40d5514b-21a3-44b0-9892-bfc3bb61b0a1",
+      "name": "Search conversation logs by call IDs - default",
+      "request": {
+        "urlPathTemplate": "/conversation/search",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"logs\": [\n      {\n        \"key\": \"value\"\n      }\n    ],\n    \"total\": 2,\n    \"requestedCount\": 3\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "40d5514b-21a3-44b0-9892-bfc3bb61b0a1",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "3db90889-0387-4a8c-8daa-a0fceb0acd4a",
+      "name": "Get conversation log by ID - default",
+      "request": {
+        "urlPathTemplate": "/conversation/{id}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "CALL-1737000000000-abc123"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"abc123\",\n    \"callId\": \"abc123\",\n    \"agent\": {\n      \"_id\": \"_id\",\n      \"name\": \"name\",\n      \"description\": \"description\",\n      \"backgroundSound\": \"\",\n      \"organization\": \"organization\",\n      \"workflowId\": \"workflowId\",\n      \"workflowType\": \"workflow_graph\",\n      \"createdBy\": \"createdBy\",\n      \"globalKnowledgeBaseId\": \"globalKnowledgeBaseId\",\n      \"slmModel\": \"electron\",\n      \"defaultVariables\": {\n        \"key\": \"value\"\n      },\n      \"preCallAPI\": {\n        \"url\": \"url\",\n        \"method\": \"GET\"\n      },\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\",\n      \"activeVersionId\": \"activeVersionId\",\n      \"versionId\": \"versionId\",\n      \"_resolvedConfig\": {\n        \"tools\": [\n          {\n            \"type\": \"end_call\",\n            \"name\": \"end_call\",\n            \"description\": \"End the conversation when the user is satisfied\",\n            \"transferNumber\": \"+1234567890\",\n            \"url\": \"https://api.example.com/orders\",\n            \"headers\": {\n              \"Authorization\": \"Bearer TOKEN\",\n              \"Content-Type\": \"application/json\"\n            },\n            \"headersArray\": [\n              {\n                \"key\": \"Authorization\",\n                \"value\": \"Bearer TOKEN\"\n              }\n            ],\n            \"queryParams\": [\n              {\n                \"key\": \"id\",\n                \"value\": \"{{order_id}}\"\n              }\n            ],\n            \"requestBody\": \"{\\\"customer_id\\\": \\\"{{customer_id}}\\\"}\",\n            \"responseVariables\": [\n              {\n                \"variableName\": \"orderStatus\",\n                \"jsonPath\": \"$.data.status\"\n              }\n            ],\n            \"variablesExtractionSchema\": [\n              {\n                \"name\": \"customer_name\",\n                \"description\": \"The customer's full name\",\n                \"type\": \"text\",\n                \"values\": [\n                  \"satisfied\",\n                  \"unsatisfied\",\n                  \"neutral\"\n                ]\n              }\n            ],\n            \"knowledgeBaseId\": \"60d0fe4f5311236168a109ca\",\n            \"fillerPhrases\": [\n              \"Let me check that for you\",\n              \"One moment please\"\n            ]\n          }\n        ],\n        \"postCallAnalyticsConfig\": {\n          \"dispositionMetrics\": [\n            {\n              \"identifier\": \"call_resolved\",\n              \"dispositionMetricPrompt\": \"Was the customer issue resolved by the end of the call?\",\n              \"dispositionMetricType\": \"STRING\",\n              \"choices\": [\n                \"resolved\",\n                \"escalated\",\n                \"callback_scheduled\",\n                \"no_action\"\n              ]\n            }\n          ]\n        }\n      }\n    },\n    \"status\": \"completed\",\n    \"duration\": 300,\n    \"recordingUrl\": \"recordingUrl\",\n    \"from\": \"from\",\n    \"to\": \"to\",\n    \"transcript\": [\n      {\n        \"key\": \"value\"\n      }\n    ],\n    \"average_transcriber_latency\": 1.1,\n    \"average_agent_latency\": 1.1,\n    \"average_synthesizer_latency\": 1.1,\n    \"type\": \"telephony_inbound\",\n    \"voiceConfigUsed\": {\n      \"model\": \"model\",\n      \"voiceId\": \"voiceId\",\n      \"gender\": \"gender\"\n    },\n    \"slmModelUsed\": \"slmModelUsed\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "3db90889-0387-4a8c-8daa-a0fceb0acd4a",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "99fffb81-4c25-4d7c-8534-031e5e1d48f3",
+      "name": "Start an outbound call - default",
+      "request": {
+        "urlPathTemplate": "/conversation/outbound",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"conversationId\": \"CALL-XXXXX1234\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "99fffb81-4c25-4d7c-8534-031e5e1d48f3",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "d895d2eb-f60f-48e2-992e-0bf5d9c52798",
+      "name": "Subscribe to live call events (SSE) - default",
+      "request": {
+        "urlPathTemplate": "/events",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "queryParameters": {
+          "callId": {
+            "equalTo": "CALL-1758124225863-80752e"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "event: message\ndata: {\"event_type\":\"sse_init\",\"event_id\":\"event_id\",\"timestamp\":\"2024-01-15T09:30:00Z\",\"call_id\":\"call_id\",\"interim_transcription_text\":\"interim_transcription_text\",\"user_transcription_text\":\"user_transcription_text\",\"tts_text\":\"tts_text\",\"tts_latency\":1}\n",
+        "headers": {
+          "Content-Type": "text/event-stream"
+        }
+      },
+      "uuid": "d895d2eb-f60f-48e2-992e-0bf5d9c52798",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "5b505cba-4eab-4708-91bc-3e08bcf18d7e",
+      "name": "Retrieve all campaigns - default",
+      "request": {
+        "urlPathTemplate": "/campaign",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"campaigns\": [\n      {}\n    ]\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "5b505cba-4eab-4708-91bc-3e08bcf18d7e",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "352d8af0-f0d1-4665-a50d-3096bb35647e",
+      "name": "Create a campaign - default",
+      "request": {
+        "urlPathTemplate": "/campaign",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"name\": \"name\",\n    \"description\": \"description\",\n    \"organization\": \"organization\",\n    \"agentId\": \"agentId\",\n    \"createdBy\": \"createdBy\",\n    \"audienceId\": \"audienceId\",\n    \"participantsCount\": 1,\n    \"scheduledAt\": \"2024-01-15T09:30:00Z\",\n    \"maxRetries\": 1,\n    \"retryDelay\": 1,\n    \"retryAttempts\": 1,\n    \"status\": \"draft\",\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "352d8af0-f0d1-4665-a50d-3096bb35647e",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "c5c46f12-7a23-41d1-a843-f718071c5139",
+      "name": "Get a campaign - default",
+      "request": {
+        "urlPathTemplate": "/campaign/{id}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"campaign\": {\n      \"_id\": \"_id\",\n      \"name\": \"name\",\n      \"description\": \"description\",\n      \"organization\": \"organization\",\n      \"agentId\": \"agentId\",\n      \"createdBy\": \"createdBy\",\n      \"audienceId\": \"audienceId\",\n      \"participantsCount\": 1,\n      \"status\": \"draft\",\n      \"maxRetries\": 3,\n      \"retryDelay\": 15,\n      \"scheduledAt\": \"2024-01-15T09:30:00Z\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\"\n    },\n    \"events\": [\n      {}\n    ],\n    \"metrics\": {\n      \"total_participants\": 500,\n      \"contacts_called\": 247,\n      \"contacts_connected\": 150\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "c5c46f12-7a23-41d1-a843-f718071c5139",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "e4761dc2-336a-423f-aec3-62eeb330ca4f",
+      "name": "Delete a campaign - default",
+      "request": {
+        "urlPathTemplate": "/campaign/{id}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "e4761dc2-336a-423f-aec3-62eeb330ca4f",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "7688746f-2c5e-4c75-b383-bc08e60258ca",
+      "name": "Start a campaign - default",
+      "request": {
+        "urlPathTemplate": "/campaign/{id}/start",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"status\": true\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "7688746f-2c5e-4c75-b383-bc08e60258ca",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "086db77b-3f23-4721-9f88-b7c71e2eaec0",
+      "name": "Pause a campaign - default",
+      "request": {
+        "urlPathTemplate": "/campaign/{id}/pause",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "086db77b-3f23-4721-9f88-b7c71e2eaec0",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "7410c049-3394-4d97-ba30-157035fb210e",
+      "name": "Get all knowledge bases - default",
+      "request": {
+        "urlPathTemplate": "/knowledgebase",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": [\n    {\n      \"_id\": \"_id\",\n      \"name\": \"name\",\n      \"description\": \"description\",\n      \"organization\": \"organization\",\n      \"createdBy\": \"createdBy\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "7410c049-3394-4d97-ba30-157035fb210e",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "7c2b010b-4ea2-4c50-b596-e3ccf66f0792",
+      "name": "Create a knowledge base - default",
+      "request": {
+        "urlPathTemplate": "/knowledgebase",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"status\": true,\n  \"data\": \"60d0fe4f5311236168a109ca\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "7c2b010b-4ea2-4c50-b596-e3ccf66f0792",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "7bad4fe6-c3b2-4a3e-be91-9052498c84db",
+      "name": "Get a knowledge base - default",
+      "request": {
+        "urlPathTemplate": "/knowledgebase/{id}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"name\": \"name\",\n    \"description\": \"description\",\n    \"organization\": \"organization\",\n    \"createdBy\": \"createdBy\",\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "7bad4fe6-c3b2-4a3e-be91-9052498c84db",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "8ded4885-e585-4357-89b0-09fcccd34397",
+      "name": "Delete a knowledge base - default",
+      "request": {
+        "urlPathTemplate": "/knowledgebase/{id}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "8ded4885-e585-4357-89b0-09fcccd34397",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "3a7513c2-89d5-480b-b4d5-7953d2843661",
+      "name": "Get all knowledge base items - default",
+      "request": {
+        "urlPathTemplate": "/knowledgebase/{id}/items",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": [\n    {\n      \"_id\": \"_id\",\n      \"itemType\": \"file\",\n      \"metadata\": {\n        \"key\": \"value\"\n      },\n      \"knowledgeBaseId\": \"knowledgeBaseId\",\n      \"processingStatus\": \"pending\",\n      \"fileName\": \"fileName\",\n      \"contentType\": \"contentType\",\n      \"size\": 1.1,\n      \"key\": \"key\",\n      \"title\": \"title\",\n      \"content\": \"content\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "3a7513c2-89d5-480b-b4d5-7953d2843661",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "8859ddff-dde5-4375-864c-a063d79ab832",
+      "name": "Delete a knowledge base item - default",
+      "request": {
+        "urlPathTemplate": "/knowledgebase/{knowledgeBaseId}/items/{knowledgeBaseItemId}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "knowledgeBaseId": {
+            "equalTo": "knowledgeBaseId"
+          },
+          "knowledgeBaseItemId": {
+            "equalTo": "knowledgeBaseItemId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "8859ddff-dde5-4375-864c-a063d79ab832",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "022fa9c4-3f2f-4344-908f-5fda72dd8387",
+      "name": "Upload a PDF file to a knowledge base - default",
+      "request": {
+        "urlPathTemplate": "/knowledgebase/{id}/items/upload-media",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"status\": true\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "022fa9c4-3f2f-4344-908f-5fda72dd8387",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "087ddc1a-b80b-4884-b884-8473b5bd5342",
+      "name": "Get acquired phone numbers - default",
+      "request": {
+        "urlPathTemplate": "/product/phone-numbers",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": [\n    {\n      \"_id\": \"6867ca76d0f8f2e0f4201281\",\n      \"isActive\": false,\n      \"attributes\": {\n        \"provider\": \"twilio\",\n        \"phoneNumber\": \"+13412184691\"\n      },\n      \"createdAt\": \"2025-07-04T12:35:02Z\",\n      \"updatedAt\": \"2025-07-07T08:11:35Z\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "087ddc1a-b80b-4884-b884-8473b5bd5342",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "c68b9f95-4529-4eba-ad7a-7a3413888584",
+      "name": "Import a SIP phone number - default",
+      "request": {
+        "urlPathTemplate": "/product/import-phone-number",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"507f1f77bcf86cd799439011\",\n    \"productType\": \"custom\",\n    \"isActive\": true,\n    \"attributes\": {\n      \"name\": \"Main Support Line\",\n      \"phoneNumber\": \"+14155551234\",\n      \"outboundSipTrunkId\": \"ST_xxxxxxxxxxxx\",\n      \"inboundSipTrunkId\": \"ST_xxxxxxxxxxxx\"\n    },\n    \"agentId\": \"agentId\",\n    \"createdAt\": \"2026-03-16T12:00:00Z\",\n    \"updatedAt\": \"2026-03-16T12:00:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "c68b9f95-4529-4eba-ad7a-7a3413888584",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "0dbce498-341f-4412-87ea-c475d237d06d",
+      "name": "Get compliance status - default",
+      "request": {
+        "urlPathTemplate": "/compliance/status",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "queryParameters": {
+          "countryIso": {
+            "equalTo": "IN"
+          },
+          "numberType": {
+            "equalTo": "local"
+          },
+          "userType": {
+            "equalTo": "individual"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"step\": \"form\",\n    \"application\": {\n      \"_id\": \"663f1a2b4c5d6e7f8a9b0c1d\",\n      \"organizationId\": \"organizationId\",\n      \"plivoComplianceId\": \"plivoComplianceId\",\n      \"alias\": \"663f1a2b-IN-production\",\n      \"status\": \"draft\",\n      \"countryIso\": \"IN\",\n      \"numberType\": \"local\",\n      \"userType\": \"individual\",\n      \"endUserName\": \"Acme Corp\",\n      \"endUserLastName\": \"endUserLastName\",\n      \"endUserEmail\": \"endUserEmail\",\n      \"endUserCountry\": \"IN\",\n      \"documentFileNames\": [\n        \"certificate_of_incorporation.pdf\"\n      ],\n      \"rejectionReason\": \"rejectionReason\",\n      \"createdBy\": \"createdBy\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\"\n    },\n    \"requiredDocuments\": [\n      {\n        \"documentTypeId\": \"dt_certificate_of_incorporation\",\n        \"name\": \"Certificate of Incorporation\",\n        \"description\": \"A government-issued certificate proving business registration\",\n        \"proofRequired\": true,\n        \"requiredFields\": [\n          {\n            \"fieldName\": \"business_name\",\n            \"friendlyName\": \"Business Name\",\n            \"helpText\": \"Exact name as on the certificate\",\n            \"fieldType\": \"string\",\n            \"required\": true\n          }\n        ]\n      }\n    ]\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "0dbce498-341f-4412-87ea-c475d237d06d",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "276219a3-b235-48cc-bc26-643a0e938b26",
+      "name": "Get compliance requirements - default",
+      "request": {
+        "urlPathTemplate": "/compliance/requirements",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "queryParameters": {
+          "countryIso": {
+            "equalTo": "IN"
+          },
+          "numberType": {
+            "equalTo": "local"
+          },
+          "userType": {
+            "equalTo": "individual"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"requirementId\": \"requirementId\",\n    \"countryIso\": \"IN\",\n    \"numberType\": \"local\",\n    \"userType\": \"business\",\n    \"documentTypes\": [\n      {\n        \"documentTypeId\": \"dt_certificate_of_incorporation\",\n        \"name\": \"Certificate of Incorporation\",\n        \"description\": \"A government-issued certificate proving business registration\",\n        \"proofRequired\": true,\n        \"requiredFields\": [\n          {\n            \"fieldName\": \"business_name\",\n            \"friendlyName\": \"Business Name\",\n            \"helpText\": \"Exact name as on the certificate\",\n            \"fieldType\": \"string\",\n            \"required\": true\n          }\n        ]\n      }\n    ]\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "276219a3-b235-48cc-bc26-643a0e938b26",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "3c014f0a-9814-4648-a5af-fda1c41683d1",
+      "name": "Submit a compliance application - default",
+      "request": {
+        "urlPathTemplate": "/compliance/applications",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"663f1a2b4c5d6e7f8a9b0c1d\",\n    \"organizationId\": \"organizationId\",\n    \"plivoComplianceId\": \"plivoComplianceId\",\n    \"alias\": \"663f1a2b-IN-production\",\n    \"status\": \"draft\",\n    \"countryIso\": \"IN\",\n    \"numberType\": \"local\",\n    \"userType\": \"individual\",\n    \"endUserName\": \"Acme Corp\",\n    \"endUserLastName\": \"endUserLastName\",\n    \"endUserEmail\": \"endUserEmail\",\n    \"endUserCountry\": \"IN\",\n    \"documentFileNames\": [\n      \"certificate_of_incorporation.pdf\"\n    ],\n    \"rejectionReason\": \"rejectionReason\",\n    \"createdBy\": \"createdBy\",\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "3c014f0a-9814-4648-a5af-fda1c41683d1",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "d074a140-c45b-41f0-ad3d-c5cfc6659dd7",
+      "name": "Resubmit a rejected compliance application - default",
+      "request": {
+        "urlPathTemplate": "/compliance/applications/{id}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"663f1a2b4c5d6e7f8a9b0c1d\",\n    \"organizationId\": \"organizationId\",\n    \"plivoComplianceId\": \"plivoComplianceId\",\n    \"alias\": \"663f1a2b-IN-production\",\n    \"status\": \"draft\",\n    \"countryIso\": \"IN\",\n    \"numberType\": \"local\",\n    \"userType\": \"individual\",\n    \"endUserName\": \"Acme Corp\",\n    \"endUserLastName\": \"endUserLastName\",\n    \"endUserEmail\": \"endUserEmail\",\n    \"endUserCountry\": \"IN\",\n    \"documentFileNames\": [\n      \"certificate_of_incorporation.pdf\"\n    ],\n    \"rejectionReason\": \"rejectionReason\",\n    \"createdBy\": \"createdBy\",\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "d074a140-c45b-41f0-ad3d-c5cfc6659dd7",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "9d0d52c1-deeb-49bf-8b78-589f4c563d01",
+      "name": "Refresh compliance application status - default",
+      "request": {
+        "urlPathTemplate": "/compliance/applications/{id}/refresh",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"663f1a2b4c5d6e7f8a9b0c1d\",\n    \"organizationId\": \"organizationId\",\n    \"plivoComplianceId\": \"plivoComplianceId\",\n    \"alias\": \"663f1a2b-IN-production\",\n    \"status\": \"draft\",\n    \"countryIso\": \"IN\",\n    \"numberType\": \"local\",\n    \"userType\": \"individual\",\n    \"endUserName\": \"Acme Corp\",\n    \"endUserLastName\": \"endUserLastName\",\n    \"endUserEmail\": \"endUserEmail\",\n    \"endUserCountry\": \"IN\",\n    \"documentFileNames\": [\n      \"certificate_of_incorporation.pdf\"\n    ],\n    \"rejectionReason\": \"rejectionReason\",\n    \"createdBy\": \"createdBy\",\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "9d0d52c1-deeb-49bf-8b78-589f4c563d01",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "04329352-bd7f-4cb9-be23-11197398a986",
+      "name": "Get webhooks - default",
+      "request": {
+        "urlPathTemplate": "/webhook",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"url\": \"url\",\n    \"description\": \"description\",\n    \"status\": \"enabled\",\n    \"organizationId\": \"organizationId\",\n    \"createdBy\": \"createdBy\",\n    \"subscriptions\": [\n      {}\n    ],\n    \"decryptedSecretKey\": \"decryptedSecretKey\",\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "04329352-bd7f-4cb9-be23-11197398a986",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "9f061a09-3e3c-42b2-9751-1d17c19fd413",
+      "name": "Create a webhook - default",
+      "request": {
+        "urlPathTemplate": "/webhook",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"status\": true,\n  \"data\": \"60d0fe4f5311236168a109ca\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "9f061a09-3e3c-42b2-9751-1d17c19fd413",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "61885801-8924-4924-aed5-aaf2c653dbaf",
+      "name": "Delete a webhook - default",
+      "request": {
+        "urlPathTemplate": "/webhook/{id}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "61885801-8924-4924-aed5-aaf2c653dbaf",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "d78e54f2-cac3-4637-ad04-9d0299e40ffa",
+      "name": "Get webhook subscriptions for an agent - default",
+      "request": {
+        "urlPathTemplate": "/agent/{agentId}/webhook-subscriptions",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "agentId": {
+            "equalTo": "agentId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": [\n    {\n      \"_id\": \"_id\",\n      \"webhookId\": \"webhookId\",\n      \"agentId\": \"agentId\",\n      \"eventType\": \"pre-conversation\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "d78e54f2-cac3-4637-ad04-9d0299e40ffa",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "25b6dd37-6090-4d29-81fe-a41ea7891e46",
+      "name": "Create webhook subscriptions for an agent - default",
+      "request": {
+        "urlPathTemplate": "/agent/{agentId}/webhook-subscriptions",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "agentId": {
+            "equalTo": "agentId"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"status\": true,\n  \"data\": \"Subscriptions created successfully\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "25b6dd37-6090-4d29-81fe-a41ea7891e46",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "5fe4cf7e-da76-4454-a65f-5d9ba4708f77",
+      "name": "Delete webhook subscriptions for an agent - default",
+      "request": {
+        "urlPathTemplate": "/agent/{agentId}/webhook-subscriptions",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "agentId": {
+            "equalTo": "agentId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": \"Subscriptions deleted successfully\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "5fe4cf7e-da76-4454-a65f-5d9ba4708f77",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "cbd836df-feca-44df-80a7-46fb5cb4a562",
+      "name": "Get all audiences - default",
+      "request": {
+        "urlPathTemplate": "/audience",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": [\n    {\n      \"_id\": \"60d0fe4f5311236168a109ca\",\n      \"name\": \"My Customer List\",\n      \"description\": \"List of customers for marketing campaign\",\n      \"phoneNumberColumnName\": \"phoneNumber\",\n      \"organization\": \"60d0fe4f5311236168a109cb\",\n      \"createdBy\": \"60d0fe4f5311236168a109cc\",\n      \"createdAt\": \"2025-01-15T10:30:00Z\",\n      \"updatedAt\": \"2025-01-15T10:30:00Z\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "cbd836df-feca-44df-80a7-46fb5cb4a562",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "4e4765ae-fb23-45e3-a0f9-2804d161927a",
+      "name": "Create audience with CSV upload - default",
+      "request": {
+        "urlPathTemplate": "/audience",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"60d0fe4f5311236168a109ca\",\n    \"name\": \"My Customer List\",\n    \"description\": \"List of customers for marketing campaign\",\n    \"phoneNumberColumnName\": \"phoneNumber\",\n    \"identifierColumnName\": \"Name\",\n    \"organization\": \"60d0fe4f5311236168a109cb\",\n    \"createdBy\": \"60d0fe4f5311236168a109cc\",\n    \"createdAt\": \"2025-01-15T10:30:00Z\",\n    \"updatedAt\": \"2025-01-15T10:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "4e4765ae-fb23-45e3-a0f9-2804d161927a",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "8cb69c93-a563-40f9-8fd0-a5877c2c019c",
+      "name": "Get audience by ID - default",
+      "request": {
+        "urlPathTemplate": "/audience/{id}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"60d0fe4f5311236168a109ca\",\n    \"name\": \"My Customer List\",\n    \"description\": \"List of customers for marketing campaign\",\n    \"phoneNumberColumnName\": \"phoneNumber\",\n    \"organization\": \"60d0fe4f5311236168a109cb\",\n    \"createdBy\": \"60d0fe4f5311236168a109cc\",\n    \"createdAt\": \"2025-01-15T10:30:00Z\",\n    \"updatedAt\": \"2025-01-15T10:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "8cb69c93-a563-40f9-8fd0-a5877c2c019c",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "282c3503-4b97-496f-9c49-3d2f6490e811",
+      "name": "Delete audience - default",
+      "request": {
+        "urlPathTemplate": "/audience/{id}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "282c3503-4b97-496f-9c49-3d2f6490e811",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "602373dd-c616-40b1-b813-bb2b0cdfa939",
+      "name": "Get audience members - default",
+      "request": {
+        "urlPathTemplate": "/audience/{id}/members",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          }
+        },
+        "queryParameters": {
+          "page": {
+            "equalTo": "1"
+          },
+          "limit": {
+            "equalTo": "10"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"members\": [\n      {\n        \"_id\": \"60d0fe4f5311236168a109cd\",\n        \"data\": {\n          \"phoneNumber\": \"+1234567890\",\n          \"name\": \"John Doe\",\n          \"email\": \"john@example.com\"\n        }\n      }\n    ],\n    \"totalCount\": 150,\n    \"totalPages\": 15,\n    \"hasMore\": true\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "602373dd-c616-40b1-b813-bb2b0cdfa939",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "4648a567-f1df-4670-8c5d-81d53601df77",
+      "name": "Add audience members - default",
+      "request": {
+        "urlPathTemplate": "/audience/{id}/members",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": [\n    {\n      \"message\": \"5 members added successfully\",\n      \"data\": {\n        \"added\": 5,\n        \"skipped\": 2\n      }\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "4648a567-f1df-4670-8c5d-81d53601df77",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "07403f7d-d481-41d9-8b4d-4de32384ee0c",
+      "name": "Delete audience members - default",
+      "request": {
+        "urlPathTemplate": "/audience/{id}/members",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"deletedCount\": 3\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "07403f7d-d481-41d9-8b4d-4de32384ee0c",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "5de1c4a5-a1ba-4278-8e3a-42a2edecdbc5",
+      "name": "Search audience members - default",
+      "request": {
+        "urlPathTemplate": "/audience/{id}/members/search",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          }
+        },
+        "queryParameters": {
+          "query": {
+            "equalTo": "john"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"members\": [\n      {\n        \"_id\": \"60d0fe4f5311236168a109cd\",\n        \"data\": {\n          \"phoneNumber\": \"+1234567890\",\n          \"name\": \"John Doe\",\n          \"email\": \"john@example.com\"\n        }\n      }\n    ],\n    \"searchInfo\": {\n      \"searchType\": \"general\",\n      \"searchTerm\": \"john\",\n      \"searchFields\": [\n        \"firstName\",\n        \"lastName\"\n      ],\n      \"totalResults\": 5\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "5de1c4a5-a1ba-4278-8e3a-42a2edecdbc5",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "2b01f65c-b760-4d82-8cf9-dbeab4f7ca71",
+      "name": "List active drafts - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/drafts",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": [\n    {\n      \"_id\": \"_id\",\n      \"agent\": \"agent\",\n      \"status\": \"published\",\n      \"versionNumber\": 1,\n      \"label\": \"label\",\n      \"description\": \"description\",\n      \"isPinned\": true,\n      \"publishedBy\": \"publishedBy\",\n      \"draftId\": \"draftId\",\n      \"draftName\": \"draftName\",\n      \"draftRevision\": 1,\n      \"sourceVersionId\": \"sourceVersionId\",\n      \"workflowType\": \"workflow_graph\",\n      \"parentVersion\": \"parentVersion\",\n      \"isActive\": true,\n      \"createdBy\": \"createdBy\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\",\n      \"lastEditorName\": \"lastEditorName\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "2b01f65c-b760-4d82-8cf9-dbeab4f7ca71",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "4b4ecfa1-142c-43fe-b9f5-a9f7f11ee867",
+      "name": "Create a draft - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/drafts",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"agent\": \"agent\",\n    \"status\": \"published\",\n    \"versionNumber\": 1,\n    \"label\": \"label\",\n    \"description\": \"description\",\n    \"isPinned\": true,\n    \"publishedBy\": \"publishedBy\",\n    \"draftId\": \"draftId\",\n    \"draftName\": \"draftName\",\n    \"draftRevision\": 1,\n    \"sourceVersionId\": \"sourceVersionId\",\n    \"blocks\": {\n      \"workflow_prompt\": \"workflow_prompt\",\n      \"workflow_tools\": \"workflow_tools\",\n      \"workflow_graph\": \"workflow_graph\",\n      \"llm\": \"llm\",\n      \"voice\": \"voice\",\n      \"language\": \"language\",\n      \"call_handling\": \"call_handling\",\n      \"detection\": \"detection\",\n      \"analytics\": \"analytics\",\n      \"timeouts\": \"timeouts\",\n      \"audio\": \"audio\",\n      \"privacy\": \"privacy\",\n      \"widget\": \"widget\"\n    },\n    \"workflowType\": \"workflow_graph\",\n    \"parentVersion\": \"parentVersion\",\n    \"isActive\": true,\n    \"createdBy\": \"createdBy\",\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "4b4ecfa1-142c-43fe-b9f5-a9f7f11ee867",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "4ba9f2e0-03f8-4112-a482-fec3e06eb44e",
+      "name": "Get draft detail - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/drafts/{draftId}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          },
+          "draftId": {
+            "equalTo": "draftId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"latest\": {\n      \"_id\": \"_id\",\n      \"agent\": \"agent\",\n      \"status\": \"published\",\n      \"versionNumber\": 1,\n      \"label\": \"label\",\n      \"description\": \"description\",\n      \"isPinned\": true,\n      \"publishedBy\": \"publishedBy\",\n      \"draftId\": \"draftId\",\n      \"draftName\": \"draftName\",\n      \"draftRevision\": 1,\n      \"sourceVersionId\": \"sourceVersionId\",\n      \"workflowType\": \"workflow_graph\",\n      \"parentVersion\": \"parentVersion\",\n      \"isActive\": true,\n      \"createdBy\": \"createdBy\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\"\n    },\n    \"editHistory\": [\n      {}\n    ],\n    \"editCount\": 1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "4ba9f2e0-03f8-4112-a482-fec3e06eb44e",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "8027da82-51f8-4702-8dc6-25614bf46079",
+      "name": "Discard a draft - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/drafts/{draftId}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          },
+          "draftId": {
+            "equalTo": "draftId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"key\": \"value\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "8027da82-51f8-4702-8dc6-25614bf46079",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "866b478d-0fda-41ee-bfd2-b61a6a9c24ef",
+      "name": "Rename a draft - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/drafts/{draftId}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          },
+          "draftId": {
+            "equalTo": "draftId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"draftName\": \"draftName\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "866b478d-0fda-41ee-bfd2-b61a6a9c24ef",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "08fe27ff-7f1a-4b8d-a5e5-0e7fbea5bdaf",
+      "name": "Get draft diff - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/drafts/{draftId}/diff",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          },
+          "draftId": {
+            "equalTo": "draftId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"key\": \"value\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "08fe27ff-7f1a-4b8d-a5e5-0e7fbea5bdaf",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "4485e7c7-6a8a-426a-a6c9-388d9fd06450",
+      "name": "Publish a draft - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/drafts/{draftId}/publish",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          },
+          "draftId": {
+            "equalTo": "draftId"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"agent\": \"agent\",\n    \"status\": \"published\",\n    \"versionNumber\": 1,\n    \"label\": \"label\",\n    \"description\": \"description\",\n    \"isPinned\": true,\n    \"publishedBy\": \"publishedBy\",\n    \"draftId\": \"draftId\",\n    \"draftName\": \"draftName\",\n    \"draftRevision\": 1,\n    \"sourceVersionId\": \"sourceVersionId\",\n    \"blocks\": {\n      \"workflow_prompt\": \"workflow_prompt\",\n      \"workflow_tools\": \"workflow_tools\",\n      \"workflow_graph\": \"workflow_graph\",\n      \"llm\": \"llm\",\n      \"voice\": \"voice\",\n      \"language\": \"language\",\n      \"call_handling\": \"call_handling\",\n      \"detection\": \"detection\",\n      \"analytics\": \"analytics\",\n      \"timeouts\": \"timeouts\",\n      \"audio\": \"audio\",\n      \"privacy\": \"privacy\",\n      \"widget\": \"widget\"\n    },\n    \"workflowType\": \"workflow_graph\",\n    \"parentVersion\": \"parentVersion\",\n    \"isActive\": true,\n    \"createdBy\": \"createdBy\",\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "4485e7c7-6a8a-426a-a6c9-388d9fd06450",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "825ee8e3-9b6f-442e-b8ea-a08f8312fcdd",
+      "name": "Test call with draft config - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/drafts/{draftId}/test-call",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          },
+          "draftId": {
+            "equalTo": "draftId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"key\": \"value\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "825ee8e3-9b6f-442e-b8ea-a08f8312fcdd",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "33d7ca90-a2ef-43c2-8451-80c22248583c",
+      "name": "Edit draft config (prompt, tools, post-call metrics, voice, etc.) - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/drafts/{draftId}/config",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          },
+          "draftId": {
+            "equalTo": "draftId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"agent\": \"agent\",\n    \"status\": \"published\",\n    \"versionNumber\": 1,\n    \"label\": \"label\",\n    \"description\": \"description\",\n    \"isPinned\": true,\n    \"publishedBy\": \"publishedBy\",\n    \"draftId\": \"draftId\",\n    \"draftName\": \"draftName\",\n    \"draftRevision\": 1,\n    \"sourceVersionId\": \"sourceVersionId\",\n    \"blocks\": {\n      \"workflow_prompt\": \"workflow_prompt\",\n      \"workflow_tools\": \"workflow_tools\",\n      \"workflow_graph\": \"workflow_graph\",\n      \"llm\": \"llm\",\n      \"voice\": \"voice\",\n      \"language\": \"language\",\n      \"call_handling\": \"call_handling\",\n      \"detection\": \"detection\",\n      \"analytics\": \"analytics\",\n      \"timeouts\": \"timeouts\",\n      \"audio\": \"audio\",\n      \"privacy\": \"privacy\",\n      \"widget\": \"widget\"\n    },\n    \"workflowType\": \"workflow_graph\",\n    \"parentVersion\": \"parentVersion\",\n    \"isActive\": true,\n    \"createdBy\": \"createdBy\",\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "33d7ca90-a2ef-43c2-8451-80c22248583c",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "44b926a2-43af-4927-8eba-89dab1dee0a9",
+      "name": "List published versions - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/versions",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"versions\": [\n      {}\n    ],\n    \"total\": 1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "44b926a2-43af-4927-8eba-89dab1dee0a9",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "10d6ccd1-781d-4657-bde4-9a91f051c094",
+      "name": "Diff two versions - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/versions/diff",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          }
+        },
+        "queryParameters": {
+          "versionA": {
+            "equalTo": "versionA"
+          },
+          "versionB": {
+            "equalTo": "versionB"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"key\": \"value\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "10d6ccd1-781d-4657-bde4-9a91f051c094",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "d8d8b59b-d1af-4bc0-aa81-8726d689d5cc",
+      "name": "Compare metrics between two versions - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/versions/compare-metrics",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          }
+        },
+        "queryParameters": {
+          "versionA": {
+            "equalTo": "versionA"
+          },
+          "versionB": {
+            "equalTo": "versionB"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"key\": \"value\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "d8d8b59b-d1af-4bc0-aa81-8726d689d5cc",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "b355fc5e-fddf-4949-add8-e692d3aba429",
+      "name": "Get version detail - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/versions/{versionId}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          },
+          "versionId": {
+            "equalTo": "versionId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"version\": {\n      \"_id\": \"_id\",\n      \"agent\": \"agent\",\n      \"status\": \"published\",\n      \"versionNumber\": 1,\n      \"label\": \"label\",\n      \"description\": \"description\",\n      \"isPinned\": true,\n      \"publishedBy\": \"publishedBy\",\n      \"draftId\": \"draftId\",\n      \"draftName\": \"draftName\",\n      \"draftRevision\": 1,\n      \"sourceVersionId\": \"sourceVersionId\",\n      \"workflowType\": \"workflow_graph\",\n      \"parentVersion\": \"parentVersion\",\n      \"isActive\": true,\n      \"createdBy\": \"createdBy\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "b355fc5e-fddf-4949-add8-e692d3aba429",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "eddbe437-bb23-4425-bcd4-f86999752d46",
+      "name": "Update version metadata (label, description, pin only) - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/versions/{versionId}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          },
+          "versionId": {
+            "equalTo": "versionId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"agent\": \"agent\",\n    \"status\": \"published\",\n    \"versionNumber\": 1,\n    \"label\": \"label\",\n    \"description\": \"description\",\n    \"isPinned\": true,\n    \"publishedBy\": \"publishedBy\",\n    \"draftId\": \"draftId\",\n    \"draftName\": \"draftName\",\n    \"draftRevision\": 1,\n    \"sourceVersionId\": \"sourceVersionId\",\n    \"blocks\": {\n      \"workflow_prompt\": \"workflow_prompt\",\n      \"workflow_tools\": \"workflow_tools\",\n      \"workflow_graph\": \"workflow_graph\",\n      \"llm\": \"llm\",\n      \"voice\": \"voice\",\n      \"language\": \"language\",\n      \"call_handling\": \"call_handling\",\n      \"detection\": \"detection\",\n      \"analytics\": \"analytics\",\n      \"timeouts\": \"timeouts\",\n      \"audio\": \"audio\",\n      \"privacy\": \"privacy\",\n      \"widget\": \"widget\"\n    },\n    \"workflowType\": \"workflow_graph\",\n    \"parentVersion\": \"parentVersion\",\n    \"isActive\": true,\n    \"createdBy\": \"createdBy\",\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "eddbe437-bb23-4425-bcd4-f86999752d46",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "1ee2300a-c5ae-4537-a8a8-4947a801d63d",
+      "name": "Activate a version - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/versions/{versionId}/activate",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          },
+          "versionId": {
+            "equalTo": "versionId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"agent\": \"agent\",\n    \"status\": \"published\",\n    \"versionNumber\": 1,\n    \"label\": \"label\",\n    \"description\": \"description\",\n    \"isPinned\": true,\n    \"publishedBy\": \"publishedBy\",\n    \"draftId\": \"draftId\",\n    \"draftName\": \"draftName\",\n    \"draftRevision\": 1,\n    \"sourceVersionId\": \"sourceVersionId\",\n    \"blocks\": {\n      \"workflow_prompt\": \"workflow_prompt\",\n      \"workflow_tools\": \"workflow_tools\",\n      \"workflow_graph\": \"workflow_graph\",\n      \"llm\": \"llm\",\n      \"voice\": \"voice\",\n      \"language\": \"language\",\n      \"call_handling\": \"call_handling\",\n      \"detection\": \"detection\",\n      \"analytics\": \"analytics\",\n      \"timeouts\": \"timeouts\",\n      \"audio\": \"audio\",\n      \"privacy\": \"privacy\",\n      \"widget\": \"widget\"\n    },\n    \"workflowType\": \"workflow_graph\",\n    \"parentVersion\": \"parentVersion\",\n    \"isActive\": true,\n    \"createdBy\": \"createdBy\",\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "1ee2300a-c5ae-4537-a8a8-4947a801d63d",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "7b7e705f-1223-4d8a-a526-569267345501",
+      "name": "Test call with version config - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/versions/{versionId}/test-call",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "60d0fe4f5311236168a109ca"
+          },
+          "versionId": {
+            "equalTo": "versionId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"key\": \"value\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "7b7e705f-1223-4d8a-a526-569267345501",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "23284c9e-d15e-4f3a-84b7-de9613ccf399",
+      "name": "Get pronunciation dictionaries - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/pronunciation-dicts",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "[\n  {\n    \"id\": \"64f1234567890abcdef12345\",\n    \"items\": [\n      {\n        \"word\": \"mysql\",\n        \"pronunciation\": \"my-sequel\"\n      }\n    ],\n    \"createdAt\": \"2023-09-01T12:00:00Z\"\n  }\n]",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "23284c9e-d15e-4f3a-84b7-de9613ccf399",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "2bda2b48-3814-4298-b92c-dad37f8c7a76",
+      "name": "Create pronunciation dictionary - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/pronunciation-dicts",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"id\": \"64f1234567890abcdef12345\",\n  \"items\": [\n    {\n      \"word\": \"mysql\",\n      \"pronunciation\": \"my-sequel\"\n    }\n  ],\n  \"createdAt\": \"2023-09-01T12:00:00Z\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "2bda2b48-3814-4298-b92c-dad37f8c7a76",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "d2a666c0-9796-4eeb-bcff-8a039794cdef",
+      "name": "Update pronunciation dictionary - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/pronunciation-dicts",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"id\": \"64f1234567890abcdef12345\",\n  \"items\": [\n    {\n      \"word\": \"mysql\",\n      \"pronunciation\": \"my-sequel\"\n    },\n    {\n      \"word\": \"goodbye\",\n      \"pronunciation\": \"goodbai\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "d2a666c0-9796-4eeb-bcff-8a039794cdef",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "e8661638-733d-4a3c-9f3e-2653ca6aa6c2",
+      "name": "Delete pronunciation dictionary - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/pronunciation-dicts",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"id\": \"64f1234567890abcdef12345\",\n  \"deleted\": true\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "e8661638-733d-4a3c-9f3e-2653ca6aa6c2",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "5500f660-6aa4-448a-8957-ab600545e121",
+      "name": "Text to speech - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/lightning/get_speech",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"key\": \"value\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "5500f660-6aa4-448a-8957-ab600545e121",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "13561e0b-23bd-41bf-9b99-e2ea2be27ac7",
+      "name": "Text to Speech - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/lightning-large/get_speech",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"key\": \"value\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "13561e0b-23bd-41bf-9b99-e2ea2be27ac7",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "ef11e86c-f602-47b6-9975-ee81ec6d88ec",
+      "name": "Text to Speech - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/lightning-v2/get_speech",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"key\": \"value\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "ef11e86c-f602-47b6-9975-ee81ec6d88ec",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "ea5e264d-31bf-446d-8fa6-12011757773f",
+      "name": "Text to Speech (SSE) - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/lightning-large/stream",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "event: message\ndata: {\"data\":\"event: chunk\\ndata: <WAV_DATA>\\ndone: false\\n\"}\n",
+        "headers": {
+          "Content-Type": "text/event-stream"
+        }
+      },
+      "uuid": "ea5e264d-31bf-446d-8fa6-12011757773f",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "250eca29-072a-4b30-9dd4-47ceb470be34",
+      "name": "Text to Speech (SSE) - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/lightning-v2/stream",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "event: message\ndata: {\"data\":\"event: chunk\\ndata: <WAV_DATA>\\ndone: false\\n\"}\n",
+        "headers": {
+          "Content-Type": "text/event-stream"
+        }
+      },
+      "uuid": "250eca29-072a-4b30-9dd4-47ceb470be34",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "d6ae9792-3284-4584-b16b-2fab02164aae",
+      "name": "Get Voices - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/{model}/get_voices",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "model": {
+            "equalTo": "lightning"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"voices\": [\n    {\n      \"voiceId\": \"voiceId\",\n      \"displayName\": \"displayName\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "d6ae9792-3284-4584-b16b-2fab02164aae",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "70067508-7499-413e-a2f8-f646931bc3e2",
+      "name": "Add your Voice (Deprecated) - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/lightning-large/add_voice",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"message\": \"message\",\n  \"data\": {\n    \"voiceId\": \"voiceId\",\n    \"model\": \"model\",\n    \"status\": \"status\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "70067508-7499-413e-a2f8-f646931bc3e2",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "fb9b09ba-fd73-4dc0-b53a-c9be394e795b",
+      "name": "Get your cloned Voices (Deprecated) - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/lightning-large/get_cloned_voices",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"voices\": [\n    {\n      \"displayName\": \"displayName\",\n      \"accent\": \"accent\",\n      \"tags\": [\n        \"tags\"\n      ],\n      \"voiceId\": \"voiceId\",\n      \"model\": \"model\",\n      \"status\": \"status\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "fb9b09ba-fd73-4dc0-b53a-c9be394e795b",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "118a92d8-e048-4c54-89a3-23dbb07b863d",
+      "name": "Delete a Voice Clone - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/lightning-large",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"voiceId\": \"voiceId\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "118a92d8-e048-4c54-89a3-23dbb07b863d",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "08b8b38a-1beb-4b12-8edd-9283fb75b42a",
+      "name": "Generate speech (Lightning v3.1) - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/lightning-v3.1/get_speech",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"key\": \"value\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "08b8b38a-1beb-4b12-8edd-9283fb75b42a",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "bd539b02-0452-4596-9451-8b5b6b5266e3",
+      "name": "Stream speech (Lightning v3.1 SSE) - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/lightning-v3.1/stream",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "event: message\ndata: {\"data\":\"event: chunk\\ndata: <WAV_DATA>\\ndone: false\\n\"}\n",
+        "headers": {
+          "Content-Type": "text/event-stream"
+        }
+      },
+      "uuid": "bd539b02-0452-4596-9451-8b5b6b5266e3",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    }
+  ],
+  "meta": {
+    "total": 82
+  }
+}
