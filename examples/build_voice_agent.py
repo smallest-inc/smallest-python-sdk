@@ -67,11 +67,13 @@ def main() -> None:
     print("    firstMessage :", repr(agent.first_message))
 
     print("4. (optional) knowledge base for the menu")
+    created_kb = None
     try:
         kb = c.atoms.knowledge_base.create_a_knowledge_base(
             name="mario-menu", description="Pizza menu + prices"
         )
-        print("    KB created:", getattr(kb, "data", kb))
+        created_kb = getattr(kb, "data", None)
+        print("    KB created:", created_kb)
     except Exception as e:
         print("    KB skipped:", type(e).__name__, str(e)[:80])
 
@@ -109,7 +111,13 @@ def main() -> None:
     print("8. list agents in the org")
     print("    total:", len(as_page(c.atoms.agents.list_agents()).items))
 
-    print("9. cleanup (archive the demo agent)")
+    print("9. cleanup (archive the demo agent + delete the demo KB)")
+    if created_kb:
+        try:
+            c.atoms.knowledge_base.delete_a_knowledge_base(id=created_kb)
+            print("    deleted KB:", created_kb)
+        except Exception as e:
+            print("    KB delete skipped:", type(e).__name__, str(e)[:60])
     for aid in created_ids:
         try:
             c.atoms.agents.archive_agent(id=aid)
@@ -117,7 +125,11 @@ def main() -> None:
         except Exception as e:
             print("    archive skipped:", type(e).__name__, str(e)[:60])
 
-    print("\nDONE — built, configured, and activated a voice agent end to end.")
+    if live:
+        print("\nDONE — built, configured, and activated a voice agent end to end.")
+    else:
+        print("\nDONE — built and published a new version. Activation is server-side/async")
+        print("(a security check gates it) and hadn't completed when this script finished.")
     print("Next (telephony): attach a phone number + run the agent runtime to take real calls.")
 
 
