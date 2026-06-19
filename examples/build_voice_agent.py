@@ -25,6 +25,11 @@ from smallestai.environment import SmallestAIEnvironment
 from smallestai.atoms.helpers import as_page
 
 
+def _id_of(obj) -> str:
+    """Resource id — agents expose `_id`, versions expose `id`."""
+    return getattr(obj, "id", None) or getattr(obj, "_id", None)
+
+
 def make_client() -> SmallestAI:
     api_key = os.environ["SMALLEST_API_KEY"]
     base = os.environ.get("SMALLEST_BASE_URL")
@@ -73,17 +78,17 @@ def main() -> None:
     print("5. draft a new version from the active one")
     versions = as_page(c.atoms.agent_versioning_versions.list_published_versions(id=agent_id))
     active = next((v for v in versions.items if getattr(v, "is_active", False)), None) or versions.items[0]
-    src_version_id = getattr(active, "_id", None) or getattr(active, "id", None)
+    src_version_id = _id_of(active)
     print("    source version:", src_version_id)
     draft = c.atoms.agent_versioning_drafts.create_a_draft(id=agent_id, source_version_id=src_version_id)
-    draft_id = getattr(draft.data, "draft_id", None) or getattr(draft.data, "_id", None)
+    draft_id = getattr(draft.data, "draft_id", None) or _id_of(draft.data)
     print("    draft id:", draft_id)
 
     print("6. publish the draft with activate=True (go live)")
     published = c.atoms.agent_versioning_drafts.publish_a_draft(
         id=agent_id, draft_id=draft_id, label="v2-live", activate=True
     )
-    new_version_id = getattr(published.data, "_id", None)
+    new_version_id = _id_of(published.data)
     print("    published version:", new_version_id, "— waiting for it to go live...")
 
     print("7. poll until the new version is active")
@@ -91,7 +96,7 @@ def main() -> None:
     for i in range(10):
         time.sleep(4)
         vs = as_page(c.atoms.agent_versioning_versions.list_published_versions(id=agent_id))
-        v = next((x for x in vs.items if getattr(x, "_id", None) == new_version_id), None)
+        v = next((x for x in vs.items if _id_of(x) == new_version_id), None)
         sc = getattr(v, "security_check", None)
         status = getattr(sc, "status", None) if sc else None
         is_active = getattr(v, "is_active", None) if v else None
