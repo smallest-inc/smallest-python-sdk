@@ -50,7 +50,7 @@ jobs:
   #   2. Merge to main.
   #   3. This job auto-publishes to PyPI and creates the v<version> tag.
   #
-  # Required repo secret: PYPI_TOKEN (a PyPI API token with upload scope
+  # Required repo secret: PYPI_API_TOKEN (a PyPI API token with upload scope
   # for the `smallestai` project).
   publish:
     needs: [compile, test]
@@ -118,10 +118,10 @@ jobs:
       - name: Publish to PyPI
         if: steps.should_publish.outputs.release == 'true'
         env:
-          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           if [ -z "${POETRY_PYPI_TOKEN_PYPI}" ]; then
-            echo "::error::PYPI_TOKEN secret is not set on this repo. Add it under Settings → Secrets and variables → Actions before this job can publish."
+            echo "::error::PYPI_API_TOKEN secret is not set on this repo. Add it under Settings → Secrets and variables → Actions before this job can publish."
             exit 1
           fi
           poetry publish --no-interaction
