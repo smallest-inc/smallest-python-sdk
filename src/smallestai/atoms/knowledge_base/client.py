@@ -65,7 +65,7 @@ class KnowledgeBaseClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.knowledge_base.get_all_knowledge_bases()
         """
@@ -102,7 +102,7 @@ class KnowledgeBaseClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.knowledge_base.create_a_knowledge_base(
             name="name",
@@ -137,7 +137,7 @@ class KnowledgeBaseClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.knowledge_base.get_a_knowledge_base(
             id="id",
@@ -183,7 +183,7 @@ class KnowledgeBaseClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.knowledge_base.update_a_knowledge_base_name_description(
             id="id",
@@ -223,7 +223,7 @@ class KnowledgeBaseClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.knowledge_base.delete_a_knowledge_base(
             id="id",
@@ -256,7 +256,7 @@ class KnowledgeBaseClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.knowledge_base.get_all_knowledge_base_items(
             id="id",
@@ -296,7 +296,7 @@ class KnowledgeBaseClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.knowledge_base.delete_a_knowledge_base_item(
             knowledge_base_id="knowledgeBaseId",
@@ -341,7 +341,7 @@ class KnowledgeBaseClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.knowledge_base.upload_a_pdf_file_to_a_knowledge_base(
             id="id",
@@ -397,7 +397,7 @@ class KnowledgeBaseClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.knowledge_base.get_a_presigned_s3url_for_direct_file_upload(
             file_name="company-handbook.pdf",
@@ -458,7 +458,7 @@ class KnowledgeBaseClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.knowledge_base.complete_a_presigned_url_upload_and_start_processing(
             file_name="company-handbook.pdf",
@@ -507,7 +507,7 @@ class KnowledgeBaseClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.knowledge_base.extract_ur_ls_from_a_sitemap_xml(
             site_url="https://example.com/sitemap.xml",
@@ -551,7 +551,7 @@ class KnowledgeBaseClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.knowledge_base.scrape_a_list_of_ur_ls_into_a_knowledge_base(
             id="id",
@@ -587,7 +587,7 @@ class KnowledgeBaseClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.knowledge_base.list_scraped_ur_ls_in_a_knowledge_base_their_status(
             id="id",
@@ -629,7 +629,7 @@ class KnowledgeBaseClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.knowledge_base.delete_a_scraped_url_from_a_knowledge_base(
             knowledge_base_id="knowledgeBaseId",
@@ -680,7 +680,7 @@ class AsyncKnowledgeBaseClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -725,7 +725,7 @@ class AsyncKnowledgeBaseClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -768,7 +768,7 @@ class AsyncKnowledgeBaseClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -822,7 +822,7 @@ class AsyncKnowledgeBaseClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -870,7 +870,7 @@ class AsyncKnowledgeBaseClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -911,7 +911,7 @@ class AsyncKnowledgeBaseClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -959,7 +959,7 @@ class AsyncKnowledgeBaseClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1012,7 +1012,7 @@ class AsyncKnowledgeBaseClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1076,7 +1076,7 @@ class AsyncKnowledgeBaseClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1145,7 +1145,7 @@ class AsyncKnowledgeBaseClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1202,7 +1202,7 @@ class AsyncKnowledgeBaseClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1254,7 +1254,7 @@ class AsyncKnowledgeBaseClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1298,7 +1298,7 @@ class AsyncKnowledgeBaseClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1348,7 +1348,7 @@ class AsyncKnowledgeBaseClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 

@@ -64,7 +64,7 @@ class AgentVersioningDraftsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.list_active_drafts(
             id="60d0fe4f5311236168a109ca",
@@ -113,7 +113,7 @@ class AgentVersioningDraftsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.create_a_draft(
             id="60d0fe4f5311236168a109ca",
@@ -163,7 +163,7 @@ class AgentVersioningDraftsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.get_draft_detail(
             id="60d0fe4f5311236168a109ca",
@@ -200,7 +200,7 @@ class AgentVersioningDraftsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.discard_a_draft(
             id="60d0fe4f5311236168a109ca",
@@ -240,7 +240,7 @@ class AgentVersioningDraftsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.rename_a_draft(
             id="60d0fe4f5311236168a109ca",
@@ -288,7 +288,7 @@ class AgentVersioningDraftsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.get_draft_diff(
             id="60d0fe4f5311236168a109ca",
@@ -343,7 +343,7 @@ class AgentVersioningDraftsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.publish_a_draft(
             id="60d0fe4f5311236168a109ca",
@@ -394,7 +394,7 @@ class AgentVersioningDraftsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.test_call_with_draft_config(
             id="60d0fe4f5311236168a109ca",
@@ -569,7 +569,7 @@ class AgentVersioningDraftsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.edit_draft_config_prompt_tools_post_call_metrics_voice_etc(
             id="60d0fe4f5311236168a109ca",
@@ -656,7 +656,7 @@ class AsyncAgentVersioningDraftsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -713,7 +713,7 @@ class AsyncAgentVersioningDraftsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -771,7 +771,7 @@ class AsyncAgentVersioningDraftsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -816,7 +816,7 @@ class AsyncAgentVersioningDraftsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -864,7 +864,7 @@ class AsyncAgentVersioningDraftsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -920,7 +920,7 @@ class AsyncAgentVersioningDraftsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -983,7 +983,7 @@ class AsyncAgentVersioningDraftsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1042,7 +1042,7 @@ class AsyncAgentVersioningDraftsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1225,7 +1225,7 @@ class AsyncAgentVersioningDraftsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 

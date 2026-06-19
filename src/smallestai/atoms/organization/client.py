@@ -42,7 +42,7 @@ class OrganizationClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.organization.get_organization_details()
         """
@@ -86,7 +86,7 @@ class AsyncOrganizationClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 

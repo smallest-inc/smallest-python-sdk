@@ -57,7 +57,7 @@ class ConversationsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.conversations.get_a_time_limited_recording_download_url(
             call_id="CALL-1781127346211-e765f7",
@@ -95,7 +95,7 @@ class ConversationsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.conversations.list_retry_attempts(
             call_id="callId",
@@ -137,7 +137,7 @@ class ConversationsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.conversations.cancel(
             call_id="CALL-1778226705739-7e4c17",
@@ -174,7 +174,7 @@ class ConversationsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.conversations.cancel_queued(
             call_id="CALL-1781127346211-e765f7",
@@ -227,7 +227,7 @@ class AsyncConversationsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -275,7 +275,7 @@ class AsyncConversationsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -325,7 +325,7 @@ class AsyncConversationsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -370,7 +370,7 @@ class AsyncConversationsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 

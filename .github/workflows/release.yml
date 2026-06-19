@@ -1,0 +1,73 @@
+name: release
+
+# Prerequisites:
+# - changelog.md must already have a "## <version> - YYYY-MM-DD" entry for the
+#   version you're releasing (the workflow refuses to run otherwise).
+# - main must allow GITHUB_TOKEN to push (no branch-protection rule that
+#   blocks the bot's commit). If protection is on, either grant a bypass or
+#   change this workflow to open a release PR instead of pushing direct.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g. 4.5.0). Must not already exist as a tag, and changelog.md must already have a "## <version> - YYYY-MM-DD" entry.'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Validate version is unused + changelog updated
+        run: |
+          VERSION="${{ inputs.version }}"
+          if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
+            echo "::error::Tag v${VERSION} already exists. Pick a different version."
+            exit 1
+          fi
+          if ! echo "${VERSION}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$'; then
+            echo "::error::Version '${VERSION}' does not look like semver (e.g. 4.5.0 or 4.5.0-rc1)."
+            exit 1
+          fi
+          if ! grep -Fq "## ${VERSION} -" changelog.md; then
+            echo "::error::changelog.md has no entry for ${VERSION}. Add a '## ${VERSION} - YYYY-MM-DD' section before releasing."
+            exit 1
+          fi
+
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Bootstrap poetry
+        run: curl -sSL https://install.python-poetry.org | python - -y --version 1.5.1
+
+      - name: Bump pyproject.toml version
+        run: poetry version "${{ inputs.version }}"
+
+      - name: Commit version bump
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pyproject.toml
+          git commit -m "chore(release): v${{ inputs.version }}"
+          git push origin main
+
+      - name: Tag and push
+        run: |
+          git tag -a "v${{ inputs.version }}" -m "Release v${{ inputs.version }}"
+          git push origin "v${{ inputs.version }}"
+
+      - name: Done
+        run: |
+          echo "::notice::v${{ inputs.version }} tagged. ci.yml's publish job will now build + upload to PyPI."

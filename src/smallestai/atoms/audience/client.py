@@ -53,7 +53,7 @@ class AudienceClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.audience.get_all_audiences()
         """
@@ -108,7 +108,7 @@ class AudienceClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.audience.create_audience_with_csv_upload(
             name="name",
@@ -150,7 +150,7 @@ class AudienceClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.audience.get_audience_by_id(
             id="60d0fe4f5311236168a109ca",
@@ -189,7 +189,7 @@ class AudienceClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.audience.delete_audience(
             id="60d0fe4f5311236168a109ca",
@@ -234,7 +234,7 @@ class AudienceClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.audience.get_audience_members(
             id="60d0fe4f5311236168a109ca",
@@ -282,7 +282,7 @@ class AudienceClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.audience.add_audience_members(
             id="60d0fe4f5311236168a109ca",
@@ -325,7 +325,7 @@ class AudienceClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.audience.delete_audience_members(
             id="60d0fe4f5311236168a109ca",
@@ -374,7 +374,7 @@ class AudienceClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.audience.search_audience_members(
             id="60d0fe4f5311236168a109ca",
@@ -423,7 +423,7 @@ class AsyncAudienceClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -486,7 +486,7 @@ class AsyncAudienceClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -536,7 +536,7 @@ class AsyncAudienceClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -583,7 +583,7 @@ class AsyncAudienceClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -636,7 +636,7 @@ class AsyncAudienceClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -694,7 +694,7 @@ class AsyncAudienceClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -745,7 +745,7 @@ class AsyncAudienceClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -804,7 +804,7 @@ class AsyncAudienceClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 

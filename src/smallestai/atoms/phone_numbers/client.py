@@ -60,7 +60,7 @@ class PhoneNumbersClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.phone_numbers.get_acquired_phone_numbers()
         """
@@ -93,7 +93,7 @@ class PhoneNumbersClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.phone_numbers.list_all_phone_numbers_platform_sip()
         """
@@ -137,7 +137,7 @@ class PhoneNumbersClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.phone_numbers.search_rentable_phone_numbers_in_inventory(
             country_code="US",
@@ -172,7 +172,7 @@ class PhoneNumbersClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.phone_numbers.preview_prorated_rental_cost_for_renting_a_phone_number_today()
         """
@@ -215,7 +215,7 @@ class PhoneNumbersClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.phone_numbers.rent_a_phone_number_from_the_telephony_inventory(
             phone_number="13183747513",
@@ -253,7 +253,7 @@ class PhoneNumbersClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.phone_numbers.release_a_rented_phone_number(
             product_id="6969109c84c74bed175f02a7",
@@ -285,7 +285,7 @@ class PhoneNumbersClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.phone_numbers.get_stripe_customer_portal_url()
         """
@@ -313,7 +313,7 @@ class PhoneNumbersClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.phone_numbers.check_whether_the_organization_has_unpaid_invoices()
         """
@@ -366,7 +366,7 @@ class PhoneNumbersClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.phone_numbers.import_a_sip_phone_number(
             phone_number="+14155551234",
@@ -428,7 +428,7 @@ class AsyncPhoneNumbersClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -469,7 +469,7 @@ class AsyncPhoneNumbersClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -521,7 +521,7 @@ class AsyncPhoneNumbersClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -564,7 +564,7 @@ class AsyncPhoneNumbersClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -615,7 +615,7 @@ class AsyncPhoneNumbersClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -661,7 +661,7 @@ class AsyncPhoneNumbersClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -701,7 +701,7 @@ class AsyncPhoneNumbersClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -737,7 +737,7 @@ class AsyncPhoneNumbersClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -800,7 +800,7 @@ class AsyncPhoneNumbersClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 

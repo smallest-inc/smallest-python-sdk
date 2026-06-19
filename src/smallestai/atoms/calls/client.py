@@ -124,7 +124,7 @@ class CallsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.calls.list(
             agent_ids="60d0fe4f5311236168a109ca,60d0fe4f5311236168a109cb",
@@ -195,7 +195,7 @@ class CallsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.calls.search(
             call_ids=["CALL-1737000000000-abc123", "CALL-1737000000001-def456"],
@@ -226,7 +226,7 @@ class CallsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.calls.get(
             id="CALL-1737000000000-abc123",
@@ -334,7 +334,7 @@ class CallsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.calls.start_outbound_call(
             agent_id="60d0fe4f5311236168a109ca",
@@ -460,7 +460,7 @@ class AsyncCallsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -539,7 +539,7 @@ class AsyncCallsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -578,7 +578,7 @@ class AsyncCallsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -694,7 +694,7 @@ class AsyncCallsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 

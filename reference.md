@@ -17,7 +17,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -67,7 +67,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -117,7 +117,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -188,7 +188,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -279,7 +279,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -409,7 +409,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -757,7 +757,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -862,7 +862,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -990,7 +990,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -1084,7 +1084,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -1178,7 +1178,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -1261,7 +1261,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -1361,7 +1361,7 @@ from smallestai.environment import SmallestAIEnvironment
 import datetime
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -1574,7 +1574,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -1653,7 +1653,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -1766,7 +1766,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -1909,7 +1909,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -1987,7 +1987,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -2062,7 +2062,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -2147,7 +2147,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -2254,7 +2254,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -2336,7 +2336,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -2447,7 +2447,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -2590,7 +2590,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -2663,7 +2663,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -2740,7 +2740,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -2814,7 +2814,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -2888,7 +2888,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -2951,7 +2951,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -3032,7 +3032,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -3107,7 +3107,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -3201,7 +3201,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -3274,7 +3274,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -3347,7 +3347,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -3435,7 +3435,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -3523,7 +3523,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -3625,7 +3625,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -3736,7 +3736,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -3824,7 +3824,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -3909,7 +3909,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -3982,7 +3982,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -4068,7 +4068,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -4136,7 +4136,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -4201,7 +4201,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -4293,7 +4293,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -4360,7 +4360,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -4444,7 +4444,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -4517,7 +4517,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -4580,7 +4580,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -4646,7 +4646,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -4758,7 +4758,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -4851,7 +4851,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -4946,7 +4946,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -5092,7 +5092,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -5191,7 +5191,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -5265,7 +5265,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -5340,7 +5340,7 @@ from smallestai.environment import SmallestAIEnvironment
 from smallestai.atoms.webhooks import PostWebhookRequestEventsItem
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -5443,7 +5443,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -5516,7 +5516,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -5591,7 +5591,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -5685,7 +5685,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -5759,7 +5759,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -5827,7 +5827,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -5935,7 +5935,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -6014,7 +6014,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -6087,7 +6087,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -6187,7 +6187,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -6275,7 +6275,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -6371,7 +6371,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -6454,7 +6454,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -6527,7 +6527,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -6627,7 +6627,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -6717,7 +6717,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -6799,7 +6799,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -6890,7 +6890,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -6980,7 +6980,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -7086,7 +7086,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -7204,7 +7204,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -7537,7 +7537,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -7634,7 +7634,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -7726,7 +7726,7 @@ from smallestai.environment import SmallestAIEnvironment
 import datetime
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -7837,7 +7837,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -7922,7 +7922,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -8032,7 +8032,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -8117,7 +8117,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -8235,7 +8235,7 @@ from smallestai.environment import SmallestAIEnvironment
 from smallestai.atoms.prompt_scoring import PostPromptScoringScoreRequestVersionId
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -8311,7 +8311,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -8375,7 +8375,7 @@ from smallestai.environment import SmallestAIEnvironment
 from smallestai.waves import PronunciationItem
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -8454,7 +8454,7 @@ from smallestai.environment import SmallestAIEnvironment
 from smallestai.waves import PronunciationItem
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -8541,7 +8541,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -8614,7 +8614,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -8728,7 +8728,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -8802,7 +8802,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -8890,7 +8890,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -8979,7 +8979,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -9053,7 +9053,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -9131,7 +9131,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -9215,7 +9215,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -9280,7 +9280,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -9444,7 +9444,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -9566,7 +9566,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -9723,7 +9723,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
@@ -9904,7 +9904,7 @@ from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
 client = SmallestAI(
-    token="<token>",
+    api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 

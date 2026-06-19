@@ -59,7 +59,7 @@ class WebhooksClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.webhooks.get_webhooks()
         """
@@ -105,7 +105,7 @@ class WebhooksClient:
         from smallestai.atoms.webhooks import PostWebhookRequestEventsItem
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.webhooks.create_a_webhook(
             endpoint="https://example.com/webhook",
@@ -154,7 +154,7 @@ class WebhooksClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.webhooks.delete_a_webhook(
             id="id",
@@ -187,7 +187,7 @@ class WebhooksClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.webhooks.get_webhook_subscriptions_for_an_agent(
             agent_id="agentId",
@@ -233,7 +233,7 @@ class WebhooksClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.webhooks.replace_webhook_subscriptions_for_an_agent(
             agent_id="agentId",
@@ -271,7 +271,7 @@ class WebhooksClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.webhooks.delete_webhook_subscriptions_for_an_agent(
             agent_id="agentId",
@@ -324,7 +324,7 @@ class AsyncWebhooksClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -378,7 +378,7 @@ class AsyncWebhooksClient:
         from smallestai.atoms.webhooks import PostWebhookRequestEventsItem
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -435,7 +435,7 @@ class AsyncWebhooksClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -476,7 +476,7 @@ class AsyncWebhooksClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -532,7 +532,7 @@ class AsyncWebhooksClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -578,7 +578,7 @@ class AsyncWebhooksClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 

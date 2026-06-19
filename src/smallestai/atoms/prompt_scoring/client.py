@@ -79,7 +79,7 @@ class PromptScoringClient:
         )
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.prompt_scoring.score_a_prompt(
             request=PostPromptScoringScoreRequestVersionId(
@@ -160,7 +160,7 @@ class AsyncPromptScoringClient:
         )
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 

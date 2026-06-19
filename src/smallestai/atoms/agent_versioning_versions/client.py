@@ -75,7 +75,7 @@ class AgentVersioningVersionsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_versions.list_published_versions(
             id="60d0fe4f5311236168a109ca",
@@ -116,7 +116,7 @@ class AgentVersioningVersionsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_versions.diff_two_versions(
             id="60d0fe4f5311236168a109ca",
@@ -174,7 +174,7 @@ class AgentVersioningVersionsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_versions.compare_metrics_between_two_versions(
             id="60d0fe4f5311236168a109ca",
@@ -227,7 +227,7 @@ class AgentVersioningVersionsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_versions.get_version_detail(
             id="60d0fe4f5311236168a109ca",
@@ -283,7 +283,7 @@ class AgentVersioningVersionsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_versions.update_version_metadata_label_description_pin_only(
             id="60d0fe4f5311236168a109ca",
@@ -326,7 +326,7 @@ class AgentVersioningVersionsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_versions.activate_a_version(
             id="60d0fe4f5311236168a109ca",
@@ -378,7 +378,7 @@ class AgentVersioningVersionsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_versions.test_call_with_version_config(
             id="60d0fe4f5311236168a109ca",
@@ -449,7 +449,7 @@ class AsyncAgentVersioningVersionsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -498,7 +498,7 @@ class AsyncAgentVersioningVersionsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -563,7 +563,7 @@ class AsyncAgentVersioningVersionsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -624,7 +624,7 @@ class AsyncAgentVersioningVersionsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -688,7 +688,7 @@ class AsyncAgentVersioningVersionsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -739,7 +739,7 @@ class AsyncAgentVersioningVersionsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -799,7 +799,7 @@ class AsyncAgentVersioningVersionsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 

@@ -4,7 +4,6 @@ __pycache__/
 dist/
 poetry.toml
 .env
-.venv-test
-
-# release workflows added separately (needs `workflow` OAuth scope / Fern push)
-/.github/workflows/
+.venv-test/
+*.pyc
+.DS_Store

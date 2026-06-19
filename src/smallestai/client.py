@@ -31,7 +31,7 @@ class SmallestAI:
 
 
 
-    token : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
+    api_key : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
     headers : typing.Optional[typing.Dict[str, str]]
         Additional headers to send with every request.
 
@@ -55,7 +55,7 @@ class SmallestAI:
     from smallestai import SmallestAI
 
     client = SmallestAI(
-        token="YOUR_TOKEN",
+        api_key="YOUR_API_KEY",
     )
     """
 
@@ -63,7 +63,7 @@ class SmallestAI:
         self,
         *,
         environment: SmallestAIEnvironment = SmallestAIEnvironment.PRODUCTION,
-        token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = os.getenv("SMALLEST_API_KEY"),
+        api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = os.getenv("SMALLEST_API_KEY"),
         headers: typing.Optional[typing.Dict[str, str]] = None,
         timeout: typing.Optional[float] = None,
         max_retries: typing.Optional[int] = None,
@@ -75,13 +75,13 @@ class SmallestAI:
             timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
         )
         _defaulted_max_retries = max_retries if max_retries is not None else 2
-        if token is None:
+        if api_key is None:
             raise ApiError(
-                body="The client must be instantiated be either passing in token or setting SMALLEST_API_KEY"
+                body="The client must be instantiated be either passing in api_key or setting SMALLEST_API_KEY"
             )
         self._client_wrapper = SyncClientWrapper(
             environment=environment,
-            token=token,
+            api_key=api_key,
             headers=headers,
             httpx_client=httpx_client
             if httpx_client is not None
@@ -145,7 +145,7 @@ class AsyncSmallestAI:
 
 
 
-    token : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
+    api_key : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
     headers : typing.Optional[typing.Dict[str, str]]
         Additional headers to send with every request.
 
@@ -172,7 +172,7 @@ class AsyncSmallestAI:
     from smallestai import AsyncSmallestAI
 
     client = AsyncSmallestAI(
-        token="YOUR_TOKEN",
+        api_key="YOUR_API_KEY",
     )
     """
 
@@ -180,7 +180,7 @@ class AsyncSmallestAI:
         self,
         *,
         environment: SmallestAIEnvironment = SmallestAIEnvironment.PRODUCTION,
-        token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = os.getenv("SMALLEST_API_KEY"),
+        api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = os.getenv("SMALLEST_API_KEY"),
         headers: typing.Optional[typing.Dict[str, str]] = None,
         async_token: typing.Optional[typing.Callable[[], typing.Awaitable[str]]] = None,
         timeout: typing.Optional[float] = None,
@@ -193,13 +193,13 @@ class AsyncSmallestAI:
             timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
         )
         _defaulted_max_retries = max_retries if max_retries is not None else 2
-        if token is None:
+        if api_key is None:
             raise ApiError(
-                body="The client must be instantiated be either passing in token or setting SMALLEST_API_KEY"
+                body="The client must be instantiated be either passing in api_key or setting SMALLEST_API_KEY"
             )
         self._client_wrapper = AsyncClientWrapper(
             environment=environment,
-            token=token,
+            api_key=api_key,
             headers=headers,
             async_token=async_token,
             httpx_client=httpx_client

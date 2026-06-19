@@ -53,7 +53,7 @@ class AgentTemplatesClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_templates.list_agent_templates()
         """
@@ -95,7 +95,7 @@ class AgentTemplatesClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.agent_templates.create_agent_from_template(
             agent_name="agentName",
@@ -153,7 +153,7 @@ class AsyncAgentTemplatesClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -203,7 +203,7 @@ class AsyncAgentTemplatesClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 

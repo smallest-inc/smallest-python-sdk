@@ -87,7 +87,7 @@ class LiveTranscriptsClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         response = client.atoms.live_transcripts.subscribe_to_live_events(
             call_id="CALL-1758124225863-80752e",
@@ -182,7 +182,7 @@ class AsyncLiveTranscriptsClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 

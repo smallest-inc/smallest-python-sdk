@@ -74,7 +74,7 @@ class ComplianceClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.compliance.get_compliance_status(
             country_iso="IN",
@@ -124,7 +124,7 @@ class ComplianceClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.compliance.get_compliance_requirements(
             country_iso="IN",
@@ -205,7 +205,7 @@ class ComplianceClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.compliance.submit_a_compliance_application(
             country_iso="countryIso",
@@ -266,7 +266,7 @@ class ComplianceClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.compliance.resubmit_a_rejected_compliance_application(
             id="id",
@@ -304,7 +304,7 @@ class ComplianceClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.atoms.compliance.refresh_compliance_application_status(
             id="id",
@@ -368,7 +368,7 @@ class AsyncComplianceClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -426,7 +426,7 @@ class AsyncComplianceClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -515,7 +515,7 @@ class AsyncComplianceClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -584,7 +584,7 @@ class AsyncComplianceClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -630,7 +630,7 @@ class AsyncComplianceClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
