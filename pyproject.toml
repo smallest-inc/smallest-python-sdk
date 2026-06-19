@@ -1,73 +1,111 @@
 [project]
 name = "smallestai"
-version = "4.3.0"
-description = "Official Python client for the Smallest AI API"
-authors = [{ name = "Smallest", email = "support@smallest.ai" }]
+dynamic = ["version"]
+
+
+[tool.poetry]
+name = "smallestai"
+version = "5.0.0"
+description = ""
 readme = "README.md"
-license = { text = "MIT" }
-requires-python = ">=3.9"
+authors = []
+keywords = []
+
 classifiers = [
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Operating System :: OS Independent",
+    "Operating System :: POSIX",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed"
 ]
-keywords = [
-    "smallest",
-    "smallest.ai",
-    "tts",
-    "text-to-speech",
-    "waves",
-    "atoms",
-]
-dependencies = [
-    "aiohttp",
-    "aiofiles",
-    "requests",
-    "pydub",
-    "websocket-client",
-    "urllib3 >= 1.25.3, < 3.0.0",
-    "python-dateutil >= 2.8.2",
-    "pydantic >= 2",
-    "typing-extensions >= 4.7.1",
-    "audioop-lts; python_version >= '3.13'",
-    "loguru >= 0.7.0",
-    "fastapi>=0.115.0",
-    "httpx>=0.28.1",
-    "python-dotenv>=1.2.1",
-    "questionary>=2.1.1",
-    "rich>=14.2.0",
-    "tomli>=2.3.0",
-    "tomli-w>=1.2.0",
-    "typer>=0.20.0",
-    "uvicorn>=0.32.0",
-    "websockets>=14.0",
-    "openai>=2.14.0",
+packages = [
+    { include = "smallestai", from = "src"}
 ]
 
-[project.optional-dependencies]
-test = [
-    "jiwer",
-    "pytest >= 7.2.1",
-    "pytest-asyncio",
-    "deepgram-sdk",
-    "pytest-cov >= 2.8.1",
-    "tox >= 3.9.0",
-    "flake8 >= 4.0.0",
-    "types-python-dateutil >= 2.8.19.14",
-    "mypy >= 1.5",
+[tool.poetry.urls]
+Repository = 'https://github.com/fern-demo/smallest-ai-python-sdk'
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = ">=0.115.0"
+httpx = ">=0.21.2"
+loguru = ">=0.7.0"
+openai = ">=2.0.0"
+pydantic = ">= 1.9.2"
+pydantic-core = ">=2.18.2"
+python-dotenv = ">=1.0.0"
+typing_extensions = ">= 4.0.0"
+uvicorn = ">=0.32.0"
+websockets = ">=12.0"
+websocket-client = ">=1.6.0"  # used by waves.stream_tts.WavesStreamingTTS (4.3.1 compat shim)
+requests = ">=2.31.0"  # used by smallestai.atoms.helpers.{call,kb,audience,campaign}
+# CLI dependencies (smallestai.cli — typer-based agent CLI, see [tool.poetry.scripts])
+typer = ">=0.20.0"
+rich = ">=14.2.0"
+questionary = ">=2.1.1"
+tomli = ">=2.3.0"
+tomli-w = ">=1.2.0"
+
+[tool.poetry.scripts]
+smallestai = "smallestai.cli.main:main"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "==1.13.0"
+pytest = "^7.4.0"
+pytest-asyncio = "^0.23.5"
+pytest-xdist = "^3.6.1"
+python-dateutil = "^2.9.0"
+types-python-dateutil = "^2.9.0.20240316"
+requests = "^2.31.0"
+types-requests = "^2.31.0"
+ruff = "==0.11.5"
+
+[tool.pytest.ini_options]
+testpaths = [ "tests" ]
+asyncio_mode = "auto"
+markers = [
+    "aiohttp: tests that require httpx_aiohttp to be installed",
 ]
 
-[project.urls]
-Homepage = "https://github.com/smallest-inc/smallest-python-sdk"
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+exclude = ["src/smallestai/atoms/crew", "src/smallestai/atoms/helpers", "src/smallestai/cli", "src/smallestai/waves/text_to_speech/client.py", "src/smallestai/waves/text_to_speech/raw_client.py", "src/smallestai/waves/stream_tts.py"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "F",  # pyflakes
+    "I",  # isort
+]
+ignore = [
+    "E402",  # Module level import not at top of file
+    "E501",  # Line too long
+    "E711",  # Comparison to `None` should be `cond is not None`
+    "E712",  # Avoid equality comparisons to `True`; use `if ...:` checks
+    "E721",  # Use `is` and `is not` for type comparisons, or `isinstance()` for insinstance checks
+    "E722",  # Do not use bare `except`
+    "E731",  # Do not assign a `lambda` expression, use a `def`
+    "F821",  # Undefined name
+    "F841"   # Local variable ... is assigned to but never used
+]
+
+[tool.ruff.lint.isort]
+section-order = ["future", "standard-library", "third-party", "first-party"]
 
 [build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["smallest*"]
-
-
-[project.scripts]
-smallestai = "smallestai.cli.main:main"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

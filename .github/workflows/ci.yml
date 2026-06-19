@@ -1,0 +1,142 @@
+name: ci
+on: [push]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Bootstrap poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python - -y --version 1.5.1
+      - name: Install dependencies
+        run: poetry install
+      - name: Compile
+        run: poetry run mypy .
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Bootstrap poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python - -y --version 1.5.1
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Test
+        run: poetry run pytest -rP -n auto .
+
+  # Auto-publish to PyPI when the version in pyproject.toml has been bumped
+  # beyond the latest git tag. Only fires on pushes to main, only after
+  # compile+test pass. No-ops on pushes that didn't change the version.
+  #
+  # Workflow for a release:
+  #   1. Open a PR that bumps `[tool.poetry] version` in pyproject.toml AND
+  #      adds a matching `## <version> - YYYY-MM-DD` entry to changelog.md.
+  #   2. Merge to main.
+  #   3. This job auto-publishes to PyPI and creates the v<version> tag.
+  #
+  # Required repo secret: PYPI_API_TOKEN (a PyPI API token with upload scope
+  # for the `smallestai` project).
+  publish:
+    needs: [compile, test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # to push the tag
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read version from pyproject.toml
+        id: pyproject
+        run: |
+          # Only the [tool.poetry] version line uses the `version = "..."` form
+          # in this repo. The [project] section just declares `dynamic = ["version"]`
+          # and doesn't match the quoted-value pattern, so grep -m 1 is safe.
+          VERSION=$(grep -m 1 '^version[[:space:]]*=[[:space:]]*"' pyproject.toml \
+            | sed -E 's/^version[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
+          if [ -z "${VERSION}" ]; then
+            echo "::error::Could not read [tool.poetry] version from pyproject.toml"
+            exit 1
+          fi
+          echo "Detected pyproject version: ${VERSION}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Check if version is new (tag does not yet exist)
+        id: should_publish
+        run: |
+          VERSION="${{ steps.pyproject.outputs.version }}"
+          if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
+            echo "Tag v${VERSION} already exists — nothing to publish on this push."
+            echo "release=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Tag v${VERSION} does not exist — will release."
+            echo "release=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate changelog entry exists
+        if: steps.should_publish.outputs.release == 'true'
+        run: |
+          VERSION="${{ steps.pyproject.outputs.version }}"
+          if ! grep -Fq "## ${VERSION} -" changelog.md; then
+            echo "::error::changelog.md has no entry for ${VERSION}. Add a '## ${VERSION} - YYYY-MM-DD' section to changelog.md and push again."
+            exit 1
+          fi
+
+      - name: Set up python
+        if: steps.should_publish.outputs.release == 'true'
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Bootstrap poetry
+        if: steps.should_publish.outputs.release == 'true'
+        run: |
+          curl -sSL https://install.python-poetry.org | python - -y --version 1.5.1
+
+      - name: Build wheel + sdist
+        if: steps.should_publish.outputs.release == 'true'
+        run: poetry build
+
+      - name: Publish to PyPI
+        if: steps.should_publish.outputs.release == 'true'
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          if [ -z "${POETRY_PYPI_TOKEN_PYPI}" ]; then
+            echo "::error::PYPI_API_TOKEN secret is not set on this repo. Add it under Settings → Secrets and variables → Actions before this job can publish."
+            exit 1
+          fi
+          poetry publish --no-interaction
+
+      - name: Tag and push
+        if: steps.should_publish.outputs.release == 'true'
+        run: |
+          VERSION="${{ steps.pyproject.outputs.version }}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${VERSION}" -m "Release v${VERSION}"
+          git push origin "v${VERSION}"
+
+      - name: Summary
+        if: steps.should_publish.outputs.release == 'true'
+        run: |
+          VERSION="${{ steps.pyproject.outputs.version }}"
+          echo "::notice::Published smallestai ${VERSION} to PyPI and tagged v${VERSION}."

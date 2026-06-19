@@ -1,0 +1,51 @@
+{
+  "cliVersion": "5.28.2",
+  "generatorName": "fernapi/fern-python-sdk",
+  "generatorVersion": "5.12.12",
+  "generatorConfig": {
+    "package_name": "smallestai",
+    "enable_wire_tests": true,
+    "client": {
+      "class_name": "SmallestAI",
+      "filename": "client.py"
+    },
+    "pydantic_config": {
+      "skip_validation": true
+    },
+    "exclude_types_from_init_exports": true,
+    "should_generate_websocket_clients": true,
+    "extra_dependencies": {
+      "fastapi": ">=0.115.0",
+      "uvicorn": ">=0.32.0",
+      "loguru": ">=0.7.0",
+      "openai": ">=2.0.0",
+      "python-dotenv": ">=1.0.0"
+    },
+    "mypy_exclude": [
+      "src/smallestai/atoms/agent",
+      "src/smallestai/atoms/helpers",
+      "src/smallestai/waves/text_to_speech/client.py",
+      "src/smallestai/waves/text_to_speech/raw_client.py"
+    ],
+    "additional_init_exports": [
+      {
+        "from": "atoms.client",
+        "imports": [
+          "AtomsClient",
+          "AsyncAtomsClient"
+        ]
+      },
+      {
+        "from": "waves.client",
+        "imports": [
+          "WavesClient",
+          "AsyncWavesClient"
+        ]
+      }
+    ]
+  },
+  "originGitCommit": "bfe03966fbb10a7955f9e3ea2951addaa0e99027",
+  "originGitCommitIsDirty": true,
+  "invokedBy": "manual",
+  "sdkVersion": "4.4.2"
+}

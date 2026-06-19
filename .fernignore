@@ -1,0 +1,39 @@
+# Files Fern shouldn't modify
+changelog.md
+poetry.lock
+pyproject.toml
+
+# Customer-owned directories (Track A's fix makes ** patterns work)
+src/smallestai/atoms/crew/**
+src/smallestai/atoms/helpers/**
+src/smallestai/cli/**
+
+# Customer-added files (generator never produces these)
+src/smallestai/waves/stream_tts.py
+src/smallestai/waves/types/sample_rate.py
+
+# Files with non-IR-expressible customizations
+# (shim block in waves/__init__.py; SampleRate type override in client.py/raw_client.py)
+src/smallestai/waves/__init__.py
+src/smallestai/waves/client.py
+src/smallestai/waves/raw_client.py
+
+# Customer-owned CI / release automation
+.github/workflows/**
+
+# Custom tests + live (velocity) harness
+tests/custom/**
+tests/velocity/**
+
+# Hand-written examples + migration/release docs (generator never produces these)
+examples/**
+MIGRATION.md
+RELEASE.md
+
+# Self-protect: customer owns their .fernignore
+.fernignore
+
+# Replay's own state
+.fern/replay.lock
+.fern/replay.yml
+.gitattributes
