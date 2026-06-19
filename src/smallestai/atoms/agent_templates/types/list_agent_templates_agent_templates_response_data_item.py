@@ -25,7 +25,18 @@ from .list_agent_templates_agent_templates_response_data_item_workflow_type impo
 
 
 class ListAgentTemplatesAgentTemplatesResponseDataItem(UncheckedBaseModel):
-    id: typing_extensions.Annotated[
+    # NOTE: the API returns BOTH `_id` (Mongo ObjectId) and `id` (a human-readable
+    # slug). Fern aliases `_id` -> `id`, which collides with the real `id`. Until the
+    # spec disambiguates these (see SDK_ESCALATIONS.log), expose them as distinct
+    # fields so neither value is lost: `.id` keeps the slug (matches the field's own
+    # "The ID of the agent template" description and the prior runtime behaviour),
+    # `.object_id` carries the Mongo ObjectId.
+    id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    The ID of the agent template
+    """
+
+    object_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="_id"),
         pydantic.Field(alias="_id", description="MongoDB ObjectId of the template"),
