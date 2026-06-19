@@ -11,6 +11,7 @@ consistency + packaging/correctness fixes. See MIGRATION.md.
 * **`OpenAIClient`** raises on missing key; adds `.electron()` factory.
 * **`requests`** is now a runtime dependency (helpers import cleanly).
 * **CLI**: `init --agent-id`, `chat --url`, env-aware `auth login`.
+* **New helpers** `smallestai.atoms.helpers.as_page(...)` (one shape for any list response) and `require_id(...)` (rejects empty ids) — #25 / #18.
 
 ## 4.4.7 - 2026-05-20
 
