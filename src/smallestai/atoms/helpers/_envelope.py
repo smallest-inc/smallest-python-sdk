@@ -32,6 +32,7 @@ _LIST_KEYS = (
     "versions",
     "drafts",
     "knowledge_bases",
+    "retries",
 )
 
 
@@ -69,6 +70,13 @@ def as_page(response: Any) -> Page:
     if isinstance(data, list):
         return Page(items=list(data))
 
+    # Composite phone-products list: telephony + custom numbers in one envelope
+    # under two arrays (no single container key). Concatenate both.
+    telephony = _get(data, "telephony_products")
+    custom = _get(data, "custom_products")
+    if telephony is not None or custom is not None:
+        return Page(items=list(telephony or []) + list(custom or []))
+
     pagination = _get(data, "pagination")
     for key in _LIST_KEYS:
         items = _get(data, key)
@@ -76,6 +84,7 @@ def as_page(response: Any) -> Page:
             return Page(
                 items=list(items),
                 total_count=(_get(data, "total_count") or _get(data, "total") or _get(data, "count")
+                             or _get(data, "total_campaign_count")
                              or _get(pagination, "total") or _get(pagination, "total_count")),
                 total_pages=_get(data, "total_pages") or _get(pagination, "total_pages"),
                 has_more=(_get(data, "has_more") if _get(data, "has_more") is not None
