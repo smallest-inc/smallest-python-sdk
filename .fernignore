@@ -21,8 +21,14 @@ src/smallestai/waves/raw_client.py
 # Customer-owned CI / release automation
 .github/workflows/**
 
-# Custom tests
+# Custom tests + live (velocity) harness
 tests/custom/**
+tests/velocity/**
+
+# Hand-written examples + migration/release docs (generator never produces these)
+examples/**
+MIGRATION.md
+RELEASE.md
 
 # Self-protect: customer owns their .fernignore
 .fernignore
