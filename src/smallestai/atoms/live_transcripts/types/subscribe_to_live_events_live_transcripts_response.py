@@ -133,7 +133,13 @@ class SubscribeToLiveEventsLiveTranscriptsResponse(UncheckedBaseModel):
     TTS latency in milliseconds (only for `tts_completed`)
     """
 
-    metrics: typing.Optional[typing.Dict[str, typing.Any]] = pydantic.Field(default=None)
+    # The runtime sends `metrics` as a LIST of {processor, model, value} dicts, but the
+    # spec types it as an object — which made the SDK drop every `metrics` SSE event with
+    # a validation error (found via a live call). Accept both shapes until the spec is
+    # fixed (see SDK_ESCALATIONS.log); list is what the server actually emits.
+    metrics: typing.Optional[
+        typing.Union[typing.List[typing.Dict[str, typing.Any]], typing.Dict[str, typing.Any]]
+    ] = pydantic.Field(default=None)
     """
     Metrics payload for `metrics`
     """
