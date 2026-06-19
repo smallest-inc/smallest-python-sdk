@@ -37,3 +37,7 @@ RELEASE.md
 .fern/replay.lock
 .fern/replay.yml
 .gitattributes
+
+# Pre-release verification harness (hand-written)
+scripts/**
+Makefile
