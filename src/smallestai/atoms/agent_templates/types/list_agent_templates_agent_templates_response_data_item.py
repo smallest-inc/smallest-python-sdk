@@ -30,11 +30,6 @@ class ListAgentTemplatesAgentTemplatesResponseDataItem(UncheckedBaseModel):
         FieldMetadata(alias="_id"),
         pydantic.Field(alias="_id", description="MongoDB ObjectId of the template"),
     ] = None
-    id: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    The ID of the agent template
-    """
-
     name: typing.Optional[str] = pydantic.Field(default=None)
     """
     The name of the agent template

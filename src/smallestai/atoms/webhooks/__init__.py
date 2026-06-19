@@ -2,3 +2,6 @@
 
 # isort: skip_file
 
+from .types.post_webhook_request_events_item import PostWebhookRequestEventsItem
+
+__all__ = ["PostWebhookRequestEventsItem"]

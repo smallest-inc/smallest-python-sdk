@@ -1,3 +1,5 @@
+import datetime
+
 from .conftest import get_client, verify_request_count
 
 
@@ -37,12 +39,14 @@ def test_atoms_agentVersioningVersions_compare_metrics_between_two_versions() ->
         id="60d0fe4f5311236168a109ca",
         version_a="versionA",
         version_b="versionB",
+        date_from=datetime.date.fromisoformat("2026-05-01"),
+        date_to=datetime.date.fromisoformat("2026-05-31"),
     )
     verify_request_count(
         test_id,
         "GET",
         "/agent/60d0fe4f5311236168a109ca/versions/compare-metrics",
-        {"versionA": "versionA", "versionB": "versionB"},
+        {"versionA": "versionA", "versionB": "versionB", "dateFrom": "2026-05-01", "dateTo": "2026-05-31"},
         1,
     )
 

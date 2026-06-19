@@ -19,6 +19,7 @@ from .types.lightning_large_request_output_format import LightningLargeRequestOu
 from .types.lightning_request_language import LightningRequestLanguage
 from .types.lightning_request_output_format import LightningRequestOutputFormat
 from .types.lightning_v31request_language import LightningV31RequestLanguage
+from .types.lightning_v31request_model import LightningV31RequestModel
 from .types.lightning_v31request_output_format import LightningV31RequestOutputFormat
 from .types.lightningv2request_language import Lightningv2RequestLanguage
 from .types.lightningv2request_output_format import Lightningv2RequestOutputFormat
@@ -32,14 +33,18 @@ from .types.transcribe_pulse_waves_request_gender_detection import TranscribePul
 from .types.transcribe_pulse_waves_request_language import TranscribePulseWavesRequestLanguage
 from .types.transcribe_pulse_waves_request_punctuate import TranscribePulseWavesRequestPunctuate
 from .types.transcribe_pulse_waves_response import TranscribePulseWavesResponse
+from .types.tts_request_language import TtsRequestLanguage
+from .types.tts_request_model import TtsRequestModel
+from .types.tts_request_output_format import TtsRequestOutputFormat
 from .types.update_pronunciation_dict_response import UpdatePronunciationDictResponse
-from .types.sample_rate import SampleRate
 
 if typing.TYPE_CHECKING:
     from .lightning_v2tts.client import AsyncLightningV2TtsClient, LightningV2TtsClient
     from .lightning_v31tts.client import AsyncLightningV31TtsClient, LightningV31TtsClient
     from .pulse_stt_streaming.client import AsyncPulseSttStreamingClient, PulseSttStreamingClient
+    from .speech_to_speech.client import AsyncSpeechToSpeechClient, SpeechToSpeechClient
     from .streaming_tts.client import AsyncStreamingTtsClient, StreamingTtsClient
+    from .tts.client import AsyncTtsClient, TtsClient
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
@@ -48,10 +53,12 @@ class WavesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._raw_client = RawWavesClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
+        self._tts: typing.Optional[TtsClient] = None
         self._streaming_tts: typing.Optional[StreamingTtsClient] = None
         self._lightning_v2tts: typing.Optional[LightningV2TtsClient] = None
         self._lightning_v31tts: typing.Optional[LightningV31TtsClient] = None
         self._pulse_stt_streaming: typing.Optional[PulseSttStreamingClient] = None
+        self._speech_to_speech: typing.Optional[SpeechToSpeechClient] = None
 
     @property
     def with_raw_response(self) -> RawWavesClient:
@@ -85,7 +92,7 @@ class WavesClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.waves.get_pronunciation_dicts()
         """
@@ -117,7 +124,7 @@ class WavesClient:
         from smallestai.waves import PronunciationItem
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.waves.create_pronunciation_dict(
             items=[
@@ -163,7 +170,7 @@ class WavesClient:
         from smallestai.waves import PronunciationItem
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.waves.update_pronunciation_dict(
             id="64f1234567890abcdef12345",
@@ -202,7 +209,7 @@ class WavesClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.waves.delete_pronunciation_dict(
             id="64f1234567890abcdef12345",
@@ -216,7 +223,7 @@ class WavesClient:
         *,
         text: str,
         voice_id: str,
-        sample_rate: typing.Optional[SampleRate] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         language: typing.Optional[LightningRequestLanguage] = OMIT,
         output_format: typing.Optional[LightningRequestOutputFormat] = OMIT,
@@ -233,7 +240,7 @@ class WavesClient:
         voice_id : str
             The voice identifier to use for speech generation.
 
-        sample_rate : typing.Optional[SampleRate]
+        sample_rate : typing.Optional[int]
             The sample rate for the generated audio.
 
         speed : typing.Optional[float]
@@ -258,7 +265,7 @@ class WavesClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.waves.synthesize_lightning(
             text="text",
@@ -281,7 +288,7 @@ class WavesClient:
         *,
         text: str,
         voice_id: str,
-        sample_rate: typing.Optional[SampleRate] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         consistency: typing.Optional[float] = OMIT,
         similarity: typing.Optional[float] = OMIT,
@@ -302,7 +309,7 @@ class WavesClient:
         voice_id : str
             The voice identifier to use for speech generation.
 
-        sample_rate : typing.Optional[SampleRate]
+        sample_rate : typing.Optional[int]
             The sample rate for the generated audio.
 
         speed : typing.Optional[float]
@@ -339,7 +346,7 @@ class WavesClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.waves.synthesize_lightning_large(
             text="text",
@@ -366,7 +373,7 @@ class WavesClient:
         *,
         text: str,
         voice_id: str,
-        sample_rate: typing.Optional[SampleRate] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         consistency: typing.Optional[float] = OMIT,
         similarity: typing.Optional[float] = OMIT,
@@ -387,7 +394,7 @@ class WavesClient:
         voice_id : str
             The voice identifier to use for speech generation.
 
-        sample_rate : typing.Optional[SampleRate]
+        sample_rate : typing.Optional[int]
             The sample rate for the generated audio.
 
         speed : typing.Optional[float]
@@ -424,7 +431,7 @@ class WavesClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.waves.synthesize_lightning_v2(
             text="Hey i am your a text to speech model",
@@ -451,7 +458,7 @@ class WavesClient:
         *,
         text: str,
         voice_id: str,
-        sample_rate: typing.Optional[SampleRate] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         consistency: typing.Optional[float] = OMIT,
         similarity: typing.Optional[float] = OMIT,
@@ -486,7 +493,7 @@ class WavesClient:
         voice_id : str
             The voice identifier to use for speech generation.
 
-        sample_rate : typing.Optional[SampleRate]
+        sample_rate : typing.Optional[int]
             The sample rate for the generated audio.
 
         speed : typing.Optional[float]
@@ -523,7 +530,7 @@ class WavesClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         response = client.waves.synthesize_sse_lightning_large(
             text="text",
@@ -552,7 +559,7 @@ class WavesClient:
         *,
         text: str,
         voice_id: str,
-        sample_rate: typing.Optional[SampleRate] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         consistency: typing.Optional[float] = OMIT,
         similarity: typing.Optional[float] = OMIT,
@@ -588,7 +595,7 @@ class WavesClient:
         voice_id : str
             The voice identifier to use for speech generation.
 
-        sample_rate : typing.Optional[SampleRate]
+        sample_rate : typing.Optional[int]
             The sample rate for the generated audio.
 
         speed : typing.Optional[float]
@@ -625,7 +632,7 @@ class WavesClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         response = client.waves.synthesize_sse_lightning_v2(
             text="text",
@@ -653,12 +660,12 @@ class WavesClient:
         self, model: GetVoicesWavesRequestModel, *, request_options: typing.Optional[RequestOptions] = None
     ) -> GetVoicesWavesResponse:
         """
-        Get voices supported for a given model using the new Waves API.
+        List voices available for Lightning v3.1. The response is the union of the standard and Pro voice catalogs — the API does not return a per-voice "is Pro" flag, so consult the [Lightning v3.1 Pro](/waves/model-cards/text-to-speech/lightning-v-3-1-pro) and [Lightning v3.1](/waves/model-cards/text-to-speech/lightning-v-3-1) model cards for the canonical per-pool voice lists. Use the `voice_id` from this response together with `"model": "lightning_v3.1"` (default) or `"model": "lightning_v3.1_pro"` on the unified `/waves/v1/tts` route to pick the pool.
 
         Parameters
         ----------
         model : GetVoicesWavesRequestModel
-            The model to use for speech synthesis.
+            The catalog to query. Currently only `lightning-v3.1` is supported — the response returns the union of standard Lightning v3.1 voices and Lightning v3.1 Pro voices. The API does not include a per-voice Pro flag; consult the model cards for the canonical per-pool catalogs.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -673,10 +680,10 @@ class WavesClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.waves.get_voices(
-            model="lightning",
+            model="lightning-v3.1",
         )
         """
         _response = self._raw_client.get_voices(model, request_options=request_options)
@@ -714,7 +721,7 @@ class WavesClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.waves.add_voice(
             display_name="displayName",
@@ -746,7 +753,7 @@ class WavesClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.waves.get_cloned_voices()
         """
@@ -779,7 +786,7 @@ class WavesClient:
         from smallestai import SmallestAI
 
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.waves.delete_voice(
             voice_id="voiceId",
@@ -788,12 +795,380 @@ class WavesClient:
         _response = self._raw_client.delete_voice(voice_id=voice_id, request_options=request_options)
         return _response.data
 
+    def synthesize_tts(
+        self,
+        *,
+        text: str,
+        voice_id: str,
+        model: typing.Optional[TtsRequestModel] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
+        speed: typing.Optional[float] = OMIT,
+        language: typing.Optional[TtsRequestLanguage] = OMIT,
+        output_format: typing.Optional[TtsRequestOutputFormat] = OMIT,
+        pronunciation_dicts: typing.Optional[typing.Sequence[str]] = OMIT,
+        word_timestamps: typing.Optional[bool] = OMIT,
+        session_id: typing.Optional[str] = OMIT,
+        request_id: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> typing.Iterator[bytes]:
+        """
+        Synthesize speech from text in a single request. Pass `text` + `voice_id`, get back binary audio.
+        
+        Pick the model with the `model` body parameter: default `lightning_v3.1`, or `lightning_v3.1_pro` for the Pro pool. Other request parameters are identical across models.
+        
+        **Language behaviour on `lightning_v3.1_pro`:** pass `language: en` for UK + American accented English, pass `language: hi` for Indian accented English + Hindi (code-switching), or omit `language` to default to `en + hi` (mixed Indian + Western English coverage). On `lightning_v3.1` the full 12-language catalog applies (see voice catalog).
+        
+        ## When to use this
+        
+        - **Use this** for short utterances you can render before playback (notifications, prompts, batch jobs, audio file generation).
+        - **Use `/waves/v1/tts/live`** when you want playback to start before the full audio is ready (long passages, latency-sensitive apps).
+        - **Use `/waves/v1/tts/live`** (WebSocket) when text arrives incrementally (LLM token streams, live captioning).
+        
+        ## Key features
+        
+        - 44 kHz natural, expressive synthesis
+        - Model selectable per request via `model` body parameter
+        - Cloned voice IDs (`voice_*`) work on `lightning_v3.1` — same param as catalog voices
+        - 12 documented languages on `lightning_v3.1`. On `lightning_v3.1_pro`: `language: en` → UK + American accented English; `language: hi` → Indian accented English + Hindi; omit `language` → defaults to `en + hi`.
+        - Output formats: `pcm`, `mp3`, `wav`, `ulaw`, `alaw`
+        - Sample rates: 8 kHz – 44.1 kHz
+        - Speed: 0.5× – 2×
+        - Per-call pronunciation dictionaries via `pronunciation_dicts`
+        
+        ## Examples
+        
+        **cURL — Lightning v3.1 (default)**
+        ```bash
+        curl -X POST "https://api.smallest.ai/waves/v1/tts" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -H "Accept: audio/wav" \\
+          -d '{
+            "text": "Hello from Waves TTS.",
+            "voice_id": "magnus",
+            "sample_rate": 24000,
+            "output_format": "wav"
+          }' --output speech.wav
+        ```
+        
+        **cURL — Lightning v3.1 Pro (omit `language` → defaults to `en + hi`)**
+        ```bash
+        curl -X POST "https://api.smallest.ai/waves/v1/tts" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -H "Accept: audio/wav" \\
+          -d '{
+            "text": "Hello from the Lightning v3.1 Pro pool.",
+            "voice_id": "meher",
+            "model": "lightning_v3.1_pro",
+            "sample_rate": 24000,
+            "output_format": "wav"
+          }' --output speech.wav
+        ```
+        
+        **cURL — Lightning v3.1 Pro with explicit `language: en` (UK + American accented English)**
+        ```bash
+        curl -X POST "https://api.smallest.ai/waves/v1/tts" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -H "Accept: audio/wav" \\
+          -d '{
+            "text": "Good morning, this is a Pro voice speaking.",
+            "voice_id": "meher",
+            "model": "lightning_v3.1_pro",
+            "language": "en",
+            "sample_rate": 24000,
+            "output_format": "wav"
+          }' --output speech.wav
+        ```
+        
+        **cURL — Lightning v3.1 Pro with explicit `language: hi` (Indian accented English + Hindi)**
+        ```bash
+        curl -X POST "https://api.smallest.ai/waves/v1/tts" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -H "Accept: audio/wav" \\
+          -d '{
+            "text": "Namaste, this is an Indian-accented Pro voice.",
+            "voice_id": "meher",
+            "model": "lightning_v3.1_pro",
+            "language": "hi",
+            "sample_rate": 24000,
+            "output_format": "wav"
+          }' --output speech.wav
+        ```
+        
+        ## Common gotchas
+        
+        - **Set `Accept: audio/wav`.** Omitting it can return an empty or unplayable response.
+        - **Pair voice IDs with the right model.** Voice catalogs differ between `lightning_v3.1` and `lightning_v3.1_pro`. The API does not reject mismatched pairings, but using a Pro-only `voice_id` with `model=lightning_v3.1` (or omitting `model`) can return wrong or hallucinated audio. Pair Pro voices with `model=lightning_v3.1_pro`; standard catalog voices with `model=lightning_v3.1` (the default).
+        - **Cloned voices** (`voice_*` from `add_voice`) work with `lightning_v3.1` only; voice cloning is not available on `lightning_v3.1_pro`.
+        - **44.1 kHz output** is supported but most playback environments are happy with 24 kHz — drop the sample rate if bandwidth matters.
+        
+        Parameters
+        ----------
+        text : str
+            The text to convert to speech.
+        
+        voice_id : str
+            The voice identifier to use for speech generation. See the model card for available voices per model.
+        
+        model : typing.Optional[TtsRequestModel]
+            TTS model to route the request to. Controls which model pool serves
+            this synthesis.
+            
+            - `lightning_v3.1` (default) — standard Lightning v3.1.
+            - `lightning_v3.1_pro` — Lightning v3.1 Pro pool. Improved audio
+              quality and naturalness, with a curated voice catalog. See the
+              [Lightning v3.1 Pro model card](/waves/model-cards/text-to-speech/lightning-v-3-1-pro)
+              for supported voice IDs.
+            
+            Same concurrency and latency profile across both. Other request
+            parameters behave identically.
+        
+        sample_rate : typing.Optional[int]
+            The sample rate for the generated audio.
+        
+        speed : typing.Optional[float]
+            The speed of the generated speech.
+        
+        language : typing.Optional[TtsRequestLanguage]
+            Language code for synthesis. Influences pronunciation, number/date
+            normalization, and phoneme selection.
+            
+            Each voice has its own `tags.language` set in the voice catalog —
+            query `GET /waves/v1/lightning-v3.1/get_voices`. Pass a language
+            the voice was trained on; passing other codes is accepted by the
+            API but produces English-pronounced output.
+            
+            **On `lightning_v3.1`**, the full 12-language catalog applies.
+            
+            **On `lightning_v3.1_pro`**:
+            - Pass `en` → UK + American accented English.
+            - Pass `hi` → Indian accented English + Hindi (code-switching).
+            - Omit `language` → defaults to `en + hi` (mixed Indian + Western English coverage).
+        
+        output_format : typing.Optional[TtsRequestOutputFormat]
+            Format of the returned audio. `pcm` is the lowest-latency option
+            but requires a decoder to play; `mp3` and `wav` are directly
+            playable in browsers and most media players. The server default
+            is `pcm` when the field is omitted — the API playground uses
+            `mp3` so the generated audio is directly playable.
+        
+        pronunciation_dicts : typing.Optional[typing.Sequence[str]]
+            The IDs of the pronunciation dictionaries to use for speech generation. Available on both `lightning_v3.1` and `lightning_v3.1_pro`.
+        
+        word_timestamps : typing.Optional[bool]
+            **WebSocket-only feature.** Accepted on this endpoint but ignored — no per-word timing information is returned in the sync HTTP or SSE response shape. To receive `status: "word_timestamp"` frames with per-word `{ id, word, start, end }` data, use the WebSocket endpoint `wss://api.smallest.ai/waves/v1/tts/live`. See [Word-level timestamps](/waves/documentation/text-to-speech-lightning/word-timestamps).
+        
+        session_id : typing.Optional[str]
+            Optional client-provided session identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Session-Id`.
+        
+        request_id : typing.Optional[str]
+            Optional client-provided request identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Request-Id`.
+        
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration. You can pass in configuration such as `chunk_size`, and more to customize the request and response.
+        
+        Returns
+        -------
+        typing.Iterator[bytes]
+            Synthesized speech retrieved successfully.
+        
+        Examples
+        --------
+        from smallestai import SmallestAI
+        
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.waves.synthesize_tts(
+            text="Hello from Waves TTS.",
+            voice_id="magnus",
+        )
+        """
+        with self._raw_client.synthesize_tts(
+            text=text,
+            voice_id=voice_id,
+            model=model,
+            sample_rate=sample_rate,
+            speed=speed,
+            language=language,
+            output_format=output_format,
+            pronunciation_dicts=pronunciation_dicts,
+            word_timestamps=word_timestamps,
+            session_id=session_id,
+            request_id=request_id,
+            request_options=request_options,
+        ) as r:
+            yield from r.data
+
+    def synthesize_sse_tts(
+        self,
+        *,
+        text: str,
+        voice_id: str,
+        model: typing.Optional[TtsRequestModel] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
+        speed: typing.Optional[float] = OMIT,
+        language: typing.Optional[TtsRequestLanguage] = OMIT,
+        output_format: typing.Optional[TtsRequestOutputFormat] = OMIT,
+        pronunciation_dicts: typing.Optional[typing.Sequence[str]] = OMIT,
+        word_timestamps: typing.Optional[bool] = OMIT,
+        session_id: typing.Optional[str] = OMIT,
+        request_id: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> typing.Iterator[str]:
+        """
+        Synthesize speech and stream the audio back over Server-Sent Events. Same body as `/waves/v1/tts` — the only difference is the response is a stream of base64-encoded PCM chunks instead of one binary blob.
+        
+        Pick the model with the `model` body parameter, same as the sync route.
+        
+        <Note>
+          **The same URL serves the WebSocket endpoint.** `wss://api.smallest.ai/waves/v1/tts/live` accepts a WebSocket upgrade for streaming-text scenarios (LLM token streams, live captioning). The HTTP `POST` documented on this page returns SSE; use `wss://` to use the WebSocket protocol instead. See the [WebSocket reference](/waves/api-reference/api-reference/text-to-speech/tts).
+        </Note>
+        
+        ## When to use this
+        
+        - **Use this** when you want playback to start before synthesis is complete — long passages, latency-sensitive UI, live narration.
+        - **Use sync `/waves/v1/tts`** when total latency doesn't matter and you'd rather get one buffer.
+        - **Use `/waves/v1/tts/live`** (WebSocket) when the *text* arrives incrementally (LLM token stream). SSE assumes you have the full text up front.
+        
+        ## How it works
+        
+        1. POST your text + voice settings — same payload as `/waves/v1/tts`, plus optional `model`.
+        2. The response is `Content-Type: text/event-stream`. Each chunk frame is `event: audio\\n` followed by `data: {"audio": "<base64-pcm>"}\\n\\n`.
+        3. Decode each chunk's `audio` field with base64 and feed the PCM bytes to your audio pipeline (browser `MediaSource`, ffmpeg pipe, raw PCM player, etc.).
+        4. A final `data: {"done": true}\\n\\n` frame marks end of stream.
+        
+        ## Examples
+        
+        **cURL**
+        ```bash
+        curl -N -X POST "https://api.smallest.ai/waves/v1/tts/live" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -d '{
+            "text": "Streaming this paragraph chunk by chunk so playback can start sooner.",
+            "voice_id": "magnus",
+            "sample_rate": 24000,
+            "output_format": "pcm"
+          }'
+        ```
+        
+        ## Common gotchas
+        
+        - **Use a streaming-friendly client.** `curl -N`, Python `iter_lines`, or a `fetch` `ReadableStream` reader. Buffering clients will hide the latency win.
+        - **Audio is base64 inside the event payload**, not the raw event bytes. Decode the `data.audio` field per event.
+        - **`output_format=pcm`** gives the lowest overhead for streaming playback. `wav`/`mp3` work but add per-chunk framing bytes.
+        
+        Parameters
+        ----------
+        text : str
+            The text to convert to speech.
+        
+        voice_id : str
+            The voice identifier to use for speech generation. See the model card for available voices per model.
+        
+        model : typing.Optional[TtsRequestModel]
+            TTS model to route the request to. Controls which model pool serves
+            this synthesis.
+            
+            - `lightning_v3.1` (default) — standard Lightning v3.1.
+            - `lightning_v3.1_pro` — Lightning v3.1 Pro pool. Improved audio
+              quality and naturalness, with a curated voice catalog. See the
+              [Lightning v3.1 Pro model card](/waves/model-cards/text-to-speech/lightning-v-3-1-pro)
+              for supported voice IDs.
+            
+            Same concurrency and latency profile across both. Other request
+            parameters behave identically.
+        
+        sample_rate : typing.Optional[int]
+            The sample rate for the generated audio.
+        
+        speed : typing.Optional[float]
+            The speed of the generated speech.
+        
+        language : typing.Optional[TtsRequestLanguage]
+            Language code for synthesis. Influences pronunciation, number/date
+            normalization, and phoneme selection.
+            
+            Each voice has its own `tags.language` set in the voice catalog —
+            query `GET /waves/v1/lightning-v3.1/get_voices`. Pass a language
+            the voice was trained on; passing other codes is accepted by the
+            API but produces English-pronounced output.
+            
+            **On `lightning_v3.1`**, the full 12-language catalog applies.
+            
+            **On `lightning_v3.1_pro`**:
+            - Pass `en` → UK + American accented English.
+            - Pass `hi` → Indian accented English + Hindi (code-switching).
+            - Omit `language` → defaults to `en + hi` (mixed Indian + Western English coverage).
+        
+        output_format : typing.Optional[TtsRequestOutputFormat]
+            Format of the returned audio. `pcm` is the lowest-latency option
+            but requires a decoder to play; `mp3` and `wav` are directly
+            playable in browsers and most media players. The server default
+            is `pcm` when the field is omitted — the API playground uses
+            `mp3` so the generated audio is directly playable.
+        
+        pronunciation_dicts : typing.Optional[typing.Sequence[str]]
+            The IDs of the pronunciation dictionaries to use for speech generation. Available on both `lightning_v3.1` and `lightning_v3.1_pro`.
+        
+        word_timestamps : typing.Optional[bool]
+            **WebSocket-only feature.** Accepted on this endpoint but ignored — no per-word timing information is returned in the sync HTTP or SSE response shape. To receive `status: "word_timestamp"` frames with per-word `{ id, word, start, end }` data, use the WebSocket endpoint `wss://api.smallest.ai/waves/v1/tts/live`. See [Word-level timestamps](/waves/documentation/text-to-speech-lightning/word-timestamps).
+        
+        session_id : typing.Optional[str]
+            Optional client-provided session identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Session-Id`.
+        
+        request_id : typing.Optional[str]
+            Optional client-provided request identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Request-Id`.
+        
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+        
+        Yields
+        ------
+        typing.Iterator[str]
+            Synthesized speech retrieved successfully.
+        
+        Examples
+        --------
+        from smallestai import SmallestAI
+        
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        response = client.waves.synthesize_sse_tts(
+            text="text",
+            voice_id="voice_id",
+        )
+        for chunk in response:
+            yield chunk
+        """
+        with self._raw_client.synthesize_sse_tts(
+            text=text,
+            voice_id=voice_id,
+            model=model,
+            sample_rate=sample_rate,
+            speed=speed,
+            language=language,
+            output_format=output_format,
+            pronunciation_dicts=pronunciation_dicts,
+            word_timestamps=word_timestamps,
+            session_id=session_id,
+            request_id=request_id,
+            request_options=request_options,
+        ) as r:
+            yield from r.data
+
     def synthesize_lightning_v31(
         self,
         *,
         text: str,
         voice_id: str,
-        sample_rate: typing.Optional[SampleRate] = OMIT,
+        model: typing.Optional[LightningV31RequestModel] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         language: typing.Optional[LightningV31RequestLanguage] = OMIT,
         output_format: typing.Optional[LightningV31RequestOutputFormat] = OMIT,
@@ -803,75 +1178,156 @@ class WavesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Iterator[bytes]:
         """
-        Get speech for given text using the Lightning v3.1 model
-
-        ## Overview
-
-        Lightning v3.1 is a 44 kHz text-to-speech model that delivers natural, expressive, and realistic speech synthesis.
-
-        ## Key Features
-
-        * **Voice Cloning Support**: Compatible with cloned voices
-        * **Ultra-Low Latency**: Optimized for real-time applications
-        * **Multi-Language**: Supports English (en) and Hindi (hi)
-        * **Multiple Output Formats**: PCM, MP3, WAV, ulaw, and alaw
-        * **Flexible Sample Rates**: 8000 Hz to 44100 Hz
-        * **Speed Control**: Adjustable from 0.5x to 2x speed
-
+        <Warning>**Endpoint scheduled for retirement.** This URL will stop accepting requests **60 days from the Lightning v3.1 Pro launch (2026-05-15)** — i.e. on **2026-07-14**. The Lightning v3.1 model itself is current and stays. Migrate to [`POST /waves/v1/tts`](/waves/api-reference/api-reference/text-to-speech/synthesize-speech) and select Lightning v3.1 via the `model` body field (default).</Warning>
+        
+        Synthesize speech from text in a single request. The simplest way to get audio when you have the full text up front — pass `text` + `voice_id`, get back binary audio.
+        
+        ## When to use this
+        
+        - **Use this** for short utterances you can render before playback (notifications, prompts, batch jobs, audio file generation).
+        - **Use the SSE streaming endpoint** when you want playback to start before the full audio is ready (long passages, latency-sensitive apps).
+        - **Use the WebSocket endpoint** when text arrives incrementally (LLM token streams, live captioning).
+        
+        ## Key features
+        
+        - 44 kHz natural, expressive synthesis
+        - Cloned voice IDs (`voice_*`) work — same param as catalog voices
+        - 12 documented languages — see the model card for the full list
+        - Output formats: `pcm`, `mp3`, `wav`, `ulaw`, `alaw`
+        - Sample rates: 8 kHz – 44.1 kHz
+        - Speed: 0.5× – 2×
+        - Per-call pronunciation dictionaries via `pronunciation_dicts`
+        
+        ## Examples
+        
+        **cURL**
+        ```bash
+        curl -X POST "https://api.smallest.ai/waves/v1/lightning-v3.1/get_speech" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -H "Accept: audio/wav" \\
+          -d '{
+            "text": "Hello from Lightning v3.1.",
+            "voice_id": "magnus",
+            "sample_rate": 24000,
+            "output_format": "wav"
+          }' --output speech.wav
+        ```
+        
+        **Python** (`pip install smallestai>=4.4.0`)
+        ```python
+        from smallestai import SmallestAI
+        
+        client = SmallestAI(api_key="YOUR_API_KEY")
+        
+        with open("speech.wav", "wb") as f:
+            for chunk in client.waves.synthesize_lightning_v3_1(
+                text="Hello from Lightning v3.1.",
+                voice_id="magnus",
+                sample_rate=24000,
+                output_format="wav",
+                # Optional: cloned voice support
+                # voice_id="voice_FlPKRWI7DX",
+                # Optional: pin pronunciations for specific words
+                # pronunciation_dicts=["<your dict id>"],
+            ):
+                f.write(chunk)
+        ```
+        
+        **JavaScript / TypeScript** (using `fetch`)
+        ```typescript
+        const res = await fetch("https://api.smallest.ai/waves/v1/lightning-v3.1/get_speech", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.SMALLEST_API_KEY}`,
+            "Content-Type": "application/json",
+            Accept: "audio/wav",
+          },
+          body: JSON.stringify({
+            text: "Hello from Lightning v3.1.",
+            voice_id: "magnus",
+            sample_rate: 24000,
+            output_format: "wav",
+          }),
+        });
+        const audio = Buffer.from(await res.arrayBuffer());
+        require("node:fs").writeFileSync("speech.wav", audio);
+        ```
+        
+        ## Common gotchas
+        
+        - **Set `Accept: audio/wav`.** Omitting it can return an empty or unplayable response.
+        - **Cloned voices** (`voice_*` from `add_voice`) work on this endpoint and support `pronunciation_dicts`.
+        - **`pronunciation_dicts` validates IDs at request time.** Passing an unknown ID returns `Invalid input data` — create the dict first via the pronunciation-dicts endpoint and save the returned `id`.
+        - **Pronunciation matching is case-sensitive.** Add both `Synopsis` and `synopsis` if your text uses both casings.
+        - **44.1 kHz output** is supported but most playback environments are happy with 24 kHz — drop the sample rate if bandwidth matters.
+        - **JavaScript / TypeScript**: the official `smallestai` npm package predates Lightning v3.1, so call this endpoint with `fetch` or `axios` as shown above.
+        
         Parameters
         ----------
         text : str
             The text to convert to speech.
-
+        
         voice_id : str
             The voice identifier to use for speech generation.
-
-        sample_rate : typing.Optional[SampleRate]
+        
+        model : typing.Optional[LightningV31RequestModel]
+            TTS model to route the request to.
+            
+            - `lightning_v3.1` (default) — standard Lightning v3.1 pool.
+            - `lightning_v3.1_pro` — Lightning v3.1 Pro pool with a curated
+              voice catalog. See the
+              [Pro model card](/waves/model-cards/text-to-speech/lightning-v-3-1-pro).
+            
+            New integrations should use the unified
+            `/waves/v1/tts` route instead of this endpoint, but the `model`
+            field is supported here for backwards-compatible Pro opt-in.
+        
+        sample_rate : typing.Optional[int]
             The sample rate for the generated audio.
-
+        
         speed : typing.Optional[float]
             The speed of the generated speech.
-
+        
         language : typing.Optional[LightningV31RequestLanguage]
             Language code for synthesis. Influences pronunciation, number/date
             normalization, and phoneme selection.
-
+            
             - **Indian:** `en`, `hi`, `mr` (Marathi), `kn` (Kannada), `ta` (Tamil),
               `bn` (Bengali), `gu` (Gujarati), `te` (Telugu), `ml` (Malayalam),
               `pa` (Punjabi), `or` (Odia)
             - **European:** `es` (Spanish)
-            - `auto` — auto-detect from input text (recommended for code-switching)
-
+        
         output_format : typing.Optional[LightningV31RequestOutputFormat]
             Format of the returned audio. `pcm` is the lowest-latency option
             but requires a decoder to play; `mp3` and `wav` are directly
             playable in browsers and most media players. The server default
             is `pcm` when the field is omitted — the API playground uses
             `mp3` so the generated audio is directly playable.
-
+        
         pronunciation_dicts : typing.Optional[typing.Sequence[str]]
             The IDs of the pronunciation dictionaries to use for speech generation.
-
+        
         session_id : typing.Optional[str]
             Optional client-provided session identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Session-Id`.
-
+        
         request_id : typing.Optional[str]
             Optional client-provided request identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Request-Id`.
-
+        
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration. You can pass in configuration such as `chunk_size`, and more to customize the request and response.
-
+        
         Returns
         -------
         typing.Iterator[bytes]
             Synthesized speech retrieved successfully.
-
+        
         Examples
         --------
         from smallestai import SmallestAI
-
+        
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         client.waves.synthesize_lightning_v31(
             text="Hey i am your a text to speech model",
@@ -881,6 +1337,7 @@ class WavesClient:
         with self._raw_client.synthesize_lightning_v31(
             text=text,
             voice_id=voice_id,
+            model=model,
             sample_rate=sample_rate,
             speed=speed,
             language=language,
@@ -897,7 +1354,8 @@ class WavesClient:
         *,
         text: str,
         voice_id: str,
-        sample_rate: typing.Optional[SampleRate] = OMIT,
+        model: typing.Optional[LightningV31RequestModel] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         language: typing.Optional[LightningV31RequestLanguage] = OMIT,
         output_format: typing.Optional[LightningV31RequestOutputFormat] = OMIT,
@@ -907,82 +1365,172 @@ class WavesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Iterator[typing.Any]:
         """
-        Stream speech for given text using the Lightning v3.1 SSE API
-
-        ## Overview
-
-        The Lightning v3.1 SSE API provides real-time text-to-speech streaming capabilities with natural, expressive voice synthesis. This API uses Server-Sent Events (SSE) to deliver audio chunks as they're generated, enabling low-latency audio playback without waiting for the entire audio file to process.
-
-        Lightning v3.1 is a 44 kHz model that produces natural, expressive, and realistic speech, with support for voice cloning.
-
-        ## When to Use
-
-        * **Interactive Applications**: Perfect for chatbots, virtual assistants, and other applications requiring immediate voice responses
-        * **Long-Form Content**: Efficiently stream audio for articles, stories, or other long-form content without buffering delays
-        * **Voice User Interfaces**: Create natural-sounding voice interfaces with minimal perceived latency
-        * **Accessibility Solutions**: Provide real-time audio versions of written content for users with visual impairments
-
-        ## How It Works
-
-        1. **Make a POST Request**: Send your text and voice settings to the API endpoint
-        2. **Receive Audio Chunks**: The API processes your text and streams audio back as base64-encoded chunks with 1024 byte size
-        3. **Process the Stream**: Handle the SSE events to decode and play audio chunks sequentially
-        4. **End of Stream**: The API sends a completion event when all audio has been delivered
-
+        <Warning>**Endpoint scheduled for retirement.** This URL will stop accepting requests **60 days from the Lightning v3.1 Pro launch (2026-05-15)** — i.e. on **2026-07-14**. The Lightning v3.1 model itself is current and stays. Migrate to [`POST /waves/v1/tts/live`](/waves/api-reference/api-reference/text-to-speech/synthesize-speech-sse) and select Lightning v3.1 via the `model` body field (default).</Warning>
+        
+        Synthesize speech and stream the audio back over Server-Sent Events. The body and parameters are identical to the sync `/get_speech` endpoint — the difference is the response is a stream of base64-encoded PCM chunks instead of one binary blob.
+        
+        ## When to use this
+        
+        - **Use this** when you want playback to start before synthesis is complete — long passages, latency-sensitive UI, live narration.
+        - **Use sync `/get_speech`** when total latency doesn't matter and you'd rather get one buffer.
+        - **Use the WebSocket endpoint** when the *text* arrives incrementally (LLM token stream). SSE assumes you have the full text up front.
+        
+        ## How it works
+        
+        1. POST your text + voice settings — same payload as `/get_speech`.
+        2. The response is `Content-Type: text/event-stream`. Each chunk frame is `event: audio\\n` followed by `data: {"audio": "<base64-pcm>"}\\n\\n`.
+        3. Decode each chunk's `audio` field with base64 and feed the PCM bytes to your audio pipeline (browser `MediaSource`, ffmpeg pipe, raw PCM player, etc.).
+        4. A final `data: {"done": true}\\n\\n` frame marks end of stream.
+        
+        ## Examples
+        
+        **cURL**
+        ```bash
+        curl -N -X POST "https://api.smallest.ai/waves/v1/lightning-v3.1/stream" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -d '{
+            "text": "Streaming this paragraph chunk by chunk so playback can start sooner.",
+            "voice_id": "magnus",
+            "sample_rate": 24000,
+            "output_format": "pcm"
+          }'
+        ```
+        
+        **Python** (`pip install smallestai>=4.4.0`)
+        ```python
+        import base64
+        from smallestai import SmallestAI
+        
+        client = SmallestAI(api_key="YOUR_API_KEY")
+        
+        with open("stream.pcm", "wb") as f:
+            for chunk in client.waves.synthesize_sse_lightning_v3_1(
+                text="Streaming this paragraph chunk by chunk so playback can start sooner.",
+                voice_id="magnus",
+                sample_rate=24000,
+                output_format="pcm",
+            ):
+                # Each chunk is `{"audio": "<base64-encoded PCM>"}`.
+                # Decode and pipe to your audio pipeline.
+                if chunk.get("audio"):
+                    f.write(base64.b64decode(chunk["audio"]))
+        ```
+        
+        **JavaScript / TypeScript** (using `fetch` + a reader)
+        ```typescript
+        const res = await fetch("https://api.smallest.ai/waves/v1/lightning-v3.1/stream", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.SMALLEST_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text: "Streaming this paragraph chunk by chunk so playback can start sooner.",
+            voice_id: "magnus",
+            sample_rate: 24000,
+            output_format: "pcm",
+          }),
+        });
+        
+        const reader = res.body!.getReader();
+        const decoder = new TextDecoder();
+        let buf = "";
+        let finished = false;
+        while (!finished) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value);
+          const events = buf.split("\\n\\n");
+          buf = events.pop() ?? "";
+          for (const ev of events) {
+            // SSE frames are "event: audio\\ndata: {json}" or just "data: {json}".
+            // We only care about the data line — pull it out and parse.
+            const dataLine = ev.split("\\n").find((l) => l.startsWith("data:"));
+            if (!dataLine) continue;
+            const payload = JSON.parse(dataLine.slice(5).trim());
+            if (payload.done) { finished = true; break; }
+            if (payload.audio) {
+              const pcm = Buffer.from(payload.audio, "base64");
+              // … hand pcm to your audio pipeline
+            }
+          }
+        }
+        ```
+        
+        ## Common gotchas
+        
+        - **Use a streaming-friendly client.** `curl -N`, Python `iter_lines`, or a `fetch` `ReadableStream` reader. Buffering clients will hide the latency win.
+        - **Audio is base64 inside the event payload**, not the raw event bytes. Decode the `data.audio` field per event.
+        - **`output_format=pcm`** gives the lowest overhead for streaming playback. `wav`/`mp3` work but add per-chunk framing bytes.
+        - **First-chunk latency** depends on model warm-up + network distance. Use `output_format=pcm` and a streaming-friendly client to minimize what you can control.
+        - **JavaScript / TypeScript**: the official `smallestai` npm package predates Lightning v3.1, so call this endpoint with `fetch` as shown above.
+        
         Parameters
         ----------
         text : str
             The text to convert to speech.
-
+        
         voice_id : str
             The voice identifier to use for speech generation.
-
-        sample_rate : typing.Optional[SampleRate]
+        
+        model : typing.Optional[LightningV31RequestModel]
+            TTS model to route the request to.
+            
+            - `lightning_v3.1` (default) — standard Lightning v3.1 pool.
+            - `lightning_v3.1_pro` — Lightning v3.1 Pro pool with a curated
+              voice catalog. See the
+              [Pro model card](/waves/model-cards/text-to-speech/lightning-v-3-1-pro).
+            
+            New integrations should use the unified
+            `/waves/v1/tts` route instead of this endpoint, but the `model`
+            field is supported here for backwards-compatible Pro opt-in.
+        
+        sample_rate : typing.Optional[int]
             The sample rate for the generated audio.
-
+        
         speed : typing.Optional[float]
             The speed of the generated speech.
-
+        
         language : typing.Optional[LightningV31RequestLanguage]
             Language code for synthesis. Influences pronunciation, number/date
             normalization, and phoneme selection.
-
+            
             - **Indian:** `en`, `hi`, `mr` (Marathi), `kn` (Kannada), `ta` (Tamil),
               `bn` (Bengali), `gu` (Gujarati), `te` (Telugu), `ml` (Malayalam),
               `pa` (Punjabi), `or` (Odia)
             - **European:** `es` (Spanish)
-            - `auto` — auto-detect from input text (recommended for code-switching)
-
+        
         output_format : typing.Optional[LightningV31RequestOutputFormat]
             Format of the returned audio. `pcm` is the lowest-latency option
             but requires a decoder to play; `mp3` and `wav` are directly
             playable in browsers and most media players. The server default
             is `pcm` when the field is omitted — the API playground uses
             `mp3` so the generated audio is directly playable.
-
+        
         pronunciation_dicts : typing.Optional[typing.Sequence[str]]
             The IDs of the pronunciation dictionaries to use for speech generation.
-
+        
         session_id : typing.Optional[str]
             Optional client-provided session identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Session-Id`.
-
+        
         request_id : typing.Optional[str]
             Optional client-provided request identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Request-Id`.
-
+        
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
-
+        
         Yields
         ------
         typing.Iterator[typing.Any]
             Synthesized speech retrieved successfully.
-
+        
         Examples
         --------
         from smallestai import SmallestAI
-
+        
         client = SmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
         response = client.waves.synthesize_sse_lightning_v31(
             text="text",
@@ -994,6 +1542,7 @@ class WavesClient:
         with self._raw_client.synthesize_sse_lightning_v31(
             text=text,
             voice_id=voice_id,
+            model=model,
             sample_rate=sample_rate,
             speed=speed,
             language=language,
@@ -1023,82 +1572,149 @@ class WavesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> TranscribePulseWavesResponse:
         """
-        Convert speech to text using file upload with the Pulse STT POST API
-
-        The STT POST API allows you to convert speech to text using two different input methods:
-
-        1. **Raw Audio Bytes** (`application/octet-stream`) - Send raw audio data with all parameters as query parameters
-        2. **Audio URL** (`application/json`) - Provide only a URL to an audio file in the JSON body, with all other parameters as query parameters
-
-        Both methods use our Pulse STT model with automatic language detection across 30+ languages.
-
+        Transcribe an audio file to text using the Pulse model. The fastest way to get a transcript when you already have a recording — pass either the raw bytes or a URL.
+        
+        ## When to use this
+        
+        Use this endpoint when you have a complete audio file (call recording, voicemail, podcast episode) and want the transcript back in one response. For live transcription as audio arrives, use the realtime WebSocket endpoint (`WSS /waves/v1/pulse/get_text`) instead.
+        
+        ## Input methods
+        
+        Send the audio in one of two ways:
+        
+        1. **Raw bytes** — `Content-Type: application/octet-stream` with the audio in the body. All knobs (`language`, `word_timestamps`, etc.) are query parameters.
+        2. **URL** — `Content-Type: application/json` with `{"url": "..."}` in the body. Useful when the audio already lives in object storage. Same query parameters apply.
+        
+        Pulse autodetects the language across 30+ supported locales. Pass `language` explicitly when you already know it — detection is fast but skipping it is faster.
+        
+        ## Examples
+        
+        **cURL** (raw bytes)
+        ```bash
+        curl -X POST "https://api.smallest.ai/waves/v1/pulse/get_text?language=en&word_timestamps=true" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/octet-stream" \\
+          --data-binary "@./call.wav"
+        ```
+        
+        **cURL** (URL)
+        ```bash
+        curl -X POST "https://api.smallest.ai/waves/v1/pulse/get_text?language=en" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -d '{"url": "https://your-bucket.s3.amazonaws.com/call.wav"}'
+        ```
+        
+        **Python** (`pip install smallestai>=4.4.0`)
+        ```python
+        from smallestai import SmallestAI
+        
+        client = SmallestAI(api_key="YOUR_API_KEY")
+        with open("./call.wav", "rb") as f:
+            result = client.waves.transcribe_pulse(
+                request=f.read(),
+                language="en",
+                word_timestamps=True,
+                diarize=True,
+            )
+        print(result.status)         # "success"
+        print(result.transcription)  # the transcript string
+        ```
+        
+        **JavaScript / TypeScript** (using `fetch`)
+        ```typescript
+        import { readFileSync } from "node:fs";
+        
+        const audio = readFileSync("./call.wav");
+        const params = new URLSearchParams({ language: "en", word_timestamps: "true", diarize: "true" });
+        
+        const res = await fetch(`https://api.smallest.ai/waves/v1/pulse/get_text?${params}`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.SMALLEST_API_KEY}`,
+            "Content-Type": "application/octet-stream",
+          },
+          body: audio,
+        });
+        const result = await res.json();
+        console.log(result.transcription);
+        ```
+        
+        ## Common gotchas
+        
+        - **Max file size is 250 MB.** Larger files return HTTP `400` with `{errors: "Audio data too large", status: "error", message: "Error handling audio data"}`. Compress to mono 16 kHz PCM if you're close to the limit; quality is unaffected.
+        - **Formatting flags (`format`, `punctuate`, `capitalize`)** are accepted at the wire level and exposed in the Python SDK as of `smallestai>=4.4.0`. Today they currently return the same transcript regardless of value — pass them in your integration so it works as the behavior changes.
+        - **Webhook-driven flow**: pass `webhook_url` to receive the transcript asynchronously. The endpoint returns immediately; the transcript hits your webhook when ready. Useful for long files where you don't want to hold an HTTP connection open.
+        - **Speaker diarization** (`diarize=true`) adds latency. Skip it if you only need the words.
+        - **JavaScript / TypeScript**: the official `smallestai` npm package predates the Pulse model, so call this endpoint with `fetch` or `axios` as shown above.
+        
         Parameters
         ----------
         request : typing.Union[bytes, typing.Iterator[bytes], typing.AsyncIterator[bytes]]
-
+        
         language : typing.Optional[TranscribePulseWavesRequestLanguage]
             Language of the audio file. Set explicitly to the known language for best accuracy.
-
-            Auto-detection scopes:
-            - `multi-eu` (default) — European set: de, en, fr, it, nl, pt, ru, es.
-            - `multi-indic` — Indic set: en, hi, mr, pa, gu, or, ka, ta, te, ml, bn.
-            - `multi-asian` — East Asian set: en, ja, ko, zh, yue.
-            - `multi` — full multilingual auto-detection across all supported languages.
-
-            Omitting `language` routes to `multi-eu`, which can mis-detect on non-European audio. Always pass `language` explicitly when the source language is known, or pick the regional `multi-*` scope that matches your audio.
-
+            
+            **26 single-language codes** on this endpoint: `en`, `hi`, `de`, `es`, `ru`, `it`, `fr`, `nl`, `pt`, `uk`, `pl`, `cs`, `sk`, `lv`, `et`, `ro`, `fi`, `sv`, `bg`, `hu`, `da`, `lt`, `mt`, `zh`, `ja`, `ko`.
+            
+            **Regional auto-detect aggregators** for unknown audio:
+            - `multi-eu` (default) — auto-detects across all 21 European codes above plus `en`.
+            - `multi-asian` — auto-detects across `zh`, `ko`, `ja`, `en`.
+            
+            Omitting `language` routes to `multi-eu`. See the [Pulse model card](/waves/model-cards/speech-to-text/pulse) for the full table.
+        
         encoding : typing.Optional[TranscribePulseWavesRequestEncoding]
             Audio encoding of the bytes you upload. Mirrors the `encoding`
             parameter on the realtime WS endpoint.
-
+            
             - `linear16`, `linear32` — raw PCM (16-bit and 32-bit)
             - `alaw`, `mulaw` — 8 kHz telephony codecs
             - `opus`, `ogg_opus` — Opus compressed audio (raw and Ogg container)
-
+            
             When omitted, the server detects the format from the file's
             container header (works for `.wav`, `.mp3`, `.flac`, `.ogg`,
             `.m4a`, `.webm`).
-
+        
         webhook_url : typing.Optional[str]
-
+        
         webhook_extra : typing.Optional[str]
-
+        
         word_timestamps : typing.Optional[bool]
             Whether to include word and utterance level timestamps in the response
-
+        
         diarize : typing.Optional[bool]
             Whether to perform speaker diarization
-
+        
         gender_detection : typing.Optional[TranscribePulseWavesRequestGenderDetection]
             Whether to predict the gender of the speaker
-
+        
         emotion_detection : typing.Optional[TranscribePulseWavesRequestEmotionDetection]
             Whether to predict speaker emotions
-
+        
         format : typing.Optional[TranscribePulseWavesRequestFormat]
             Master formatting switch for the transcript. When `false`, forces
             `punctuate=false`, `capitalize=false`, and also disables Inverse
             Text Normalization (ITN) so it cannot silently reintroduce
             punctuation or casing.
-
+            
             When `true`, the `punctuate` and `capitalize` params take effect
             independently. Leave `format=true` and use those two to fine-tune.
-
+        
         punctuate : typing.Optional[TranscribePulseWavesRequestPunctuate]
             When `false`, strips end-of-sentence punctuation (`.`, `,`, `?`, `!`)
             from the transcript, `words[].word`, and
             `utterances[].transcript`. Does not affect casing — use
             `capitalize` for that. Overridden to `false` when `format=false`.
-
+        
         capitalize : typing.Optional[TranscribePulseWavesRequestCapitalize]
             When `false`, lowercases the entire transcript output (transcript,
             `words[].word`, and `utterances[].transcript`). Does not affect
             punctuation — use `punctuate` for that. Overridden to `false`
             when `format=false`.
-
+        
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
-
+        
         Returns
         -------
         TranscribePulseWavesResponse
@@ -1120,6 +1736,14 @@ class WavesClient:
             request_options=request_options,
         )
         return _response.data
+
+    @property
+    def tts(self):
+        if self._tts is None:
+            from .tts.client import TtsClient  # noqa: E402
+
+            self._tts = TtsClient(client_wrapper=self._client_wrapper)
+        return self._tts
 
     @property
     def streaming_tts(self):
@@ -1153,15 +1777,25 @@ class WavesClient:
             self._pulse_stt_streaming = PulseSttStreamingClient(client_wrapper=self._client_wrapper)
         return self._pulse_stt_streaming
 
+    @property
+    def speech_to_speech(self):
+        if self._speech_to_speech is None:
+            from .speech_to_speech.client import SpeechToSpeechClient  # noqa: E402
+
+            self._speech_to_speech = SpeechToSpeechClient(client_wrapper=self._client_wrapper)
+        return self._speech_to_speech
+
 
 class AsyncWavesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._raw_client = AsyncRawWavesClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
+        self._tts: typing.Optional[AsyncTtsClient] = None
         self._streaming_tts: typing.Optional[AsyncStreamingTtsClient] = None
         self._lightning_v2tts: typing.Optional[AsyncLightningV2TtsClient] = None
         self._lightning_v31tts: typing.Optional[AsyncLightningV31TtsClient] = None
         self._pulse_stt_streaming: typing.Optional[AsyncPulseSttStreamingClient] = None
+        self._speech_to_speech: typing.Optional[AsyncSpeechToSpeechClient] = None
 
     @property
     def with_raw_response(self) -> AsyncRawWavesClient:
@@ -1197,7 +1831,7 @@ class AsyncWavesClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1237,7 +1871,7 @@ class AsyncWavesClient:
         from smallestai.waves import PronunciationItem
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1291,7 +1925,7 @@ class AsyncWavesClient:
         from smallestai.waves import PronunciationItem
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1340,7 +1974,7 @@ class AsyncWavesClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1360,7 +1994,7 @@ class AsyncWavesClient:
         *,
         text: str,
         voice_id: str,
-        sample_rate: typing.Optional[SampleRate] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         language: typing.Optional[LightningRequestLanguage] = OMIT,
         output_format: typing.Optional[LightningRequestOutputFormat] = OMIT,
@@ -1377,7 +2011,7 @@ class AsyncWavesClient:
         voice_id : str
             The voice identifier to use for speech generation.
 
-        sample_rate : typing.Optional[SampleRate]
+        sample_rate : typing.Optional[int]
             The sample rate for the generated audio.
 
         speed : typing.Optional[float]
@@ -1404,7 +2038,7 @@ class AsyncWavesClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1434,7 +2068,7 @@ class AsyncWavesClient:
         *,
         text: str,
         voice_id: str,
-        sample_rate: typing.Optional[SampleRate] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         consistency: typing.Optional[float] = OMIT,
         similarity: typing.Optional[float] = OMIT,
@@ -1455,7 +2089,7 @@ class AsyncWavesClient:
         voice_id : str
             The voice identifier to use for speech generation.
 
-        sample_rate : typing.Optional[SampleRate]
+        sample_rate : typing.Optional[int]
             The sample rate for the generated audio.
 
         speed : typing.Optional[float]
@@ -1494,7 +2128,7 @@ class AsyncWavesClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1528,7 +2162,7 @@ class AsyncWavesClient:
         *,
         text: str,
         voice_id: str,
-        sample_rate: typing.Optional[SampleRate] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         consistency: typing.Optional[float] = OMIT,
         similarity: typing.Optional[float] = OMIT,
@@ -1549,7 +2183,7 @@ class AsyncWavesClient:
         voice_id : str
             The voice identifier to use for speech generation.
 
-        sample_rate : typing.Optional[SampleRate]
+        sample_rate : typing.Optional[int]
             The sample rate for the generated audio.
 
         speed : typing.Optional[float]
@@ -1588,7 +2222,7 @@ class AsyncWavesClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1622,7 +2256,7 @@ class AsyncWavesClient:
         *,
         text: str,
         voice_id: str,
-        sample_rate: typing.Optional[SampleRate] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         consistency: typing.Optional[float] = OMIT,
         similarity: typing.Optional[float] = OMIT,
@@ -1657,7 +2291,7 @@ class AsyncWavesClient:
         voice_id : str
             The voice identifier to use for speech generation.
 
-        sample_rate : typing.Optional[SampleRate]
+        sample_rate : typing.Optional[int]
             The sample rate for the generated audio.
 
         speed : typing.Optional[float]
@@ -1696,7 +2330,7 @@ class AsyncWavesClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1732,7 +2366,7 @@ class AsyncWavesClient:
         *,
         text: str,
         voice_id: str,
-        sample_rate: typing.Optional[SampleRate] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         consistency: typing.Optional[float] = OMIT,
         similarity: typing.Optional[float] = OMIT,
@@ -1768,7 +2402,7 @@ class AsyncWavesClient:
         voice_id : str
             The voice identifier to use for speech generation.
 
-        sample_rate : typing.Optional[SampleRate]
+        sample_rate : typing.Optional[int]
             The sample rate for the generated audio.
 
         speed : typing.Optional[float]
@@ -1807,7 +2441,7 @@ class AsyncWavesClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1842,12 +2476,12 @@ class AsyncWavesClient:
         self, model: GetVoicesWavesRequestModel, *, request_options: typing.Optional[RequestOptions] = None
     ) -> GetVoicesWavesResponse:
         """
-        Get voices supported for a given model using the new Waves API.
+        List voices available for Lightning v3.1. The response is the union of the standard and Pro voice catalogs — the API does not return a per-voice "is Pro" flag, so consult the [Lightning v3.1 Pro](/waves/model-cards/text-to-speech/lightning-v-3-1-pro) and [Lightning v3.1](/waves/model-cards/text-to-speech/lightning-v-3-1) model cards for the canonical per-pool voice lists. Use the `voice_id` from this response together with `"model": "lightning_v3.1"` (default) or `"model": "lightning_v3.1_pro"` on the unified `/waves/v1/tts` route to pick the pool.
 
         Parameters
         ----------
         model : GetVoicesWavesRequestModel
-            The model to use for speech synthesis.
+            The catalog to query. Currently only `lightning-v3.1` is supported — the response returns the union of standard Lightning v3.1 voices and Lightning v3.1 Pro voices. The API does not include a per-voice Pro flag; consult the model cards for the canonical per-pool catalogs.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1864,13 +2498,13 @@ class AsyncWavesClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
         async def main() -> None:
             await client.waves.get_voices(
-                model="lightning",
+                model="lightning-v3.1",
             )
 
 
@@ -1913,7 +2547,7 @@ class AsyncWavesClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1955,7 +2589,7 @@ class AsyncWavesClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -1996,7 +2630,7 @@ class AsyncWavesClient:
         from smallestai import AsyncSmallestAI
 
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
 
 
@@ -2011,12 +2645,398 @@ class AsyncWavesClient:
         _response = await self._raw_client.delete_voice(voice_id=voice_id, request_options=request_options)
         return _response.data
 
+    async def synthesize_tts(
+        self,
+        *,
+        text: str,
+        voice_id: str,
+        model: typing.Optional[TtsRequestModel] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
+        speed: typing.Optional[float] = OMIT,
+        language: typing.Optional[TtsRequestLanguage] = OMIT,
+        output_format: typing.Optional[TtsRequestOutputFormat] = OMIT,
+        pronunciation_dicts: typing.Optional[typing.Sequence[str]] = OMIT,
+        word_timestamps: typing.Optional[bool] = OMIT,
+        session_id: typing.Optional[str] = OMIT,
+        request_id: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> typing.AsyncIterator[bytes]:
+        """
+        Synthesize speech from text in a single request. Pass `text` + `voice_id`, get back binary audio.
+        
+        Pick the model with the `model` body parameter: default `lightning_v3.1`, or `lightning_v3.1_pro` for the Pro pool. Other request parameters are identical across models.
+        
+        **Language behaviour on `lightning_v3.1_pro`:** pass `language: en` for UK + American accented English, pass `language: hi` for Indian accented English + Hindi (code-switching), or omit `language` to default to `en + hi` (mixed Indian + Western English coverage). On `lightning_v3.1` the full 12-language catalog applies (see voice catalog).
+        
+        ## When to use this
+        
+        - **Use this** for short utterances you can render before playback (notifications, prompts, batch jobs, audio file generation).
+        - **Use `/waves/v1/tts/live`** when you want playback to start before the full audio is ready (long passages, latency-sensitive apps).
+        - **Use `/waves/v1/tts/live`** (WebSocket) when text arrives incrementally (LLM token streams, live captioning).
+        
+        ## Key features
+        
+        - 44 kHz natural, expressive synthesis
+        - Model selectable per request via `model` body parameter
+        - Cloned voice IDs (`voice_*`) work on `lightning_v3.1` — same param as catalog voices
+        - 12 documented languages on `lightning_v3.1`. On `lightning_v3.1_pro`: `language: en` → UK + American accented English; `language: hi` → Indian accented English + Hindi; omit `language` → defaults to `en + hi`.
+        - Output formats: `pcm`, `mp3`, `wav`, `ulaw`, `alaw`
+        - Sample rates: 8 kHz – 44.1 kHz
+        - Speed: 0.5× – 2×
+        - Per-call pronunciation dictionaries via `pronunciation_dicts`
+        
+        ## Examples
+        
+        **cURL — Lightning v3.1 (default)**
+        ```bash
+        curl -X POST "https://api.smallest.ai/waves/v1/tts" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -H "Accept: audio/wav" \\
+          -d '{
+            "text": "Hello from Waves TTS.",
+            "voice_id": "magnus",
+            "sample_rate": 24000,
+            "output_format": "wav"
+          }' --output speech.wav
+        ```
+        
+        **cURL — Lightning v3.1 Pro (omit `language` → defaults to `en + hi`)**
+        ```bash
+        curl -X POST "https://api.smallest.ai/waves/v1/tts" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -H "Accept: audio/wav" \\
+          -d '{
+            "text": "Hello from the Lightning v3.1 Pro pool.",
+            "voice_id": "meher",
+            "model": "lightning_v3.1_pro",
+            "sample_rate": 24000,
+            "output_format": "wav"
+          }' --output speech.wav
+        ```
+        
+        **cURL — Lightning v3.1 Pro with explicit `language: en` (UK + American accented English)**
+        ```bash
+        curl -X POST "https://api.smallest.ai/waves/v1/tts" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -H "Accept: audio/wav" \\
+          -d '{
+            "text": "Good morning, this is a Pro voice speaking.",
+            "voice_id": "meher",
+            "model": "lightning_v3.1_pro",
+            "language": "en",
+            "sample_rate": 24000,
+            "output_format": "wav"
+          }' --output speech.wav
+        ```
+        
+        **cURL — Lightning v3.1 Pro with explicit `language: hi` (Indian accented English + Hindi)**
+        ```bash
+        curl -X POST "https://api.smallest.ai/waves/v1/tts" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -H "Accept: audio/wav" \\
+          -d '{
+            "text": "Namaste, this is an Indian-accented Pro voice.",
+            "voice_id": "meher",
+            "model": "lightning_v3.1_pro",
+            "language": "hi",
+            "sample_rate": 24000,
+            "output_format": "wav"
+          }' --output speech.wav
+        ```
+        
+        ## Common gotchas
+        
+        - **Set `Accept: audio/wav`.** Omitting it can return an empty or unplayable response.
+        - **Pair voice IDs with the right model.** Voice catalogs differ between `lightning_v3.1` and `lightning_v3.1_pro`. The API does not reject mismatched pairings, but using a Pro-only `voice_id` with `model=lightning_v3.1` (or omitting `model`) can return wrong or hallucinated audio. Pair Pro voices with `model=lightning_v3.1_pro`; standard catalog voices with `model=lightning_v3.1` (the default).
+        - **Cloned voices** (`voice_*` from `add_voice`) work with `lightning_v3.1` only; voice cloning is not available on `lightning_v3.1_pro`.
+        - **44.1 kHz output** is supported but most playback environments are happy with 24 kHz — drop the sample rate if bandwidth matters.
+        
+        Parameters
+        ----------
+        text : str
+            The text to convert to speech.
+        
+        voice_id : str
+            The voice identifier to use for speech generation. See the model card for available voices per model.
+        
+        model : typing.Optional[TtsRequestModel]
+            TTS model to route the request to. Controls which model pool serves
+            this synthesis.
+            
+            - `lightning_v3.1` (default) — standard Lightning v3.1.
+            - `lightning_v3.1_pro` — Lightning v3.1 Pro pool. Improved audio
+              quality and naturalness, with a curated voice catalog. See the
+              [Lightning v3.1 Pro model card](/waves/model-cards/text-to-speech/lightning-v-3-1-pro)
+              for supported voice IDs.
+            
+            Same concurrency and latency profile across both. Other request
+            parameters behave identically.
+        
+        sample_rate : typing.Optional[int]
+            The sample rate for the generated audio.
+        
+        speed : typing.Optional[float]
+            The speed of the generated speech.
+        
+        language : typing.Optional[TtsRequestLanguage]
+            Language code for synthesis. Influences pronunciation, number/date
+            normalization, and phoneme selection.
+            
+            Each voice has its own `tags.language` set in the voice catalog —
+            query `GET /waves/v1/lightning-v3.1/get_voices`. Pass a language
+            the voice was trained on; passing other codes is accepted by the
+            API but produces English-pronounced output.
+            
+            **On `lightning_v3.1`**, the full 12-language catalog applies.
+            
+            **On `lightning_v3.1_pro`**:
+            - Pass `en` → UK + American accented English.
+            - Pass `hi` → Indian accented English + Hindi (code-switching).
+            - Omit `language` → defaults to `en + hi` (mixed Indian + Western English coverage).
+        
+        output_format : typing.Optional[TtsRequestOutputFormat]
+            Format of the returned audio. `pcm` is the lowest-latency option
+            but requires a decoder to play; `mp3` and `wav` are directly
+            playable in browsers and most media players. The server default
+            is `pcm` when the field is omitted — the API playground uses
+            `mp3` so the generated audio is directly playable.
+        
+        pronunciation_dicts : typing.Optional[typing.Sequence[str]]
+            The IDs of the pronunciation dictionaries to use for speech generation. Available on both `lightning_v3.1` and `lightning_v3.1_pro`.
+        
+        word_timestamps : typing.Optional[bool]
+            **WebSocket-only feature.** Accepted on this endpoint but ignored — no per-word timing information is returned in the sync HTTP or SSE response shape. To receive `status: "word_timestamp"` frames with per-word `{ id, word, start, end }` data, use the WebSocket endpoint `wss://api.smallest.ai/waves/v1/tts/live`. See [Word-level timestamps](/waves/documentation/text-to-speech-lightning/word-timestamps).
+        
+        session_id : typing.Optional[str]
+            Optional client-provided session identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Session-Id`.
+        
+        request_id : typing.Optional[str]
+            Optional client-provided request identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Request-Id`.
+        
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration. You can pass in configuration such as `chunk_size`, and more to customize the request and response.
+        
+        Returns
+        -------
+        typing.AsyncIterator[bytes]
+            Synthesized speech retrieved successfully.
+        
+        Examples
+        --------
+        import asyncio
+        
+        from smallestai import AsyncSmallestAI
+        
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        
+        
+        async def main() -> None:
+            await client.waves.synthesize_tts(
+                text="Hello from Waves TTS.",
+                voice_id="magnus",
+            )
+        
+        
+        asyncio.run(main())
+        """
+        async with self._raw_client.synthesize_tts(
+            text=text,
+            voice_id=voice_id,
+            model=model,
+            sample_rate=sample_rate,
+            speed=speed,
+            language=language,
+            output_format=output_format,
+            pronunciation_dicts=pronunciation_dicts,
+            word_timestamps=word_timestamps,
+            session_id=session_id,
+            request_id=request_id,
+            request_options=request_options,
+        ) as r:
+            async for _chunk in r.data:
+                yield _chunk
+
+    async def synthesize_sse_tts(
+        self,
+        *,
+        text: str,
+        voice_id: str,
+        model: typing.Optional[TtsRequestModel] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
+        speed: typing.Optional[float] = OMIT,
+        language: typing.Optional[TtsRequestLanguage] = OMIT,
+        output_format: typing.Optional[TtsRequestOutputFormat] = OMIT,
+        pronunciation_dicts: typing.Optional[typing.Sequence[str]] = OMIT,
+        word_timestamps: typing.Optional[bool] = OMIT,
+        session_id: typing.Optional[str] = OMIT,
+        request_id: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> typing.AsyncIterator[str]:
+        """
+        Synthesize speech and stream the audio back over Server-Sent Events. Same body as `/waves/v1/tts` — the only difference is the response is a stream of base64-encoded PCM chunks instead of one binary blob.
+        
+        Pick the model with the `model` body parameter, same as the sync route.
+        
+        <Note>
+          **The same URL serves the WebSocket endpoint.** `wss://api.smallest.ai/waves/v1/tts/live` accepts a WebSocket upgrade for streaming-text scenarios (LLM token streams, live captioning). The HTTP `POST` documented on this page returns SSE; use `wss://` to use the WebSocket protocol instead. See the [WebSocket reference](/waves/api-reference/api-reference/text-to-speech/tts).
+        </Note>
+        
+        ## When to use this
+        
+        - **Use this** when you want playback to start before synthesis is complete — long passages, latency-sensitive UI, live narration.
+        - **Use sync `/waves/v1/tts`** when total latency doesn't matter and you'd rather get one buffer.
+        - **Use `/waves/v1/tts/live`** (WebSocket) when the *text* arrives incrementally (LLM token stream). SSE assumes you have the full text up front.
+        
+        ## How it works
+        
+        1. POST your text + voice settings — same payload as `/waves/v1/tts`, plus optional `model`.
+        2. The response is `Content-Type: text/event-stream`. Each chunk frame is `event: audio\\n` followed by `data: {"audio": "<base64-pcm>"}\\n\\n`.
+        3. Decode each chunk's `audio` field with base64 and feed the PCM bytes to your audio pipeline (browser `MediaSource`, ffmpeg pipe, raw PCM player, etc.).
+        4. A final `data: {"done": true}\\n\\n` frame marks end of stream.
+        
+        ## Examples
+        
+        **cURL**
+        ```bash
+        curl -N -X POST "https://api.smallest.ai/waves/v1/tts/live" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -d '{
+            "text": "Streaming this paragraph chunk by chunk so playback can start sooner.",
+            "voice_id": "magnus",
+            "sample_rate": 24000,
+            "output_format": "pcm"
+          }'
+        ```
+        
+        ## Common gotchas
+        
+        - **Use a streaming-friendly client.** `curl -N`, Python `iter_lines`, or a `fetch` `ReadableStream` reader. Buffering clients will hide the latency win.
+        - **Audio is base64 inside the event payload**, not the raw event bytes. Decode the `data.audio` field per event.
+        - **`output_format=pcm`** gives the lowest overhead for streaming playback. `wav`/`mp3` work but add per-chunk framing bytes.
+        
+        Parameters
+        ----------
+        text : str
+            The text to convert to speech.
+        
+        voice_id : str
+            The voice identifier to use for speech generation. See the model card for available voices per model.
+        
+        model : typing.Optional[TtsRequestModel]
+            TTS model to route the request to. Controls which model pool serves
+            this synthesis.
+            
+            - `lightning_v3.1` (default) — standard Lightning v3.1.
+            - `lightning_v3.1_pro` — Lightning v3.1 Pro pool. Improved audio
+              quality and naturalness, with a curated voice catalog. See the
+              [Lightning v3.1 Pro model card](/waves/model-cards/text-to-speech/lightning-v-3-1-pro)
+              for supported voice IDs.
+            
+            Same concurrency and latency profile across both. Other request
+            parameters behave identically.
+        
+        sample_rate : typing.Optional[int]
+            The sample rate for the generated audio.
+        
+        speed : typing.Optional[float]
+            The speed of the generated speech.
+        
+        language : typing.Optional[TtsRequestLanguage]
+            Language code for synthesis. Influences pronunciation, number/date
+            normalization, and phoneme selection.
+            
+            Each voice has its own `tags.language` set in the voice catalog —
+            query `GET /waves/v1/lightning-v3.1/get_voices`. Pass a language
+            the voice was trained on; passing other codes is accepted by the
+            API but produces English-pronounced output.
+            
+            **On `lightning_v3.1`**, the full 12-language catalog applies.
+            
+            **On `lightning_v3.1_pro`**:
+            - Pass `en` → UK + American accented English.
+            - Pass `hi` → Indian accented English + Hindi (code-switching).
+            - Omit `language` → defaults to `en + hi` (mixed Indian + Western English coverage).
+        
+        output_format : typing.Optional[TtsRequestOutputFormat]
+            Format of the returned audio. `pcm` is the lowest-latency option
+            but requires a decoder to play; `mp3` and `wav` are directly
+            playable in browsers and most media players. The server default
+            is `pcm` when the field is omitted — the API playground uses
+            `mp3` so the generated audio is directly playable.
+        
+        pronunciation_dicts : typing.Optional[typing.Sequence[str]]
+            The IDs of the pronunciation dictionaries to use for speech generation. Available on both `lightning_v3.1` and `lightning_v3.1_pro`.
+        
+        word_timestamps : typing.Optional[bool]
+            **WebSocket-only feature.** Accepted on this endpoint but ignored — no per-word timing information is returned in the sync HTTP or SSE response shape. To receive `status: "word_timestamp"` frames with per-word `{ id, word, start, end }` data, use the WebSocket endpoint `wss://api.smallest.ai/waves/v1/tts/live`. See [Word-level timestamps](/waves/documentation/text-to-speech-lightning/word-timestamps).
+        
+        session_id : typing.Optional[str]
+            Optional client-provided session identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Session-Id`.
+        
+        request_id : typing.Optional[str]
+            Optional client-provided request identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Request-Id`.
+        
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+        
+        Yields
+        ------
+        typing.AsyncIterator[str]
+            Synthesized speech retrieved successfully.
+        
+        Examples
+        --------
+        import asyncio
+        
+        from smallestai import AsyncSmallestAI
+        
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        
+        
+        async def main() -> None:
+            response = await client.waves.synthesize_sse_tts(
+                text="text",
+                voice_id="voice_id",
+            )
+            async for chunk in response:
+                yield chunk
+        
+        
+        asyncio.run(main())
+        """
+        async with self._raw_client.synthesize_sse_tts(
+            text=text,
+            voice_id=voice_id,
+            model=model,
+            sample_rate=sample_rate,
+            speed=speed,
+            language=language,
+            output_format=output_format,
+            pronunciation_dicts=pronunciation_dicts,
+            word_timestamps=word_timestamps,
+            session_id=session_id,
+            request_id=request_id,
+            request_options=request_options,
+        ) as r:
+            async for _chunk in r.data:
+                yield _chunk
+
     async def synthesize_lightning_v31(
         self,
         *,
         text: str,
         voice_id: str,
-        sample_rate: typing.Optional[SampleRate] = OMIT,
+        model: typing.Optional[LightningV31RequestModel] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         language: typing.Optional[LightningV31RequestLanguage] = OMIT,
         output_format: typing.Optional[LightningV31RequestOutputFormat] = OMIT,
@@ -2026,92 +3046,174 @@ class AsyncWavesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.AsyncIterator[bytes]:
         """
-        Get speech for given text using the Lightning v3.1 model
-
-        ## Overview
-
-        Lightning v3.1 is a 44 kHz text-to-speech model that delivers natural, expressive, and realistic speech synthesis.
-
-        ## Key Features
-
-        * **Voice Cloning Support**: Compatible with cloned voices
-        * **Ultra-Low Latency**: Optimized for real-time applications
-        * **Multi-Language**: Supports English (en) and Hindi (hi)
-        * **Multiple Output Formats**: PCM, MP3, WAV, ulaw, and alaw
-        * **Flexible Sample Rates**: 8000 Hz to 44100 Hz
-        * **Speed Control**: Adjustable from 0.5x to 2x speed
-
+        <Warning>**Endpoint scheduled for retirement.** This URL will stop accepting requests **60 days from the Lightning v3.1 Pro launch (2026-05-15)** — i.e. on **2026-07-14**. The Lightning v3.1 model itself is current and stays. Migrate to [`POST /waves/v1/tts`](/waves/api-reference/api-reference/text-to-speech/synthesize-speech) and select Lightning v3.1 via the `model` body field (default).</Warning>
+        
+        Synthesize speech from text in a single request. The simplest way to get audio when you have the full text up front — pass `text` + `voice_id`, get back binary audio.
+        
+        ## When to use this
+        
+        - **Use this** for short utterances you can render before playback (notifications, prompts, batch jobs, audio file generation).
+        - **Use the SSE streaming endpoint** when you want playback to start before the full audio is ready (long passages, latency-sensitive apps).
+        - **Use the WebSocket endpoint** when text arrives incrementally (LLM token streams, live captioning).
+        
+        ## Key features
+        
+        - 44 kHz natural, expressive synthesis
+        - Cloned voice IDs (`voice_*`) work — same param as catalog voices
+        - 12 documented languages — see the model card for the full list
+        - Output formats: `pcm`, `mp3`, `wav`, `ulaw`, `alaw`
+        - Sample rates: 8 kHz – 44.1 kHz
+        - Speed: 0.5× – 2×
+        - Per-call pronunciation dictionaries via `pronunciation_dicts`
+        
+        ## Examples
+        
+        **cURL**
+        ```bash
+        curl -X POST "https://api.smallest.ai/waves/v1/lightning-v3.1/get_speech" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -H "Accept: audio/wav" \\
+          -d '{
+            "text": "Hello from Lightning v3.1.",
+            "voice_id": "magnus",
+            "sample_rate": 24000,
+            "output_format": "wav"
+          }' --output speech.wav
+        ```
+        
+        **Python** (`pip install smallestai>=4.4.0`)
+        ```python
+        from smallestai import SmallestAI
+        
+        client = SmallestAI(api_key="YOUR_API_KEY")
+        
+        with open("speech.wav", "wb") as f:
+            for chunk in client.waves.synthesize_lightning_v3_1(
+                text="Hello from Lightning v3.1.",
+                voice_id="magnus",
+                sample_rate=24000,
+                output_format="wav",
+                # Optional: cloned voice support
+                # voice_id="voice_FlPKRWI7DX",
+                # Optional: pin pronunciations for specific words
+                # pronunciation_dicts=["<your dict id>"],
+            ):
+                f.write(chunk)
+        ```
+        
+        **JavaScript / TypeScript** (using `fetch`)
+        ```typescript
+        const res = await fetch("https://api.smallest.ai/waves/v1/lightning-v3.1/get_speech", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.SMALLEST_API_KEY}`,
+            "Content-Type": "application/json",
+            Accept: "audio/wav",
+          },
+          body: JSON.stringify({
+            text: "Hello from Lightning v3.1.",
+            voice_id: "magnus",
+            sample_rate: 24000,
+            output_format: "wav",
+          }),
+        });
+        const audio = Buffer.from(await res.arrayBuffer());
+        require("node:fs").writeFileSync("speech.wav", audio);
+        ```
+        
+        ## Common gotchas
+        
+        - **Set `Accept: audio/wav`.** Omitting it can return an empty or unplayable response.
+        - **Cloned voices** (`voice_*` from `add_voice`) work on this endpoint and support `pronunciation_dicts`.
+        - **`pronunciation_dicts` validates IDs at request time.** Passing an unknown ID returns `Invalid input data` — create the dict first via the pronunciation-dicts endpoint and save the returned `id`.
+        - **Pronunciation matching is case-sensitive.** Add both `Synopsis` and `synopsis` if your text uses both casings.
+        - **44.1 kHz output** is supported but most playback environments are happy with 24 kHz — drop the sample rate if bandwidth matters.
+        - **JavaScript / TypeScript**: the official `smallestai` npm package predates Lightning v3.1, so call this endpoint with `fetch` or `axios` as shown above.
+        
         Parameters
         ----------
         text : str
             The text to convert to speech.
-
+        
         voice_id : str
             The voice identifier to use for speech generation.
-
-        sample_rate : typing.Optional[SampleRate]
+        
+        model : typing.Optional[LightningV31RequestModel]
+            TTS model to route the request to.
+            
+            - `lightning_v3.1` (default) — standard Lightning v3.1 pool.
+            - `lightning_v3.1_pro` — Lightning v3.1 Pro pool with a curated
+              voice catalog. See the
+              [Pro model card](/waves/model-cards/text-to-speech/lightning-v-3-1-pro).
+            
+            New integrations should use the unified
+            `/waves/v1/tts` route instead of this endpoint, but the `model`
+            field is supported here for backwards-compatible Pro opt-in.
+        
+        sample_rate : typing.Optional[int]
             The sample rate for the generated audio.
-
+        
         speed : typing.Optional[float]
             The speed of the generated speech.
-
+        
         language : typing.Optional[LightningV31RequestLanguage]
             Language code for synthesis. Influences pronunciation, number/date
             normalization, and phoneme selection.
-
+            
             - **Indian:** `en`, `hi`, `mr` (Marathi), `kn` (Kannada), `ta` (Tamil),
               `bn` (Bengali), `gu` (Gujarati), `te` (Telugu), `ml` (Malayalam),
               `pa` (Punjabi), `or` (Odia)
             - **European:** `es` (Spanish)
-            - `auto` — auto-detect from input text (recommended for code-switching)
-
+        
         output_format : typing.Optional[LightningV31RequestOutputFormat]
             Format of the returned audio. `pcm` is the lowest-latency option
             but requires a decoder to play; `mp3` and `wav` are directly
             playable in browsers and most media players. The server default
             is `pcm` when the field is omitted — the API playground uses
             `mp3` so the generated audio is directly playable.
-
+        
         pronunciation_dicts : typing.Optional[typing.Sequence[str]]
             The IDs of the pronunciation dictionaries to use for speech generation.
-
+        
         session_id : typing.Optional[str]
             Optional client-provided session identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Session-Id`.
-
+        
         request_id : typing.Optional[str]
             Optional client-provided request identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Request-Id`.
-
+        
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration. You can pass in configuration such as `chunk_size`, and more to customize the request and response.
-
+        
         Returns
         -------
         typing.AsyncIterator[bytes]
             Synthesized speech retrieved successfully.
-
+        
         Examples
         --------
         import asyncio
-
+        
         from smallestai import AsyncSmallestAI
-
+        
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
-
-
+        
+        
         async def main() -> None:
             await client.waves.synthesize_lightning_v31(
                 text="Hey i am your a text to speech model",
                 voice_id="daniel",
             )
-
-
+        
+        
         asyncio.run(main())
         """
         async with self._raw_client.synthesize_lightning_v31(
             text=text,
             voice_id=voice_id,
+            model=model,
             sample_rate=sample_rate,
             speed=speed,
             language=language,
@@ -2129,7 +3231,8 @@ class AsyncWavesClient:
         *,
         text: str,
         voice_id: str,
-        sample_rate: typing.Optional[SampleRate] = OMIT,
+        model: typing.Optional[LightningV31RequestModel] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         language: typing.Optional[LightningV31RequestLanguage] = OMIT,
         output_format: typing.Optional[LightningV31RequestOutputFormat] = OMIT,
@@ -2139,87 +3242,177 @@ class AsyncWavesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.AsyncIterator[typing.Any]:
         """
-        Stream speech for given text using the Lightning v3.1 SSE API
-
-        ## Overview
-
-        The Lightning v3.1 SSE API provides real-time text-to-speech streaming capabilities with natural, expressive voice synthesis. This API uses Server-Sent Events (SSE) to deliver audio chunks as they're generated, enabling low-latency audio playback without waiting for the entire audio file to process.
-
-        Lightning v3.1 is a 44 kHz model that produces natural, expressive, and realistic speech, with support for voice cloning.
-
-        ## When to Use
-
-        * **Interactive Applications**: Perfect for chatbots, virtual assistants, and other applications requiring immediate voice responses
-        * **Long-Form Content**: Efficiently stream audio for articles, stories, or other long-form content without buffering delays
-        * **Voice User Interfaces**: Create natural-sounding voice interfaces with minimal perceived latency
-        * **Accessibility Solutions**: Provide real-time audio versions of written content for users with visual impairments
-
-        ## How It Works
-
-        1. **Make a POST Request**: Send your text and voice settings to the API endpoint
-        2. **Receive Audio Chunks**: The API processes your text and streams audio back as base64-encoded chunks with 1024 byte size
-        3. **Process the Stream**: Handle the SSE events to decode and play audio chunks sequentially
-        4. **End of Stream**: The API sends a completion event when all audio has been delivered
-
+        <Warning>**Endpoint scheduled for retirement.** This URL will stop accepting requests **60 days from the Lightning v3.1 Pro launch (2026-05-15)** — i.e. on **2026-07-14**. The Lightning v3.1 model itself is current and stays. Migrate to [`POST /waves/v1/tts/live`](/waves/api-reference/api-reference/text-to-speech/synthesize-speech-sse) and select Lightning v3.1 via the `model` body field (default).</Warning>
+        
+        Synthesize speech and stream the audio back over Server-Sent Events. The body and parameters are identical to the sync `/get_speech` endpoint — the difference is the response is a stream of base64-encoded PCM chunks instead of one binary blob.
+        
+        ## When to use this
+        
+        - **Use this** when you want playback to start before synthesis is complete — long passages, latency-sensitive UI, live narration.
+        - **Use sync `/get_speech`** when total latency doesn't matter and you'd rather get one buffer.
+        - **Use the WebSocket endpoint** when the *text* arrives incrementally (LLM token stream). SSE assumes you have the full text up front.
+        
+        ## How it works
+        
+        1. POST your text + voice settings — same payload as `/get_speech`.
+        2. The response is `Content-Type: text/event-stream`. Each chunk frame is `event: audio\\n` followed by `data: {"audio": "<base64-pcm>"}\\n\\n`.
+        3. Decode each chunk's `audio` field with base64 and feed the PCM bytes to your audio pipeline (browser `MediaSource`, ffmpeg pipe, raw PCM player, etc.).
+        4. A final `data: {"done": true}\\n\\n` frame marks end of stream.
+        
+        ## Examples
+        
+        **cURL**
+        ```bash
+        curl -N -X POST "https://api.smallest.ai/waves/v1/lightning-v3.1/stream" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -d '{
+            "text": "Streaming this paragraph chunk by chunk so playback can start sooner.",
+            "voice_id": "magnus",
+            "sample_rate": 24000,
+            "output_format": "pcm"
+          }'
+        ```
+        
+        **Python** (`pip install smallestai>=4.4.0`)
+        ```python
+        import base64
+        from smallestai import SmallestAI
+        
+        client = SmallestAI(api_key="YOUR_API_KEY")
+        
+        with open("stream.pcm", "wb") as f:
+            for chunk in client.waves.synthesize_sse_lightning_v3_1(
+                text="Streaming this paragraph chunk by chunk so playback can start sooner.",
+                voice_id="magnus",
+                sample_rate=24000,
+                output_format="pcm",
+            ):
+                # Each chunk is `{"audio": "<base64-encoded PCM>"}`.
+                # Decode and pipe to your audio pipeline.
+                if chunk.get("audio"):
+                    f.write(base64.b64decode(chunk["audio"]))
+        ```
+        
+        **JavaScript / TypeScript** (using `fetch` + a reader)
+        ```typescript
+        const res = await fetch("https://api.smallest.ai/waves/v1/lightning-v3.1/stream", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.SMALLEST_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text: "Streaming this paragraph chunk by chunk so playback can start sooner.",
+            voice_id: "magnus",
+            sample_rate: 24000,
+            output_format: "pcm",
+          }),
+        });
+        
+        const reader = res.body!.getReader();
+        const decoder = new TextDecoder();
+        let buf = "";
+        let finished = false;
+        while (!finished) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value);
+          const events = buf.split("\\n\\n");
+          buf = events.pop() ?? "";
+          for (const ev of events) {
+            // SSE frames are "event: audio\\ndata: {json}" or just "data: {json}".
+            // We only care about the data line — pull it out and parse.
+            const dataLine = ev.split("\\n").find((l) => l.startsWith("data:"));
+            if (!dataLine) continue;
+            const payload = JSON.parse(dataLine.slice(5).trim());
+            if (payload.done) { finished = true; break; }
+            if (payload.audio) {
+              const pcm = Buffer.from(payload.audio, "base64");
+              // … hand pcm to your audio pipeline
+            }
+          }
+        }
+        ```
+        
+        ## Common gotchas
+        
+        - **Use a streaming-friendly client.** `curl -N`, Python `iter_lines`, or a `fetch` `ReadableStream` reader. Buffering clients will hide the latency win.
+        - **Audio is base64 inside the event payload**, not the raw event bytes. Decode the `data.audio` field per event.
+        - **`output_format=pcm`** gives the lowest overhead for streaming playback. `wav`/`mp3` work but add per-chunk framing bytes.
+        - **First-chunk latency** depends on model warm-up + network distance. Use `output_format=pcm` and a streaming-friendly client to minimize what you can control.
+        - **JavaScript / TypeScript**: the official `smallestai` npm package predates Lightning v3.1, so call this endpoint with `fetch` as shown above.
+        
         Parameters
         ----------
         text : str
             The text to convert to speech.
-
+        
         voice_id : str
             The voice identifier to use for speech generation.
-
-        sample_rate : typing.Optional[SampleRate]
+        
+        model : typing.Optional[LightningV31RequestModel]
+            TTS model to route the request to.
+            
+            - `lightning_v3.1` (default) — standard Lightning v3.1 pool.
+            - `lightning_v3.1_pro` — Lightning v3.1 Pro pool with a curated
+              voice catalog. See the
+              [Pro model card](/waves/model-cards/text-to-speech/lightning-v-3-1-pro).
+            
+            New integrations should use the unified
+            `/waves/v1/tts` route instead of this endpoint, but the `model`
+            field is supported here for backwards-compatible Pro opt-in.
+        
+        sample_rate : typing.Optional[int]
             The sample rate for the generated audio.
-
+        
         speed : typing.Optional[float]
             The speed of the generated speech.
-
+        
         language : typing.Optional[LightningV31RequestLanguage]
             Language code for synthesis. Influences pronunciation, number/date
             normalization, and phoneme selection.
-
+            
             - **Indian:** `en`, `hi`, `mr` (Marathi), `kn` (Kannada), `ta` (Tamil),
               `bn` (Bengali), `gu` (Gujarati), `te` (Telugu), `ml` (Malayalam),
               `pa` (Punjabi), `or` (Odia)
             - **European:** `es` (Spanish)
-            - `auto` — auto-detect from input text (recommended for code-switching)
-
+        
         output_format : typing.Optional[LightningV31RequestOutputFormat]
             Format of the returned audio. `pcm` is the lowest-latency option
             but requires a decoder to play; `mp3` and `wav` are directly
             playable in browsers and most media players. The server default
             is `pcm` when the field is omitted — the API playground uses
             `mp3` so the generated audio is directly playable.
-
+        
         pronunciation_dicts : typing.Optional[typing.Sequence[str]]
             The IDs of the pronunciation dictionaries to use for speech generation.
-
+        
         session_id : typing.Optional[str]
             Optional client-provided session identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Session-Id`.
-
+        
         request_id : typing.Optional[str]
             Optional client-provided request identifier for correlation. Only alphanumeric characters, hyphens, underscores, and dots are allowed. Max 128 characters. Echoed back in response headers as `X-External-Request-Id`.
-
+        
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
-
+        
         Yields
         ------
         typing.AsyncIterator[typing.Any]
             Synthesized speech retrieved successfully.
-
+        
         Examples
         --------
         import asyncio
-
+        
         from smallestai import AsyncSmallestAI
-
+        
         client = AsyncSmallestAI(
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
         )
-
-
+        
+        
         async def main() -> None:
             response = await client.waves.synthesize_sse_lightning_v31(
                 text="text",
@@ -2227,13 +3420,14 @@ class AsyncWavesClient:
             )
             async for chunk in response:
                 yield chunk
-
-
+        
+        
         asyncio.run(main())
         """
         async with self._raw_client.synthesize_sse_lightning_v31(
             text=text,
             voice_id=voice_id,
+            model=model,
             sample_rate=sample_rate,
             speed=speed,
             language=language,
@@ -2264,82 +3458,149 @@ class AsyncWavesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> TranscribePulseWavesResponse:
         """
-        Convert speech to text using file upload with the Pulse STT POST API
-
-        The STT POST API allows you to convert speech to text using two different input methods:
-
-        1. **Raw Audio Bytes** (`application/octet-stream`) - Send raw audio data with all parameters as query parameters
-        2. **Audio URL** (`application/json`) - Provide only a URL to an audio file in the JSON body, with all other parameters as query parameters
-
-        Both methods use our Pulse STT model with automatic language detection across 30+ languages.
-
+        Transcribe an audio file to text using the Pulse model. The fastest way to get a transcript when you already have a recording — pass either the raw bytes or a URL.
+        
+        ## When to use this
+        
+        Use this endpoint when you have a complete audio file (call recording, voicemail, podcast episode) and want the transcript back in one response. For live transcription as audio arrives, use the realtime WebSocket endpoint (`WSS /waves/v1/pulse/get_text`) instead.
+        
+        ## Input methods
+        
+        Send the audio in one of two ways:
+        
+        1. **Raw bytes** — `Content-Type: application/octet-stream` with the audio in the body. All knobs (`language`, `word_timestamps`, etc.) are query parameters.
+        2. **URL** — `Content-Type: application/json` with `{"url": "..."}` in the body. Useful when the audio already lives in object storage. Same query parameters apply.
+        
+        Pulse autodetects the language across 30+ supported locales. Pass `language` explicitly when you already know it — detection is fast but skipping it is faster.
+        
+        ## Examples
+        
+        **cURL** (raw bytes)
+        ```bash
+        curl -X POST "https://api.smallest.ai/waves/v1/pulse/get_text?language=en&word_timestamps=true" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/octet-stream" \\
+          --data-binary "@./call.wav"
+        ```
+        
+        **cURL** (URL)
+        ```bash
+        curl -X POST "https://api.smallest.ai/waves/v1/pulse/get_text?language=en" \\
+          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
+          -H "Content-Type: application/json" \\
+          -d '{"url": "https://your-bucket.s3.amazonaws.com/call.wav"}'
+        ```
+        
+        **Python** (`pip install smallestai>=4.4.0`)
+        ```python
+        from smallestai import SmallestAI
+        
+        client = SmallestAI(api_key="YOUR_API_KEY")
+        with open("./call.wav", "rb") as f:
+            result = client.waves.transcribe_pulse(
+                request=f.read(),
+                language="en",
+                word_timestamps=True,
+                diarize=True,
+            )
+        print(result.status)         # "success"
+        print(result.transcription)  # the transcript string
+        ```
+        
+        **JavaScript / TypeScript** (using `fetch`)
+        ```typescript
+        import { readFileSync } from "node:fs";
+        
+        const audio = readFileSync("./call.wav");
+        const params = new URLSearchParams({ language: "en", word_timestamps: "true", diarize: "true" });
+        
+        const res = await fetch(`https://api.smallest.ai/waves/v1/pulse/get_text?${params}`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.SMALLEST_API_KEY}`,
+            "Content-Type": "application/octet-stream",
+          },
+          body: audio,
+        });
+        const result = await res.json();
+        console.log(result.transcription);
+        ```
+        
+        ## Common gotchas
+        
+        - **Max file size is 250 MB.** Larger files return HTTP `400` with `{errors: "Audio data too large", status: "error", message: "Error handling audio data"}`. Compress to mono 16 kHz PCM if you're close to the limit; quality is unaffected.
+        - **Formatting flags (`format`, `punctuate`, `capitalize`)** are accepted at the wire level and exposed in the Python SDK as of `smallestai>=4.4.0`. Today they currently return the same transcript regardless of value — pass them in your integration so it works as the behavior changes.
+        - **Webhook-driven flow**: pass `webhook_url` to receive the transcript asynchronously. The endpoint returns immediately; the transcript hits your webhook when ready. Useful for long files where you don't want to hold an HTTP connection open.
+        - **Speaker diarization** (`diarize=true`) adds latency. Skip it if you only need the words.
+        - **JavaScript / TypeScript**: the official `smallestai` npm package predates the Pulse model, so call this endpoint with `fetch` or `axios` as shown above.
+        
         Parameters
         ----------
         request : typing.Union[bytes, typing.Iterator[bytes], typing.AsyncIterator[bytes]]
-
+        
         language : typing.Optional[TranscribePulseWavesRequestLanguage]
             Language of the audio file. Set explicitly to the known language for best accuracy.
-
-            Auto-detection scopes:
-            - `multi-eu` (default) — European set: de, en, fr, it, nl, pt, ru, es.
-            - `multi-indic` — Indic set: en, hi, mr, pa, gu, or, ka, ta, te, ml, bn.
-            - `multi-asian` — East Asian set: en, ja, ko, zh, yue.
-            - `multi` — full multilingual auto-detection across all supported languages.
-
-            Omitting `language` routes to `multi-eu`, which can mis-detect on non-European audio. Always pass `language` explicitly when the source language is known, or pick the regional `multi-*` scope that matches your audio.
-
+            
+            **26 single-language codes** on this endpoint: `en`, `hi`, `de`, `es`, `ru`, `it`, `fr`, `nl`, `pt`, `uk`, `pl`, `cs`, `sk`, `lv`, `et`, `ro`, `fi`, `sv`, `bg`, `hu`, `da`, `lt`, `mt`, `zh`, `ja`, `ko`.
+            
+            **Regional auto-detect aggregators** for unknown audio:
+            - `multi-eu` (default) — auto-detects across all 21 European codes above plus `en`.
+            - `multi-asian` — auto-detects across `zh`, `ko`, `ja`, `en`.
+            
+            Omitting `language` routes to `multi-eu`. See the [Pulse model card](/waves/model-cards/speech-to-text/pulse) for the full table.
+        
         encoding : typing.Optional[TranscribePulseWavesRequestEncoding]
             Audio encoding of the bytes you upload. Mirrors the `encoding`
             parameter on the realtime WS endpoint.
-
+            
             - `linear16`, `linear32` — raw PCM (16-bit and 32-bit)
             - `alaw`, `mulaw` — 8 kHz telephony codecs
             - `opus`, `ogg_opus` — Opus compressed audio (raw and Ogg container)
-
+            
             When omitted, the server detects the format from the file's
             container header (works for `.wav`, `.mp3`, `.flac`, `.ogg`,
             `.m4a`, `.webm`).
-
+        
         webhook_url : typing.Optional[str]
-
+        
         webhook_extra : typing.Optional[str]
-
+        
         word_timestamps : typing.Optional[bool]
             Whether to include word and utterance level timestamps in the response
-
+        
         diarize : typing.Optional[bool]
             Whether to perform speaker diarization
-
+        
         gender_detection : typing.Optional[TranscribePulseWavesRequestGenderDetection]
             Whether to predict the gender of the speaker
-
+        
         emotion_detection : typing.Optional[TranscribePulseWavesRequestEmotionDetection]
             Whether to predict speaker emotions
-
+        
         format : typing.Optional[TranscribePulseWavesRequestFormat]
             Master formatting switch for the transcript. When `false`, forces
             `punctuate=false`, `capitalize=false`, and also disables Inverse
             Text Normalization (ITN) so it cannot silently reintroduce
             punctuation or casing.
-
+            
             When `true`, the `punctuate` and `capitalize` params take effect
             independently. Leave `format=true` and use those two to fine-tune.
-
+        
         punctuate : typing.Optional[TranscribePulseWavesRequestPunctuate]
             When `false`, strips end-of-sentence punctuation (`.`, `,`, `?`, `!`)
             from the transcript, `words[].word`, and
             `utterances[].transcript`. Does not affect casing — use
             `capitalize` for that. Overridden to `false` when `format=false`.
-
+        
         capitalize : typing.Optional[TranscribePulseWavesRequestCapitalize]
             When `false`, lowercases the entire transcript output (transcript,
             `words[].word`, and `utterances[].transcript`). Does not affect
             punctuation — use `punctuate` for that. Overridden to `false`
             when `format=false`.
-
+        
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
-
+        
         Returns
         -------
         TranscribePulseWavesResponse
@@ -2361,6 +3622,14 @@ class AsyncWavesClient:
             request_options=request_options,
         )
         return _response.data
+
+    @property
+    def tts(self):
+        if self._tts is None:
+            from .tts.client import AsyncTtsClient  # noqa: E402
+
+            self._tts = AsyncTtsClient(client_wrapper=self._client_wrapper)
+        return self._tts
 
     @property
     def streaming_tts(self):
@@ -2393,3 +3662,11 @@ class AsyncWavesClient:
 
             self._pulse_stt_streaming = AsyncPulseSttStreamingClient(client_wrapper=self._client_wrapper)
         return self._pulse_stt_streaming
+
+    @property
+    def speech_to_speech(self):
+        if self._speech_to_speech is None:
+            from .speech_to_speech.client import AsyncSpeechToSpeechClient  # noqa: E402
+
+            self._speech_to_speech = AsyncSpeechToSpeechClient(client_wrapper=self._client_wrapper)
+        return self._speech_to_speech

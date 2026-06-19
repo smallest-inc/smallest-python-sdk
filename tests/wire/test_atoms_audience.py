@@ -17,7 +17,6 @@ def test_atoms_audience_create_audience_with_csv_upload() -> None:
         file="example_file",
         name="name",
         phone_number_column_name="phoneNumberColumnName",
-        identifier_column_name="identifierColumnName",
     )
     verify_request_count(test_id, "POST", "/audience", None, 1)
 
@@ -49,9 +48,9 @@ def test_atoms_audience_get_audience_members() -> None:
     client.atoms.audience.get_audience_members(
         id="60d0fe4f5311236168a109ca",
         page=1,
-        limit=10,
+        offset=10,
     )
-    verify_request_count(test_id, "GET", "/audience/60d0fe4f5311236168a109ca/members", {"page": "1", "limit": "10"}, 1)
+    verify_request_count(test_id, "GET", "/audience/60d0fe4f5311236168a109ca/members", {"page": "1", "offset": "10"}, 1)
 
 
 def test_atoms_audience_add_audience_members() -> None:

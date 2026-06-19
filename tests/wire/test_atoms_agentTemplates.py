@@ -1,11 +1,11 @@
 from .conftest import get_client, verify_request_count
 
 
-def test_atoms_agentTemplates_get_agent_templates() -> None:
-    """Test getAgentTemplates endpoint with WireMock"""
-    test_id = "atoms.agent_templates.get_agent_templates.0"
+def test_atoms_agentTemplates_list_agent_templates() -> None:
+    """Test list_agent_templates endpoint with WireMock"""
+    test_id = "atoms.agent_templates.list_agent_templates.0"
     client = get_client(test_id)
-    client.atoms.agent_templates.get_agent_templates()
+    client.atoms.agent_templates.list_agent_templates()
     verify_request_count(test_id, "GET", "/agent/template", None, 1)
 
 

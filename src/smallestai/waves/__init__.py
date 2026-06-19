@@ -6,27 +6,16 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
+    from . import lightning_v2tts, lightning_v31tts, pulse_stt_streaming, speech_to_speech, streaming_tts, tts
     from .types.pronunciation_item import PronunciationItem
-    from . import (
-        lightning_v2tts,
-        lightning_v31tts,
-        pulse_stt_streaming,
-        streaming_tts,
-    )
-    # Backward-compat shims for the 4.3.1 surface (source in stream_tts.py,
-    # protected by .fernignore). Use the namespaced Fern client for new code:
-    # `client.waves.lightning_v31tts.connect(...)`.
-    from .stream_tts import WavesStreamingTTS, TTSConfig
 _dynamic_imports: typing.Dict[str, str] = {
+    "PronunciationItem": ".types.pronunciation_item",
     "lightning_v2tts": ".lightning_v2tts",
     "lightning_v31tts": ".lightning_v31tts",
     "pulse_stt_streaming": ".pulse_stt_streaming",
+    "speech_to_speech": ".speech_to_speech",
     "streaming_tts": ".streaming_tts",
-    # Backward-compat shims:
-    "WavesStreamingTTS": ".stream_tts",
-    "TTSConfig": ".stream_tts",
-    # Type re-exports for generated tests:
-    "PronunciationItem": ".types.pronunciation_item",
+    "tts": ".tts",
 }
 
 
@@ -52,12 +41,11 @@ def __dir__():
 
 
 __all__ = [
+    "PronunciationItem",
     "lightning_v2tts",
     "lightning_v31tts",
     "pulse_stt_streaming",
+    "speech_to_speech",
     "streaming_tts",
-    # Backward-compat shims
-    "WavesStreamingTTS",
-    "TTSConfig",
-    "PronunciationItem"
+    "tts",
 ]

@@ -1,5 +1,4 @@
 from .conftest import get_client, verify_request_count
-
 from smallestai.atoms.webhooks import PostWebhookRequestEventsItem
 
 
@@ -18,7 +17,12 @@ def test_atoms_webhooks_create_a_webhook() -> None:
     client.atoms.webhooks.create_a_webhook(
         endpoint="https://example.com/webhook",
         description="Webhook for conversation events",
-        events=[PostWebhookRequestEventsItem()],
+        events=[
+            PostWebhookRequestEventsItem(
+                agent_id="60d0fe4f5311236168a109ca",
+                event_type="pre-conversation",
+            )
+        ],
     )
     verify_request_count(test_id, "POST", "/webhook", None, 1)
 
@@ -43,11 +47,11 @@ def test_atoms_webhooks_get_webhook_subscriptions_for_an_agent() -> None:
     verify_request_count(test_id, "GET", "/agent/agentId/webhook-subscriptions", None, 1)
 
 
-def test_atoms_webhooks_create_webhook_subscriptions_for_an_agent() -> None:
-    """Test createWebhookSubscriptionsForAnAgent endpoint with WireMock"""
-    test_id = "atoms.webhooks.create_webhook_subscriptions_for_an_agent.0"
+def test_atoms_webhooks_replace_webhook_subscriptions_for_an_agent() -> None:
+    """Test replaceWebhookSubscriptionsForAnAgent endpoint with WireMock"""
+    test_id = "atoms.webhooks.replace_webhook_subscriptions_for_an_agent.0"
     client = get_client(test_id)
-    client.atoms.webhooks.create_webhook_subscriptions_for_an_agent(
+    client.atoms.webhooks.replace_webhook_subscriptions_for_an_agent(
         agent_id="agentId",
         event_types=["pre-conversation"],
         webhook_id="60d0fe4f5311236168a109ca",

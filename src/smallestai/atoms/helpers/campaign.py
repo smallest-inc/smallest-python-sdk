@@ -73,7 +73,7 @@ class Campaign:
             "maxRetries": max_retries,
             "retryDelay": retry_delay,
         }
-        response = requests.post(url, headers=self._get_headers(), json=payload)
+        response = requests.post(url, headers=self._get_headers(), json=payload)  # type: ignore[arg-type]
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 

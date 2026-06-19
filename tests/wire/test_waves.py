@@ -1,5 +1,4 @@
 from .conftest import get_client, verify_request_count
-
 from smallestai.waves import PronunciationItem
 
 
@@ -117,9 +116,9 @@ def test_waves_get_voices() -> None:
     test_id = "waves.get_voices.0"
     client = get_client(test_id)
     client.waves.get_voices(
-        model="lightning",
+        model="lightning-v3.1",
     )
-    verify_request_count(test_id, "GET", "/waves/v1/lightning/get_voices", None, 1)
+    verify_request_count(test_id, "GET", "/waves/v1/lightning-v3.1/get_voices", None, 1)
 
 
 def test_waves_add_voice() -> None:
@@ -149,6 +148,30 @@ def test_waves_delete_voice() -> None:
         voice_id="voiceId",
     )
     verify_request_count(test_id, "DELETE", "/waves/v1/lightning-large", None, 1)
+
+
+def test_waves_synthesize_tts() -> None:
+    """Test synthesize_tts endpoint with WireMock"""
+    test_id = "waves.synthesize_tts.0"
+    client = get_client(test_id)
+    for _ in client.waves.synthesize_tts(
+        text="Hello from Waves TTS.",
+        voice_id="magnus",
+    ):
+        pass
+    verify_request_count(test_id, "POST", "/waves/v1/tts", None, 1)
+
+
+def test_waves_synthesize_sse_tts() -> None:
+    """Test synthesize_sse_tts endpoint with WireMock"""
+    test_id = "waves.synthesize_sse_tts.0"
+    client = get_client(test_id)
+    for _ in client.waves.synthesize_sse_tts(
+        text="text",
+        voice_id="voice_id",
+    ):
+        pass
+    verify_request_count(test_id, "POST", "/waves/v1/tts/live", None, 1)
 
 
 def test_waves_synthesize_lightning_v31() -> None:

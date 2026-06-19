@@ -2,3 +2,6 @@
 
 # isort: skip_file
 
+from .types.post_prompt_scoring_score_request_version_id import PostPromptScoringScoreRequestVersionId
+
+__all__ = ["PostPromptScoringScoreRequestVersionId"]

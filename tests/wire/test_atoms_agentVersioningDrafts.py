@@ -95,6 +95,5 @@ def test_atoms_agentVersioningDrafts_edit_draft_config_prompt_tools_post_call_me
     client.atoms.agent_versioning_drafts.edit_draft_config_prompt_tools_post_call_metrics_voice_etc(
         id="60d0fe4f5311236168a109ca",
         draft_id="draftId",
-        name="name",
     )
     verify_request_count(test_id, "PATCH", "/agent/60d0fe4f5311236168a109ca/drafts/draftId/config", None, 1)

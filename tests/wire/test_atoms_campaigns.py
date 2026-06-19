@@ -41,11 +41,11 @@ def test_atoms_campaigns_delete_a_campaign() -> None:
     verify_request_count(test_id, "DELETE", "/campaign/id", None, 1)
 
 
-def test_atoms_campaigns_start_a_campaign() -> None:
-    """Test startACampaign endpoint with WireMock"""
-    test_id = "atoms.campaigns.start_a_campaign.0"
+def test_atoms_campaigns_start_or_resume_a_campaign() -> None:
+    """Test startOrResumeACampaign endpoint with WireMock"""
+    test_id = "atoms.campaigns.start_or_resume_a_campaign.0"
     client = get_client(test_id)
-    client.atoms.campaigns.start_a_campaign(
+    client.atoms.campaigns.start_or_resume_a_campaign(
         id="id",
     )
     verify_request_count(test_id, "POST", "/campaign/id/start", None, 1)

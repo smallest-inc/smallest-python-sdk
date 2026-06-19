@@ -8,12 +8,18 @@ from importlib import import_module
 if typing.TYPE_CHECKING:
     from . import atoms, waves
     from ._default_clients import DefaultAioHttpClient, DefaultAsyncHttpxClient
+    from .atoms.client import AsyncAtomsClient, AtomsClient
     from .client import AsyncSmallestAI, SmallestAI
+    from .waves.client import AsyncWavesClient, WavesClient
 _dynamic_imports: typing.Dict[str, str] = {
+    "AsyncAtomsClient": ".atoms.client",
     "AsyncSmallestAI": ".client",
+    "AsyncWavesClient": ".waves.client",
+    "AtomsClient": ".atoms.client",
     "DefaultAioHttpClient": "._default_clients",
     "DefaultAsyncHttpxClient": "._default_clients",
     "SmallestAI": ".client",
+    "WavesClient": ".waves.client",
     "atoms": ".atoms",
     "waves": ".waves",
 }
@@ -40,4 +46,15 @@ def __dir__():
     return sorted(lazy_attrs)
 
 
-__all__ = ["AsyncSmallestAI", "DefaultAioHttpClient", "DefaultAsyncHttpxClient", "SmallestAI", "atoms", "waves"]
+__all__ = [
+    "AsyncAtomsClient",
+    "AsyncSmallestAI",
+    "AsyncWavesClient",
+    "AtomsClient",
+    "DefaultAioHttpClient",
+    "DefaultAsyncHttpxClient",
+    "SmallestAI",
+    "WavesClient",
+    "atoms",
+    "waves",
+]

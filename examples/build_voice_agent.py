@@ -25,7 +25,7 @@ from smallestai.environment import SmallestAIEnvironment
 from smallestai.atoms.helpers import as_page
 
 
-def _id_of(obj) -> str:
+def _id_of(obj):
     """Resource id — agents expose `_id`, versions expose `id`."""
     return getattr(obj, "id", None) or getattr(obj, "_id", None)
 
