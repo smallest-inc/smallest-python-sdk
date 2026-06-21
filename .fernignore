@@ -23,6 +23,7 @@ src/smallestai/waves/raw_client.py
 # types from the package root. Preserve the re-exports. See SDK_ESCALATIONS.log [1].
 src/smallestai/atoms/webhooks/__init__.py
 src/smallestai/atoms/prompt_scoring/__init__.py
+src/smallestai/atoms/__init__.py
 
 # Customer-owned CI / release automation
 .github/workflows/**

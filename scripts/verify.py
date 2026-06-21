@@ -72,6 +72,37 @@ def check_wire_coverage():
     print(f"  {DIM}totals: {tot_m} methods, {tot_w} wire tests{END}")
 
 
+# ---------------------------------------------------------------- layer 1b
+def check_wire_imports():
+    """Import every `from smallestai... import X` in the wire tests.
+
+    mypy CANNOT catch a missing lazy __init__ export (the generated __getattr__ is typed
+    `-> Any`), so a type stripped by exclude_types_from_init_exports passes mypy but fails
+    at import/collection time. This check catches that class without needing Docker/WireMock.
+    """
+    import importlib
+
+    hdr("1b. WIRE-TEST IMPORTS — every `from smallestai import ...` resolves")
+    pat = re.compile(r"^from (smallestai[\w.]*) import (.+)$")
+    n = bad = 0
+    for f in sorted(WIRE.glob("test_*.py")):
+        for line in f.read_text().splitlines()[:10]:
+            mt = pat.match(line.strip())
+            if not mt:
+                continue
+            mod, names = mt.group(1), mt.group(2)
+            for name in [x.strip() for x in names.split(",") if x.strip()]:
+                n += 1
+                try:
+                    getattr(importlib.import_module(mod), name)
+                except Exception as e:
+                    bad += 1
+                    failures.append(f"wire-import: {f.name}: from {mod} import {name} -> {type(e).__name__}")
+                    print(f"  {RED}FAIL{END} {f.name}: from {mod} import {name}")
+    if not bad:
+        print(f"  {GREEN}ok{END}   all {n} wire-test imports resolve")
+
+
 # ---------------------------------------------------------------- live client
 def live_client():
     key = os.environ.get("SMALLEST_API_KEY")
@@ -197,6 +228,7 @@ def check_helper_coverage():
 def main():
     print(f"{DIM}smallestai pre-release verification — {ROOT.name}{END}")
     check_wire_coverage()
+    check_wire_imports()
     client = live_client()
     if client is None:
         hdr("2-3. LIVE LAYERS — SKIPPED (set SMALLEST_API_KEY to run)")
