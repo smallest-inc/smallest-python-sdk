@@ -2,3 +2,8 @@
 
 # isort: skip_file
 
+# .fernignore-preserved: see webhooks/__init__.py — generator 5.12.12 strips sub-package
+# type exports, but the generated wire test imports this from the package root.
+from .types.post_prompt_scoring_score_request_version_id import PostPromptScoringScoreRequestVersionId
+
+__all__ = ["PostPromptScoringScoreRequestVersionId"]

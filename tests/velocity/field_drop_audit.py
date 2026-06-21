@@ -44,8 +44,8 @@ CHECKS = {
     "user": lambda: c.atoms.user.get_user_details().data,
     "agent": _first_agent,
     "agent_template": lambda: as_page(c.atoms.agent_templates.list_agent_templates()).items[0],
-    "knowledge_base": lambda: as_page(c.atoms.knowledge_base.get_all_knowledge_bases()).items[0],
-    "phone_number": lambda: as_page(c.atoms.phone_numbers.get_acquired_phone_numbers()).items[0],
+    "knowledge_base": lambda: as_page(c.atoms.knowledge_base.list()).items[0],
+    "phone_number": lambda: as_page(c.atoms.phone_numbers.list()).items[0],
     "call": lambda: as_page(c.atoms.calls.list()).items[0],
 }
 

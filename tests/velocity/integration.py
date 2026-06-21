@@ -66,11 +66,11 @@ def _templates():
 
 
 def _kb_list():
-    return f"{len(as_page(c.atoms.knowledge_base.get_all_knowledge_bases()).items)} KBs"
+    return f"{len(as_page(c.atoms.knowledge_base.list()).items)} KBs"
 
 
 def _phone_list():
-    pg = as_page(c.atoms.phone_numbers.get_acquired_phone_numbers())
+    pg = as_page(c.atoms.phone_numbers.list())
     return f"{len(pg.items)} numbers"
 
 

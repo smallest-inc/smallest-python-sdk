@@ -18,6 +18,12 @@ src/smallestai/waves/__init__.py
 src/smallestai/waves/client.py
 src/smallestai/waves/raw_client.py
 
+# Sub-package __init__ type re-exports: generator 5.12.12 strips sub-package type
+# exports (exclude_types_from_init_exports), but generated wire tests import these
+# types from the package root. Preserve the re-exports. See SDK_ESCALATIONS.log [1].
+src/smallestai/atoms/webhooks/__init__.py
+src/smallestai/atoms/prompt_scoring/__init__.py
+
 # Customer-owned CI / release automation
 .github/workflows/**
 
@@ -31,6 +37,7 @@ MIGRATION.md
 RELEASE.md
 
 # Self-protect: customer owns their .fernignore
+.gitignore
 .fernignore
 
 # Replay's own state
