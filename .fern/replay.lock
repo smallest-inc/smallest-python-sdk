@@ -6,14 +6,20 @@ generations:
     timestamp: 2026-05-21T17:17:53.456Z
     cli_version: unknown
     generator_versions: {}
-current_generation: 06769f9337d7038084b1848dee0f606ef1a80360
+  - commit_sha: e6df8b56a0372564733a88670e0762c88504e06f
+    tree_hash: da76bc5f5e2974a058da125c2595e79702e11f4d
+    timestamp: 2026-06-21T21:36:48.433Z
+    cli_version: unknown
+    generator_versions:
+      fernapi/fern-python-sdk: 5.12.12
+current_generation: e6df8b56a0372564733a88670e0762c88504e06f
 patches:
   - id: patch-0c9e9b4e
     content_hash: sha256:43cbb1c853a3de0a20a4d1e151169f4039eec0f4d998b32978cb5038f2a3b665
     original_commit: 0c9e9b4e2286bd64653a1bdeb91a2b871a56668e
     original_message: "refactor: rename agent-swarm -> agent-crew across SDK + CLI (4.4.2)"
     original_author: Maharshi Chattopadhyay <maharshichattopadhyay@Maharshis-MacBook-Pro-M4.local>
-    base_generation: 06769f9337d7038084b1848dee0f606ef1a80360
+    base_generation: e6df8b56a0372564733a88670e0762c88504e06f
     files:
       - src/smallestai/atoms/swarm/__init__.py
       - src/smallestai/atoms/swarm/clients/__init__.py
@@ -169,3 +175,4 @@ patches:
       -from smallestai.atoms.swarm.nodes.output_swarm import OutputSwarmNode
       -
       -__all__ = ["BackgroundSwarmNode", "OutputSwarmNode", "SwarmNode"]
+    user_owned: true
