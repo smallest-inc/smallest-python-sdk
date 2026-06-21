@@ -16,15 +16,16 @@ from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
-from .types.delete_campaign_id_response import DeleteCampaignIdResponse
-from .types.get_campaign_id_response import GetCampaignIdResponse
-from .types.get_campaign_request_sort_field import GetCampaignRequestSortField
-from .types.get_campaign_request_sort_order import GetCampaignRequestSortOrder
-from .types.get_campaign_request_status import GetCampaignRequestStatus
-from .types.get_campaign_response import GetCampaignResponse
-from .types.post_campaign_id_pause_response import PostCampaignIdPauseResponse
-from .types.post_campaign_id_start_response import PostCampaignIdStartResponse
-from .types.post_campaign_response import PostCampaignResponse
+from .types.create_campaigns_response import CreateCampaignsResponse
+from .types.delete_campaigns_response import DeleteCampaignsResponse
+from .types.export_logs_campaigns_response_item import ExportLogsCampaignsResponseItem
+from .types.get_campaigns_response import GetCampaignsResponse
+from .types.list_campaigns_request_sort_field import ListCampaignsRequestSortField
+from .types.list_campaigns_request_sort_order import ListCampaignsRequestSortOrder
+from .types.list_campaigns_request_status import ListCampaignsRequestStatus
+from .types.list_campaigns_response import ListCampaignsResponse
+from .types.pause_campaigns_response import PauseCampaignsResponse
+from .types.start_or_resume_campaigns_response import StartOrResumeCampaignsResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -35,17 +36,17 @@ class RawCampaignsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def retrieve_all_campaigns(
+    def list(
         self,
         *,
         page: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
-        status: typing.Optional[GetCampaignRequestStatus] = None,
+        status: typing.Optional[ListCampaignsRequestStatus] = None,
         search: typing.Optional[str] = None,
-        sort_field: typing.Optional[GetCampaignRequestSortField] = None,
-        sort_order: typing.Optional[GetCampaignRequestSortOrder] = None,
+        sort_field: typing.Optional[ListCampaignsRequestSortField] = None,
+        sort_order: typing.Optional[ListCampaignsRequestSortOrder] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[GetCampaignResponse]:
+    ) -> HttpResponse[ListCampaignsResponse]:
         """
         Get all campaigns for the authenticated organization.
 
@@ -57,16 +58,16 @@ class RawCampaignsClient:
         offset : typing.Optional[int]
             Number of campaigns per page
 
-        status : typing.Optional[GetCampaignRequestStatus]
+        status : typing.Optional[ListCampaignsRequestStatus]
             Filter campaigns by status
 
         search : typing.Optional[str]
             Search campaigns by name
 
-        sort_field : typing.Optional[GetCampaignRequestSortField]
+        sort_field : typing.Optional[ListCampaignsRequestSortField]
             Field to sort by
 
-        sort_order : typing.Optional[GetCampaignRequestSortOrder]
+        sort_order : typing.Optional[ListCampaignsRequestSortOrder]
             Sort direction
 
         request_options : typing.Optional[RequestOptions]
@@ -74,7 +75,7 @@ class RawCampaignsClient:
 
         Returns
         -------
-        HttpResponse[GetCampaignResponse]
+        HttpResponse[ListCampaignsResponse]
             A list of campaigns
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -94,9 +95,9 @@ class RawCampaignsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetCampaignResponse,
+                    ListCampaignsResponse,
                     construct_type(
-                        type_=GetCampaignResponse,  # type: ignore
+                        type_=ListCampaignsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -143,7 +144,7 @@ class RawCampaignsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def create_a_campaign(
+    def create(
         self,
         *,
         name: str,
@@ -155,7 +156,7 @@ class RawCampaignsClient:
         max_retries: typing.Optional[int] = OMIT,
         retry_delay: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PostCampaignResponse]:
+    ) -> HttpResponse[CreateCampaignsResponse]:
         """
         Create a campaign
 
@@ -196,7 +197,7 @@ class RawCampaignsClient:
 
         Returns
         -------
-        HttpResponse[PostCampaignResponse]
+        HttpResponse[CreateCampaignsResponse]
             Campaign created successfully. Note: the response is the raw Mongoose document — `agentId`
             and `audienceId` are plain ObjectId strings here, not nested objects as returned by GET endpoints.
         """
@@ -223,9 +224,9 @@ class RawCampaignsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostCampaignResponse,
+                    CreateCampaignsResponse,
                     construct_type(
-                        type_=PostCampaignResponse,  # type: ignore
+                        type_=CreateCampaignsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -283,9 +284,9 @@ class RawCampaignsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_a_campaign(
+    def get(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[GetCampaignIdResponse]:
+    ) -> HttpResponse[GetCampaignsResponse]:
         """
         Get a campaign with detailed metrics
 
@@ -299,7 +300,7 @@ class RawCampaignsClient:
 
         Returns
         -------
-        HttpResponse[GetCampaignIdResponse]
+        HttpResponse[GetCampaignsResponse]
             Campaign details with metrics
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -311,9 +312,9 @@ class RawCampaignsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetCampaignIdResponse,
+                    GetCampaignsResponse,
                     construct_type(
-                        type_=GetCampaignIdResponse,  # type: ignore
+                        type_=GetCampaignsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -360,9 +361,9 @@ class RawCampaignsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def delete_a_campaign(
+    def delete(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[DeleteCampaignIdResponse]:
+    ) -> HttpResponse[DeleteCampaignsResponse]:
         """
         Delete a campaign
 
@@ -376,7 +377,7 @@ class RawCampaignsClient:
 
         Returns
         -------
-        HttpResponse[DeleteCampaignIdResponse]
+        HttpResponse[DeleteCampaignsResponse]
             Campaign deleted successfully
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -388,9 +389,9 @@ class RawCampaignsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    DeleteCampaignIdResponse,
+                    DeleteCampaignsResponse,
                     construct_type(
-                        type_=DeleteCampaignIdResponse,  # type: ignore
+                        type_=DeleteCampaignsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -448,9 +449,9 @@ class RawCampaignsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def start_or_resume_a_campaign(
+    def start_or_resume(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[PostCampaignIdStartResponse]:
+    ) -> HttpResponse[StartOrResumeCampaignsResponse]:
         """
         Queues the campaign for processing and returns immediately — the campaign is **not** yet
         running when the 202 is returned. Poll `GET /campaign/{id}` and watch for `status: "running"`.
@@ -468,7 +469,7 @@ class RawCampaignsClient:
 
         Returns
         -------
-        HttpResponse[PostCampaignIdStartResponse]
+        HttpResponse[StartOrResumeCampaignsResponse]
             Campaign queued for processing
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -480,9 +481,9 @@ class RawCampaignsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostCampaignIdStartResponse,
+                    StartOrResumeCampaignsResponse,
                     construct_type(
-                        type_=PostCampaignIdStartResponse,  # type: ignore
+                        type_=StartOrResumeCampaignsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -540,9 +541,9 @@ class RawCampaignsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def pause_a_campaign(
+    def pause(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[PostCampaignIdPauseResponse]:
+    ) -> HttpResponse[PauseCampaignsResponse]:
         """
         Queues a pause task and returns immediately — the campaign is **not** immediately paused.
         Poll `GET /campaign/{id}` and watch for `status: "paused"`.
@@ -557,7 +558,7 @@ class RawCampaignsClient:
 
         Returns
         -------
-        HttpResponse[PostCampaignIdPauseResponse]
+        HttpResponse[PauseCampaignsResponse]
             Pause task queued successfully
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -569,9 +570,9 @@ class RawCampaignsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostCampaignIdPauseResponse,
+                    PauseCampaignsResponse,
                     construct_type(
-                        type_=PostCampaignIdPauseResponse,  # type: ignore
+                        type_=PauseCampaignsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -589,6 +590,99 @@ class RawCampaignsClient:
                 )
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def export_logs(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[typing.List[ExportLogsCampaignsResponseItem]]:
+        """
+        Streams a JSON file containing every call log for a campaign.
+
+        Response is a **file download** (`Content-Disposition: attachment`), not the
+        standard `{status, data}` envelope. Body is a raw JSON array of log objects.
+        When the relay-service is configured and reachable, each row also includes an
+        `events` array; otherwise the field is omitted.
+
+        Parameters
+        ----------
+        id : str
+            Campaign ID.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[typing.List[ExportLogsCampaignsResponseItem]]
+            Campaign-logs JSON file. `Content-Disposition: attachment; filename=campaign-logs-<campaignName>-<createdAt>.json`.
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"campaign/{encode_path_param(id)}/logs/export",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    typing.List[ExportLogsCampaignsResponseItem],
+                    construct_type(
+                        type_=typing.List[ExportLogsCampaignsResponseItem],  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Any,
@@ -623,17 +717,17 @@ class AsyncRawCampaignsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def retrieve_all_campaigns(
+    async def list(
         self,
         *,
         page: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
-        status: typing.Optional[GetCampaignRequestStatus] = None,
+        status: typing.Optional[ListCampaignsRequestStatus] = None,
         search: typing.Optional[str] = None,
-        sort_field: typing.Optional[GetCampaignRequestSortField] = None,
-        sort_order: typing.Optional[GetCampaignRequestSortOrder] = None,
+        sort_field: typing.Optional[ListCampaignsRequestSortField] = None,
+        sort_order: typing.Optional[ListCampaignsRequestSortOrder] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[GetCampaignResponse]:
+    ) -> AsyncHttpResponse[ListCampaignsResponse]:
         """
         Get all campaigns for the authenticated organization.
 
@@ -645,16 +739,16 @@ class AsyncRawCampaignsClient:
         offset : typing.Optional[int]
             Number of campaigns per page
 
-        status : typing.Optional[GetCampaignRequestStatus]
+        status : typing.Optional[ListCampaignsRequestStatus]
             Filter campaigns by status
 
         search : typing.Optional[str]
             Search campaigns by name
 
-        sort_field : typing.Optional[GetCampaignRequestSortField]
+        sort_field : typing.Optional[ListCampaignsRequestSortField]
             Field to sort by
 
-        sort_order : typing.Optional[GetCampaignRequestSortOrder]
+        sort_order : typing.Optional[ListCampaignsRequestSortOrder]
             Sort direction
 
         request_options : typing.Optional[RequestOptions]
@@ -662,7 +756,7 @@ class AsyncRawCampaignsClient:
 
         Returns
         -------
-        AsyncHttpResponse[GetCampaignResponse]
+        AsyncHttpResponse[ListCampaignsResponse]
             A list of campaigns
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -682,9 +776,9 @@ class AsyncRawCampaignsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetCampaignResponse,
+                    ListCampaignsResponse,
                     construct_type(
-                        type_=GetCampaignResponse,  # type: ignore
+                        type_=ListCampaignsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -731,7 +825,7 @@ class AsyncRawCampaignsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def create_a_campaign(
+    async def create(
         self,
         *,
         name: str,
@@ -743,7 +837,7 @@ class AsyncRawCampaignsClient:
         max_retries: typing.Optional[int] = OMIT,
         retry_delay: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PostCampaignResponse]:
+    ) -> AsyncHttpResponse[CreateCampaignsResponse]:
         """
         Create a campaign
 
@@ -784,7 +878,7 @@ class AsyncRawCampaignsClient:
 
         Returns
         -------
-        AsyncHttpResponse[PostCampaignResponse]
+        AsyncHttpResponse[CreateCampaignsResponse]
             Campaign created successfully. Note: the response is the raw Mongoose document — `agentId`
             and `audienceId` are plain ObjectId strings here, not nested objects as returned by GET endpoints.
         """
@@ -811,9 +905,9 @@ class AsyncRawCampaignsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostCampaignResponse,
+                    CreateCampaignsResponse,
                     construct_type(
-                        type_=PostCampaignResponse,  # type: ignore
+                        type_=CreateCampaignsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -871,9 +965,9 @@ class AsyncRawCampaignsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def get_a_campaign(
+    async def get(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[GetCampaignIdResponse]:
+    ) -> AsyncHttpResponse[GetCampaignsResponse]:
         """
         Get a campaign with detailed metrics
 
@@ -887,7 +981,7 @@ class AsyncRawCampaignsClient:
 
         Returns
         -------
-        AsyncHttpResponse[GetCampaignIdResponse]
+        AsyncHttpResponse[GetCampaignsResponse]
             Campaign details with metrics
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -899,9 +993,9 @@ class AsyncRawCampaignsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetCampaignIdResponse,
+                    GetCampaignsResponse,
                     construct_type(
-                        type_=GetCampaignIdResponse,  # type: ignore
+                        type_=GetCampaignsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -948,9 +1042,9 @@ class AsyncRawCampaignsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def delete_a_campaign(
+    async def delete(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[DeleteCampaignIdResponse]:
+    ) -> AsyncHttpResponse[DeleteCampaignsResponse]:
         """
         Delete a campaign
 
@@ -964,7 +1058,7 @@ class AsyncRawCampaignsClient:
 
         Returns
         -------
-        AsyncHttpResponse[DeleteCampaignIdResponse]
+        AsyncHttpResponse[DeleteCampaignsResponse]
             Campaign deleted successfully
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -976,9 +1070,9 @@ class AsyncRawCampaignsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    DeleteCampaignIdResponse,
+                    DeleteCampaignsResponse,
                     construct_type(
-                        type_=DeleteCampaignIdResponse,  # type: ignore
+                        type_=DeleteCampaignsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1036,9 +1130,9 @@ class AsyncRawCampaignsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def start_or_resume_a_campaign(
+    async def start_or_resume(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[PostCampaignIdStartResponse]:
+    ) -> AsyncHttpResponse[StartOrResumeCampaignsResponse]:
         """
         Queues the campaign for processing and returns immediately — the campaign is **not** yet
         running when the 202 is returned. Poll `GET /campaign/{id}` and watch for `status: "running"`.
@@ -1056,7 +1150,7 @@ class AsyncRawCampaignsClient:
 
         Returns
         -------
-        AsyncHttpResponse[PostCampaignIdStartResponse]
+        AsyncHttpResponse[StartOrResumeCampaignsResponse]
             Campaign queued for processing
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1068,9 +1162,9 @@ class AsyncRawCampaignsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostCampaignIdStartResponse,
+                    StartOrResumeCampaignsResponse,
                     construct_type(
-                        type_=PostCampaignIdStartResponse,  # type: ignore
+                        type_=StartOrResumeCampaignsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1128,9 +1222,9 @@ class AsyncRawCampaignsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def pause_a_campaign(
+    async def pause(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[PostCampaignIdPauseResponse]:
+    ) -> AsyncHttpResponse[PauseCampaignsResponse]:
         """
         Queues a pause task and returns immediately — the campaign is **not** immediately paused.
         Poll `GET /campaign/{id}` and watch for `status: "paused"`.
@@ -1145,7 +1239,7 @@ class AsyncRawCampaignsClient:
 
         Returns
         -------
-        AsyncHttpResponse[PostCampaignIdPauseResponse]
+        AsyncHttpResponse[PauseCampaignsResponse]
             Pause task queued successfully
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1157,9 +1251,9 @@ class AsyncRawCampaignsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostCampaignIdPauseResponse,
+                    PauseCampaignsResponse,
                     construct_type(
-                        type_=PostCampaignIdPauseResponse,  # type: ignore
+                        type_=PauseCampaignsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1177,6 +1271,99 @@ class AsyncRawCampaignsClient:
                 )
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def export_logs(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[typing.List[ExportLogsCampaignsResponseItem]]:
+        """
+        Streams a JSON file containing every call log for a campaign.
+
+        Response is a **file download** (`Content-Disposition: attachment`), not the
+        standard `{status, data}` envelope. Body is a raw JSON array of log objects.
+        When the relay-service is configured and reachable, each row also includes an
+        `events` array; otherwise the field is omitted.
+
+        Parameters
+        ----------
+        id : str
+            Campaign ID.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[typing.List[ExportLogsCampaignsResponseItem]]
+            Campaign-logs JSON file. `Content-Disposition: attachment; filename=campaign-logs-<campaignName>-<createdAt>.json`.
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"campaign/{encode_path_param(id)}/logs/export",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    typing.List[ExportLogsCampaignsResponseItem],
+                    construct_type(
+                        type_=typing.List[ExportLogsCampaignsResponseItem],  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Any,

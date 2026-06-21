@@ -17,6 +17,7 @@ if typing.TYPE_CHECKING:
     from .campaigns.client import AsyncCampaignsClient, CampaignsClient
     from .compliance.client import AsyncComplianceClient, ComplianceClient
     from .conversations.client import AsyncConversationsClient, ConversationsClient
+    from .dnc.client import AsyncDncClient, DncClient
     from .knowledge_base.client import AsyncKnowledgeBaseClient, KnowledgeBaseClient
     from .live_transcripts.client import AsyncLiveTranscriptsClient, LiveTranscriptsClient
     from .organization.client import AsyncOrganizationClient, OrganizationClient
@@ -46,6 +47,7 @@ class AtomsClient:
         self._agent_versioning_drafts: typing.Optional[AgentVersioningDraftsClient] = None
         self._agent_versioning_versions: typing.Optional[AgentVersioningVersionsClient] = None
         self._prompt_scoring: typing.Optional[PromptScoringClient] = None
+        self._dnc: typing.Optional[DncClient] = None
 
     @property
     def with_raw_response(self) -> RawAtomsClient:
@@ -186,6 +188,14 @@ class AtomsClient:
             self._prompt_scoring = PromptScoringClient(client_wrapper=self._client_wrapper)
         return self._prompt_scoring
 
+    @property
+    def dnc(self):
+        if self._dnc is None:
+            from .dnc.client import DncClient  # noqa: E402
+
+            self._dnc = DncClient(client_wrapper=self._client_wrapper)
+        return self._dnc
+
 
 class AsyncAtomsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -207,6 +217,7 @@ class AsyncAtomsClient:
         self._agent_versioning_drafts: typing.Optional[AsyncAgentVersioningDraftsClient] = None
         self._agent_versioning_versions: typing.Optional[AsyncAgentVersioningVersionsClient] = None
         self._prompt_scoring: typing.Optional[AsyncPromptScoringClient] = None
+        self._dnc: typing.Optional[AsyncDncClient] = None
 
     @property
     def with_raw_response(self) -> AsyncRawAtomsClient:
@@ -346,3 +357,11 @@ class AsyncAtomsClient:
 
             self._prompt_scoring = AsyncPromptScoringClient(client_wrapper=self._client_wrapper)
         return self._prompt_scoring
+
+    @property
+    def dnc(self):
+        if self._dnc is None:
+            from .dnc.client import AsyncDncClient  # noqa: E402
+
+            self._dnc = AsyncDncClient(client_wrapper=self._client_wrapper)
+        return self._dnc

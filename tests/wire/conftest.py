@@ -14,6 +14,7 @@ import os
 from typing import Any, Dict, Optional
 
 import httpx
+
 from smallestai.client import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 

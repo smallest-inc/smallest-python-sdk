@@ -1,5 +1,5 @@
 {
-  "cliVersion": "5.28.2",
+  "cliVersion": "5.44.7",
   "generatorName": "fernapi/fern-python-sdk",
   "generatorVersion": "5.12.12",
   "generatorConfig": {
@@ -19,7 +19,8 @@
       "uvicorn": ">=0.32.0",
       "loguru": ">=0.7.0",
       "openai": ">=2.0.0",
-      "python-dotenv": ">=1.0.0"
+      "python-dotenv": ">=1.0.0",
+      "requests": ">=2.31.0"
     },
     "mypy_exclude": [
       "src/smallestai/atoms/agent",
@@ -44,8 +45,10 @@
       }
     ]
   },
-  "originGitCommit": "bfe03966fbb10a7955f9e3ea2951addaa0e99027",
-  "originGitCommitIsDirty": true,
-  "invokedBy": "manual",
-  "sdkVersion": "4.4.2"
+  "originGitCommit": "9b5e3dc88b2258bd955f7570d3c406f8a62d7a7c",
+  "originGitCommitIsDirty": false,
+  "invokedBy": "ci",
+  "requestedVersion": "5.1.0",
+  "ciProvider": "github",
+  "sdkVersion": "5.1.0"
 }

@@ -20,17 +20,17 @@ from ..types.post_call_analytics_config import PostCallAnalyticsConfig
 from ..types.single_prompt_config import SinglePromptConfig
 from ..types.test_call_request_mode import TestCallRequestMode
 from ..types.workflow_type import WorkflowType
-from .types.delete_agent_id_drafts_draft_id_response import DeleteAgentIdDraftsDraftIdResponse
+from .types.create_draft_agent_versioning_drafts_response import CreateDraftAgentVersioningDraftsResponse
+from .types.discard_draft_agent_versioning_drafts_response import DiscardDraftAgentVersioningDraftsResponse
 from .types.draft_config_request_background_sound import DraftConfigRequestBackgroundSound
 from .types.draft_config_request_slm_model import DraftConfigRequestSlmModel
 from .types.get_agent_id_drafts_draft_id_diff_response import GetAgentIdDraftsDraftIdDiffResponse
 from .types.get_agent_id_drafts_draft_id_response import GetAgentIdDraftsDraftIdResponse
 from .types.get_agent_id_drafts_response import GetAgentIdDraftsResponse
-from .types.patch_agent_id_drafts_draft_id_config_response import PatchAgentIdDraftsDraftIdConfigResponse
-from .types.patch_agent_id_drafts_draft_id_response import PatchAgentIdDraftsDraftIdResponse
-from .types.post_agent_id_drafts_draft_id_publish_response import PostAgentIdDraftsDraftIdPublishResponse
 from .types.post_agent_id_drafts_draft_id_test_call_response import PostAgentIdDraftsDraftIdTestCallResponse
-from .types.post_agent_id_drafts_response import PostAgentIdDraftsResponse
+from .types.publish_draft_agent_versioning_drafts_response import PublishDraftAgentVersioningDraftsResponse
+from .types.rename_draft_agent_versioning_drafts_response import RenameDraftAgentVersioningDraftsResponse
+from .types.update_draft_config_agent_versioning_drafts_response import UpdateDraftConfigAgentVersioningDraftsResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -129,7 +129,7 @@ class RawAgentVersioningDraftsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def create_a_draft(
+    def create_draft(
         self,
         id: str,
         *,
@@ -137,7 +137,7 @@ class RawAgentVersioningDraftsClient:
         source_draft_id: typing.Optional[str] = OMIT,
         draft_name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PostAgentIdDraftsResponse]:
+    ) -> HttpResponse[CreateDraftAgentVersioningDraftsResponse]:
         """
         Create a new draft from an existing published version or another draft. At least one of sourceVersionId or sourceDraftId is required (both may be sent simultaneously).
 
@@ -161,7 +161,7 @@ class RawAgentVersioningDraftsClient:
 
         Returns
         -------
-        HttpResponse[PostAgentIdDraftsResponse]
+        HttpResponse[CreateDraftAgentVersioningDraftsResponse]
             Draft created successfully
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -182,9 +182,9 @@ class RawAgentVersioningDraftsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostAgentIdDraftsResponse,
+                    CreateDraftAgentVersioningDraftsResponse,
                     construct_type(
-                        type_=PostAgentIdDraftsResponse,  # type: ignore
+                        type_=CreateDraftAgentVersioningDraftsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -366,9 +366,9 @@ class RawAgentVersioningDraftsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def discard_a_draft(
+    def discard_draft(
         self, id: str, draft_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[DeleteAgentIdDraftsDraftIdResponse]:
+    ) -> HttpResponse[DiscardDraftAgentVersioningDraftsResponse]:
         """
         Discard (soft-delete) a draft. Only the draft creator or an admin can discard.
 
@@ -385,7 +385,7 @@ class RawAgentVersioningDraftsClient:
 
         Returns
         -------
-        HttpResponse[DeleteAgentIdDraftsDraftIdResponse]
+        HttpResponse[DiscardDraftAgentVersioningDraftsResponse]
             Draft discarded successfully
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -397,9 +397,9 @@ class RawAgentVersioningDraftsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    DeleteAgentIdDraftsDraftIdResponse,
+                    DiscardDraftAgentVersioningDraftsResponse,
                     construct_type(
-                        type_=DeleteAgentIdDraftsDraftIdResponse,  # type: ignore
+                        type_=DiscardDraftAgentVersioningDraftsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -457,9 +457,9 @@ class RawAgentVersioningDraftsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def rename_a_draft(
+    def rename_draft(
         self, id: str, draft_id: str, *, draft_name: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[PatchAgentIdDraftsDraftIdResponse]:
+    ) -> HttpResponse[RenameDraftAgentVersioningDraftsResponse]:
         """
         Rename a draft. For config changes, use PATCH /agent/{id}/drafts/{draftId}/config instead.
 
@@ -479,7 +479,7 @@ class RawAgentVersioningDraftsClient:
 
         Returns
         -------
-        HttpResponse[PatchAgentIdDraftsDraftIdResponse]
+        HttpResponse[RenameDraftAgentVersioningDraftsResponse]
             Draft renamed successfully
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -498,9 +498,9 @@ class RawAgentVersioningDraftsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PatchAgentIdDraftsDraftIdResponse,
+                    RenameDraftAgentVersioningDraftsResponse,
                     construct_type(
-                        type_=PatchAgentIdDraftsDraftIdResponse,  # type: ignore
+                        type_=RenameDraftAgentVersioningDraftsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -682,7 +682,7 @@ class RawAgentVersioningDraftsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def publish_a_draft(
+    def publish_draft(
         self,
         id: str,
         draft_id: str,
@@ -691,7 +691,7 @@ class RawAgentVersioningDraftsClient:
         description: typing.Optional[str] = OMIT,
         activate: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PostAgentIdDraftsDraftIdPublishResponse]:
+    ) -> HttpResponse[PublishDraftAgentVersioningDraftsResponse]:
         """
         Publish a draft as a new versioned release. Optionally activate it immediately.
 
@@ -717,7 +717,7 @@ class RawAgentVersioningDraftsClient:
 
         Returns
         -------
-        HttpResponse[PostAgentIdDraftsDraftIdPublishResponse]
+        HttpResponse[PublishDraftAgentVersioningDraftsResponse]
             Draft published as a new version
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -738,9 +738,9 @@ class RawAgentVersioningDraftsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostAgentIdDraftsDraftIdPublishResponse,
+                    PublishDraftAgentVersioningDraftsResponse,
                     construct_type(
-                        type_=PostAgentIdDraftsDraftIdPublishResponse,  # type: ignore
+                        type_=PublishDraftAgentVersioningDraftsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -931,7 +931,7 @@ class RawAgentVersioningDraftsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def edit_draft_config_prompt_tools_post_call_metrics_voice_etc(
+    def update_draft_config(
         self,
         id: str,
         draft_id: str,
@@ -968,7 +968,7 @@ class RawAgentVersioningDraftsClient:
         enable_style_guide: typing.Optional[bool] = OMIT,
         speech_formatting: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PatchAgentIdDraftsDraftIdConfigResponse]:
+    ) -> HttpResponse[UpdateDraftConfigAgentVersioningDraftsResponse]:
         """
         Update the configuration of a draft. This single endpoint is how every
         agent-level config field is changed: prompt, tools, voice, language,
@@ -1086,7 +1086,7 @@ class RawAgentVersioningDraftsClient:
 
         Returns
         -------
-        HttpResponse[PatchAgentIdDraftsDraftIdConfigResponse]
+        HttpResponse[UpdateDraftConfigAgentVersioningDraftsResponse]
             Draft config updated successfully
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1139,9 +1139,9 @@ class RawAgentVersioningDraftsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PatchAgentIdDraftsDraftIdConfigResponse,
+                    UpdateDraftConfigAgentVersioningDraftsResponse,
                     construct_type(
-                        type_=PatchAgentIdDraftsDraftIdConfigResponse,  # type: ignore
+                        type_=UpdateDraftConfigAgentVersioningDraftsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1303,7 +1303,7 @@ class AsyncRawAgentVersioningDraftsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def create_a_draft(
+    async def create_draft(
         self,
         id: str,
         *,
@@ -1311,7 +1311,7 @@ class AsyncRawAgentVersioningDraftsClient:
         source_draft_id: typing.Optional[str] = OMIT,
         draft_name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PostAgentIdDraftsResponse]:
+    ) -> AsyncHttpResponse[CreateDraftAgentVersioningDraftsResponse]:
         """
         Create a new draft from an existing published version or another draft. At least one of sourceVersionId or sourceDraftId is required (both may be sent simultaneously).
 
@@ -1335,7 +1335,7 @@ class AsyncRawAgentVersioningDraftsClient:
 
         Returns
         -------
-        AsyncHttpResponse[PostAgentIdDraftsResponse]
+        AsyncHttpResponse[CreateDraftAgentVersioningDraftsResponse]
             Draft created successfully
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1356,9 +1356,9 @@ class AsyncRawAgentVersioningDraftsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostAgentIdDraftsResponse,
+                    CreateDraftAgentVersioningDraftsResponse,
                     construct_type(
-                        type_=PostAgentIdDraftsResponse,  # type: ignore
+                        type_=CreateDraftAgentVersioningDraftsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1540,9 +1540,9 @@ class AsyncRawAgentVersioningDraftsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def discard_a_draft(
+    async def discard_draft(
         self, id: str, draft_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[DeleteAgentIdDraftsDraftIdResponse]:
+    ) -> AsyncHttpResponse[DiscardDraftAgentVersioningDraftsResponse]:
         """
         Discard (soft-delete) a draft. Only the draft creator or an admin can discard.
 
@@ -1559,7 +1559,7 @@ class AsyncRawAgentVersioningDraftsClient:
 
         Returns
         -------
-        AsyncHttpResponse[DeleteAgentIdDraftsDraftIdResponse]
+        AsyncHttpResponse[DiscardDraftAgentVersioningDraftsResponse]
             Draft discarded successfully
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1571,9 +1571,9 @@ class AsyncRawAgentVersioningDraftsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    DeleteAgentIdDraftsDraftIdResponse,
+                    DiscardDraftAgentVersioningDraftsResponse,
                     construct_type(
-                        type_=DeleteAgentIdDraftsDraftIdResponse,  # type: ignore
+                        type_=DiscardDraftAgentVersioningDraftsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1631,9 +1631,9 @@ class AsyncRawAgentVersioningDraftsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def rename_a_draft(
+    async def rename_draft(
         self, id: str, draft_id: str, *, draft_name: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[PatchAgentIdDraftsDraftIdResponse]:
+    ) -> AsyncHttpResponse[RenameDraftAgentVersioningDraftsResponse]:
         """
         Rename a draft. For config changes, use PATCH /agent/{id}/drafts/{draftId}/config instead.
 
@@ -1653,7 +1653,7 @@ class AsyncRawAgentVersioningDraftsClient:
 
         Returns
         -------
-        AsyncHttpResponse[PatchAgentIdDraftsDraftIdResponse]
+        AsyncHttpResponse[RenameDraftAgentVersioningDraftsResponse]
             Draft renamed successfully
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1672,9 +1672,9 @@ class AsyncRawAgentVersioningDraftsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PatchAgentIdDraftsDraftIdResponse,
+                    RenameDraftAgentVersioningDraftsResponse,
                     construct_type(
-                        type_=PatchAgentIdDraftsDraftIdResponse,  # type: ignore
+                        type_=RenameDraftAgentVersioningDraftsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1856,7 +1856,7 @@ class AsyncRawAgentVersioningDraftsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def publish_a_draft(
+    async def publish_draft(
         self,
         id: str,
         draft_id: str,
@@ -1865,7 +1865,7 @@ class AsyncRawAgentVersioningDraftsClient:
         description: typing.Optional[str] = OMIT,
         activate: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PostAgentIdDraftsDraftIdPublishResponse]:
+    ) -> AsyncHttpResponse[PublishDraftAgentVersioningDraftsResponse]:
         """
         Publish a draft as a new versioned release. Optionally activate it immediately.
 
@@ -1891,7 +1891,7 @@ class AsyncRawAgentVersioningDraftsClient:
 
         Returns
         -------
-        AsyncHttpResponse[PostAgentIdDraftsDraftIdPublishResponse]
+        AsyncHttpResponse[PublishDraftAgentVersioningDraftsResponse]
             Draft published as a new version
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1912,9 +1912,9 @@ class AsyncRawAgentVersioningDraftsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostAgentIdDraftsDraftIdPublishResponse,
+                    PublishDraftAgentVersioningDraftsResponse,
                     construct_type(
-                        type_=PostAgentIdDraftsDraftIdPublishResponse,  # type: ignore
+                        type_=PublishDraftAgentVersioningDraftsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2105,7 +2105,7 @@ class AsyncRawAgentVersioningDraftsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def edit_draft_config_prompt_tools_post_call_metrics_voice_etc(
+    async def update_draft_config(
         self,
         id: str,
         draft_id: str,
@@ -2142,7 +2142,7 @@ class AsyncRawAgentVersioningDraftsClient:
         enable_style_guide: typing.Optional[bool] = OMIT,
         speech_formatting: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PatchAgentIdDraftsDraftIdConfigResponse]:
+    ) -> AsyncHttpResponse[UpdateDraftConfigAgentVersioningDraftsResponse]:
         """
         Update the configuration of a draft. This single endpoint is how every
         agent-level config field is changed: prompt, tools, voice, language,
@@ -2260,7 +2260,7 @@ class AsyncRawAgentVersioningDraftsClient:
 
         Returns
         -------
-        AsyncHttpResponse[PatchAgentIdDraftsDraftIdConfigResponse]
+        AsyncHttpResponse[UpdateDraftConfigAgentVersioningDraftsResponse]
             Draft config updated successfully
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -2313,9 +2313,9 @@ class AsyncRawAgentVersioningDraftsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PatchAgentIdDraftsDraftIdConfigResponse,
+                    UpdateDraftConfigAgentVersioningDraftsResponse,
                     construct_type(
-                        type_=PatchAgentIdDraftsDraftIdConfigResponse,  # type: ignore
+                        type_=UpdateDraftConfigAgentVersioningDraftsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

@@ -16,16 +16,16 @@ from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
+from .types.create_webhooks_request_events_item import CreateWebhooksRequestEventsItem
+from .types.create_webhooks_response import CreateWebhooksResponse
 from .types.delete_agent_agent_id_webhook_subscriptions_response import DeleteAgentAgentIdWebhookSubscriptionsResponse
-from .types.delete_webhook_id_response import DeleteWebhookIdResponse
+from .types.delete_webhooks_response import DeleteWebhooksResponse
 from .types.get_agent_agent_id_webhook_subscriptions_response import GetAgentAgentIdWebhookSubscriptionsResponse
 from .types.get_webhook_response import GetWebhookResponse
 from .types.post_agent_agent_id_webhook_subscriptions_request_event_types_item import (
     PostAgentAgentIdWebhookSubscriptionsRequestEventTypesItem,
 )
 from .types.post_agent_agent_id_webhook_subscriptions_response import PostAgentAgentIdWebhookSubscriptionsResponse
-from .types.post_webhook_request_events_item import PostWebhookRequestEventsItem
-from .types.post_webhook_response import PostWebhookResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -116,14 +116,14 @@ class RawWebhooksClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def create_a_webhook(
+    def create(
         self,
         *,
         endpoint: str,
         description: str,
-        events: typing.Sequence[PostWebhookRequestEventsItem],
+        events: typing.Sequence[CreateWebhooksRequestEventsItem],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PostWebhookResponse]:
+    ) -> HttpResponse[CreateWebhooksResponse]:
         """
         Create a new webhook with subscriptions for specific agents and events.
 
@@ -138,7 +138,7 @@ class RawWebhooksClient:
         description : str
             The description of the webhook
 
-        events : typing.Sequence[PostWebhookRequestEventsItem]
+        events : typing.Sequence[CreateWebhooksRequestEventsItem]
             Array of events to subscribe to
 
         request_options : typing.Optional[RequestOptions]
@@ -146,7 +146,7 @@ class RawWebhooksClient:
 
         Returns
         -------
-        HttpResponse[PostWebhookResponse]
+        HttpResponse[CreateWebhooksResponse]
             Webhook created successfully
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -157,7 +157,7 @@ class RawWebhooksClient:
                 "endpoint": endpoint,
                 "description": description,
                 "events": convert_and_respect_annotation_metadata(
-                    object_=events, annotation=typing.Sequence[PostWebhookRequestEventsItem], direction="write"
+                    object_=events, annotation=typing.Sequence[CreateWebhooksRequestEventsItem], direction="write"
                 ),
             },
             headers={
@@ -169,9 +169,9 @@ class RawWebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostWebhookResponse,
+                    CreateWebhooksResponse,
                     construct_type(
-                        type_=PostWebhookResponse,  # type: ignore
+                        type_=CreateWebhooksResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -218,9 +218,9 @@ class RawWebhooksClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def delete_a_webhook(
+    def delete(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[DeleteWebhookIdResponse]:
+    ) -> HttpResponse[DeleteWebhooksResponse]:
         """
         Delete a webhook by its ID.
 
@@ -241,7 +241,7 @@ class RawWebhooksClient:
 
         Returns
         -------
-        HttpResponse[DeleteWebhookIdResponse]
+        HttpResponse[DeleteWebhooksResponse]
             Webhook deleted successfully
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -253,9 +253,9 @@ class RawWebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    DeleteWebhookIdResponse,
+                    DeleteWebhooksResponse,
                     construct_type(
-                        type_=DeleteWebhookIdResponse,  # type: ignore
+                        type_=DeleteWebhooksResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -717,14 +717,14 @@ class AsyncRawWebhooksClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def create_a_webhook(
+    async def create(
         self,
         *,
         endpoint: str,
         description: str,
-        events: typing.Sequence[PostWebhookRequestEventsItem],
+        events: typing.Sequence[CreateWebhooksRequestEventsItem],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PostWebhookResponse]:
+    ) -> AsyncHttpResponse[CreateWebhooksResponse]:
         """
         Create a new webhook with subscriptions for specific agents and events.
 
@@ -739,7 +739,7 @@ class AsyncRawWebhooksClient:
         description : str
             The description of the webhook
 
-        events : typing.Sequence[PostWebhookRequestEventsItem]
+        events : typing.Sequence[CreateWebhooksRequestEventsItem]
             Array of events to subscribe to
 
         request_options : typing.Optional[RequestOptions]
@@ -747,7 +747,7 @@ class AsyncRawWebhooksClient:
 
         Returns
         -------
-        AsyncHttpResponse[PostWebhookResponse]
+        AsyncHttpResponse[CreateWebhooksResponse]
             Webhook created successfully
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -758,7 +758,7 @@ class AsyncRawWebhooksClient:
                 "endpoint": endpoint,
                 "description": description,
                 "events": convert_and_respect_annotation_metadata(
-                    object_=events, annotation=typing.Sequence[PostWebhookRequestEventsItem], direction="write"
+                    object_=events, annotation=typing.Sequence[CreateWebhooksRequestEventsItem], direction="write"
                 ),
             },
             headers={
@@ -770,9 +770,9 @@ class AsyncRawWebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostWebhookResponse,
+                    CreateWebhooksResponse,
                     construct_type(
-                        type_=PostWebhookResponse,  # type: ignore
+                        type_=CreateWebhooksResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -819,9 +819,9 @@ class AsyncRawWebhooksClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def delete_a_webhook(
+    async def delete(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[DeleteWebhookIdResponse]:
+    ) -> AsyncHttpResponse[DeleteWebhooksResponse]:
         """
         Delete a webhook by its ID.
 
@@ -842,7 +842,7 @@ class AsyncRawWebhooksClient:
 
         Returns
         -------
-        AsyncHttpResponse[DeleteWebhookIdResponse]
+        AsyncHttpResponse[DeleteWebhooksResponse]
             Webhook deleted successfully
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -854,9 +854,9 @@ class AsyncRawWebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    DeleteWebhookIdResponse,
+                    DeleteWebhooksResponse,
                     construct_type(
-                        type_=DeleteWebhookIdResponse,  # type: ignore
+                        type_=DeleteWebhooksResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

@@ -10,12 +10,23 @@ from ...core.serialization import FieldMetadata
 from ...core.unchecked_base_model import UncheckedBaseModel
 from .agent_dto_background_sound import AgentDtoBackgroundSound
 from .agent_dto_config_source import AgentDtoConfigSource
+from .agent_dto_denoising_config import AgentDtoDenoisingConfig
 from .agent_dto_language import AgentDtoLanguage
+from .agent_dto_llm_idle_timeout_config import AgentDtoLlmIdleTimeoutConfig
 from .agent_dto_pre_call_api import AgentDtoPreCallApi
+from .agent_dto_pronunciation_dicts_item import AgentDtoPronunciationDictsItem
+from .agent_dto_redaction_config import AgentDtoRedactionConfig
 from .agent_dto_resolved_config import AgentDtoResolvedConfig
+from .agent_dto_session_timeout_config import AgentDtoSessionTimeoutConfig
 from .agent_dto_slm_model import AgentDtoSlmModel
+from .agent_dto_smart_turn_config import AgentDtoSmartTurnConfig
 from .agent_dto_synthesizer import AgentDtoSynthesizer
+from .agent_dto_timezone import AgentDtoTimezone
 from .agent_dto_versioned_workflow import AgentDtoVersionedWorkflow
+from .agent_dto_voice_detection_config import AgentDtoVoiceDetectionConfig
+from .agent_dto_voice_mail_detection_config import AgentDtoVoiceMailDetectionConfig
+from .agent_dto_widget_config import AgentDtoWidgetConfig
+from .post_call_analytics_config import PostCallAnalyticsConfig
 from .workflow_type import WorkflowType
 
 
@@ -178,6 +189,132 @@ class AgentDto(UncheckedBaseModel):
         typing.Optional[str],
         FieldMetadata(alias="versionId"),
         pydantic.Field(alias="versionId", description="Alias for `activeVersionId`."),
+    ] = None
+    allow_inbound_call: typing_extensions.Annotated[
+        typing.Optional[bool],
+        FieldMetadata(alias="allowInboundCall"),
+        pydantic.Field(alias="allowInboundCall", description="Whether the agent accepts inbound calls."),
+    ] = None
+    phone_number: typing_extensions.Annotated[
+        typing.Optional[typing.List[str]],
+        FieldMetadata(alias="phoneNumber"),
+        pydantic.Field(
+            alias="phoneNumber",
+            description="Phone numbers attached to this agent (E.164 strings). Only present when\nthe agent has been linked to one or more telephony products.",
+        ),
+    ] = None
+    visible_to_everyone: typing_extensions.Annotated[
+        typing.Optional[bool],
+        FieldMetadata(alias="visibleToEveryone"),
+        pydantic.Field(
+            alias="visibleToEveryone",
+            description="Whether the agent is visible to all members of the organization (vs. only the creator).",
+        ),
+    ] = None
+    speech_formatting: typing_extensions.Annotated[
+        typing.Optional[bool],
+        FieldMetadata(alias="speechFormatting"),
+        pydantic.Field(
+            alias="speechFormatting",
+            description='Apply LLM-side speech formatting (e.g. expanding "$100" to "one hundred dollars")\nbefore passing text to the synthesizer. Boolean; no default — when unset the\nplatform applies the per-organization default.',
+        ),
+    ] = None
+    mute_user_until_first_bot_response: typing_extensions.Annotated[
+        typing.Optional[bool],
+        FieldMetadata(alias="muteUserUntilFirstBotResponse"),
+        pydantic.Field(
+            alias="muteUserUntilFirstBotResponse",
+            description="When true, the user microphone is muted until the agent has spoken its first response.",
+        ),
+    ] = None
+    interruption_backoff_timer: typing_extensions.Annotated[
+        typing.Optional[float],
+        FieldMetadata(alias="interruptionBackoffTimer"),
+        pydantic.Field(
+            alias="interruptionBackoffTimer",
+            description="Seconds to wait after an interruption before the agent resumes speaking.",
+        ),
+    ] = None
+    enable_style_guide: typing_extensions.Annotated[
+        typing.Optional[bool],
+        FieldMetadata(alias="enableStyleGuide"),
+        pydantic.Field(
+            alias="enableStyleGuide",
+            description="Whether to apply the platform's style-guide post-processing on agent responses.",
+        ),
+    ] = None
+    call_disposition_config: typing_extensions.Annotated[
+        typing.Optional[str],
+        FieldMetadata(alias="callDispositionConfig"),
+        pydantic.Field(
+            alias="callDispositionConfig",
+            description="Free-form prompt used for call disposition classification (separate from `postCallAnalyticsConfig.dispositionMetrics`).",
+        ),
+    ] = None
+    voice_mail_detection_config: typing_extensions.Annotated[
+        typing.Optional[AgentDtoVoiceMailDetectionConfig],
+        FieldMetadata(alias="voiceMailDetectionConfig"),
+        pydantic.Field(alias="voiceMailDetectionConfig", description="Voicemail detection settings."),
+    ] = None
+    smart_turn_config: typing_extensions.Annotated[
+        typing.Optional[AgentDtoSmartTurnConfig],
+        FieldMetadata(alias="smartTurnConfig"),
+        pydantic.Field(alias="smartTurnConfig", description="Smart end-of-turn detection settings."),
+    ] = None
+    voice_detection_config: typing_extensions.Annotated[
+        typing.Optional[AgentDtoVoiceDetectionConfig],
+        FieldMetadata(alias="voiceDetectionConfig"),
+        pydantic.Field(alias="voiceDetectionConfig", description="VAD (voice activity detection) tuning."),
+    ] = None
+    denoising_config: typing_extensions.Annotated[
+        typing.Optional[AgentDtoDenoisingConfig],
+        FieldMetadata(alias="denoisingConfig"),
+        pydantic.Field(alias="denoisingConfig", description="Audio denoising settings."),
+    ] = None
+    redaction_config: typing_extensions.Annotated[
+        typing.Optional[AgentDtoRedactionConfig],
+        FieldMetadata(alias="redactionConfig"),
+        pydantic.Field(alias="redactionConfig", description="PII/PCI redaction settings applied to transcripts."),
+    ] = None
+    pronunciation_dicts: typing_extensions.Annotated[
+        typing.Optional[typing.List[AgentDtoPronunciationDictsItem]],
+        FieldMetadata(alias="pronunciationDicts"),
+        pydantic.Field(
+            alias="pronunciationDicts", description="Custom pronunciation dictionary applied before synthesis."
+        ),
+    ] = None
+    llm_idle_timeout_config: typing_extensions.Annotated[
+        typing.Optional[AgentDtoLlmIdleTimeoutConfig],
+        FieldMetadata(alias="llmIdleTimeoutConfig"),
+        pydantic.Field(
+            alias="llmIdleTimeoutConfig",
+            description="Per-channel idle timeouts (seconds) after which the LLM is nudged when the user\nstops speaking. `maxRetries` bounds how many nudges before the call ends.",
+        ),
+    ] = None
+    session_timeout_config: typing_extensions.Annotated[
+        typing.Optional[AgentDtoSessionTimeoutConfig],
+        FieldMetadata(alias="sessionTimeoutConfig"),
+        pydantic.Field(
+            alias="sessionTimeoutConfig", description="Maximum session duration before the call is automatically ended."
+        ),
+    ] = None
+    timezone: typing.Optional[AgentDtoTimezone] = pydantic.Field(default=None)
+    """
+    Agent timezone — used for time-of-day-sensitive prompts and analytics bucketing.
+    """
+
+    post_call_analytics_config: typing_extensions.Annotated[
+        typing.Optional[PostCallAnalyticsConfig],
+        FieldMetadata(alias="postCallAnalyticsConfig"),
+        pydantic.Field(alias="postCallAnalyticsConfig"),
+    ] = None
+    widget_config: typing_extensions.Annotated[
+        typing.Optional[AgentDtoWidgetConfig],
+        FieldMetadata(alias="widgetConfig"),
+        pydantic.Field(
+            alias="widgetConfig",
+            description="Chat-widget rendering configuration (theme, copy, consent prompt). Only relevant\nwhen the agent is exposed via the embeddable widget; ignored by voice-only agents.",
+        ),
     ] = None
     resolved_config: typing_extensions.Annotated[
         typing.Optional[AgentDtoResolvedConfig],

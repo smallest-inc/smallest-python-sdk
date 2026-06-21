@@ -5,9 +5,19 @@ import typing
 import pydantic
 from ....core.pydantic_utilities import IS_PYDANTIC_V2
 from ....core.unchecked_base_model import UncheckedBaseModel
+from .list_agent_templates_agent_templates_response_data_item_single_prompt_config_tools_item_type import (
+    ListAgentTemplatesAgentTemplatesResponseDataItemSinglePromptConfigToolsItemType,
+)
 
 
 class ListAgentTemplatesAgentTemplatesResponseDataItemSinglePromptConfigToolsItem(UncheckedBaseModel):
+    type: typing.Optional[ListAgentTemplatesAgentTemplatesResponseDataItemSinglePromptConfigToolsItemType] = (
+        pydantic.Field(default=None)
+    )
+    """
+    The tool type — drives runtime dispatch.
+    """
+
     name: typing.Optional[str] = pydantic.Field(default=None)
     """
     The name of the tool

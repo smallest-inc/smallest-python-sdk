@@ -25,22 +25,19 @@ from .list_agent_templates_agent_templates_response_data_item_workflow_type impo
 
 
 class ListAgentTemplatesAgentTemplatesResponseDataItem(UncheckedBaseModel):
-    # NOTE: the API returns BOTH `_id` (Mongo ObjectId) and `id` (a human-readable
-    # slug). Fern aliases `_id` -> `id`, which collides with the real `id`. Until the
-    # spec disambiguates these (see SDK_ESCALATIONS.log), expose them as distinct
-    # fields so neither value is lost: `.id` keeps the slug (matches the field's own
-    # "The ID of the agent template" description and the prior runtime behaviour),
-    # `.object_id` carries the Mongo ObjectId.
-    id: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    The ID of the agent template
-    """
-
     object_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="_id"),
-        pydantic.Field(alias="_id", description="MongoDB ObjectId of the template"),
+        pydantic.Field(
+            alias="_id",
+            description="Stable unique identifier for the template (24-character hex string, e.g. `6942a64ac74fc65e7bc94e47`). Surfaced as `object_id` in the generated SDK to keep it distinct from the human-readable `id` slug.",
+        ),
     ] = None
+    id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Human-readable slug for the agent template (e.g. `sp-medical-centre-receptionist-in`). Distinct from `_id`.
+    """
+
     name: typing.Optional[str] = pydantic.Field(default=None)
     """
     The name of the agent template

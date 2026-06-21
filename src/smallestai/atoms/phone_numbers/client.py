@@ -6,16 +6,16 @@ from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.request_options import RequestOptions
 from .raw_client import AsyncRawPhoneNumbersClient, RawPhoneNumbersClient
 from .types.get_product_all_numbers_response import GetProductAllNumbersResponse
-from .types.get_product_get_available_numbers_request_provider import GetProductGetAvailableNumbersRequestProvider
-from .types.get_product_get_available_numbers_response import GetProductGetAvailableNumbersResponse
 from .types.get_product_manage_subscription_response import GetProductManageSubscriptionResponse
-from .types.get_product_phone_numbers_response import GetProductPhoneNumbersResponse
 from .types.get_product_proration_amount_response import GetProductProrationAmountResponse
 from .types.get_product_unpaid_invoices_response import GetProductUnpaidInvoicesResponse
-from .types.post_product_import_phone_number_response import PostProductImportPhoneNumberResponse
-from .types.post_product_release_number_response import PostProductReleaseNumberResponse
-from .types.post_product_rent_number_request_provider import PostProductRentNumberRequestProvider
-from .types.post_product_rent_number_response import PostProductRentNumberResponse
+from .types.import_sip_phone_numbers_response import ImportSipPhoneNumbersResponse
+from .types.list_phone_numbers_response import ListPhoneNumbersResponse
+from .types.release_phone_numbers_response import ReleasePhoneNumbersResponse
+from .types.rent_phone_numbers_request_provider import RentPhoneNumbersRequestProvider
+from .types.rent_phone_numbers_response import RentPhoneNumbersResponse
+from .types.search_rentable_phone_numbers_request_provider import SearchRentablePhoneNumbersRequestProvider
+from .types.search_rentable_phone_numbers_response import SearchRentablePhoneNumbersResponse
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -36,9 +36,7 @@ class PhoneNumbersClient:
         """
         return self._raw_client
 
-    def get_acquired_phone_numbers(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetProductPhoneNumbersResponse:
+    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListPhoneNumbersResponse:
         """
         Retrieve all platform-purchased telephony numbers (Twilio/Plivo) for the organization.
 
@@ -52,7 +50,7 @@ class PhoneNumbersClient:
 
         Returns
         -------
-        GetProductPhoneNumbersResponse
+        ListPhoneNumbersResponse
             Successful response
 
         Examples
@@ -62,9 +60,9 @@ class PhoneNumbersClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.phone_numbers.get_acquired_phone_numbers()
+        client.atoms.phone_numbers.list()
         """
-        _response = self._raw_client.get_acquired_phone_numbers(request_options=request_options)
+        _response = self._raw_client.list(request_options=request_options)
         return _response.data
 
     def list_all_phone_numbers_platform_sip(
@@ -100,14 +98,14 @@ class PhoneNumbersClient:
         _response = self._raw_client.list_all_phone_numbers_platform_sip(request_options=request_options)
         return _response.data
 
-    def search_rentable_phone_numbers_in_inventory(
+    def search_rentable(
         self,
         *,
         country_code: str,
-        provider: GetProductGetAvailableNumbersRequestProvider,
+        provider: SearchRentablePhoneNumbersRequestProvider,
         area_code: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetProductGetAvailableNumbersResponse:
+    ) -> SearchRentablePhoneNumbersResponse:
         """
         Searches the telephony provider's inventory for available numbers matching the requested country (and optional area code). Returns up to 5 candidates per call.
 
@@ -118,7 +116,7 @@ class PhoneNumbersClient:
         country_code : str
             ISO 3166-1 alpha-2 country code (e.g. `US`, `IN`, `GB`).
 
-        provider : GetProductGetAvailableNumbersRequestProvider
+        provider : SearchRentablePhoneNumbersRequestProvider
             Telephony provider to search.
 
         area_code : typing.Optional[str]
@@ -129,7 +127,7 @@ class PhoneNumbersClient:
 
         Returns
         -------
-        GetProductGetAvailableNumbersResponse
+        SearchRentablePhoneNumbersResponse
             Successful response
 
         Examples
@@ -139,12 +137,12 @@ class PhoneNumbersClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.phone_numbers.search_rentable_phone_numbers_in_inventory(
+        client.atoms.phone_numbers.search_rentable(
             country_code="US",
             provider="plivo",
         )
         """
-        _response = self._raw_client.search_rentable_phone_numbers_in_inventory(
+        _response = self._raw_client.search_rentable(
             country_code=country_code, provider=provider, area_code=area_code, request_options=request_options
         )
         return _response.data
@@ -181,13 +179,13 @@ class PhoneNumbersClient:
         )
         return _response.data
 
-    def rent_a_phone_number_from_the_telephony_inventory(
+    def rent(
         self,
         *,
         phone_number: str,
-        provider: PostProductRentNumberRequestProvider,
+        provider: RentPhoneNumbersRequestProvider,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostProductRentNumberResponse:
+    ) -> RentPhoneNumbersResponse:
         """
         Rents an available number returned by [`GET /product/get-available-numbers`](#operation/searchAvailablePhoneNumbers). Charges the organization the prorated amount returned by [`GET /product/proration-amount`](#operation/getProrationAmount) immediately, then the monthly rate on each billing cycle.
 
@@ -200,14 +198,14 @@ class PhoneNumbersClient:
         phone_number : str
             The number to rent — exactly as returned by `GET /product/get-available-numbers` (no leading `+`).
 
-        provider : PostProductRentNumberRequestProvider
+        provider : RentPhoneNumbersRequestProvider
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        PostProductRentNumberResponse
+        RentPhoneNumbersResponse
             Rental processed. Inspect `data.requiresAction` to determine whether the customer needs to complete a payment-method action.
 
         Examples
@@ -217,19 +215,17 @@ class PhoneNumbersClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.phone_numbers.rent_a_phone_number_from_the_telephony_inventory(
+        client.atoms.phone_numbers.rent(
             phone_number="13183747513",
             provider="plivo",
         )
         """
-        _response = self._raw_client.rent_a_phone_number_from_the_telephony_inventory(
-            phone_number=phone_number, provider=provider, request_options=request_options
-        )
+        _response = self._raw_client.rent(phone_number=phone_number, provider=provider, request_options=request_options)
         return _response.data
 
-    def release_a_rented_phone_number(
+    def release(
         self, *, product_id: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> PostProductReleaseNumberResponse:
+    ) -> ReleasePhoneNumbersResponse:
         """
         Releases a phone number previously rented via `POST /product/rent-number`. The number goes back into provider inventory and recurring charges stop.
 
@@ -245,7 +241,7 @@ class PhoneNumbersClient:
 
         Returns
         -------
-        PostProductReleaseNumberResponse
+        ReleasePhoneNumbersResponse
             Number released
 
         Examples
@@ -255,13 +251,11 @@ class PhoneNumbersClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.phone_numbers.release_a_rented_phone_number(
+        client.atoms.phone_numbers.release(
             product_id="6969109c84c74bed175f02a7",
         )
         """
-        _response = self._raw_client.release_a_rented_phone_number(
-            product_id=product_id, request_options=request_options
-        )
+        _response = self._raw_client.release(product_id=product_id, request_options=request_options)
         return _response.data
 
     def get_stripe_customer_portal_url(
@@ -320,7 +314,7 @@ class PhoneNumbersClient:
         _response = self._raw_client.check_whether_the_organization_has_unpaid_invoices(request_options=request_options)
         return _response.data
 
-    def import_a_sip_phone_number(
+    def import_sip(
         self,
         *,
         phone_number: str,
@@ -329,7 +323,7 @@ class PhoneNumbersClient:
         sip_username: typing.Optional[str] = OMIT,
         sip_password: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostProductImportPhoneNumberResponse:
+    ) -> ImportSipPhoneNumbersResponse:
         """
         Bring your own SIP trunk by importing an existing phone number with its SIP termination URL.
         Atoms creates both inbound and outbound SIP trunks so your number works for making and receiving calls through the platform.
@@ -358,7 +352,7 @@ class PhoneNumbersClient:
 
         Returns
         -------
-        PostProductImportPhoneNumberResponse
+        ImportSipPhoneNumbersResponse
             Phone number imported successfully
 
         Examples
@@ -368,7 +362,7 @@ class PhoneNumbersClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.phone_numbers.import_a_sip_phone_number(
+        client.atoms.phone_numbers.import_sip(
             phone_number="+14155551234",
             sip_termination_url="sip:trunk.your-provider.com",
             name="Main Support Line",
@@ -376,7 +370,7 @@ class PhoneNumbersClient:
             sip_password="",
         )
         """
-        _response = self._raw_client.import_a_sip_phone_number(
+        _response = self._raw_client.import_sip(
             phone_number=phone_number,
             sip_termination_url=sip_termination_url,
             name=name,
@@ -402,9 +396,7 @@ class AsyncPhoneNumbersClient:
         """
         return self._raw_client
 
-    async def get_acquired_phone_numbers(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetProductPhoneNumbersResponse:
+    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListPhoneNumbersResponse:
         """
         Retrieve all platform-purchased telephony numbers (Twilio/Plivo) for the organization.
 
@@ -418,7 +410,7 @@ class AsyncPhoneNumbersClient:
 
         Returns
         -------
-        GetProductPhoneNumbersResponse
+        ListPhoneNumbersResponse
             Successful response
 
         Examples
@@ -433,12 +425,12 @@ class AsyncPhoneNumbersClient:
 
 
         async def main() -> None:
-            await client.atoms.phone_numbers.get_acquired_phone_numbers()
+            await client.atoms.phone_numbers.list()
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_acquired_phone_numbers(request_options=request_options)
+        _response = await self._raw_client.list(request_options=request_options)
         return _response.data
 
     async def list_all_phone_numbers_platform_sip(
@@ -482,14 +474,14 @@ class AsyncPhoneNumbersClient:
         _response = await self._raw_client.list_all_phone_numbers_platform_sip(request_options=request_options)
         return _response.data
 
-    async def search_rentable_phone_numbers_in_inventory(
+    async def search_rentable(
         self,
         *,
         country_code: str,
-        provider: GetProductGetAvailableNumbersRequestProvider,
+        provider: SearchRentablePhoneNumbersRequestProvider,
         area_code: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetProductGetAvailableNumbersResponse:
+    ) -> SearchRentablePhoneNumbersResponse:
         """
         Searches the telephony provider's inventory for available numbers matching the requested country (and optional area code). Returns up to 5 candidates per call.
 
@@ -500,7 +492,7 @@ class AsyncPhoneNumbersClient:
         country_code : str
             ISO 3166-1 alpha-2 country code (e.g. `US`, `IN`, `GB`).
 
-        provider : GetProductGetAvailableNumbersRequestProvider
+        provider : SearchRentablePhoneNumbersRequestProvider
             Telephony provider to search.
 
         area_code : typing.Optional[str]
@@ -511,7 +503,7 @@ class AsyncPhoneNumbersClient:
 
         Returns
         -------
-        GetProductGetAvailableNumbersResponse
+        SearchRentablePhoneNumbersResponse
             Successful response
 
         Examples
@@ -526,7 +518,7 @@ class AsyncPhoneNumbersClient:
 
 
         async def main() -> None:
-            await client.atoms.phone_numbers.search_rentable_phone_numbers_in_inventory(
+            await client.atoms.phone_numbers.search_rentable(
                 country_code="US",
                 provider="plivo",
             )
@@ -534,7 +526,7 @@ class AsyncPhoneNumbersClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.search_rentable_phone_numbers_in_inventory(
+        _response = await self._raw_client.search_rentable(
             country_code=country_code, provider=provider, area_code=area_code, request_options=request_options
         )
         return _response.data
@@ -579,13 +571,13 @@ class AsyncPhoneNumbersClient:
         )
         return _response.data
 
-    async def rent_a_phone_number_from_the_telephony_inventory(
+    async def rent(
         self,
         *,
         phone_number: str,
-        provider: PostProductRentNumberRequestProvider,
+        provider: RentPhoneNumbersRequestProvider,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostProductRentNumberResponse:
+    ) -> RentPhoneNumbersResponse:
         """
         Rents an available number returned by [`GET /product/get-available-numbers`](#operation/searchAvailablePhoneNumbers). Charges the organization the prorated amount returned by [`GET /product/proration-amount`](#operation/getProrationAmount) immediately, then the monthly rate on each billing cycle.
 
@@ -598,14 +590,14 @@ class AsyncPhoneNumbersClient:
         phone_number : str
             The number to rent — exactly as returned by `GET /product/get-available-numbers` (no leading `+`).
 
-        provider : PostProductRentNumberRequestProvider
+        provider : RentPhoneNumbersRequestProvider
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        PostProductRentNumberResponse
+        RentPhoneNumbersResponse
             Rental processed. Inspect `data.requiresAction` to determine whether the customer needs to complete a payment-method action.
 
         Examples
@@ -620,7 +612,7 @@ class AsyncPhoneNumbersClient:
 
 
         async def main() -> None:
-            await client.atoms.phone_numbers.rent_a_phone_number_from_the_telephony_inventory(
+            await client.atoms.phone_numbers.rent(
                 phone_number="13183747513",
                 provider="plivo",
             )
@@ -628,14 +620,14 @@ class AsyncPhoneNumbersClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.rent_a_phone_number_from_the_telephony_inventory(
+        _response = await self._raw_client.rent(
             phone_number=phone_number, provider=provider, request_options=request_options
         )
         return _response.data
 
-    async def release_a_rented_phone_number(
+    async def release(
         self, *, product_id: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> PostProductReleaseNumberResponse:
+    ) -> ReleasePhoneNumbersResponse:
         """
         Releases a phone number previously rented via `POST /product/rent-number`. The number goes back into provider inventory and recurring charges stop.
 
@@ -651,7 +643,7 @@ class AsyncPhoneNumbersClient:
 
         Returns
         -------
-        PostProductReleaseNumberResponse
+        ReleasePhoneNumbersResponse
             Number released
 
         Examples
@@ -666,16 +658,14 @@ class AsyncPhoneNumbersClient:
 
 
         async def main() -> None:
-            await client.atoms.phone_numbers.release_a_rented_phone_number(
+            await client.atoms.phone_numbers.release(
                 product_id="6969109c84c74bed175f02a7",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.release_a_rented_phone_number(
-            product_id=product_id, request_options=request_options
-        )
+        _response = await self._raw_client.release(product_id=product_id, request_options=request_options)
         return _response.data
 
     async def get_stripe_customer_portal_url(
@@ -752,7 +742,7 @@ class AsyncPhoneNumbersClient:
         )
         return _response.data
 
-    async def import_a_sip_phone_number(
+    async def import_sip(
         self,
         *,
         phone_number: str,
@@ -761,7 +751,7 @@ class AsyncPhoneNumbersClient:
         sip_username: typing.Optional[str] = OMIT,
         sip_password: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostProductImportPhoneNumberResponse:
+    ) -> ImportSipPhoneNumbersResponse:
         """
         Bring your own SIP trunk by importing an existing phone number with its SIP termination URL.
         Atoms creates both inbound and outbound SIP trunks so your number works for making and receiving calls through the platform.
@@ -790,7 +780,7 @@ class AsyncPhoneNumbersClient:
 
         Returns
         -------
-        PostProductImportPhoneNumberResponse
+        ImportSipPhoneNumbersResponse
             Phone number imported successfully
 
         Examples
@@ -805,7 +795,7 @@ class AsyncPhoneNumbersClient:
 
 
         async def main() -> None:
-            await client.atoms.phone_numbers.import_a_sip_phone_number(
+            await client.atoms.phone_numbers.import_sip(
                 phone_number="+14155551234",
                 sip_termination_url="sip:trunk.your-provider.com",
                 name="Main Support Line",
@@ -816,7 +806,7 @@ class AsyncPhoneNumbersClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.import_a_sip_phone_number(
+        _response = await self._raw_client.import_sip(
             phone_number=phone_number,
             sip_termination_url=sip_termination_url,
             name=name,

@@ -5,7 +5,12 @@ import typing
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.request_options import RequestOptions
 from .raw_client import AsyncRawOrganizationClient, RawOrganizationClient
+from .types.get_account_details_organization_response import GetAccountDetailsOrganizationResponse
 from .types.get_organization_response import GetOrganizationResponse
+from .types.update_name_organization_response import UpdateNameOrganizationResponse
+
+# this is used as the default value for optional parameters
+OMIT = typing.cast(typing.Any, ...)
 
 
 class OrganizationClient:
@@ -47,6 +52,73 @@ class OrganizationClient:
         client.atoms.organization.get_organization_details()
         """
         _response = self._raw_client.get_organization_details(request_options=request_options)
+        return _response.data
+
+    def get_account_details(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> GetAccountDetailsOrganizationResponse:
+        """
+        Returns the authenticated user's profile and the organizations they belong to.
+
+        **Response envelope is non-standard** — this endpoint returns the account object
+        directly (no `{status, data}` wrapper).
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetAccountDetailsOrganizationResponse
+            Authenticated user + organizations. Raw object, no envelope.
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.organization.get_account_details()
+        """
+        _response = self._raw_client.get_account_details(request_options=request_options)
+        return _response.data
+
+    def update_name(
+        self, *, name: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> UpdateNameOrganizationResponse:
+        """
+        Update the display name of the caller's current organization. Requires admin role.
+
+        **Response envelope is non-standard** — returns `{success: true, name}` instead
+        of the usual `{status, data}` wrapper.
+
+        Parameters
+        ----------
+        name : str
+            New organization name (trimmed).
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        UpdateNameOrganizationResponse
+            Organization renamed.
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.organization.update_name(
+            name="name",
+        )
+        """
+        _response = self._raw_client.update_name(name=name, request_options=request_options)
         return _response.data
 
 
@@ -97,4 +169,87 @@ class AsyncOrganizationClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.get_organization_details(request_options=request_options)
+        return _response.data
+
+    async def get_account_details(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> GetAccountDetailsOrganizationResponse:
+        """
+        Returns the authenticated user's profile and the organizations they belong to.
+
+        **Response envelope is non-standard** — this endpoint returns the account object
+        directly (no `{status, data}` wrapper).
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetAccountDetailsOrganizationResponse
+            Authenticated user + organizations. Raw object, no envelope.
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.organization.get_account_details()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_account_details(request_options=request_options)
+        return _response.data
+
+    async def update_name(
+        self, *, name: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> UpdateNameOrganizationResponse:
+        """
+        Update the display name of the caller's current organization. Requires admin role.
+
+        **Response envelope is non-standard** — returns `{success: true, name}` instead
+        of the usual `{status, data}` wrapper.
+
+        Parameters
+        ----------
+        name : str
+            New organization name (trimmed).
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        UpdateNameOrganizationResponse
+            Organization renamed.
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.organization.update_name(
+                name="name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.update_name(name=name, request_options=request_options)
         return _response.data

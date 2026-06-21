@@ -31,11 +31,11 @@ def test_atoms_agentVersioningVersions_diff_two_versions() -> None:
     )
 
 
-def test_atoms_agentVersioningVersions_compare_metrics_between_two_versions() -> None:
-    """Test compareMetricsBetweenTwoVersions endpoint with WireMock"""
-    test_id = "atoms.agent_versioning_versions.compare_metrics_between_two_versions.0"
+def test_atoms_agentVersioningVersions_compare_version_metrics() -> None:
+    """Test compare_version_metrics endpoint with WireMock"""
+    test_id = "atoms.agent_versioning_versions.compare_version_metrics.0"
     client = get_client(test_id)
-    client.atoms.agent_versioning_versions.compare_metrics_between_two_versions(
+    client.atoms.agent_versioning_versions.compare_version_metrics(
         id="60d0fe4f5311236168a109ca",
         version_a="versionA",
         version_b="versionB",
@@ -62,22 +62,22 @@ def test_atoms_agentVersioningVersions_get_version_detail() -> None:
     verify_request_count(test_id, "GET", "/agent/60d0fe4f5311236168a109ca/versions/versionId", None, 1)
 
 
-def test_atoms_agentVersioningVersions_update_version_metadata_label_description_pin_only() -> None:
-    """Test updateVersionMetadataLabelDescriptionPinOnly endpoint with WireMock"""
-    test_id = "atoms.agent_versioning_versions.update_version_metadata_label_description_pin_only.0"
+def test_atoms_agentVersioningVersions_update_version_metadata() -> None:
+    """Test update_version_metadata endpoint with WireMock"""
+    test_id = "atoms.agent_versioning_versions.update_version_metadata.0"
     client = get_client(test_id)
-    client.atoms.agent_versioning_versions.update_version_metadata_label_description_pin_only(
+    client.atoms.agent_versioning_versions.update_version_metadata(
         id="60d0fe4f5311236168a109ca",
         version_id="versionId",
     )
     verify_request_count(test_id, "PATCH", "/agent/60d0fe4f5311236168a109ca/versions/versionId", None, 1)
 
 
-def test_atoms_agentVersioningVersions_activate_a_version() -> None:
-    """Test activateAVersion endpoint with WireMock"""
-    test_id = "atoms.agent_versioning_versions.activate_a_version.0"
+def test_atoms_agentVersioningVersions_activate_version() -> None:
+    """Test activate_version endpoint with WireMock"""
+    test_id = "atoms.agent_versioning_versions.activate_version.0"
     client = get_client(test_id)
-    client.atoms.agent_versioning_versions.activate_a_version(
+    client.atoms.agent_versioning_versions.activate_version(
         id="60d0fe4f5311236168a109ca",
         version_id="versionId",
     )

@@ -5,12 +5,12 @@ import typing
 import pydantic
 from ....core.pydantic_utilities import IS_PYDANTIC_V2
 from ....core.unchecked_base_model import UncheckedBaseModel
-from .get_audience_response_data_item import GetAudienceResponseDataItem
+from .get_audience_response_data import GetAudienceResponseData
 
 
 class GetAudienceResponse(UncheckedBaseModel):
     status: typing.Optional[bool] = None
-    data: typing.Optional[typing.List[GetAudienceResponseDataItem]] = None
+    data: typing.Optional[GetAudienceResponseData] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

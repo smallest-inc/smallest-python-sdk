@@ -18,6 +18,7 @@ from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.single_prompt_config import SinglePromptConfig
+from ..types.widget_config import WidgetConfig
 from ..types.workflow_type import WorkflowType
 from .types.archive_agent_agents_response import ArchiveAgentAgentsResponse
 from .types.create_agent_agents_response import CreateAgentAgentsResponse
@@ -35,14 +36,22 @@ from .types.create_agent_request_synthesizer import CreateAgentRequestSynthesize
 from .types.create_agent_request_timezone import CreateAgentRequestTimezone
 from .types.create_agent_request_voice_detection_config import CreateAgentRequestVoiceDetectionConfig
 from .types.create_agent_request_voice_mail_detection_config import CreateAgentRequestVoiceMailDetectionConfig
+from .types.create_with_ai_agents_request_questions_item import CreateWithAiAgentsRequestQuestionsItem
+from .types.create_with_ai_agents_request_type import CreateWithAiAgentsRequestType
+from .types.create_with_ai_agents_request_voice_model import CreateWithAiAgentsRequestVoiceModel
+from .types.create_with_ai_agents_response import CreateWithAiAgentsResponse
 from .types.duplicate_agent_agents_response import DuplicateAgentAgentsResponse
 from .types.get_agent_agents_response import GetAgentAgentsResponse
 from .types.get_agent_id_workflow_response import GetAgentIdWorkflowResponse
+from .types.get_prompt_config_agents_response import GetPromptConfigAgentsResponse
+from .types.get_widget_config_agents_response import GetWidgetConfigAgentsResponse
 from .types.list_agents_agents_request_sort_field import ListAgentsAgentsRequestSortField
 from .types.list_agents_agents_request_sort_order import ListAgentsAgentsRequestSortOrder
 from .types.list_agents_agents_request_type import ListAgentsAgentsRequestType
 from .types.list_agents_agents_response import ListAgentsAgentsResponse
+from .types.list_call_logs_agents_response import ListCallLogsAgentsResponse
 from .types.update_agent_agents_response import UpdateAgentAgentsResponse
+from .types.update_widget_config_agents_response import UpdateWidgetConfigAgentsResponse
 from .types.update_workflow_configuration_agents_request_workflow_graph import (
     UpdateWorkflowConfigurationAgentsRequestWorkflowGraph,
 )
@@ -1196,6 +1205,480 @@ class RawAgentsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def create_with_ai(
+        self,
+        *,
+        name: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        questions: typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]] = OMIT,
+        type: typing.Optional[CreateWithAiAgentsRequestType] = OMIT,
+        emotive_toggle: typing.Optional[bool] = OMIT,
+        voice_id: typing.Optional[str] = OMIT,
+        voice_model: typing.Optional[CreateWithAiAgentsRequestVoiceModel] = OMIT,
+        knowledge_base_id: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[CreateWithAiAgentsResponse]:
+        """
+        Create a new single-prompt agent from a natural-language brief or structured
+        question/answer pairs. Atoms generates the system prompt for you.
+
+        Provide either `description` (free-form brief) or a non-empty `questions` array,
+        but not both. The `emotiveToggle`, `voiceId`, and `voiceModel` fields must be
+        supplied as a 3-tuple or omitted entirely.
+
+        Parameters
+        ----------
+        name : typing.Optional[str]
+            Agent name (trimmed). Auto-generated when omitted.
+
+        description : typing.Optional[str]
+            Free-form natural-language description of what the agent should do.
+            Atoms turns this into the system prompt. Use this OR `questions`, not both.
+
+        questions : typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]]
+            Structured question/answer pairs. Atoms uses these to compose the
+            system prompt. Use this OR `description`, not both.
+
+        type : typing.Optional[CreateWithAiAgentsRequestType]
+            Currently the only supported agent type.
+
+        emotive_toggle : typing.Optional[bool]
+            Enable emotive synthesis. Must be paired with `voiceId` + `voiceModel`.
+
+        voice_id : typing.Optional[str]
+            Voice ID for synthesis. Must be paired with `emotiveToggle` + `voiceModel`.
+
+        voice_model : typing.Optional[CreateWithAiAgentsRequestVoiceModel]
+            Synthesizer to use. Must be paired with `emotiveToggle` + `voiceId`.
+
+        knowledge_base_id : typing.Optional[str]
+            Optional knowledge-base ID to attach to the new agent.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[CreateWithAiAgentsResponse]
+            Agent created. `data` is the new agent's `_id` (string).
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "agent/with-ai",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="POST",
+            json={
+                "name": name,
+                "description": description,
+                "questions": convert_and_respect_annotation_metadata(
+                    object_=questions,
+                    annotation=typing.Sequence[CreateWithAiAgentsRequestQuestionsItem],
+                    direction="write",
+                ),
+                "type": type,
+                "emotiveToggle": emotive_toggle,
+                "voiceId": voice_id,
+                "voiceModel": voice_model,
+                "knowledgeBaseId": knowledge_base_id,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    CreateWithAiAgentsResponse,
+                    construct_type(
+                        type_=CreateWithAiAgentsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def list_call_logs(
+        self,
+        id: str,
+        *,
+        page: typing.Optional[str] = None,
+        offset: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[ListCallLogsAgentsResponse]:
+        """
+        Returns paginated conversation logs (calls) for a specific agent in the caller's
+        organization. Use `GET /conversation` for cross-agent log listing; use this when
+        you already have an agent ID.
+
+        Parameters
+        ----------
+        id : str
+            The agent ID
+
+        page : typing.Optional[str]
+            Page number (string-encoded positive integer).
+
+        offset : typing.Optional[str]
+            Page size (string-encoded positive integer).
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[ListCallLogsAgentsResponse]
+            Paginated list of conversation logs for the agent.
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/call-logs",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            params={
+                "page": page,
+                "offset": offset,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ListCallLogsAgentsResponse,
+                    construct_type(
+                        type_=ListCallLogsAgentsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_widget_config(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[GetWidgetConfigAgentsResponse]:
+        """
+        Returns the embeddable web widget configuration for the agent (theme, copy,
+        consent prompts, branding, voice/chat mode, allowlist). The response merges the
+        stored config with `assistantId: <agentId>` injected.
+
+        Parameters
+        ----------
+        id : str
+            The agent ID
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[GetWidgetConfigAgentsResponse]
+            Widget configuration for the agent.
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/widget-config",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GetWidgetConfigAgentsResponse,
+                    construct_type(
+                        type_=GetWidgetConfigAgentsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def update_widget_config(
+        self, id: str, *, widget_config: WidgetConfig, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[UpdateWidgetConfigAgentsResponse]:
+        """
+        Merge updates into the agent's embeddable widget config. Only the fields in the
+        request body are overwritten; everything else is preserved. Returns the full
+        widget config after merge.
+
+        Parameters
+        ----------
+        id : str
+            The agent ID
+
+        widget_config : WidgetConfig
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[UpdateWidgetConfigAgentsResponse]
+            Merged widget configuration.
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/widget-config",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="PATCH",
+            json={
+                "widgetConfig": convert_and_respect_annotation_metadata(
+                    object_=widget_config, annotation=WidgetConfig, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    UpdateWidgetConfigAgentsResponse,
+                    construct_type(
+                        type_=UpdateWidgetConfigAgentsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_prompt_config(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[GetPromptConfigAgentsResponse]:
+        """
+        Returns the canonical question definitions, option choices, and example labels
+        used by the agent-builder UI when collecting input for `POST /agent/with-ai`.
+
+        Use this to programmatically discover what questions to ask end-users when
+        building agent-creation UIs.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[GetPromptConfigAgentsResponse]
+            Prompt-config catalogue.
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "agent/prompt-config",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GetPromptConfigAgentsResponse,
+                    construct_type(
+                        type_=GetPromptConfigAgentsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
 
 class AsyncRawAgentsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -2312,6 +2795,480 @@ class AsyncRawAgentsClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def create_with_ai(
+        self,
+        *,
+        name: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        questions: typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]] = OMIT,
+        type: typing.Optional[CreateWithAiAgentsRequestType] = OMIT,
+        emotive_toggle: typing.Optional[bool] = OMIT,
+        voice_id: typing.Optional[str] = OMIT,
+        voice_model: typing.Optional[CreateWithAiAgentsRequestVoiceModel] = OMIT,
+        knowledge_base_id: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[CreateWithAiAgentsResponse]:
+        """
+        Create a new single-prompt agent from a natural-language brief or structured
+        question/answer pairs. Atoms generates the system prompt for you.
+
+        Provide either `description` (free-form brief) or a non-empty `questions` array,
+        but not both. The `emotiveToggle`, `voiceId`, and `voiceModel` fields must be
+        supplied as a 3-tuple or omitted entirely.
+
+        Parameters
+        ----------
+        name : typing.Optional[str]
+            Agent name (trimmed). Auto-generated when omitted.
+
+        description : typing.Optional[str]
+            Free-form natural-language description of what the agent should do.
+            Atoms turns this into the system prompt. Use this OR `questions`, not both.
+
+        questions : typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]]
+            Structured question/answer pairs. Atoms uses these to compose the
+            system prompt. Use this OR `description`, not both.
+
+        type : typing.Optional[CreateWithAiAgentsRequestType]
+            Currently the only supported agent type.
+
+        emotive_toggle : typing.Optional[bool]
+            Enable emotive synthesis. Must be paired with `voiceId` + `voiceModel`.
+
+        voice_id : typing.Optional[str]
+            Voice ID for synthesis. Must be paired with `emotiveToggle` + `voiceModel`.
+
+        voice_model : typing.Optional[CreateWithAiAgentsRequestVoiceModel]
+            Synthesizer to use. Must be paired with `emotiveToggle` + `voiceId`.
+
+        knowledge_base_id : typing.Optional[str]
+            Optional knowledge-base ID to attach to the new agent.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[CreateWithAiAgentsResponse]
+            Agent created. `data` is the new agent's `_id` (string).
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "agent/with-ai",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="POST",
+            json={
+                "name": name,
+                "description": description,
+                "questions": convert_and_respect_annotation_metadata(
+                    object_=questions,
+                    annotation=typing.Sequence[CreateWithAiAgentsRequestQuestionsItem],
+                    direction="write",
+                ),
+                "type": type,
+                "emotiveToggle": emotive_toggle,
+                "voiceId": voice_id,
+                "voiceModel": voice_model,
+                "knowledgeBaseId": knowledge_base_id,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    CreateWithAiAgentsResponse,
+                    construct_type(
+                        type_=CreateWithAiAgentsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_call_logs(
+        self,
+        id: str,
+        *,
+        page: typing.Optional[str] = None,
+        offset: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[ListCallLogsAgentsResponse]:
+        """
+        Returns paginated conversation logs (calls) for a specific agent in the caller's
+        organization. Use `GET /conversation` for cross-agent log listing; use this when
+        you already have an agent ID.
+
+        Parameters
+        ----------
+        id : str
+            The agent ID
+
+        page : typing.Optional[str]
+            Page number (string-encoded positive integer).
+
+        offset : typing.Optional[str]
+            Page size (string-encoded positive integer).
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[ListCallLogsAgentsResponse]
+            Paginated list of conversation logs for the agent.
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/call-logs",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            params={
+                "page": page,
+                "offset": offset,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ListCallLogsAgentsResponse,
+                    construct_type(
+                        type_=ListCallLogsAgentsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_widget_config(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[GetWidgetConfigAgentsResponse]:
+        """
+        Returns the embeddable web widget configuration for the agent (theme, copy,
+        consent prompts, branding, voice/chat mode, allowlist). The response merges the
+        stored config with `assistantId: <agentId>` injected.
+
+        Parameters
+        ----------
+        id : str
+            The agent ID
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[GetWidgetConfigAgentsResponse]
+            Widget configuration for the agent.
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/widget-config",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GetWidgetConfigAgentsResponse,
+                    construct_type(
+                        type_=GetWidgetConfigAgentsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def update_widget_config(
+        self, id: str, *, widget_config: WidgetConfig, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[UpdateWidgetConfigAgentsResponse]:
+        """
+        Merge updates into the agent's embeddable widget config. Only the fields in the
+        request body are overwritten; everything else is preserved. Returns the full
+        widget config after merge.
+
+        Parameters
+        ----------
+        id : str
+            The agent ID
+
+        widget_config : WidgetConfig
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[UpdateWidgetConfigAgentsResponse]
+            Merged widget configuration.
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/widget-config",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="PATCH",
+            json={
+                "widgetConfig": convert_and_respect_annotation_metadata(
+                    object_=widget_config, annotation=WidgetConfig, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    UpdateWidgetConfigAgentsResponse,
+                    construct_type(
+                        type_=UpdateWidgetConfigAgentsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_prompt_config(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[GetPromptConfigAgentsResponse]:
+        """
+        Returns the canonical question definitions, option choices, and example labels
+        used by the agent-builder UI when collecting input for `POST /agent/with-ai`.
+
+        Use this to programmatically discover what questions to ask end-users when
+        building agent-creation UIs.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[GetPromptConfigAgentsResponse]
+            Prompt-config catalogue.
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "agent/prompt-config",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GetPromptConfigAgentsResponse,
+                    construct_type(
+                        type_=GetPromptConfigAgentsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Any,

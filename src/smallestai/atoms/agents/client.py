@@ -5,6 +5,7 @@ import typing
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.request_options import RequestOptions
 from ..types.single_prompt_config import SinglePromptConfig
+from ..types.widget_config import WidgetConfig
 from ..types.workflow_type import WorkflowType
 from .raw_client import AsyncRawAgentsClient, RawAgentsClient
 from .types.archive_agent_agents_response import ArchiveAgentAgentsResponse
@@ -23,14 +24,22 @@ from .types.create_agent_request_synthesizer import CreateAgentRequestSynthesize
 from .types.create_agent_request_timezone import CreateAgentRequestTimezone
 from .types.create_agent_request_voice_detection_config import CreateAgentRequestVoiceDetectionConfig
 from .types.create_agent_request_voice_mail_detection_config import CreateAgentRequestVoiceMailDetectionConfig
+from .types.create_with_ai_agents_request_questions_item import CreateWithAiAgentsRequestQuestionsItem
+from .types.create_with_ai_agents_request_type import CreateWithAiAgentsRequestType
+from .types.create_with_ai_agents_request_voice_model import CreateWithAiAgentsRequestVoiceModel
+from .types.create_with_ai_agents_response import CreateWithAiAgentsResponse
 from .types.duplicate_agent_agents_response import DuplicateAgentAgentsResponse
 from .types.get_agent_agents_response import GetAgentAgentsResponse
 from .types.get_agent_id_workflow_response import GetAgentIdWorkflowResponse
+from .types.get_prompt_config_agents_response import GetPromptConfigAgentsResponse
+from .types.get_widget_config_agents_response import GetWidgetConfigAgentsResponse
 from .types.list_agents_agents_request_sort_field import ListAgentsAgentsRequestSortField
 from .types.list_agents_agents_request_sort_order import ListAgentsAgentsRequestSortOrder
 from .types.list_agents_agents_request_type import ListAgentsAgentsRequestType
 from .types.list_agents_agents_response import ListAgentsAgentsResponse
+from .types.list_call_logs_agents_response import ListCallLogsAgentsResponse
 from .types.update_agent_agents_response import UpdateAgentAgentsResponse
+from .types.update_widget_config_agents_response import UpdateWidgetConfigAgentsResponse
 from .types.update_workflow_configuration_agents_request_workflow_graph import (
     UpdateWorkflowConfigurationAgentsRequestWorkflowGraph,
 )
@@ -670,6 +679,239 @@ class AgentsClient:
             single_prompt_config=single_prompt_config,
             request_options=request_options,
         )
+        return _response.data
+
+    def create_with_ai(
+        self,
+        *,
+        name: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        questions: typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]] = OMIT,
+        type: typing.Optional[CreateWithAiAgentsRequestType] = OMIT,
+        emotive_toggle: typing.Optional[bool] = OMIT,
+        voice_id: typing.Optional[str] = OMIT,
+        voice_model: typing.Optional[CreateWithAiAgentsRequestVoiceModel] = OMIT,
+        knowledge_base_id: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CreateWithAiAgentsResponse:
+        """
+        Create a new single-prompt agent from a natural-language brief or structured
+        question/answer pairs. Atoms generates the system prompt for you.
+
+        Provide either `description` (free-form brief) or a non-empty `questions` array,
+        but not both. The `emotiveToggle`, `voiceId`, and `voiceModel` fields must be
+        supplied as a 3-tuple or omitted entirely.
+
+        Parameters
+        ----------
+        name : typing.Optional[str]
+            Agent name (trimmed). Auto-generated when omitted.
+
+        description : typing.Optional[str]
+            Free-form natural-language description of what the agent should do.
+            Atoms turns this into the system prompt. Use this OR `questions`, not both.
+
+        questions : typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]]
+            Structured question/answer pairs. Atoms uses these to compose the
+            system prompt. Use this OR `description`, not both.
+
+        type : typing.Optional[CreateWithAiAgentsRequestType]
+            Currently the only supported agent type.
+
+        emotive_toggle : typing.Optional[bool]
+            Enable emotive synthesis. Must be paired with `voiceId` + `voiceModel`.
+
+        voice_id : typing.Optional[str]
+            Voice ID for synthesis. Must be paired with `emotiveToggle` + `voiceModel`.
+
+        voice_model : typing.Optional[CreateWithAiAgentsRequestVoiceModel]
+            Synthesizer to use. Must be paired with `emotiveToggle` + `voiceId`.
+
+        knowledge_base_id : typing.Optional[str]
+            Optional knowledge-base ID to attach to the new agent.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CreateWithAiAgentsResponse
+            Agent created. `data` is the new agent's `_id` (string).
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.agents.create_with_ai()
+        """
+        _response = self._raw_client.create_with_ai(
+            name=name,
+            description=description,
+            questions=questions,
+            type=type,
+            emotive_toggle=emotive_toggle,
+            voice_id=voice_id,
+            voice_model=voice_model,
+            knowledge_base_id=knowledge_base_id,
+            request_options=request_options,
+        )
+        return _response.data
+
+    def list_call_logs(
+        self,
+        id: str,
+        *,
+        page: typing.Optional[str] = None,
+        offset: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ListCallLogsAgentsResponse:
+        """
+        Returns paginated conversation logs (calls) for a specific agent in the caller's
+        organization. Use `GET /conversation` for cross-agent log listing; use this when
+        you already have an agent ID.
+
+        Parameters
+        ----------
+        id : str
+            The agent ID
+
+        page : typing.Optional[str]
+            Page number (string-encoded positive integer).
+
+        offset : typing.Optional[str]
+            Page size (string-encoded positive integer).
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ListCallLogsAgentsResponse
+            Paginated list of conversation logs for the agent.
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.agents.list_call_logs(
+            id="60d0fe4f5311236168a109ca",
+        )
+        """
+        _response = self._raw_client.list_call_logs(id, page=page, offset=offset, request_options=request_options)
+        return _response.data
+
+    def get_widget_config(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> GetWidgetConfigAgentsResponse:
+        """
+        Returns the embeddable web widget configuration for the agent (theme, copy,
+        consent prompts, branding, voice/chat mode, allowlist). The response merges the
+        stored config with `assistantId: <agentId>` injected.
+
+        Parameters
+        ----------
+        id : str
+            The agent ID
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetWidgetConfigAgentsResponse
+            Widget configuration for the agent.
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.agents.get_widget_config(
+            id="60d0fe4f5311236168a109ca",
+        )
+        """
+        _response = self._raw_client.get_widget_config(id, request_options=request_options)
+        return _response.data
+
+    def update_widget_config(
+        self, id: str, *, widget_config: WidgetConfig, request_options: typing.Optional[RequestOptions] = None
+    ) -> UpdateWidgetConfigAgentsResponse:
+        """
+        Merge updates into the agent's embeddable widget config. Only the fields in the
+        request body are overwritten; everything else is preserved. Returns the full
+        widget config after merge.
+
+        Parameters
+        ----------
+        id : str
+            The agent ID
+
+        widget_config : WidgetConfig
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        UpdateWidgetConfigAgentsResponse
+            Merged widget configuration.
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+        from smallestai.atoms import WidgetConfig
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.agents.update_widget_config(
+            id="60d0fe4f5311236168a109ca",
+            widget_config=WidgetConfig(),
+        )
+        """
+        _response = self._raw_client.update_widget_config(
+            id, widget_config=widget_config, request_options=request_options
+        )
+        return _response.data
+
+    def get_prompt_config(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> GetPromptConfigAgentsResponse:
+        """
+        Returns the canonical question definitions, option choices, and example labels
+        used by the agent-builder UI when collecting input for `POST /agent/with-ai`.
+
+        Use this to programmatically discover what questions to ask end-users when
+        building agent-creation UIs.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetPromptConfigAgentsResponse
+            Prompt-config catalogue.
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.agents.get_prompt_config()
+        """
+        _response = self._raw_client.get_prompt_config(request_options=request_options)
         return _response.data
 
 
@@ -1368,4 +1610,277 @@ class AsyncAgentsClient:
             single_prompt_config=single_prompt_config,
             request_options=request_options,
         )
+        return _response.data
+
+    async def create_with_ai(
+        self,
+        *,
+        name: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        questions: typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]] = OMIT,
+        type: typing.Optional[CreateWithAiAgentsRequestType] = OMIT,
+        emotive_toggle: typing.Optional[bool] = OMIT,
+        voice_id: typing.Optional[str] = OMIT,
+        voice_model: typing.Optional[CreateWithAiAgentsRequestVoiceModel] = OMIT,
+        knowledge_base_id: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CreateWithAiAgentsResponse:
+        """
+        Create a new single-prompt agent from a natural-language brief or structured
+        question/answer pairs. Atoms generates the system prompt for you.
+
+        Provide either `description` (free-form brief) or a non-empty `questions` array,
+        but not both. The `emotiveToggle`, `voiceId`, and `voiceModel` fields must be
+        supplied as a 3-tuple or omitted entirely.
+
+        Parameters
+        ----------
+        name : typing.Optional[str]
+            Agent name (trimmed). Auto-generated when omitted.
+
+        description : typing.Optional[str]
+            Free-form natural-language description of what the agent should do.
+            Atoms turns this into the system prompt. Use this OR `questions`, not both.
+
+        questions : typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]]
+            Structured question/answer pairs. Atoms uses these to compose the
+            system prompt. Use this OR `description`, not both.
+
+        type : typing.Optional[CreateWithAiAgentsRequestType]
+            Currently the only supported agent type.
+
+        emotive_toggle : typing.Optional[bool]
+            Enable emotive synthesis. Must be paired with `voiceId` + `voiceModel`.
+
+        voice_id : typing.Optional[str]
+            Voice ID for synthesis. Must be paired with `emotiveToggle` + `voiceModel`.
+
+        voice_model : typing.Optional[CreateWithAiAgentsRequestVoiceModel]
+            Synthesizer to use. Must be paired with `emotiveToggle` + `voiceId`.
+
+        knowledge_base_id : typing.Optional[str]
+            Optional knowledge-base ID to attach to the new agent.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CreateWithAiAgentsResponse
+            Agent created. `data` is the new agent's `_id` (string).
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.agents.create_with_ai()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.create_with_ai(
+            name=name,
+            description=description,
+            questions=questions,
+            type=type,
+            emotive_toggle=emotive_toggle,
+            voice_id=voice_id,
+            voice_model=voice_model,
+            knowledge_base_id=knowledge_base_id,
+            request_options=request_options,
+        )
+        return _response.data
+
+    async def list_call_logs(
+        self,
+        id: str,
+        *,
+        page: typing.Optional[str] = None,
+        offset: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ListCallLogsAgentsResponse:
+        """
+        Returns paginated conversation logs (calls) for a specific agent in the caller's
+        organization. Use `GET /conversation` for cross-agent log listing; use this when
+        you already have an agent ID.
+
+        Parameters
+        ----------
+        id : str
+            The agent ID
+
+        page : typing.Optional[str]
+            Page number (string-encoded positive integer).
+
+        offset : typing.Optional[str]
+            Page size (string-encoded positive integer).
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ListCallLogsAgentsResponse
+            Paginated list of conversation logs for the agent.
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.agents.list_call_logs(
+                id="60d0fe4f5311236168a109ca",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_call_logs(id, page=page, offset=offset, request_options=request_options)
+        return _response.data
+
+    async def get_widget_config(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> GetWidgetConfigAgentsResponse:
+        """
+        Returns the embeddable web widget configuration for the agent (theme, copy,
+        consent prompts, branding, voice/chat mode, allowlist). The response merges the
+        stored config with `assistantId: <agentId>` injected.
+
+        Parameters
+        ----------
+        id : str
+            The agent ID
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetWidgetConfigAgentsResponse
+            Widget configuration for the agent.
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.agents.get_widget_config(
+                id="60d0fe4f5311236168a109ca",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_widget_config(id, request_options=request_options)
+        return _response.data
+
+    async def update_widget_config(
+        self, id: str, *, widget_config: WidgetConfig, request_options: typing.Optional[RequestOptions] = None
+    ) -> UpdateWidgetConfigAgentsResponse:
+        """
+        Merge updates into the agent's embeddable widget config. Only the fields in the
+        request body are overwritten; everything else is preserved. Returns the full
+        widget config after merge.
+
+        Parameters
+        ----------
+        id : str
+            The agent ID
+
+        widget_config : WidgetConfig
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        UpdateWidgetConfigAgentsResponse
+            Merged widget configuration.
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+        from smallestai.atoms import WidgetConfig
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.agents.update_widget_config(
+                id="60d0fe4f5311236168a109ca",
+                widget_config=WidgetConfig(),
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.update_widget_config(
+            id, widget_config=widget_config, request_options=request_options
+        )
+        return _response.data
+
+    async def get_prompt_config(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> GetPromptConfigAgentsResponse:
+        """
+        Returns the canonical question definitions, option choices, and example labels
+        used by the agent-builder UI when collecting input for `POST /agent/with-ai`.
+
+        Use this to programmatically discover what questions to ask end-users when
+        building agent-creation UIs.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetPromptConfigAgentsResponse
+            Prompt-config catalogue.
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.agents.get_prompt_config()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_prompt_config(request_options=request_options)
         return _response.data

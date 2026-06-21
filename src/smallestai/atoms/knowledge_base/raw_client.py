@@ -16,24 +16,24 @@ from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from .types.delete_knowledgebase_id_response import DeleteKnowledgebaseIdResponse
+from .types.create_knowledge_base_response import CreateKnowledgeBaseResponse
+from .types.delete_knowledge_base_response import DeleteKnowledgeBaseResponse
 from .types.delete_knowledgebase_knowledge_base_id_items_knowledge_base_item_id_response import (
     DeleteKnowledgebaseKnowledgeBaseIdItemsKnowledgeBaseItemIdResponse,
 )
 from .types.delete_knowledgebase_knowledge_base_id_scraped_urls_knowledge_base_scraped_urls_id_response import (
     DeleteKnowledgebaseKnowledgeBaseIdScrapedUrlsKnowledgeBaseScrapedUrlsIdResponse,
 )
+from .types.extract_sitemap_urls_knowledge_base_response import ExtractSitemapUrlsKnowledgeBaseResponse
+from .types.get_knowledge_base_response import GetKnowledgeBaseResponse
 from .types.get_knowledgebase_id_items_response import GetKnowledgebaseIdItemsResponse
-from .types.get_knowledgebase_id_response import GetKnowledgebaseIdResponse
 from .types.get_knowledgebase_id_scraped_urls_response import GetKnowledgebaseIdScrapedUrlsResponse
-from .types.get_knowledgebase_response import GetKnowledgebaseResponse
+from .types.list_knowledge_base_response import ListKnowledgeBaseResponse
 from .types.post_knowledgebase_compelete_file_upload_response import PostKnowledgebaseCompeleteFileUploadResponse
 from .types.post_knowledgebase_get_presigned_url_response import PostKnowledgebaseGetPresignedUrlResponse
-from .types.post_knowledgebase_get_sitemap_urls_response import PostKnowledgebaseGetSitemapUrlsResponse
 from .types.post_knowledgebase_id_items_upload_media_response import PostKnowledgebaseIdItemsUploadMediaResponse
 from .types.post_knowledgebase_id_response import PostKnowledgebaseIdResponse
-from .types.post_knowledgebase_id_scrape_urls_response import PostKnowledgebaseIdScrapeUrlsResponse
-from .types.post_knowledgebase_response import PostKnowledgebaseResponse
+from .types.scrape_urls_knowledge_base_response import ScrapeUrlsKnowledgeBaseResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -44,9 +44,9 @@ class RawKnowledgeBaseClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get_all_knowledge_bases(
+    def list(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[GetKnowledgebaseResponse]:
+    ) -> HttpResponse[ListKnowledgeBaseResponse]:
         """
         Get all knowledge bases
 
@@ -57,7 +57,7 @@ class RawKnowledgeBaseClient:
 
         Returns
         -------
-        HttpResponse[GetKnowledgebaseResponse]
+        HttpResponse[ListKnowledgeBaseResponse]
             A list of knowledge bases
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -69,9 +69,9 @@ class RawKnowledgeBaseClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetKnowledgebaseResponse,
+                    ListKnowledgeBaseResponse,
                     construct_type(
-                        type_=GetKnowledgebaseResponse,  # type: ignore
+                        type_=ListKnowledgeBaseResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -107,13 +107,13 @@ class RawKnowledgeBaseClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def create_a_knowledge_base(
+    def create(
         self,
         *,
         name: str,
         description: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PostKnowledgebaseResponse]:
+    ) -> HttpResponse[CreateKnowledgeBaseResponse]:
         """
         Create a knowledge base
 
@@ -129,7 +129,7 @@ class RawKnowledgeBaseClient:
 
         Returns
         -------
-        HttpResponse[PostKnowledgebaseResponse]
+        HttpResponse[CreateKnowledgeBaseResponse]
             Knowledge base created successfully
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -149,9 +149,9 @@ class RawKnowledgeBaseClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostKnowledgebaseResponse,
+                    CreateKnowledgeBaseResponse,
                     construct_type(
-                        type_=PostKnowledgebaseResponse,  # type: ignore
+                        type_=CreateKnowledgeBaseResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -198,9 +198,9 @@ class RawKnowledgeBaseClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_a_knowledge_base(
+    def get(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[GetKnowledgebaseIdResponse]:
+    ) -> HttpResponse[GetKnowledgeBaseResponse]:
         """
         Get a knowledge base
 
@@ -214,7 +214,7 @@ class RawKnowledgeBaseClient:
 
         Returns
         -------
-        HttpResponse[GetKnowledgebaseIdResponse]
+        HttpResponse[GetKnowledgeBaseResponse]
             A knowledge base
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -226,9 +226,9 @@ class RawKnowledgeBaseClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetKnowledgebaseIdResponse,
+                    GetKnowledgeBaseResponse,
                     construct_type(
-                        type_=GetKnowledgebaseIdResponse,  # type: ignore
+                        type_=GetKnowledgeBaseResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -395,9 +395,9 @@ class RawKnowledgeBaseClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def delete_a_knowledge_base(
+    def delete(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[DeleteKnowledgebaseIdResponse]:
+    ) -> HttpResponse[DeleteKnowledgeBaseResponse]:
         """
         Delete a knowledge base.
 
@@ -415,7 +415,7 @@ class RawKnowledgeBaseClient:
 
         Returns
         -------
-        HttpResponse[DeleteKnowledgebaseIdResponse]
+        HttpResponse[DeleteKnowledgeBaseResponse]
             Knowledge base deleted successfully
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -427,9 +427,9 @@ class RawKnowledgeBaseClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    DeleteKnowledgebaseIdResponse,
+                    DeleteKnowledgeBaseResponse,
                     construct_type(
-                        type_=DeleteKnowledgebaseIdResponse,  # type: ignore
+                        type_=DeleteKnowledgeBaseResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -955,9 +955,9 @@ class RawKnowledgeBaseClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def extract_ur_ls_from_a_sitemap_xml(
+    def extract_sitemap_urls(
         self, *, site_url: str, knowledge_base_id: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[PostKnowledgebaseGetSitemapUrlsResponse]:
+    ) -> HttpResponse[ExtractSitemapUrlsKnowledgeBaseResponse]:
         """
         Fetches a website's `sitemap.xml`, parses it, and returns the list of URLs inside. Use this before calling `POST /knowledgebase/{id}/scrape-urls` to let the customer pick which URLs they actually want indexed.
 
@@ -976,7 +976,7 @@ class RawKnowledgeBaseClient:
 
         Returns
         -------
-        HttpResponse[PostKnowledgebaseGetSitemapUrlsResponse]
+        HttpResponse[ExtractSitemapUrlsKnowledgeBaseResponse]
             Extracted URLs, ready to be filtered + passed to `/scrape-urls`.
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -996,9 +996,9 @@ class RawKnowledgeBaseClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostKnowledgebaseGetSitemapUrlsResponse,
+                    ExtractSitemapUrlsKnowledgeBaseResponse,
                     construct_type(
-                        type_=PostKnowledgebaseGetSitemapUrlsResponse,  # type: ignore
+                        type_=ExtractSitemapUrlsKnowledgeBaseResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1067,9 +1067,9 @@ class RawKnowledgeBaseClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def scrape_a_list_of_ur_ls_into_a_knowledge_base(
+    def scrape_urls(
         self, id: str, *, urls: typing.Sequence[str], request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[PostKnowledgebaseIdScrapeUrlsResponse]:
+    ) -> HttpResponse[ScrapeUrlsKnowledgeBaseResponse]:
         """
         Adds one or more URLs to a knowledge base by scraping each page's content, chunking it, and indexing for retrieval. Typical flow:
 
@@ -1091,7 +1091,7 @@ class RawKnowledgeBaseClient:
 
         Returns
         -------
-        HttpResponse[PostKnowledgebaseIdScrapeUrlsResponse]
+        HttpResponse[ScrapeUrlsKnowledgeBaseResponse]
             Scrape job(s) queued. Poll `/scraped-urls` for per-URL status.
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1110,9 +1110,9 @@ class RawKnowledgeBaseClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostKnowledgebaseIdScrapeUrlsResponse,
+                    ScrapeUrlsKnowledgeBaseResponse,
                     construct_type(
-                        type_=PostKnowledgebaseIdScrapeUrlsResponse,  # type: ignore
+                        type_=ScrapeUrlsKnowledgeBaseResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1325,9 +1325,9 @@ class AsyncRawKnowledgeBaseClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get_all_knowledge_bases(
+    async def list(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[GetKnowledgebaseResponse]:
+    ) -> AsyncHttpResponse[ListKnowledgeBaseResponse]:
         """
         Get all knowledge bases
 
@@ -1338,7 +1338,7 @@ class AsyncRawKnowledgeBaseClient:
 
         Returns
         -------
-        AsyncHttpResponse[GetKnowledgebaseResponse]
+        AsyncHttpResponse[ListKnowledgeBaseResponse]
             A list of knowledge bases
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1350,9 +1350,9 @@ class AsyncRawKnowledgeBaseClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetKnowledgebaseResponse,
+                    ListKnowledgeBaseResponse,
                     construct_type(
-                        type_=GetKnowledgebaseResponse,  # type: ignore
+                        type_=ListKnowledgeBaseResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1388,13 +1388,13 @@ class AsyncRawKnowledgeBaseClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def create_a_knowledge_base(
+    async def create(
         self,
         *,
         name: str,
         description: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PostKnowledgebaseResponse]:
+    ) -> AsyncHttpResponse[CreateKnowledgeBaseResponse]:
         """
         Create a knowledge base
 
@@ -1410,7 +1410,7 @@ class AsyncRawKnowledgeBaseClient:
 
         Returns
         -------
-        AsyncHttpResponse[PostKnowledgebaseResponse]
+        AsyncHttpResponse[CreateKnowledgeBaseResponse]
             Knowledge base created successfully
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1430,9 +1430,9 @@ class AsyncRawKnowledgeBaseClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostKnowledgebaseResponse,
+                    CreateKnowledgeBaseResponse,
                     construct_type(
-                        type_=PostKnowledgebaseResponse,  # type: ignore
+                        type_=CreateKnowledgeBaseResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1479,9 +1479,9 @@ class AsyncRawKnowledgeBaseClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def get_a_knowledge_base(
+    async def get(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[GetKnowledgebaseIdResponse]:
+    ) -> AsyncHttpResponse[GetKnowledgeBaseResponse]:
         """
         Get a knowledge base
 
@@ -1495,7 +1495,7 @@ class AsyncRawKnowledgeBaseClient:
 
         Returns
         -------
-        AsyncHttpResponse[GetKnowledgebaseIdResponse]
+        AsyncHttpResponse[GetKnowledgeBaseResponse]
             A knowledge base
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1507,9 +1507,9 @@ class AsyncRawKnowledgeBaseClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetKnowledgebaseIdResponse,
+                    GetKnowledgeBaseResponse,
                     construct_type(
-                        type_=GetKnowledgebaseIdResponse,  # type: ignore
+                        type_=GetKnowledgeBaseResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1676,9 +1676,9 @@ class AsyncRawKnowledgeBaseClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def delete_a_knowledge_base(
+    async def delete(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[DeleteKnowledgebaseIdResponse]:
+    ) -> AsyncHttpResponse[DeleteKnowledgeBaseResponse]:
         """
         Delete a knowledge base.
 
@@ -1696,7 +1696,7 @@ class AsyncRawKnowledgeBaseClient:
 
         Returns
         -------
-        AsyncHttpResponse[DeleteKnowledgebaseIdResponse]
+        AsyncHttpResponse[DeleteKnowledgeBaseResponse]
             Knowledge base deleted successfully
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1708,9 +1708,9 @@ class AsyncRawKnowledgeBaseClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    DeleteKnowledgebaseIdResponse,
+                    DeleteKnowledgeBaseResponse,
                     construct_type(
-                        type_=DeleteKnowledgebaseIdResponse,  # type: ignore
+                        type_=DeleteKnowledgeBaseResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2236,9 +2236,9 @@ class AsyncRawKnowledgeBaseClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def extract_ur_ls_from_a_sitemap_xml(
+    async def extract_sitemap_urls(
         self, *, site_url: str, knowledge_base_id: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[PostKnowledgebaseGetSitemapUrlsResponse]:
+    ) -> AsyncHttpResponse[ExtractSitemapUrlsKnowledgeBaseResponse]:
         """
         Fetches a website's `sitemap.xml`, parses it, and returns the list of URLs inside. Use this before calling `POST /knowledgebase/{id}/scrape-urls` to let the customer pick which URLs they actually want indexed.
 
@@ -2257,7 +2257,7 @@ class AsyncRawKnowledgeBaseClient:
 
         Returns
         -------
-        AsyncHttpResponse[PostKnowledgebaseGetSitemapUrlsResponse]
+        AsyncHttpResponse[ExtractSitemapUrlsKnowledgeBaseResponse]
             Extracted URLs, ready to be filtered + passed to `/scrape-urls`.
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -2277,9 +2277,9 @@ class AsyncRawKnowledgeBaseClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostKnowledgebaseGetSitemapUrlsResponse,
+                    ExtractSitemapUrlsKnowledgeBaseResponse,
                     construct_type(
-                        type_=PostKnowledgebaseGetSitemapUrlsResponse,  # type: ignore
+                        type_=ExtractSitemapUrlsKnowledgeBaseResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2348,9 +2348,9 @@ class AsyncRawKnowledgeBaseClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def scrape_a_list_of_ur_ls_into_a_knowledge_base(
+    async def scrape_urls(
         self, id: str, *, urls: typing.Sequence[str], request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[PostKnowledgebaseIdScrapeUrlsResponse]:
+    ) -> AsyncHttpResponse[ScrapeUrlsKnowledgeBaseResponse]:
         """
         Adds one or more URLs to a knowledge base by scraping each page's content, chunking it, and indexing for retrieval. Typical flow:
 
@@ -2372,7 +2372,7 @@ class AsyncRawKnowledgeBaseClient:
 
         Returns
         -------
-        AsyncHttpResponse[PostKnowledgebaseIdScrapeUrlsResponse]
+        AsyncHttpResponse[ScrapeUrlsKnowledgeBaseResponse]
             Scrape job(s) queued. Poll `/scraped-urls` for per-URL status.
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -2391,9 +2391,9 @@ class AsyncRawKnowledgeBaseClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostKnowledgebaseIdScrapeUrlsResponse,
+                    ScrapeUrlsKnowledgeBaseResponse,
                     construct_type(
-                        type_=PostKnowledgebaseIdScrapeUrlsResponse,  # type: ignore
+                        type_=ScrapeUrlsKnowledgeBaseResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

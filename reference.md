@@ -49,6 +49,73 @@ client.atoms.user.get_user_details()
 </dl>
 </details>
 
+<details><summary><code>client.atoms.user.<a href="src/smallestai/atoms/user/client.py">get_subscription</a>() -> GetSubscriptionUserResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the caller's subscription details (plan ID + plan-tier limits) and
+feature-flag map. Useful for client-side gating of paid features.
+
+**`limits` is omitted** for the `ENTERPRISE` plan (and for unknown plan IDs) —
+only `features` is returned in those cases.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.user.get_subscription()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Atoms Organization
 <details><summary><code>client.atoms.organization.<a href="src/smallestai/atoms/organization/client.py">get_organization_details</a>() -> GetOrganizationResponse</code></summary>
 <dl>
@@ -83,6 +150,148 @@ client.atoms.organization.get_organization_details()
 
 <dl>
 <dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.organization.<a href="src/smallestai/atoms/organization/client.py">get_account_details</a>() -> GetAccountDetailsOrganizationResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the authenticated user's profile and the organizations they belong to.
+
+**Response envelope is non-standard** — this endpoint returns the account object
+directly (no `{status, data}` wrapper).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.organization.get_account_details()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.organization.<a href="src/smallestai/atoms/organization/client.py">update_name</a>(...) -> UpdateNameOrganizationResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update the display name of the caller's current organization. Requires admin role.
+
+**Response envelope is non-standard** — returns `{success: true, name}` instead
+of the usual `{status, data}` wrapper.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.organization.update_name(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` — New organization name (trimmed).
+    
+</dd>
+</dl>
 
 <dl>
 <dd>
@@ -1328,6 +1537,462 @@ client.atoms.agents.update_workflow_configuration(
 </dl>
 </details>
 
+<details><summary><code>client.atoms.agents.<a href="src/smallestai/atoms/agents/client.py">create_with_ai</a>(...) -> CreateWithAiAgentsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a new single-prompt agent from a natural-language brief or structured
+question/answer pairs. Atoms generates the system prompt for you.
+
+Provide either `description` (free-form brief) or a non-empty `questions` array,
+but not both. The `emotiveToggle`, `voiceId`, and `voiceModel` fields must be
+supplied as a 3-tuple or omitted entirely.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.agents.create_with_ai()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `typing.Optional[str]` — Agent name (trimmed). Auto-generated when omitted.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `typing.Optional[str]` 
+
+Free-form natural-language description of what the agent should do.
+Atoms turns this into the system prompt. Use this OR `questions`, not both.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**questions:** `typing.Optional[typing.List[CreateWithAiAgentsRequestQuestionsItem]]` 
+
+Structured question/answer pairs. Atoms uses these to compose the
+system prompt. Use this OR `description`, not both.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**type:** `typing.Optional[CreateWithAiAgentsRequestType]` — Currently the only supported agent type.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**emotive_toggle:** `typing.Optional[bool]` — Enable emotive synthesis. Must be paired with `voiceId` + `voiceModel`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**voice_id:** `typing.Optional[str]` — Voice ID for synthesis. Must be paired with `emotiveToggle` + `voiceModel`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**voice_model:** `typing.Optional[CreateWithAiAgentsRequestVoiceModel]` — Synthesizer to use. Must be paired with `emotiveToggle` + `voiceId`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**knowledge_base_id:** `typing.Optional[str]` — Optional knowledge-base ID to attach to the new agent.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.agents.<a href="src/smallestai/atoms/agents/client.py">list_call_logs</a>(...) -> ListCallLogsAgentsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns paginated conversation logs (calls) for a specific agent in the caller's
+organization. Use `GET /conversation` for cross-agent log listing; use this when
+you already have an agent ID.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.agents.list_call_logs(
+    id="60d0fe4f5311236168a109ca",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` — The agent ID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page:** `typing.Optional[str]` — Page number (string-encoded positive integer).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[str]` — Page size (string-encoded positive integer).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.agents.<a href="src/smallestai/atoms/agents/client.py">get_widget_config</a>(...) -> GetWidgetConfigAgentsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the embeddable web widget configuration for the agent (theme, copy,
+consent prompts, branding, voice/chat mode, allowlist). The response merges the
+stored config with `assistantId: <agentId>` injected.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.agents.get_widget_config(
+    id="60d0fe4f5311236168a109ca",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` — The agent ID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.agents.<a href="src/smallestai/atoms/agents/client.py">update_widget_config</a>(...) -> UpdateWidgetConfigAgentsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Merge updates into the agent's embeddable widget config. Only the fields in the
+request body are overwritten; everything else is preserved. Returns the full
+widget config after merge.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+from smallestai.atoms import WidgetConfig
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.agents.update_widget_config(
+    id="60d0fe4f5311236168a109ca",
+    widget_config=WidgetConfig(),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` — The agent ID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**widget_config:** `WidgetConfig` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.agents.<a href="src/smallestai/atoms/agents/client.py">get_prompt_config</a>() -> GetPromptConfigAgentsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the canonical question definitions, option choices, and example labels
+used by the agent-builder UI when collecting input for `POST /agent/with-ai`.
+
+Use this to programmatically discover what questions to ask end-users when
+building agent-creation UIs.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.agents.get_prompt_config()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Atoms Calls
 <details><summary><code>client.atoms.calls.<a href="src/smallestai/atoms/calls/client.py">list</a>(...) -> ListCallsResponse</code></summary>
 <dl>
@@ -2305,7 +2970,7 @@ client.atoms.live_transcripts.subscribe_to_live_events(
 </details>
 
 ## Atoms Campaigns
-<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">retrieve_all_campaigns</a>(...) -> GetCampaignResponse</code></summary>
+<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">list</a>(...) -> ListCampaignsResponse</code></summary>
 <dl>
 <dd>
 
@@ -2340,7 +3005,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.campaigns.retrieve_all_campaigns()
+client.atoms.campaigns.list()
 
 ```
 </dd>
@@ -2372,7 +3037,7 @@ client.atoms.campaigns.retrieve_all_campaigns()
 <dl>
 <dd>
 
-**status:** `typing.Optional[GetCampaignRequestStatus]` — Filter campaigns by status
+**status:** `typing.Optional[ListCampaignsRequestStatus]` — Filter campaigns by status
     
 </dd>
 </dl>
@@ -2388,7 +3053,7 @@ client.atoms.campaigns.retrieve_all_campaigns()
 <dl>
 <dd>
 
-**sort_field:** `typing.Optional[GetCampaignRequestSortField]` — Field to sort by
+**sort_field:** `typing.Optional[ListCampaignsRequestSortField]` — Field to sort by
     
 </dd>
 </dl>
@@ -2396,7 +3061,7 @@ client.atoms.campaigns.retrieve_all_campaigns()
 <dl>
 <dd>
 
-**sort_order:** `typing.Optional[GetCampaignRequestSortOrder]` — Sort direction
+**sort_order:** `typing.Optional[ListCampaignsRequestSortOrder]` — Sort direction
     
 </dd>
 </dl>
@@ -2416,7 +3081,7 @@ client.atoms.campaigns.retrieve_all_campaigns()
 </dl>
 </details>
 
-<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">create_a_campaign</a>(...) -> PostCampaignResponse</code></summary>
+<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">create</a>(...) -> CreateCampaignsResponse</code></summary>
 <dl>
 <dd>
 
@@ -2451,7 +3116,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.campaigns.create_a_campaign(
+client.atoms.campaigns.create(
     name="My Campaign",
     audience_id="60d0fe4f5311236168a109ca",
     agent_id="60d0fe4f5311236168a109ca",
@@ -2559,7 +3224,7 @@ participant is marked as failed. `0` disables retries.
 </dl>
 </details>
 
-<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">get_a_campaign</a>(...) -> GetCampaignIdResponse</code></summary>
+<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">get</a>(...) -> GetCampaignsResponse</code></summary>
 <dl>
 <dd>
 
@@ -2594,7 +3259,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.campaigns.get_a_campaign(
+client.atoms.campaigns.get(
     id="id",
 )
 
@@ -2632,7 +3297,7 @@ client.atoms.campaigns.get_a_campaign(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">delete_a_campaign</a>(...) -> DeleteCampaignIdResponse</code></summary>
+<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">delete</a>(...) -> DeleteCampaignsResponse</code></summary>
 <dl>
 <dd>
 
@@ -2667,7 +3332,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.campaigns.delete_a_campaign(
+client.atoms.campaigns.delete(
     id="id",
 )
 
@@ -2705,7 +3370,7 @@ client.atoms.campaigns.delete_a_campaign(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">start_or_resume_a_campaign</a>(...) -> PostCampaignIdStartResponse</code></summary>
+<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">start_or_resume</a>(...) -> StartOrResumeCampaignsResponse</code></summary>
 <dl>
 <dd>
 
@@ -2744,7 +3409,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.campaigns.start_or_resume_a_campaign(
+client.atoms.campaigns.start_or_resume(
     id="id",
 )
 
@@ -2782,7 +3447,7 @@ client.atoms.campaigns.start_or_resume_a_campaign(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">pause_a_campaign</a>(...) -> PostCampaignIdPauseResponse</code></summary>
+<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">pause</a>(...) -> PauseCampaignsResponse</code></summary>
 <dl>
 <dd>
 
@@ -2818,7 +3483,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.campaigns.pause_a_campaign(
+client.atoms.campaigns.pause(
     id="id",
 )
 
@@ -2856,8 +3521,86 @@ client.atoms.campaigns.pause_a_campaign(
 </dl>
 </details>
 
+<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">export_logs</a>(...) -> typing.List[ExportLogsCampaignsResponseItem]</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Streams a JSON file containing every call log for a campaign.
+
+Response is a **file download** (`Content-Disposition: attachment`), not the
+standard `{status, data}` envelope. Body is a raw JSON array of log objects.
+When the relay-service is configured and reachable, each row also includes an
+`events` array; otherwise the field is omitted.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.campaigns.export_logs(
+    id="id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` — Campaign ID.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Atoms KnowledgeBase
-<details><summary><code>client.atoms.knowledge_base.<a href="src/smallestai/atoms/knowledge_base/client.py">get_all_knowledge_bases</a>() -> GetKnowledgebaseResponse</code></summary>
+<details><summary><code>client.atoms.knowledge_base.<a href="src/smallestai/atoms/knowledge_base/client.py">list</a>() -> ListKnowledgeBaseResponse</code></summary>
 <dl>
 <dd>
 
@@ -2892,7 +3635,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.knowledge_base.get_all_knowledge_bases()
+client.atoms.knowledge_base.list()
 
 ```
 </dd>
@@ -2920,7 +3663,7 @@ client.atoms.knowledge_base.get_all_knowledge_bases()
 </dl>
 </details>
 
-<details><summary><code>client.atoms.knowledge_base.<a href="src/smallestai/atoms/knowledge_base/client.py">create_a_knowledge_base</a>(...) -> PostKnowledgebaseResponse</code></summary>
+<details><summary><code>client.atoms.knowledge_base.<a href="src/smallestai/atoms/knowledge_base/client.py">create</a>(...) -> CreateKnowledgeBaseResponse</code></summary>
 <dl>
 <dd>
 
@@ -2955,7 +3698,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.knowledge_base.create_a_knowledge_base(
+client.atoms.knowledge_base.create(
     name="name",
 )
 
@@ -3001,7 +3744,7 @@ client.atoms.knowledge_base.create_a_knowledge_base(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.knowledge_base.<a href="src/smallestai/atoms/knowledge_base/client.py">get_a_knowledge_base</a>(...) -> GetKnowledgebaseIdResponse</code></summary>
+<details><summary><code>client.atoms.knowledge_base.<a href="src/smallestai/atoms/knowledge_base/client.py">get</a>(...) -> GetKnowledgeBaseResponse</code></summary>
 <dl>
 <dd>
 
@@ -3036,7 +3779,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.knowledge_base.get_a_knowledge_base(
+client.atoms.knowledge_base.get(
     id="id",
 )
 
@@ -3166,7 +3909,7 @@ client.atoms.knowledge_base.update_a_knowledge_base_name_description(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.knowledge_base.<a href="src/smallestai/atoms/knowledge_base/client.py">delete_a_knowledge_base</a>(...) -> DeleteKnowledgebaseIdResponse</code></summary>
+<details><summary><code>client.atoms.knowledge_base.<a href="src/smallestai/atoms/knowledge_base/client.py">delete</a>(...) -> DeleteKnowledgeBaseResponse</code></summary>
 <dl>
 <dd>
 
@@ -3205,7 +3948,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.knowledge_base.delete_a_knowledge_base(
+client.atoms.knowledge_base.delete(
     id="id",
 )
 
@@ -3703,7 +4446,7 @@ client.atoms.knowledge_base.complete_a_presigned_url_upload_and_start_processing
 </dl>
 </details>
 
-<details><summary><code>client.atoms.knowledge_base.<a href="src/smallestai/atoms/knowledge_base/client.py">extract_ur_ls_from_a_sitemap_xml</a>(...) -> PostKnowledgebaseGetSitemapUrlsResponse</code></summary>
+<details><summary><code>client.atoms.knowledge_base.<a href="src/smallestai/atoms/knowledge_base/client.py">extract_sitemap_urls</a>(...) -> ExtractSitemapUrlsKnowledgeBaseResponse</code></summary>
 <dl>
 <dd>
 
@@ -3740,7 +4483,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.knowledge_base.extract_ur_ls_from_a_sitemap_xml(
+client.atoms.knowledge_base.extract_sitemap_urls(
     site_url="https://example.com/sitemap.xml",
     knowledge_base_id="6867ca76d0f8f2e0f4201281",
 )
@@ -3787,7 +4530,7 @@ client.atoms.knowledge_base.extract_ur_ls_from_a_sitemap_xml(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.knowledge_base.<a href="src/smallestai/atoms/knowledge_base/client.py">scrape_a_list_of_ur_ls_into_a_knowledge_base</a>(...) -> PostKnowledgebaseIdScrapeUrlsResponse</code></summary>
+<details><summary><code>client.atoms.knowledge_base.<a href="src/smallestai/atoms/knowledge_base/client.py">scrape_urls</a>(...) -> ScrapeUrlsKnowledgeBaseResponse</code></summary>
 <dl>
 <dd>
 
@@ -3828,7 +4571,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.knowledge_base.scrape_a_list_of_ur_ls_into_a_knowledge_base(
+client.atoms.knowledge_base.scrape_urls(
     id="id",
     urls=[
         "https://example.com/pricing",
@@ -4034,7 +4777,7 @@ client.atoms.knowledge_base.delete_a_scraped_url_from_a_knowledge_base(
 </details>
 
 ## Atoms PhoneNumbers
-<details><summary><code>client.atoms.phone_numbers.<a href="src/smallestai/atoms/phone_numbers/client.py">get_acquired_phone_numbers</a>() -> GetProductPhoneNumbersResponse</code></summary>
+<details><summary><code>client.atoms.phone_numbers.<a href="src/smallestai/atoms/phone_numbers/client.py">list</a>() -> ListPhoneNumbersResponse</code></summary>
 <dl>
 <dd>
 
@@ -4072,7 +4815,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.phone_numbers.get_acquired_phone_numbers()
+client.atoms.phone_numbers.list()
 
 ```
 </dd>
@@ -4168,7 +4911,7 @@ client.atoms.phone_numbers.list_all_phone_numbers_platform_sip()
 </dl>
 </details>
 
-<details><summary><code>client.atoms.phone_numbers.<a href="src/smallestai/atoms/phone_numbers/client.py">search_rentable_phone_numbers_in_inventory</a>(...) -> GetProductGetAvailableNumbersResponse</code></summary>
+<details><summary><code>client.atoms.phone_numbers.<a href="src/smallestai/atoms/phone_numbers/client.py">search_rentable</a>(...) -> SearchRentablePhoneNumbersResponse</code></summary>
 <dl>
 <dd>
 
@@ -4205,7 +4948,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.phone_numbers.search_rentable_phone_numbers_in_inventory(
+client.atoms.phone_numbers.search_rentable(
     country_code="US",
     provider="plivo",
 )
@@ -4232,7 +4975,7 @@ client.atoms.phone_numbers.search_rentable_phone_numbers_in_inventory(
 <dl>
 <dd>
 
-**provider:** `GetProductGetAvailableNumbersRequestProvider` — Telephony provider to search.
+**provider:** `SearchRentablePhoneNumbersRequestProvider` — Telephony provider to search.
     
 </dd>
 </dl>
@@ -4325,7 +5068,7 @@ client.atoms.phone_numbers.preview_prorated_rental_cost_for_renting_a_phone_numb
 </dl>
 </details>
 
-<details><summary><code>client.atoms.phone_numbers.<a href="src/smallestai/atoms/phone_numbers/client.py">rent_a_phone_number_from_the_telephony_inventory</a>(...) -> PostProductRentNumberResponse</code></summary>
+<details><summary><code>client.atoms.phone_numbers.<a href="src/smallestai/atoms/phone_numbers/client.py">rent</a>(...) -> RentPhoneNumbersResponse</code></summary>
 <dl>
 <dd>
 
@@ -4364,7 +5107,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.phone_numbers.rent_a_phone_number_from_the_telephony_inventory(
+client.atoms.phone_numbers.rent(
     phone_number="13183747513",
     provider="plivo",
 )
@@ -4391,7 +5134,7 @@ client.atoms.phone_numbers.rent_a_phone_number_from_the_telephony_inventory(
 <dl>
 <dd>
 
-**provider:** `PostProductRentNumberRequestProvider` 
+**provider:** `RentPhoneNumbersRequestProvider` 
     
 </dd>
 </dl>
@@ -4411,7 +5154,7 @@ client.atoms.phone_numbers.rent_a_phone_number_from_the_telephony_inventory(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.phone_numbers.<a href="src/smallestai/atoms/phone_numbers/client.py">release_a_rented_phone_number</a>(...) -> PostProductReleaseNumberResponse</code></summary>
+<details><summary><code>client.atoms.phone_numbers.<a href="src/smallestai/atoms/phone_numbers/client.py">release</a>(...) -> ReleasePhoneNumbersResponse</code></summary>
 <dl>
 <dd>
 
@@ -4448,7 +5191,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.phone_numbers.release_a_rented_phone_number(
+client.atoms.phone_numbers.release(
     product_id="6969109c84c74bed175f02a7",
 )
 
@@ -4612,7 +5355,7 @@ client.atoms.phone_numbers.check_whether_the_organization_has_unpaid_invoices()
 </dl>
 </details>
 
-<details><summary><code>client.atoms.phone_numbers.<a href="src/smallestai/atoms/phone_numbers/client.py">import_a_sip_phone_number</a>(...) -> PostProductImportPhoneNumberResponse</code></summary>
+<details><summary><code>client.atoms.phone_numbers.<a href="src/smallestai/atoms/phone_numbers/client.py">import_sip</a>(...) -> ImportSipPhoneNumbersResponse</code></summary>
 <dl>
 <dd>
 
@@ -4650,7 +5393,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.phone_numbers.import_a_sip_phone_number(
+client.atoms.phone_numbers.import_sip(
     phone_number="+14155551234",
     sip_termination_url="sip:trunk.your-provider.com",
     name="Main Support Line",
@@ -4911,7 +5654,7 @@ client.atoms.compliance.get_compliance_requirements(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.compliance.<a href="src/smallestai/atoms/compliance/client.py">submit_a_compliance_application</a>(...) -> PostComplianceApplicationsResponse</code></summary>
+<details><summary><code>client.atoms.compliance.<a href="src/smallestai/atoms/compliance/client.py">submit</a>(...) -> SubmitComplianceResponse</code></summary>
 <dl>
 <dd>
 
@@ -4950,7 +5693,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.compliance.submit_a_compliance_application(
+client.atoms.compliance.submit(
     files=["example_files"],
     country_iso="countryIso",
     number_type="local",
@@ -4981,7 +5724,7 @@ client.atoms.compliance.submit_a_compliance_application(
 <dl>
 <dd>
 
-**number_type:** `PostComplianceApplicationsRequestNumberType` — The type of phone number
+**number_type:** `SubmitComplianceRequestNumberType` — The type of phone number
     
 </dd>
 </dl>
@@ -4989,7 +5732,7 @@ client.atoms.compliance.submit_a_compliance_application(
 <dl>
 <dd>
 
-**user_type:** `PostComplianceApplicationsRequestUserType` — The type of end user
+**user_type:** `SubmitComplianceRequestUserType` — The type of end user
     
 </dd>
 </dl>
@@ -5057,7 +5800,7 @@ Accepted formats: PDF, JPEG, PNG. Maximum 5 MB per file, up to 10 files.
 </dl>
 </details>
 
-<details><summary><code>client.atoms.compliance.<a href="src/smallestai/atoms/compliance/client.py">resubmit_a_rejected_compliance_application</a>(...) -> PatchComplianceApplicationsIdResponse</code></summary>
+<details><summary><code>client.atoms.compliance.<a href="src/smallestai/atoms/compliance/client.py">resubmit</a>(...) -> ResubmitComplianceResponse</code></summary>
 <dl>
 <dd>
 
@@ -5096,7 +5839,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.compliance.resubmit_a_rejected_compliance_application(
+client.atoms.compliance.resubmit(
     id="id",
     files=["example_files"],
     documents="documents",
@@ -5305,7 +6048,7 @@ client.atoms.webhooks.get_webhooks()
 </dl>
 </details>
 
-<details><summary><code>client.atoms.webhooks.<a href="src/smallestai/atoms/webhooks/client.py">create_a_webhook</a>(...) -> PostWebhookResponse</code></summary>
+<details><summary><code>client.atoms.webhooks.<a href="src/smallestai/atoms/webhooks/client.py">create</a>(...) -> CreateWebhooksResponse</code></summary>
 <dl>
 <dd>
 
@@ -5337,18 +6080,18 @@ Create a new webhook with subscriptions for specific agents and events.
 ```python
 from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
-from smallestai.atoms.webhooks import PostWebhookRequestEventsItem
+from smallestai.atoms.webhooks import CreateWebhooksRequestEventsItem
 
 client = SmallestAI(
     api_key="<token>",
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.webhooks.create_a_webhook(
+client.atoms.webhooks.create(
     endpoint="https://example.com/webhook",
     description="Webhook for conversation events",
     events=[
-        PostWebhookRequestEventsItem(
+        CreateWebhooksRequestEventsItem(
             agent_id="60d0fe4f5311236168a109ca",
             event_type="pre-conversation",
         )
@@ -5385,7 +6128,7 @@ client.atoms.webhooks.create_a_webhook(
 <dl>
 <dd>
 
-**events:** `typing.List[PostWebhookRequestEventsItem]` — Array of events to subscribe to
+**events:** `typing.List[CreateWebhooksRequestEventsItem]` — Array of events to subscribe to
     
 </dd>
 </dl>
@@ -5405,7 +6148,7 @@ client.atoms.webhooks.create_a_webhook(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.webhooks.<a href="src/smallestai/atoms/webhooks/client.py">delete_a_webhook</a>(...) -> DeleteWebhookIdResponse</code></summary>
+<details><summary><code>client.atoms.webhooks.<a href="src/smallestai/atoms/webhooks/client.py">delete</a>(...) -> DeleteWebhooksResponse</code></summary>
 <dl>
 <dd>
 
@@ -5447,7 +6190,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.webhooks.delete_a_webhook(
+client.atoms.webhooks.delete(
     id="id",
 )
 
@@ -5728,7 +6471,7 @@ client.atoms.webhooks.delete_webhook_subscriptions_for_an_agent(
 </details>
 
 ## Atoms Audience
-<details><summary><code>client.atoms.audience.<a href="src/smallestai/atoms/audience/client.py">get_all_audiences</a>() -> GetAudienceResponse</code></summary>
+<details><summary><code>client.atoms.audience.<a href="src/smallestai/atoms/audience/client.py">list</a>() -> ListAudienceResponse</code></summary>
 <dl>
 <dd>
 
@@ -5763,7 +6506,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.audience.get_all_audiences()
+client.atoms.audience.list()
 
 ```
 </dd>
@@ -5903,7 +6646,7 @@ client.atoms.audience.create_audience_with_csv_upload(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.audience.<a href="src/smallestai/atoms/audience/client.py">get_audience_by_id</a>(...) -> GetAudienceIdResponse</code></summary>
+<details><summary><code>client.atoms.audience.<a href="src/smallestai/atoms/audience/client.py">get</a>(...) -> GetAudienceResponse</code></summary>
 <dl>
 <dd>
 
@@ -5939,7 +6682,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.audience.get_audience_by_id(
+client.atoms.audience.get(
     id="60d0fe4f5311236168a109ca",
 )
 
@@ -6496,7 +7239,7 @@ client.atoms.agent_versioning_drafts.list_active_drafts(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.agent_versioning_drafts.<a href="src/smallestai/atoms/agent_versioning_drafts/client.py">create_a_draft</a>(...) -> PostAgentIdDraftsResponse</code></summary>
+<details><summary><code>client.atoms.agent_versioning_drafts.<a href="src/smallestai/atoms/agent_versioning_drafts/client.py">create_draft</a>(...) -> CreateDraftAgentVersioningDraftsResponse</code></summary>
 <dl>
 <dd>
 
@@ -6531,7 +7274,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.agent_versioning_drafts.create_a_draft(
+client.atoms.agent_versioning_drafts.create_draft(
     id="60d0fe4f5311236168a109ca",
 )
 
@@ -6686,7 +7429,7 @@ client.atoms.agent_versioning_drafts.get_draft_detail(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.agent_versioning_drafts.<a href="src/smallestai/atoms/agent_versioning_drafts/client.py">discard_a_draft</a>(...) -> DeleteAgentIdDraftsDraftIdResponse</code></summary>
+<details><summary><code>client.atoms.agent_versioning_drafts.<a href="src/smallestai/atoms/agent_versioning_drafts/client.py">discard_draft</a>(...) -> DiscardDraftAgentVersioningDraftsResponse</code></summary>
 <dl>
 <dd>
 
@@ -6721,7 +7464,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.agent_versioning_drafts.discard_a_draft(
+client.atoms.agent_versioning_drafts.discard_draft(
     id="60d0fe4f5311236168a109ca",
     draft_id="draftId",
 )
@@ -6768,7 +7511,7 @@ client.atoms.agent_versioning_drafts.discard_a_draft(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.agent_versioning_drafts.<a href="src/smallestai/atoms/agent_versioning_drafts/client.py">rename_a_draft</a>(...) -> PatchAgentIdDraftsDraftIdResponse</code></summary>
+<details><summary><code>client.atoms.agent_versioning_drafts.<a href="src/smallestai/atoms/agent_versioning_drafts/client.py">rename_draft</a>(...) -> RenameDraftAgentVersioningDraftsResponse</code></summary>
 <dl>
 <dd>
 
@@ -6803,7 +7546,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.agent_versioning_drafts.rename_a_draft(
+client.atoms.agent_versioning_drafts.rename_draft(
     id="60d0fe4f5311236168a109ca",
     draft_id="draftId",
     draft_name="draftName",
@@ -6949,7 +7692,7 @@ client.atoms.agent_versioning_drafts.get_draft_diff(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.agent_versioning_drafts.<a href="src/smallestai/atoms/agent_versioning_drafts/client.py">publish_a_draft</a>(...) -> PostAgentIdDraftsDraftIdPublishResponse</code></summary>
+<details><summary><code>client.atoms.agent_versioning_drafts.<a href="src/smallestai/atoms/agent_versioning_drafts/client.py">publish_draft</a>(...) -> PublishDraftAgentVersioningDraftsResponse</code></summary>
 <dl>
 <dd>
 
@@ -6984,7 +7727,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.agent_versioning_drafts.publish_a_draft(
+client.atoms.agent_versioning_drafts.publish_draft(
     id="60d0fe4f5311236168a109ca",
     draft_id="draftId",
 )
@@ -7145,7 +7888,7 @@ client.atoms.agent_versioning_drafts.test_call_with_draft_config(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.agent_versioning_drafts.<a href="src/smallestai/atoms/agent_versioning_drafts/client.py">edit_draft_config_prompt_tools_post_call_metrics_voice_etc</a>(...) -> PatchAgentIdDraftsDraftIdConfigResponse</code></summary>
+<details><summary><code>client.atoms.agent_versioning_drafts.<a href="src/smallestai/atoms/agent_versioning_drafts/client.py">update_draft_config</a>(...) -> UpdateDraftConfigAgentVersioningDraftsResponse</code></summary>
 <dl>
 <dd>
 
@@ -7208,7 +7951,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.agent_versioning_drafts.edit_draft_config_prompt_tools_post_call_metrics_voice_etc(
+client.atoms.agent_versioning_drafts.update_draft_config(
     id="60d0fe4f5311236168a109ca",
     draft_id="draftId",
 )
@@ -7694,7 +8437,7 @@ client.atoms.agent_versioning_versions.diff_two_versions(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.agent_versioning_versions.<a href="src/smallestai/atoms/agent_versioning_versions/client.py">compare_metrics_between_two_versions</a>(...) -> GetAgentIdVersionsCompareMetricsResponse</code></summary>
+<details><summary><code>client.atoms.agent_versioning_versions.<a href="src/smallestai/atoms/agent_versioning_versions/client.py">compare_version_metrics</a>(...) -> CompareVersionMetricsAgentVersioningVersionsResponse</code></summary>
 <dl>
 <dd>
 
@@ -7730,7 +8473,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.agent_versioning_versions.compare_metrics_between_two_versions(
+client.atoms.agent_versioning_versions.compare_version_metrics(
     id="60d0fe4f5311236168a109ca",
     version_a="versionA",
     version_b="versionB",
@@ -7888,7 +8631,7 @@ client.atoms.agent_versioning_versions.get_version_detail(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.agent_versioning_versions.<a href="src/smallestai/atoms/agent_versioning_versions/client.py">update_version_metadata_label_description_pin_only</a>(...) -> PatchAgentIdVersionsVersionIdResponse</code></summary>
+<details><summary><code>client.atoms.agent_versioning_versions.<a href="src/smallestai/atoms/agent_versioning_versions/client.py">update_version_metadata</a>(...) -> UpdateVersionMetadataAgentVersioningVersionsResponse</code></summary>
 <dl>
 <dd>
 
@@ -7926,7 +8669,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.agent_versioning_versions.update_version_metadata_label_description_pin_only(
+client.atoms.agent_versioning_versions.update_version_metadata(
     id="60d0fe4f5311236168a109ca",
     version_id="versionId",
 )
@@ -7997,7 +8740,7 @@ client.atoms.agent_versioning_versions.update_version_metadata_label_description
 </dl>
 </details>
 
-<details><summary><code>client.atoms.agent_versioning_versions.<a href="src/smallestai/atoms/agent_versioning_versions/client.py">activate_a_version</a>(...) -> PatchAgentIdVersionsVersionIdActivateResponse</code></summary>
+<details><summary><code>client.atoms.agent_versioning_versions.<a href="src/smallestai/atoms/agent_versioning_versions/client.py">activate_version</a>(...) -> ActivateVersionAgentVersioningVersionsResponse</code></summary>
 <dl>
 <dd>
 
@@ -8036,7 +8779,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.agent_versioning_versions.activate_a_version(
+client.atoms.agent_versioning_versions.activate_version(
     id="60d0fe4f5311236168a109ca",
     version_id="versionId",
 )
@@ -8260,6 +9003,126 @@ client.atoms.prompt_scoring.score_a_prompt(
 <dd>
 
 **request:** `PostPromptScoringScoreRequest` — Exactly one of `versionId` or `draftId` must be provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Atoms Dnc
+<details><summary><code>client.atoms.dnc.<a href="src/smallestai/atoms/dnc/client.py">list</a>(...) -> ListDncResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists Do-Not-Call entries for the caller's organization with pagination, search,
+and sort. Optionally scope to a single agent via `agentId`.
+
+Each entry records a phone number that was flagged (via call outcome or manual
+upload) as not-to-be-called for either the org or a specific agent.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.dnc.list()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**agent_id:** `typing.Optional[str]` 
+
+Optional 24-character hex agent ID. When present, restricts results to entries
+for this agent. Returns 400/404 if the ID isn't valid or doesn't belong to
+the caller's org.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**search:** `typing.Optional[str]` — Free-text search across phone numbers.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort_field:** `typing.Optional[ListDncRequestSortField]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort_order:** `typing.Optional[ListDncRequestSortOrder]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page:** `typing.Optional[str]` — Page number (string-encoded positive integer, ≥ 1).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[str]` — Page size (string-encoded; server clamps to 1–500).
     
 </dd>
 </dl>

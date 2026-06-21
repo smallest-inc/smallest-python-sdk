@@ -13,16 +13,16 @@ from ..errors.bad_request_error import BadRequestError
 from ..errors.internal_server_error import InternalServerError
 from ..errors.unauthorized_error import UnauthorizedError
 from .types.get_product_all_numbers_response import GetProductAllNumbersResponse
-from .types.get_product_get_available_numbers_request_provider import GetProductGetAvailableNumbersRequestProvider
-from .types.get_product_get_available_numbers_response import GetProductGetAvailableNumbersResponse
 from .types.get_product_manage_subscription_response import GetProductManageSubscriptionResponse
-from .types.get_product_phone_numbers_response import GetProductPhoneNumbersResponse
 from .types.get_product_proration_amount_response import GetProductProrationAmountResponse
 from .types.get_product_unpaid_invoices_response import GetProductUnpaidInvoicesResponse
-from .types.post_product_import_phone_number_response import PostProductImportPhoneNumberResponse
-from .types.post_product_release_number_response import PostProductReleaseNumberResponse
-from .types.post_product_rent_number_request_provider import PostProductRentNumberRequestProvider
-from .types.post_product_rent_number_response import PostProductRentNumberResponse
+from .types.import_sip_phone_numbers_response import ImportSipPhoneNumbersResponse
+from .types.list_phone_numbers_response import ListPhoneNumbersResponse
+from .types.release_phone_numbers_response import ReleasePhoneNumbersResponse
+from .types.rent_phone_numbers_request_provider import RentPhoneNumbersRequestProvider
+from .types.rent_phone_numbers_response import RentPhoneNumbersResponse
+from .types.search_rentable_phone_numbers_request_provider import SearchRentablePhoneNumbersRequestProvider
+from .types.search_rentable_phone_numbers_response import SearchRentablePhoneNumbersResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -33,9 +33,9 @@ class RawPhoneNumbersClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get_acquired_phone_numbers(
+    def list(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[GetProductPhoneNumbersResponse]:
+    ) -> HttpResponse[ListPhoneNumbersResponse]:
         """
         Retrieve all platform-purchased telephony numbers (Twilio/Plivo) for the organization.
 
@@ -49,7 +49,7 @@ class RawPhoneNumbersClient:
 
         Returns
         -------
-        HttpResponse[GetProductPhoneNumbersResponse]
+        HttpResponse[ListPhoneNumbersResponse]
             Successful response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -61,9 +61,9 @@ class RawPhoneNumbersClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetProductPhoneNumbersResponse,
+                    ListPhoneNumbersResponse,
                     construct_type(
-                        type_=GetProductPhoneNumbersResponse,  # type: ignore
+                        type_=ListPhoneNumbersResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -167,14 +167,14 @@ class RawPhoneNumbersClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def search_rentable_phone_numbers_in_inventory(
+    def search_rentable(
         self,
         *,
         country_code: str,
-        provider: GetProductGetAvailableNumbersRequestProvider,
+        provider: SearchRentablePhoneNumbersRequestProvider,
         area_code: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[GetProductGetAvailableNumbersResponse]:
+    ) -> HttpResponse[SearchRentablePhoneNumbersResponse]:
         """
         Searches the telephony provider's inventory for available numbers matching the requested country (and optional area code). Returns up to 5 candidates per call.
 
@@ -185,7 +185,7 @@ class RawPhoneNumbersClient:
         country_code : str
             ISO 3166-1 alpha-2 country code (e.g. `US`, `IN`, `GB`).
 
-        provider : GetProductGetAvailableNumbersRequestProvider
+        provider : SearchRentablePhoneNumbersRequestProvider
             Telephony provider to search.
 
         area_code : typing.Optional[str]
@@ -196,7 +196,7 @@ class RawPhoneNumbersClient:
 
         Returns
         -------
-        HttpResponse[GetProductGetAvailableNumbersResponse]
+        HttpResponse[SearchRentablePhoneNumbersResponse]
             Successful response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -213,9 +213,9 @@ class RawPhoneNumbersClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetProductGetAvailableNumbersResponse,
+                    SearchRentablePhoneNumbersResponse,
                     construct_type(
-                        type_=GetProductGetAvailableNumbersResponse,  # type: ignore
+                        type_=SearchRentablePhoneNumbersResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -338,13 +338,13 @@ class RawPhoneNumbersClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def rent_a_phone_number_from_the_telephony_inventory(
+    def rent(
         self,
         *,
         phone_number: str,
-        provider: PostProductRentNumberRequestProvider,
+        provider: RentPhoneNumbersRequestProvider,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PostProductRentNumberResponse]:
+    ) -> HttpResponse[RentPhoneNumbersResponse]:
         """
         Rents an available number returned by [`GET /product/get-available-numbers`](#operation/searchAvailablePhoneNumbers). Charges the organization the prorated amount returned by [`GET /product/proration-amount`](#operation/getProrationAmount) immediately, then the monthly rate on each billing cycle.
 
@@ -357,14 +357,14 @@ class RawPhoneNumbersClient:
         phone_number : str
             The number to rent — exactly as returned by `GET /product/get-available-numbers` (no leading `+`).
 
-        provider : PostProductRentNumberRequestProvider
+        provider : RentPhoneNumbersRequestProvider
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[PostProductRentNumberResponse]
+        HttpResponse[RentPhoneNumbersResponse]
             Rental processed. Inspect `data.requiresAction` to determine whether the customer needs to complete a payment-method action.
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -384,9 +384,9 @@ class RawPhoneNumbersClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostProductRentNumberResponse,
+                    RentPhoneNumbersResponse,
                     construct_type(
-                        type_=PostProductRentNumberResponse,  # type: ignore
+                        type_=RentPhoneNumbersResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -433,9 +433,9 @@ class RawPhoneNumbersClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def release_a_rented_phone_number(
+    def release(
         self, *, product_id: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[PostProductReleaseNumberResponse]:
+    ) -> HttpResponse[ReleasePhoneNumbersResponse]:
         """
         Releases a phone number previously rented via `POST /product/rent-number`. The number goes back into provider inventory and recurring charges stop.
 
@@ -451,7 +451,7 @@ class RawPhoneNumbersClient:
 
         Returns
         -------
-        HttpResponse[PostProductReleaseNumberResponse]
+        HttpResponse[ReleasePhoneNumbersResponse]
             Number released
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -470,9 +470,9 @@ class RawPhoneNumbersClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostProductReleaseNumberResponse,
+                    ReleasePhoneNumbersResponse,
                     construct_type(
-                        type_=PostProductReleaseNumberResponse,  # type: ignore
+                        type_=ReleasePhoneNumbersResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -645,7 +645,7 @@ class RawPhoneNumbersClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def import_a_sip_phone_number(
+    def import_sip(
         self,
         *,
         phone_number: str,
@@ -654,7 +654,7 @@ class RawPhoneNumbersClient:
         sip_username: typing.Optional[str] = OMIT,
         sip_password: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PostProductImportPhoneNumberResponse]:
+    ) -> HttpResponse[ImportSipPhoneNumbersResponse]:
         """
         Bring your own SIP trunk by importing an existing phone number with its SIP termination URL.
         Atoms creates both inbound and outbound SIP trunks so your number works for making and receiving calls through the platform.
@@ -683,7 +683,7 @@ class RawPhoneNumbersClient:
 
         Returns
         -------
-        HttpResponse[PostProductImportPhoneNumberResponse]
+        HttpResponse[ImportSipPhoneNumbersResponse]
             Phone number imported successfully
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -706,9 +706,9 @@ class RawPhoneNumbersClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostProductImportPhoneNumberResponse,
+                    ImportSipPhoneNumbersResponse,
                     construct_type(
-                        type_=PostProductImportPhoneNumberResponse,  # type: ignore
+                        type_=ImportSipPhoneNumbersResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -760,9 +760,9 @@ class AsyncRawPhoneNumbersClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get_acquired_phone_numbers(
+    async def list(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[GetProductPhoneNumbersResponse]:
+    ) -> AsyncHttpResponse[ListPhoneNumbersResponse]:
         """
         Retrieve all platform-purchased telephony numbers (Twilio/Plivo) for the organization.
 
@@ -776,7 +776,7 @@ class AsyncRawPhoneNumbersClient:
 
         Returns
         -------
-        AsyncHttpResponse[GetProductPhoneNumbersResponse]
+        AsyncHttpResponse[ListPhoneNumbersResponse]
             Successful response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -788,9 +788,9 @@ class AsyncRawPhoneNumbersClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetProductPhoneNumbersResponse,
+                    ListPhoneNumbersResponse,
                     construct_type(
-                        type_=GetProductPhoneNumbersResponse,  # type: ignore
+                        type_=ListPhoneNumbersResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -894,14 +894,14 @@ class AsyncRawPhoneNumbersClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def search_rentable_phone_numbers_in_inventory(
+    async def search_rentable(
         self,
         *,
         country_code: str,
-        provider: GetProductGetAvailableNumbersRequestProvider,
+        provider: SearchRentablePhoneNumbersRequestProvider,
         area_code: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[GetProductGetAvailableNumbersResponse]:
+    ) -> AsyncHttpResponse[SearchRentablePhoneNumbersResponse]:
         """
         Searches the telephony provider's inventory for available numbers matching the requested country (and optional area code). Returns up to 5 candidates per call.
 
@@ -912,7 +912,7 @@ class AsyncRawPhoneNumbersClient:
         country_code : str
             ISO 3166-1 alpha-2 country code (e.g. `US`, `IN`, `GB`).
 
-        provider : GetProductGetAvailableNumbersRequestProvider
+        provider : SearchRentablePhoneNumbersRequestProvider
             Telephony provider to search.
 
         area_code : typing.Optional[str]
@@ -923,7 +923,7 @@ class AsyncRawPhoneNumbersClient:
 
         Returns
         -------
-        AsyncHttpResponse[GetProductGetAvailableNumbersResponse]
+        AsyncHttpResponse[SearchRentablePhoneNumbersResponse]
             Successful response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -940,9 +940,9 @@ class AsyncRawPhoneNumbersClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetProductGetAvailableNumbersResponse,
+                    SearchRentablePhoneNumbersResponse,
                     construct_type(
-                        type_=GetProductGetAvailableNumbersResponse,  # type: ignore
+                        type_=SearchRentablePhoneNumbersResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1065,13 +1065,13 @@ class AsyncRawPhoneNumbersClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def rent_a_phone_number_from_the_telephony_inventory(
+    async def rent(
         self,
         *,
         phone_number: str,
-        provider: PostProductRentNumberRequestProvider,
+        provider: RentPhoneNumbersRequestProvider,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PostProductRentNumberResponse]:
+    ) -> AsyncHttpResponse[RentPhoneNumbersResponse]:
         """
         Rents an available number returned by [`GET /product/get-available-numbers`](#operation/searchAvailablePhoneNumbers). Charges the organization the prorated amount returned by [`GET /product/proration-amount`](#operation/getProrationAmount) immediately, then the monthly rate on each billing cycle.
 
@@ -1084,14 +1084,14 @@ class AsyncRawPhoneNumbersClient:
         phone_number : str
             The number to rent — exactly as returned by `GET /product/get-available-numbers` (no leading `+`).
 
-        provider : PostProductRentNumberRequestProvider
+        provider : RentPhoneNumbersRequestProvider
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[PostProductRentNumberResponse]
+        AsyncHttpResponse[RentPhoneNumbersResponse]
             Rental processed. Inspect `data.requiresAction` to determine whether the customer needs to complete a payment-method action.
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1111,9 +1111,9 @@ class AsyncRawPhoneNumbersClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostProductRentNumberResponse,
+                    RentPhoneNumbersResponse,
                     construct_type(
-                        type_=PostProductRentNumberResponse,  # type: ignore
+                        type_=RentPhoneNumbersResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1160,9 +1160,9 @@ class AsyncRawPhoneNumbersClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def release_a_rented_phone_number(
+    async def release(
         self, *, product_id: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[PostProductReleaseNumberResponse]:
+    ) -> AsyncHttpResponse[ReleasePhoneNumbersResponse]:
         """
         Releases a phone number previously rented via `POST /product/rent-number`. The number goes back into provider inventory and recurring charges stop.
 
@@ -1178,7 +1178,7 @@ class AsyncRawPhoneNumbersClient:
 
         Returns
         -------
-        AsyncHttpResponse[PostProductReleaseNumberResponse]
+        AsyncHttpResponse[ReleasePhoneNumbersResponse]
             Number released
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1197,9 +1197,9 @@ class AsyncRawPhoneNumbersClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostProductReleaseNumberResponse,
+                    ReleasePhoneNumbersResponse,
                     construct_type(
-                        type_=PostProductReleaseNumberResponse,  # type: ignore
+                        type_=ReleasePhoneNumbersResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1372,7 +1372,7 @@ class AsyncRawPhoneNumbersClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def import_a_sip_phone_number(
+    async def import_sip(
         self,
         *,
         phone_number: str,
@@ -1381,7 +1381,7 @@ class AsyncRawPhoneNumbersClient:
         sip_username: typing.Optional[str] = OMIT,
         sip_password: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PostProductImportPhoneNumberResponse]:
+    ) -> AsyncHttpResponse[ImportSipPhoneNumbersResponse]:
         """
         Bring your own SIP trunk by importing an existing phone number with its SIP termination URL.
         Atoms creates both inbound and outbound SIP trunks so your number works for making and receiving calls through the platform.
@@ -1410,7 +1410,7 @@ class AsyncRawPhoneNumbersClient:
 
         Returns
         -------
-        AsyncHttpResponse[PostProductImportPhoneNumberResponse]
+        AsyncHttpResponse[ImportSipPhoneNumbersResponse]
             Phone number imported successfully
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1433,9 +1433,9 @@ class AsyncRawPhoneNumbersClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostProductImportPhoneNumberResponse,
+                    ImportSipPhoneNumbersResponse,
                     construct_type(
-                        type_=PostProductImportPhoneNumberResponse,  # type: ignore
+                        type_=ImportSipPhoneNumbersResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

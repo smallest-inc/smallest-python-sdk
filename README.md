@@ -1,6 +1,6 @@
 # SmallestAi Python Library
 
-[![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-Built%20with%20Fern-brightgreen)](https://buildwithfern.com?utm_source=github&utm_medium=github&utm_campaign=readme&utm_source=https%3A%2F%2Fgithub.com%2Ffern-demo%2Fsmallest-ai-python-sdk)
+[![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-Built%20with%20Fern-brightgreen)](https://buildwithfern.com?utm_source=github&utm_medium=github&utm_campaign=readme&utm_source=https%3A%2F%2Fgithub.com%2Fsmallest-inc%2Fsmallest-python-sdk)
 [![pypi](https://img.shields.io/pypi/v/smallestai)](https://pypi.python.org/pypi/smallestai)
 
 The SmallestAi Python library provides convenient access to the SmallestAi APIs from Python.
@@ -30,7 +30,7 @@ pip install smallestai
 
 ## Reference
 
-A full reference for this library is available [here](https://github.com/fern-demo/smallest-ai-python-sdk/blob/HEAD/./reference.md).
+A full reference for this library is available [here](https://github.com/smallest-inc/smallest-python-sdk/blob/HEAD/./reference.md).
 
 ## Usage
 
@@ -40,7 +40,7 @@ Instantiate and use the client with the following:
 from smallestai import SmallestAI
 
 client = SmallestAI(
-    api_key="<api_key>",
+    api_key="<token>",
 )
 
 client.atoms.agent_templates.create_agent_from_template(
@@ -72,7 +72,7 @@ import asyncio
 from smallestai import AsyncSmallestAI
 
 client = AsyncSmallestAI(
-    api_key="<api_key>",
+    api_key="<token>",
 )
 
 
@@ -109,10 +109,10 @@ The SDK supports streaming responses, as well, the response will be a generator 
 from smallestai import SmallestAI
 
 client = SmallestAI(
-    api_key="<api_key>",
+    api_key="<token>",
 )
 
-client.atoms.live_transcripts.subscribe_to_live_call_events_sse(
+client.atoms.live_transcripts.subscribe_to_live_events(
     call_id="CALL-1758124225863-80752e",
 )
 ```
@@ -128,7 +128,7 @@ from smallestai import SmallestAI
 client = SmallestAI(...)
 
 # Connect to the websocket (Sync)
-with client.streaming_tts.connect() as socket:
+with client.tts.connect() as socket:
     # Iterate over the messages as they arrive
     for message in socket:
         print(message)
@@ -142,7 +142,7 @@ from smallestai import AsyncSmallestAI
 client = AsyncSmallestAI(...)
 
 # Connect to the websocket (Async)
-async with client.streaming_tts.connect() as socket:
+async with client.tts.connect() as socket:
     async for message in socket:
         print(message)
 ```

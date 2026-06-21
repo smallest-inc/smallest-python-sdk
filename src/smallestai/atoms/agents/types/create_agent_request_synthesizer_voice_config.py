@@ -18,7 +18,15 @@ class CreateAgentRequestSynthesizerVoiceConfig(UncheckedBaseModel):
 
     model: typing.Optional[CreateAgentRequestSynthesizerVoiceConfigModel] = pydantic.Field(default=None)
     """
-    The TTS model to use.
+    The TTS model to use. Use `waves_lightning_v3_1` for the
+    recommended Waves voice path (default), or `gpt-realtime` /
+    `gpt-realtime-mini` for OpenAI realtime models (require
+    `workflowType: single_prompt`).
+    
+    The other tokens (`waves`, `waves_lightning_large`,
+    `waves_lightning_v2`, `waves_lightning_v3`) are kept for
+    backwards compatibility with existing agents and should
+    not be used for new agents.
     """
 
     voice_id: typing_extensions.Annotated[

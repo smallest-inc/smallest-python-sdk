@@ -9,17 +9,17 @@ from ..types.single_prompt_config import SinglePromptConfig
 from ..types.test_call_request_mode import TestCallRequestMode
 from ..types.workflow_type import WorkflowType
 from .raw_client import AsyncRawAgentVersioningDraftsClient, RawAgentVersioningDraftsClient
-from .types.delete_agent_id_drafts_draft_id_response import DeleteAgentIdDraftsDraftIdResponse
+from .types.create_draft_agent_versioning_drafts_response import CreateDraftAgentVersioningDraftsResponse
+from .types.discard_draft_agent_versioning_drafts_response import DiscardDraftAgentVersioningDraftsResponse
 from .types.draft_config_request_background_sound import DraftConfigRequestBackgroundSound
 from .types.draft_config_request_slm_model import DraftConfigRequestSlmModel
 from .types.get_agent_id_drafts_draft_id_diff_response import GetAgentIdDraftsDraftIdDiffResponse
 from .types.get_agent_id_drafts_draft_id_response import GetAgentIdDraftsDraftIdResponse
 from .types.get_agent_id_drafts_response import GetAgentIdDraftsResponse
-from .types.patch_agent_id_drafts_draft_id_config_response import PatchAgentIdDraftsDraftIdConfigResponse
-from .types.patch_agent_id_drafts_draft_id_response import PatchAgentIdDraftsDraftIdResponse
-from .types.post_agent_id_drafts_draft_id_publish_response import PostAgentIdDraftsDraftIdPublishResponse
 from .types.post_agent_id_drafts_draft_id_test_call_response import PostAgentIdDraftsDraftIdTestCallResponse
-from .types.post_agent_id_drafts_response import PostAgentIdDraftsResponse
+from .types.publish_draft_agent_versioning_drafts_response import PublishDraftAgentVersioningDraftsResponse
+from .types.rename_draft_agent_versioning_drafts_response import RenameDraftAgentVersioningDraftsResponse
+from .types.update_draft_config_agent_versioning_drafts_response import UpdateDraftConfigAgentVersioningDraftsResponse
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -73,7 +73,7 @@ class AgentVersioningDraftsClient:
         _response = self._raw_client.list_active_drafts(id, request_options=request_options)
         return _response.data
 
-    def create_a_draft(
+    def create_draft(
         self,
         id: str,
         *,
@@ -81,7 +81,7 @@ class AgentVersioningDraftsClient:
         source_draft_id: typing.Optional[str] = OMIT,
         draft_name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostAgentIdDraftsResponse:
+    ) -> CreateDraftAgentVersioningDraftsResponse:
         """
         Create a new draft from an existing published version or another draft. At least one of sourceVersionId or sourceDraftId is required (both may be sent simultaneously).
 
@@ -105,7 +105,7 @@ class AgentVersioningDraftsClient:
 
         Returns
         -------
-        PostAgentIdDraftsResponse
+        CreateDraftAgentVersioningDraftsResponse
             Draft created successfully
 
         Examples
@@ -115,11 +115,11 @@ class AgentVersioningDraftsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.agent_versioning_drafts.create_a_draft(
+        client.atoms.agent_versioning_drafts.create_draft(
             id="60d0fe4f5311236168a109ca",
         )
         """
-        _response = self._raw_client.create_a_draft(
+        _response = self._raw_client.create_draft(
             id,
             source_version_id=source_version_id,
             source_draft_id=source_draft_id,
@@ -173,9 +173,9 @@ class AgentVersioningDraftsClient:
         _response = self._raw_client.get_draft_detail(id, draft_id, limit=limit, request_options=request_options)
         return _response.data
 
-    def discard_a_draft(
+    def discard_draft(
         self, id: str, draft_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> DeleteAgentIdDraftsDraftIdResponse:
+    ) -> DiscardDraftAgentVersioningDraftsResponse:
         """
         Discard (soft-delete) a draft. Only the draft creator or an admin can discard.
 
@@ -192,7 +192,7 @@ class AgentVersioningDraftsClient:
 
         Returns
         -------
-        DeleteAgentIdDraftsDraftIdResponse
+        DiscardDraftAgentVersioningDraftsResponse
             Draft discarded successfully
 
         Examples
@@ -202,17 +202,17 @@ class AgentVersioningDraftsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.agent_versioning_drafts.discard_a_draft(
+        client.atoms.agent_versioning_drafts.discard_draft(
             id="60d0fe4f5311236168a109ca",
             draft_id="draftId",
         )
         """
-        _response = self._raw_client.discard_a_draft(id, draft_id, request_options=request_options)
+        _response = self._raw_client.discard_draft(id, draft_id, request_options=request_options)
         return _response.data
 
-    def rename_a_draft(
+    def rename_draft(
         self, id: str, draft_id: str, *, draft_name: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> PatchAgentIdDraftsDraftIdResponse:
+    ) -> RenameDraftAgentVersioningDraftsResponse:
         """
         Rename a draft. For config changes, use PATCH /agent/{id}/drafts/{draftId}/config instead.
 
@@ -232,7 +232,7 @@ class AgentVersioningDraftsClient:
 
         Returns
         -------
-        PatchAgentIdDraftsDraftIdResponse
+        RenameDraftAgentVersioningDraftsResponse
             Draft renamed successfully
 
         Examples
@@ -242,15 +242,13 @@ class AgentVersioningDraftsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.agent_versioning_drafts.rename_a_draft(
+        client.atoms.agent_versioning_drafts.rename_draft(
             id="60d0fe4f5311236168a109ca",
             draft_id="draftId",
             draft_name="draftName",
         )
         """
-        _response = self._raw_client.rename_a_draft(
-            id, draft_id, draft_name=draft_name, request_options=request_options
-        )
+        _response = self._raw_client.rename_draft(id, draft_id, draft_name=draft_name, request_options=request_options)
         return _response.data
 
     def get_draft_diff(
@@ -300,7 +298,7 @@ class AgentVersioningDraftsClient:
         )
         return _response.data
 
-    def publish_a_draft(
+    def publish_draft(
         self,
         id: str,
         draft_id: str,
@@ -309,7 +307,7 @@ class AgentVersioningDraftsClient:
         description: typing.Optional[str] = OMIT,
         activate: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostAgentIdDraftsDraftIdPublishResponse:
+    ) -> PublishDraftAgentVersioningDraftsResponse:
         """
         Publish a draft as a new versioned release. Optionally activate it immediately.
 
@@ -335,7 +333,7 @@ class AgentVersioningDraftsClient:
 
         Returns
         -------
-        PostAgentIdDraftsDraftIdPublishResponse
+        PublishDraftAgentVersioningDraftsResponse
             Draft published as a new version
 
         Examples
@@ -345,12 +343,12 @@ class AgentVersioningDraftsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.agent_versioning_drafts.publish_a_draft(
+        client.atoms.agent_versioning_drafts.publish_draft(
             id="60d0fe4f5311236168a109ca",
             draft_id="draftId",
         )
         """
-        _response = self._raw_client.publish_a_draft(
+        _response = self._raw_client.publish_draft(
             id, draft_id, label=label, description=description, activate=activate, request_options=request_options
         )
         return _response.data
@@ -406,7 +404,7 @@ class AgentVersioningDraftsClient:
         )
         return _response.data
 
-    def edit_draft_config_prompt_tools_post_call_metrics_voice_etc(
+    def update_draft_config(
         self,
         id: str,
         draft_id: str,
@@ -443,7 +441,7 @@ class AgentVersioningDraftsClient:
         enable_style_guide: typing.Optional[bool] = OMIT,
         speech_formatting: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PatchAgentIdDraftsDraftIdConfigResponse:
+    ) -> UpdateDraftConfigAgentVersioningDraftsResponse:
         """
         Update the configuration of a draft. This single endpoint is how every
         agent-level config field is changed: prompt, tools, voice, language,
@@ -561,7 +559,7 @@ class AgentVersioningDraftsClient:
 
         Returns
         -------
-        PatchAgentIdDraftsDraftIdConfigResponse
+        UpdateDraftConfigAgentVersioningDraftsResponse
             Draft config updated successfully
 
         Examples
@@ -571,12 +569,12 @@ class AgentVersioningDraftsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.agent_versioning_drafts.edit_draft_config_prompt_tools_post_call_metrics_voice_etc(
+        client.atoms.agent_versioning_drafts.update_draft_config(
             id="60d0fe4f5311236168a109ca",
             draft_id="draftId",
         )
         """
-        _response = self._raw_client.edit_draft_config_prompt_tools_post_call_metrics_voice_etc(
+        _response = self._raw_client.update_draft_config(
             id,
             draft_id,
             single_prompt_config=single_prompt_config,
@@ -671,7 +669,7 @@ class AsyncAgentVersioningDraftsClient:
         _response = await self._raw_client.list_active_drafts(id, request_options=request_options)
         return _response.data
 
-    async def create_a_draft(
+    async def create_draft(
         self,
         id: str,
         *,
@@ -679,7 +677,7 @@ class AsyncAgentVersioningDraftsClient:
         source_draft_id: typing.Optional[str] = OMIT,
         draft_name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostAgentIdDraftsResponse:
+    ) -> CreateDraftAgentVersioningDraftsResponse:
         """
         Create a new draft from an existing published version or another draft. At least one of sourceVersionId or sourceDraftId is required (both may be sent simultaneously).
 
@@ -703,7 +701,7 @@ class AsyncAgentVersioningDraftsClient:
 
         Returns
         -------
-        PostAgentIdDraftsResponse
+        CreateDraftAgentVersioningDraftsResponse
             Draft created successfully
 
         Examples
@@ -718,14 +716,14 @@ class AsyncAgentVersioningDraftsClient:
 
 
         async def main() -> None:
-            await client.atoms.agent_versioning_drafts.create_a_draft(
+            await client.atoms.agent_versioning_drafts.create_draft(
                 id="60d0fe4f5311236168a109ca",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.create_a_draft(
+        _response = await self._raw_client.create_draft(
             id,
             source_version_id=source_version_id,
             source_draft_id=source_draft_id,
@@ -787,9 +785,9 @@ class AsyncAgentVersioningDraftsClient:
         _response = await self._raw_client.get_draft_detail(id, draft_id, limit=limit, request_options=request_options)
         return _response.data
 
-    async def discard_a_draft(
+    async def discard_draft(
         self, id: str, draft_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> DeleteAgentIdDraftsDraftIdResponse:
+    ) -> DiscardDraftAgentVersioningDraftsResponse:
         """
         Discard (soft-delete) a draft. Only the draft creator or an admin can discard.
 
@@ -806,7 +804,7 @@ class AsyncAgentVersioningDraftsClient:
 
         Returns
         -------
-        DeleteAgentIdDraftsDraftIdResponse
+        DiscardDraftAgentVersioningDraftsResponse
             Draft discarded successfully
 
         Examples
@@ -821,7 +819,7 @@ class AsyncAgentVersioningDraftsClient:
 
 
         async def main() -> None:
-            await client.atoms.agent_versioning_drafts.discard_a_draft(
+            await client.atoms.agent_versioning_drafts.discard_draft(
                 id="60d0fe4f5311236168a109ca",
                 draft_id="draftId",
             )
@@ -829,12 +827,12 @@ class AsyncAgentVersioningDraftsClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.discard_a_draft(id, draft_id, request_options=request_options)
+        _response = await self._raw_client.discard_draft(id, draft_id, request_options=request_options)
         return _response.data
 
-    async def rename_a_draft(
+    async def rename_draft(
         self, id: str, draft_id: str, *, draft_name: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> PatchAgentIdDraftsDraftIdResponse:
+    ) -> RenameDraftAgentVersioningDraftsResponse:
         """
         Rename a draft. For config changes, use PATCH /agent/{id}/drafts/{draftId}/config instead.
 
@@ -854,7 +852,7 @@ class AsyncAgentVersioningDraftsClient:
 
         Returns
         -------
-        PatchAgentIdDraftsDraftIdResponse
+        RenameDraftAgentVersioningDraftsResponse
             Draft renamed successfully
 
         Examples
@@ -869,7 +867,7 @@ class AsyncAgentVersioningDraftsClient:
 
 
         async def main() -> None:
-            await client.atoms.agent_versioning_drafts.rename_a_draft(
+            await client.atoms.agent_versioning_drafts.rename_draft(
                 id="60d0fe4f5311236168a109ca",
                 draft_id="draftId",
                 draft_name="draftName",
@@ -878,7 +876,7 @@ class AsyncAgentVersioningDraftsClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.rename_a_draft(
+        _response = await self._raw_client.rename_draft(
             id, draft_id, draft_name=draft_name, request_options=request_options
         )
         return _response.data
@@ -938,7 +936,7 @@ class AsyncAgentVersioningDraftsClient:
         )
         return _response.data
 
-    async def publish_a_draft(
+    async def publish_draft(
         self,
         id: str,
         draft_id: str,
@@ -947,7 +945,7 @@ class AsyncAgentVersioningDraftsClient:
         description: typing.Optional[str] = OMIT,
         activate: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostAgentIdDraftsDraftIdPublishResponse:
+    ) -> PublishDraftAgentVersioningDraftsResponse:
         """
         Publish a draft as a new versioned release. Optionally activate it immediately.
 
@@ -973,7 +971,7 @@ class AsyncAgentVersioningDraftsClient:
 
         Returns
         -------
-        PostAgentIdDraftsDraftIdPublishResponse
+        PublishDraftAgentVersioningDraftsResponse
             Draft published as a new version
 
         Examples
@@ -988,7 +986,7 @@ class AsyncAgentVersioningDraftsClient:
 
 
         async def main() -> None:
-            await client.atoms.agent_versioning_drafts.publish_a_draft(
+            await client.atoms.agent_versioning_drafts.publish_draft(
                 id="60d0fe4f5311236168a109ca",
                 draft_id="draftId",
             )
@@ -996,7 +994,7 @@ class AsyncAgentVersioningDraftsClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.publish_a_draft(
+        _response = await self._raw_client.publish_draft(
             id, draft_id, label=label, description=description, activate=activate, request_options=request_options
         )
         return _response.data
@@ -1060,7 +1058,7 @@ class AsyncAgentVersioningDraftsClient:
         )
         return _response.data
 
-    async def edit_draft_config_prompt_tools_post_call_metrics_voice_etc(
+    async def update_draft_config(
         self,
         id: str,
         draft_id: str,
@@ -1097,7 +1095,7 @@ class AsyncAgentVersioningDraftsClient:
         enable_style_guide: typing.Optional[bool] = OMIT,
         speech_formatting: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PatchAgentIdDraftsDraftIdConfigResponse:
+    ) -> UpdateDraftConfigAgentVersioningDraftsResponse:
         """
         Update the configuration of a draft. This single endpoint is how every
         agent-level config field is changed: prompt, tools, voice, language,
@@ -1215,7 +1213,7 @@ class AsyncAgentVersioningDraftsClient:
 
         Returns
         -------
-        PatchAgentIdDraftsDraftIdConfigResponse
+        UpdateDraftConfigAgentVersioningDraftsResponse
             Draft config updated successfully
 
         Examples
@@ -1230,7 +1228,7 @@ class AsyncAgentVersioningDraftsClient:
 
 
         async def main() -> None:
-            await client.atoms.agent_versioning_drafts.edit_draft_config_prompt_tools_post_call_metrics_voice_etc(
+            await client.atoms.agent_versioning_drafts.update_draft_config(
                 id="60d0fe4f5311236168a109ca",
                 draft_id="draftId",
             )
@@ -1238,7 +1236,7 @@ class AsyncAgentVersioningDraftsClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.edit_draft_config_prompt_tools_post_call_metrics_voice_etc(
+        _response = await self._raw_client.update_draft_config(
             id,
             draft_id,
             single_prompt_config=single_prompt_config,

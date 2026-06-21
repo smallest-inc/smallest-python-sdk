@@ -1,5 +1,6 @@
 from .conftest import get_client, verify_request_count
-from smallestai.atoms.webhooks import PostWebhookRequestEventsItem
+
+from smallestai.atoms.webhooks import CreateWebhooksRequestEventsItem
 
 
 def test_atoms_webhooks_get_webhooks() -> None:
@@ -10,15 +11,15 @@ def test_atoms_webhooks_get_webhooks() -> None:
     verify_request_count(test_id, "GET", "/webhook", None, 1)
 
 
-def test_atoms_webhooks_create_a_webhook() -> None:
-    """Test createAWebhook endpoint with WireMock"""
-    test_id = "atoms.webhooks.create_a_webhook.0"
+def test_atoms_webhooks_create() -> None:
+    """Test create endpoint with WireMock"""
+    test_id = "atoms.webhooks.create.0"
     client = get_client(test_id)
-    client.atoms.webhooks.create_a_webhook(
+    client.atoms.webhooks.create(
         endpoint="https://example.com/webhook",
         description="Webhook for conversation events",
         events=[
-            PostWebhookRequestEventsItem(
+            CreateWebhooksRequestEventsItem(
                 agent_id="60d0fe4f5311236168a109ca",
                 event_type="pre-conversation",
             )
@@ -27,11 +28,11 @@ def test_atoms_webhooks_create_a_webhook() -> None:
     verify_request_count(test_id, "POST", "/webhook", None, 1)
 
 
-def test_atoms_webhooks_delete_a_webhook() -> None:
-    """Test deleteAWebhook endpoint with WireMock"""
-    test_id = "atoms.webhooks.delete_a_webhook.0"
+def test_atoms_webhooks_delete() -> None:
+    """Test delete endpoint with WireMock"""
+    test_id = "atoms.webhooks.delete.0"
     client = get_client(test_id)
-    client.atoms.webhooks.delete_a_webhook(
+    client.atoms.webhooks.delete(
         id="id",
     )
     verify_request_count(test_id, "DELETE", "/webhook/id", None, 1)

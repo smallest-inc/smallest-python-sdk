@@ -3,7 +3,9 @@
 import typing
 
 import pydantic
+import typing_extensions
 from ....core.pydantic_utilities import IS_PYDANTIC_V2
+from ....core.serialization import FieldMetadata
 from ....core.unchecked_base_model import UncheckedBaseModel
 from .list_agent_templates_agent_templates_response_data_item_single_prompt_config_tools_item import (
     ListAgentTemplatesAgentTemplatesResponseDataItemSinglePromptConfigToolsItem,
@@ -15,6 +17,14 @@ class ListAgentTemplatesAgentTemplatesResponseDataItemSinglePromptConfig(Uncheck
     Configuration for single-prompt agents
     """
 
+    object_id: typing_extensions.Annotated[
+        typing.Optional[str],
+        FieldMetadata(alias="_id"),
+        pydantic.Field(
+            alias="_id",
+            description="Auto-generated unique identifier for the embedded single-prompt config (24-character hex string). Always present when `singlePromptConfig` is set. Surfaced as `object_id` in the generated SDK.",
+        ),
+    ] = None
     prompt: typing.Optional[str] = pydantic.Field(default=None)
     """
     The system prompt used by the agent
