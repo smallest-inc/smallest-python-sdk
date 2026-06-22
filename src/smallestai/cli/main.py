@@ -4,6 +4,7 @@ import typer
 from rich.console import Console
 
 from smallestai.cli.agent_crew import initialise_agent_crew_app
+from smallestai.cli.agents import initialise_agents_app
 from smallestai.cli.auth import initialise_auth_app
 from smallestai.cli.lib.atoms import AtomsAPIClient
 from smallestai.cli.lib.auth import AuthClient
@@ -22,6 +23,9 @@ app.add_typer(agent_crew_app, name="agent-crew")
 
 auth_app = initialise_auth_app(auth_client, atoms_client)
 app.add_typer(auth_app, name="auth")
+
+agents_app = initialise_agents_app(auth_client)
+app.add_typer(agents_app, name="agents")
 
 
 def main():
