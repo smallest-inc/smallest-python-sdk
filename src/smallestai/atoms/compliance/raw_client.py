@@ -24,11 +24,11 @@ from .types.get_compliance_requirements_response import GetComplianceRequirement
 from .types.get_compliance_status_request_number_type import GetComplianceStatusRequestNumberType
 from .types.get_compliance_status_request_user_type import GetComplianceStatusRequestUserType
 from .types.get_compliance_status_response import GetComplianceStatusResponse
-from .types.patch_compliance_applications_id_response import PatchComplianceApplicationsIdResponse
 from .types.post_compliance_applications_id_refresh_response import PostComplianceApplicationsIdRefreshResponse
-from .types.post_compliance_applications_request_number_type import PostComplianceApplicationsRequestNumberType
-from .types.post_compliance_applications_request_user_type import PostComplianceApplicationsRequestUserType
-from .types.post_compliance_applications_response import PostComplianceApplicationsResponse
+from .types.resubmit_compliance_response import ResubmitComplianceResponse
+from .types.submit_compliance_request_number_type import SubmitComplianceRequestNumberType
+from .types.submit_compliance_request_user_type import SubmitComplianceRequestUserType
+from .types.submit_compliance_response import SubmitComplianceResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -251,17 +251,17 @@ class RawComplianceClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def submit_a_compliance_application(
+    def submit(
         self,
         *,
         country_iso: str,
-        number_type: PostComplianceApplicationsRequestNumberType,
-        user_type: PostComplianceApplicationsRequestUserType,
+        number_type: SubmitComplianceRequestNumberType,
+        user_type: SubmitComplianceRequestUserType,
         end_user: str,
         documents: str,
         files: typing.List[core.File],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PostComplianceApplicationsResponse]:
+    ) -> HttpResponse[SubmitComplianceResponse]:
         """
         Submit a new compliance application with end-user details and supporting documents.
         One application is allowed per organization per country per number type per user type.
@@ -274,10 +274,10 @@ class RawComplianceClient:
         country_iso : str
             ISO 3166-1 alpha-2 country code
 
-        number_type : PostComplianceApplicationsRequestNumberType
+        number_type : SubmitComplianceRequestNumberType
             The type of phone number
 
-        user_type : PostComplianceApplicationsRequestUserType
+        user_type : SubmitComplianceRequestUserType
             The type of end user
 
         end_user : str
@@ -311,7 +311,7 @@ class RawComplianceClient:
 
         Returns
         -------
-        HttpResponse[PostComplianceApplicationsResponse]
+        HttpResponse[SubmitComplianceResponse]
             Application submitted successfully
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -335,9 +335,9 @@ class RawComplianceClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostComplianceApplicationsResponse,
+                    SubmitComplianceResponse,
                     construct_type(
-                        type_=PostComplianceApplicationsResponse,  # type: ignore
+                        type_=SubmitComplianceResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -406,14 +406,14 @@ class RawComplianceClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def resubmit_a_rejected_compliance_application(
+    def resubmit(
         self,
         id: str,
         *,
         documents: str,
         files: typing.List[core.File],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PatchComplianceApplicationsIdResponse]:
+    ) -> HttpResponse[ResubmitComplianceResponse]:
         """
         Resubmit a previously rejected compliance application with corrected documents.
         Only applications in `rejected` status can be resubmitted. All documents must be
@@ -438,7 +438,7 @@ class RawComplianceClient:
 
         Returns
         -------
-        HttpResponse[PatchComplianceApplicationsIdResponse]
+        HttpResponse[ResubmitComplianceResponse]
             Application resubmitted successfully
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -458,9 +458,9 @@ class RawComplianceClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PatchComplianceApplicationsIdResponse,
+                    ResubmitComplianceResponse,
                     construct_type(
-                        type_=PatchComplianceApplicationsIdResponse,  # type: ignore
+                        type_=ResubmitComplianceResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -836,17 +836,17 @@ class AsyncRawComplianceClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def submit_a_compliance_application(
+    async def submit(
         self,
         *,
         country_iso: str,
-        number_type: PostComplianceApplicationsRequestNumberType,
-        user_type: PostComplianceApplicationsRequestUserType,
+        number_type: SubmitComplianceRequestNumberType,
+        user_type: SubmitComplianceRequestUserType,
         end_user: str,
         documents: str,
         files: typing.List[core.File],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PostComplianceApplicationsResponse]:
+    ) -> AsyncHttpResponse[SubmitComplianceResponse]:
         """
         Submit a new compliance application with end-user details and supporting documents.
         One application is allowed per organization per country per number type per user type.
@@ -859,10 +859,10 @@ class AsyncRawComplianceClient:
         country_iso : str
             ISO 3166-1 alpha-2 country code
 
-        number_type : PostComplianceApplicationsRequestNumberType
+        number_type : SubmitComplianceRequestNumberType
             The type of phone number
 
-        user_type : PostComplianceApplicationsRequestUserType
+        user_type : SubmitComplianceRequestUserType
             The type of end user
 
         end_user : str
@@ -896,7 +896,7 @@ class AsyncRawComplianceClient:
 
         Returns
         -------
-        AsyncHttpResponse[PostComplianceApplicationsResponse]
+        AsyncHttpResponse[SubmitComplianceResponse]
             Application submitted successfully
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -920,9 +920,9 @@ class AsyncRawComplianceClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PostComplianceApplicationsResponse,
+                    SubmitComplianceResponse,
                     construct_type(
-                        type_=PostComplianceApplicationsResponse,  # type: ignore
+                        type_=SubmitComplianceResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -991,14 +991,14 @@ class AsyncRawComplianceClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def resubmit_a_rejected_compliance_application(
+    async def resubmit(
         self,
         id: str,
         *,
         documents: str,
         files: typing.List[core.File],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PatchComplianceApplicationsIdResponse]:
+    ) -> AsyncHttpResponse[ResubmitComplianceResponse]:
         """
         Resubmit a previously rejected compliance application with corrected documents.
         Only applications in `rejected` status can be resubmitted. All documents must be
@@ -1023,7 +1023,7 @@ class AsyncRawComplianceClient:
 
         Returns
         -------
-        AsyncHttpResponse[PatchComplianceApplicationsIdResponse]
+        AsyncHttpResponse[ResubmitComplianceResponse]
             Application resubmitted successfully
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1043,9 +1043,9 @@ class AsyncRawComplianceClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PatchComplianceApplicationsIdResponse,
+                    ResubmitComplianceResponse,
                     construct_type(
-                        type_=PatchComplianceApplicationsIdResponse,  # type: ignore
+                        type_=ResubmitComplianceResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

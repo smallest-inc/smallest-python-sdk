@@ -1,3 +1,28 @@
+## 5.1.0 - 2026-06-22
+
+Additive completeness, naming, and spec-correctness release (generator pinned to 5.12.12).
+The only breaking changes are the verb-noun method renames below; the deprecated
+model-lineup cleanup is deferred to a later release.
+
+* **New endpoints**: `agents.create_with_ai`, `agents.list_call_logs`,
+  `agents.get_widget_config`/`update_widget_config`, `agents.get_prompt_config`,
+  `organization.get_account_details`/`update_name`, `user.get_subscription`,
+  `campaigns.export_logs`, plus a new `dnc.list` namespace.
+* **Method names** cleaned to verb-noun across more namespaces: `agent_versioning_drafts`
+  (`create_draft`, `publish_draft`, `update_draft_config`, …), `agent_versioning_versions`
+  (`activate_version`, `compare_version_metrics`, `update_version_metadata`),
+  `campaigns`/`audience`/`webhooks`, and `knowledge_base`/`phone_numbers`
+  (`list`/`create`/`get`/`delete`/`rent`/`release`/`search_rentable`/`import_sip`/
+  `extract_sitemap_urls`/`scrape_urls`).
+* **Agent schema completeness**: 18 previously-untyped config fields now typed on the agent
+  (e.g. `allow_inbound_call`, `phone_number`, `voice_mail_detection_config`,
+  `smart_turn_config`, `session_timeout_config`, `pronunciation_dicts`).
+* **`agent_templates`**: `_id` (Mongo ObjectId) and `id` (slug) are now distinct fields —
+  `.object_id` and `.id` (no data loss).
+* **Live transcripts**: the `metrics` SSE event is typed as an array (was silently dropped).
+
+Breaking: the verb-noun renames above remove the old operationId-style names. See MIGRATION.md.
+
 ## 5.0.0 - 2026-06-19
 
 First release from the canonical `smallest-inc/smallest-python-sdk` repo. SDK-surface

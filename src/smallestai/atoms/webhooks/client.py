@@ -5,16 +5,16 @@ import typing
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.request_options import RequestOptions
 from .raw_client import AsyncRawWebhooksClient, RawWebhooksClient
+from .types.create_webhooks_request_events_item import CreateWebhooksRequestEventsItem
+from .types.create_webhooks_response import CreateWebhooksResponse
 from .types.delete_agent_agent_id_webhook_subscriptions_response import DeleteAgentAgentIdWebhookSubscriptionsResponse
-from .types.delete_webhook_id_response import DeleteWebhookIdResponse
+from .types.delete_webhooks_response import DeleteWebhooksResponse
 from .types.get_agent_agent_id_webhook_subscriptions_response import GetAgentAgentIdWebhookSubscriptionsResponse
 from .types.get_webhook_response import GetWebhookResponse
 from .types.post_agent_agent_id_webhook_subscriptions_request_event_types_item import (
     PostAgentAgentIdWebhookSubscriptionsRequestEventTypesItem,
 )
 from .types.post_agent_agent_id_webhook_subscriptions_response import PostAgentAgentIdWebhookSubscriptionsResponse
-from .types.post_webhook_request_events_item import PostWebhookRequestEventsItem
-from .types.post_webhook_response import PostWebhookResponse
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -66,14 +66,14 @@ class WebhooksClient:
         _response = self._raw_client.get_webhooks(webhook_id=webhook_id, request_options=request_options)
         return _response.data
 
-    def create_a_webhook(
+    def create(
         self,
         *,
         endpoint: str,
         description: str,
-        events: typing.Sequence[PostWebhookRequestEventsItem],
+        events: typing.Sequence[CreateWebhooksRequestEventsItem],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostWebhookResponse:
+    ) -> CreateWebhooksResponse:
         """
         Create a new webhook with subscriptions for specific agents and events.
 
@@ -88,7 +88,7 @@ class WebhooksClient:
         description : str
             The description of the webhook
 
-        events : typing.Sequence[PostWebhookRequestEventsItem]
+        events : typing.Sequence[CreateWebhooksRequestEventsItem]
             Array of events to subscribe to
 
         request_options : typing.Optional[RequestOptions]
@@ -96,36 +96,34 @@ class WebhooksClient:
 
         Returns
         -------
-        PostWebhookResponse
+        CreateWebhooksResponse
             Webhook created successfully
 
         Examples
         --------
         from smallestai import SmallestAI
-        from smallestai.atoms.webhooks import PostWebhookRequestEventsItem
+        from smallestai.atoms.webhooks import CreateWebhooksRequestEventsItem
 
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.webhooks.create_a_webhook(
+        client.atoms.webhooks.create(
             endpoint="https://example.com/webhook",
             description="Webhook for conversation events",
             events=[
-                PostWebhookRequestEventsItem(
+                CreateWebhooksRequestEventsItem(
                     agent_id="60d0fe4f5311236168a109ca",
                     event_type="pre-conversation",
                 )
             ],
         )
         """
-        _response = self._raw_client.create_a_webhook(
+        _response = self._raw_client.create(
             endpoint=endpoint, description=description, events=events, request_options=request_options
         )
         return _response.data
 
-    def delete_a_webhook(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> DeleteWebhookIdResponse:
+    def delete(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> DeleteWebhooksResponse:
         """
         Delete a webhook by its ID.
 
@@ -146,7 +144,7 @@ class WebhooksClient:
 
         Returns
         -------
-        DeleteWebhookIdResponse
+        DeleteWebhooksResponse
             Webhook deleted successfully
 
         Examples
@@ -156,11 +154,11 @@ class WebhooksClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.webhooks.delete_a_webhook(
+        client.atoms.webhooks.delete(
             id="id",
         )
         """
-        _response = self._raw_client.delete_a_webhook(id, request_options=request_options)
+        _response = self._raw_client.delete(id, request_options=request_options)
         return _response.data
 
     def get_webhook_subscriptions_for_an_agent(
@@ -337,14 +335,14 @@ class AsyncWebhooksClient:
         _response = await self._raw_client.get_webhooks(webhook_id=webhook_id, request_options=request_options)
         return _response.data
 
-    async def create_a_webhook(
+    async def create(
         self,
         *,
         endpoint: str,
         description: str,
-        events: typing.Sequence[PostWebhookRequestEventsItem],
+        events: typing.Sequence[CreateWebhooksRequestEventsItem],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostWebhookResponse:
+    ) -> CreateWebhooksResponse:
         """
         Create a new webhook with subscriptions for specific agents and events.
 
@@ -359,7 +357,7 @@ class AsyncWebhooksClient:
         description : str
             The description of the webhook
 
-        events : typing.Sequence[PostWebhookRequestEventsItem]
+        events : typing.Sequence[CreateWebhooksRequestEventsItem]
             Array of events to subscribe to
 
         request_options : typing.Optional[RequestOptions]
@@ -367,7 +365,7 @@ class AsyncWebhooksClient:
 
         Returns
         -------
-        PostWebhookResponse
+        CreateWebhooksResponse
             Webhook created successfully
 
         Examples
@@ -375,7 +373,7 @@ class AsyncWebhooksClient:
         import asyncio
 
         from smallestai import AsyncSmallestAI
-        from smallestai.atoms.webhooks import PostWebhookRequestEventsItem
+        from smallestai.atoms.webhooks import CreateWebhooksRequestEventsItem
 
         client = AsyncSmallestAI(
             api_key="YOUR_API_KEY",
@@ -383,11 +381,11 @@ class AsyncWebhooksClient:
 
 
         async def main() -> None:
-            await client.atoms.webhooks.create_a_webhook(
+            await client.atoms.webhooks.create(
                 endpoint="https://example.com/webhook",
                 description="Webhook for conversation events",
                 events=[
-                    PostWebhookRequestEventsItem(
+                    CreateWebhooksRequestEventsItem(
                         agent_id="60d0fe4f5311236168a109ca",
                         event_type="pre-conversation",
                     )
@@ -397,14 +395,14 @@ class AsyncWebhooksClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.create_a_webhook(
+        _response = await self._raw_client.create(
             endpoint=endpoint, description=description, events=events, request_options=request_options
         )
         return _response.data
 
-    async def delete_a_webhook(
+    async def delete(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> DeleteWebhookIdResponse:
+    ) -> DeleteWebhooksResponse:
         """
         Delete a webhook by its ID.
 
@@ -425,7 +423,7 @@ class AsyncWebhooksClient:
 
         Returns
         -------
-        DeleteWebhookIdResponse
+        DeleteWebhooksResponse
             Webhook deleted successfully
 
         Examples
@@ -440,14 +438,14 @@ class AsyncWebhooksClient:
 
 
         async def main() -> None:
-            await client.atoms.webhooks.delete_a_webhook(
+            await client.atoms.webhooks.delete(
                 id="id",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.delete_a_webhook(id, request_options=request_options)
+        _response = await self._raw_client.delete(id, request_options=request_options)
         return _response.data
 
     async def get_webhook_subscriptions_for_an_agent(

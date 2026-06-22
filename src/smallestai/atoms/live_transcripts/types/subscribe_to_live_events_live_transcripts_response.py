@@ -9,6 +9,9 @@ from ....core.unchecked_base_model import UncheckedBaseModel
 from .subscribe_to_live_events_live_transcripts_response_event_type import (
     SubscribeToLiveEventsLiveTranscriptsResponseEventType,
 )
+from .subscribe_to_live_events_live_transcripts_response_metrics_item import (
+    SubscribeToLiveEventsLiveTranscriptsResponseMetricsItem,
+)
 
 
 class SubscribeToLiveEventsLiveTranscriptsResponse(UncheckedBaseModel):
@@ -133,15 +136,17 @@ class SubscribeToLiveEventsLiveTranscriptsResponse(UncheckedBaseModel):
     TTS latency in milliseconds (only for `tts_completed`)
     """
 
-    # The runtime sends `metrics` as a LIST of {processor, model, value} dicts, but the
-    # spec types it as an object — which made the SDK drop every `metrics` SSE event with
-    # a validation error (found via a live call). Accept both shapes until the spec is
-    # fixed (see SDK_ESCALATIONS.log); list is what the server actually emits.
-    metrics: typing.Optional[
-        typing.Union[typing.List[typing.Dict[str, typing.Any]], typing.Dict[str, typing.Any]]
-    ] = pydantic.Field(default=None)
+    metrics: typing.Optional[typing.List[SubscribeToLiveEventsLiveTranscriptsResponseMetricsItem]] = pydantic.Field(
+        default=None
+    )
     """
-    Metrics payload for `metrics`
+    Per-turn metrics payload for `metrics` events. Server emits an
+    **array** of `{processor, model, value}` entries (one per
+    pipeline stage), not a single object. The SDK previously
+    dropped every `metrics` SSE event with a pydantic
+    ValidationError when this was typed as an object (122
+    events on a 40s call); typing it as an array of objects
+    fixes the decode.
     """
 
     node_id: typing.Optional[str] = pydantic.Field(default=None)

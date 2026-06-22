@@ -17,13 +17,17 @@ from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.test_call_request_mode import TestCallRequestMode
-from .types.get_agent_id_versions_compare_metrics_response import GetAgentIdVersionsCompareMetricsResponse
+from .types.activate_version_agent_versioning_versions_response import ActivateVersionAgentVersioningVersionsResponse
+from .types.compare_version_metrics_agent_versioning_versions_response import (
+    CompareVersionMetricsAgentVersioningVersionsResponse,
+)
 from .types.get_agent_id_versions_diff_response import GetAgentIdVersionsDiffResponse
 from .types.get_agent_id_versions_response import GetAgentIdVersionsResponse
 from .types.get_agent_id_versions_version_id_response import GetAgentIdVersionsVersionIdResponse
-from .types.patch_agent_id_versions_version_id_activate_response import PatchAgentIdVersionsVersionIdActivateResponse
-from .types.patch_agent_id_versions_version_id_response import PatchAgentIdVersionsVersionIdResponse
 from .types.post_agent_id_versions_version_id_test_call_response import PostAgentIdVersionsVersionIdTestCallResponse
+from .types.update_version_metadata_agent_versioning_versions_response import (
+    UpdateVersionMetadataAgentVersioningVersionsResponse,
+)
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -264,7 +268,7 @@ class RawAgentVersioningVersionsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def compare_metrics_between_two_versions(
+    def compare_version_metrics(
         self,
         id: str,
         *,
@@ -273,7 +277,7 @@ class RawAgentVersioningVersionsClient:
         date_from: typing.Optional[dt.date] = None,
         date_to: typing.Optional[dt.date] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[GetAgentIdVersionsCompareMetricsResponse]:
+    ) -> HttpResponse[CompareVersionMetricsAgentVersioningVersionsResponse]:
         """
         Compare analytics/call metrics between two published versions over an optional date range.
 
@@ -299,7 +303,7 @@ class RawAgentVersioningVersionsClient:
 
         Returns
         -------
-        HttpResponse[GetAgentIdVersionsCompareMetricsResponse]
+        HttpResponse[CompareVersionMetricsAgentVersioningVersionsResponse]
             Metrics comparison returned
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -317,9 +321,9 @@ class RawAgentVersioningVersionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetAgentIdVersionsCompareMetricsResponse,
+                    CompareVersionMetricsAgentVersioningVersionsResponse,
                     construct_type(
-                        type_=GetAgentIdVersionsCompareMetricsResponse,  # type: ignore
+                        type_=CompareVersionMetricsAgentVersioningVersionsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -492,7 +496,7 @@ class RawAgentVersioningVersionsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def update_version_metadata_label_description_pin_only(
+    def update_version_metadata(
         self,
         id: str,
         version_id: str,
@@ -501,7 +505,7 @@ class RawAgentVersioningVersionsClient:
         description: typing.Optional[str] = OMIT,
         is_pinned: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PatchAgentIdVersionsVersionIdResponse]:
+    ) -> HttpResponse[UpdateVersionMetadataAgentVersioningVersionsResponse]:
         """
         Update a published version's label, description, or pinned status. At least one field is required.
         Published versions (both active and inactive) are config-immutable — their agent
@@ -530,7 +534,7 @@ class RawAgentVersioningVersionsClient:
 
         Returns
         -------
-        HttpResponse[PatchAgentIdVersionsVersionIdResponse]
+        HttpResponse[UpdateVersionMetadataAgentVersioningVersionsResponse]
             Version metadata updated
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -551,9 +555,9 @@ class RawAgentVersioningVersionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PatchAgentIdVersionsVersionIdResponse,
+                    UpdateVersionMetadataAgentVersioningVersionsResponse,
                     construct_type(
-                        type_=PatchAgentIdVersionsVersionIdResponse,  # type: ignore
+                        type_=UpdateVersionMetadataAgentVersioningVersionsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -622,9 +626,9 @@ class RawAgentVersioningVersionsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def activate_a_version(
+    def activate_version(
         self, id: str, version_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[PatchAgentIdVersionsVersionIdActivateResponse]:
+    ) -> HttpResponse[ActivateVersionAgentVersioningVersionsResponse]:
         """
         Set a published version as the active version for the agent. The previously
         active version is deactivated. This does not modify the version's config — it
@@ -645,7 +649,7 @@ class RawAgentVersioningVersionsClient:
 
         Returns
         -------
-        HttpResponse[PatchAgentIdVersionsVersionIdActivateResponse]
+        HttpResponse[ActivateVersionAgentVersioningVersionsResponse]
             Version activated successfully
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -657,9 +661,9 @@ class RawAgentVersioningVersionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PatchAgentIdVersionsVersionIdActivateResponse,
+                    ActivateVersionAgentVersioningVersionsResponse,
                     construct_type(
-                        type_=PatchAgentIdVersionsVersionIdActivateResponse,  # type: ignore
+                        type_=ActivateVersionAgentVersioningVersionsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1088,7 +1092,7 @@ class AsyncRawAgentVersioningVersionsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def compare_metrics_between_two_versions(
+    async def compare_version_metrics(
         self,
         id: str,
         *,
@@ -1097,7 +1101,7 @@ class AsyncRawAgentVersioningVersionsClient:
         date_from: typing.Optional[dt.date] = None,
         date_to: typing.Optional[dt.date] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[GetAgentIdVersionsCompareMetricsResponse]:
+    ) -> AsyncHttpResponse[CompareVersionMetricsAgentVersioningVersionsResponse]:
         """
         Compare analytics/call metrics between two published versions over an optional date range.
 
@@ -1123,7 +1127,7 @@ class AsyncRawAgentVersioningVersionsClient:
 
         Returns
         -------
-        AsyncHttpResponse[GetAgentIdVersionsCompareMetricsResponse]
+        AsyncHttpResponse[CompareVersionMetricsAgentVersioningVersionsResponse]
             Metrics comparison returned
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1141,9 +1145,9 @@ class AsyncRawAgentVersioningVersionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetAgentIdVersionsCompareMetricsResponse,
+                    CompareVersionMetricsAgentVersioningVersionsResponse,
                     construct_type(
-                        type_=GetAgentIdVersionsCompareMetricsResponse,  # type: ignore
+                        type_=CompareVersionMetricsAgentVersioningVersionsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1316,7 +1320,7 @@ class AsyncRawAgentVersioningVersionsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def update_version_metadata_label_description_pin_only(
+    async def update_version_metadata(
         self,
         id: str,
         version_id: str,
@@ -1325,7 +1329,7 @@ class AsyncRawAgentVersioningVersionsClient:
         description: typing.Optional[str] = OMIT,
         is_pinned: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PatchAgentIdVersionsVersionIdResponse]:
+    ) -> AsyncHttpResponse[UpdateVersionMetadataAgentVersioningVersionsResponse]:
         """
         Update a published version's label, description, or pinned status. At least one field is required.
         Published versions (both active and inactive) are config-immutable — their agent
@@ -1354,7 +1358,7 @@ class AsyncRawAgentVersioningVersionsClient:
 
         Returns
         -------
-        AsyncHttpResponse[PatchAgentIdVersionsVersionIdResponse]
+        AsyncHttpResponse[UpdateVersionMetadataAgentVersioningVersionsResponse]
             Version metadata updated
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1375,9 +1379,9 @@ class AsyncRawAgentVersioningVersionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PatchAgentIdVersionsVersionIdResponse,
+                    UpdateVersionMetadataAgentVersioningVersionsResponse,
                     construct_type(
-                        type_=PatchAgentIdVersionsVersionIdResponse,  # type: ignore
+                        type_=UpdateVersionMetadataAgentVersioningVersionsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1446,9 +1450,9 @@ class AsyncRawAgentVersioningVersionsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def activate_a_version(
+    async def activate_version(
         self, id: str, version_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[PatchAgentIdVersionsVersionIdActivateResponse]:
+    ) -> AsyncHttpResponse[ActivateVersionAgentVersioningVersionsResponse]:
         """
         Set a published version as the active version for the agent. The previously
         active version is deactivated. This does not modify the version's config — it
@@ -1469,7 +1473,7 @@ class AsyncRawAgentVersioningVersionsClient:
 
         Returns
         -------
-        AsyncHttpResponse[PatchAgentIdVersionsVersionIdActivateResponse]
+        AsyncHttpResponse[ActivateVersionAgentVersioningVersionsResponse]
             Version activated successfully
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1481,9 +1485,9 @@ class AsyncRawAgentVersioningVersionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PatchAgentIdVersionsVersionIdActivateResponse,
+                    ActivateVersionAgentVersioningVersionsResponse,
                     construct_type(
-                        type_=PatchAgentIdVersionsVersionIdActivateResponse,  # type: ignore
+                        type_=ActivateVersionAgentVersioningVersionsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

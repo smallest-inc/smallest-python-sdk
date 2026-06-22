@@ -7,13 +7,17 @@ from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.request_options import RequestOptions
 from ..types.test_call_request_mode import TestCallRequestMode
 from .raw_client import AsyncRawAgentVersioningVersionsClient, RawAgentVersioningVersionsClient
-from .types.get_agent_id_versions_compare_metrics_response import GetAgentIdVersionsCompareMetricsResponse
+from .types.activate_version_agent_versioning_versions_response import ActivateVersionAgentVersioningVersionsResponse
+from .types.compare_version_metrics_agent_versioning_versions_response import (
+    CompareVersionMetricsAgentVersioningVersionsResponse,
+)
 from .types.get_agent_id_versions_diff_response import GetAgentIdVersionsDiffResponse
 from .types.get_agent_id_versions_response import GetAgentIdVersionsResponse
 from .types.get_agent_id_versions_version_id_response import GetAgentIdVersionsVersionIdResponse
-from .types.patch_agent_id_versions_version_id_activate_response import PatchAgentIdVersionsVersionIdActivateResponse
-from .types.patch_agent_id_versions_version_id_response import PatchAgentIdVersionsVersionIdResponse
 from .types.post_agent_id_versions_version_id_test_call_response import PostAgentIdVersionsVersionIdTestCallResponse
+from .types.update_version_metadata_agent_versioning_versions_response import (
+    UpdateVersionMetadataAgentVersioningVersionsResponse,
+)
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -129,7 +133,7 @@ class AgentVersioningVersionsClient:
         )
         return _response.data
 
-    def compare_metrics_between_two_versions(
+    def compare_version_metrics(
         self,
         id: str,
         *,
@@ -138,7 +142,7 @@ class AgentVersioningVersionsClient:
         date_from: typing.Optional[dt.date] = None,
         date_to: typing.Optional[dt.date] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetAgentIdVersionsCompareMetricsResponse:
+    ) -> CompareVersionMetricsAgentVersioningVersionsResponse:
         """
         Compare analytics/call metrics between two published versions over an optional date range.
 
@@ -164,7 +168,7 @@ class AgentVersioningVersionsClient:
 
         Returns
         -------
-        GetAgentIdVersionsCompareMetricsResponse
+        CompareVersionMetricsAgentVersioningVersionsResponse
             Metrics comparison returned
 
         Examples
@@ -176,7 +180,7 @@ class AgentVersioningVersionsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.agent_versioning_versions.compare_metrics_between_two_versions(
+        client.atoms.agent_versioning_versions.compare_version_metrics(
             id="60d0fe4f5311236168a109ca",
             version_a="versionA",
             version_b="versionB",
@@ -188,7 +192,7 @@ class AgentVersioningVersionsClient:
             ),
         )
         """
-        _response = self._raw_client.compare_metrics_between_two_versions(
+        _response = self._raw_client.compare_version_metrics(
             id,
             version_a=version_a,
             version_b=version_b,
@@ -237,7 +241,7 @@ class AgentVersioningVersionsClient:
         _response = self._raw_client.get_version_detail(id, version_id, request_options=request_options)
         return _response.data
 
-    def update_version_metadata_label_description_pin_only(
+    def update_version_metadata(
         self,
         id: str,
         version_id: str,
@@ -246,7 +250,7 @@ class AgentVersioningVersionsClient:
         description: typing.Optional[str] = OMIT,
         is_pinned: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PatchAgentIdVersionsVersionIdResponse:
+    ) -> UpdateVersionMetadataAgentVersioningVersionsResponse:
         """
         Update a published version's label, description, or pinned status. At least one field is required.
         Published versions (both active and inactive) are config-immutable — their agent
@@ -275,7 +279,7 @@ class AgentVersioningVersionsClient:
 
         Returns
         -------
-        PatchAgentIdVersionsVersionIdResponse
+        UpdateVersionMetadataAgentVersioningVersionsResponse
             Version metadata updated
 
         Examples
@@ -285,19 +289,19 @@ class AgentVersioningVersionsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.agent_versioning_versions.update_version_metadata_label_description_pin_only(
+        client.atoms.agent_versioning_versions.update_version_metadata(
             id="60d0fe4f5311236168a109ca",
             version_id="versionId",
         )
         """
-        _response = self._raw_client.update_version_metadata_label_description_pin_only(
+        _response = self._raw_client.update_version_metadata(
             id, version_id, label=label, description=description, is_pinned=is_pinned, request_options=request_options
         )
         return _response.data
 
-    def activate_a_version(
+    def activate_version(
         self, id: str, version_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> PatchAgentIdVersionsVersionIdActivateResponse:
+    ) -> ActivateVersionAgentVersioningVersionsResponse:
         """
         Set a published version as the active version for the agent. The previously
         active version is deactivated. This does not modify the version's config — it
@@ -318,7 +322,7 @@ class AgentVersioningVersionsClient:
 
         Returns
         -------
-        PatchAgentIdVersionsVersionIdActivateResponse
+        ActivateVersionAgentVersioningVersionsResponse
             Version activated successfully
 
         Examples
@@ -328,12 +332,12 @@ class AgentVersioningVersionsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.agent_versioning_versions.activate_a_version(
+        client.atoms.agent_versioning_versions.activate_version(
             id="60d0fe4f5311236168a109ca",
             version_id="versionId",
         )
         """
-        _response = self._raw_client.activate_a_version(id, version_id, request_options=request_options)
+        _response = self._raw_client.activate_version(id, version_id, request_options=request_options)
         return _response.data
 
     def test_call_with_version_config(
@@ -517,7 +521,7 @@ class AsyncAgentVersioningVersionsClient:
         )
         return _response.data
 
-    async def compare_metrics_between_two_versions(
+    async def compare_version_metrics(
         self,
         id: str,
         *,
@@ -526,7 +530,7 @@ class AsyncAgentVersioningVersionsClient:
         date_from: typing.Optional[dt.date] = None,
         date_to: typing.Optional[dt.date] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetAgentIdVersionsCompareMetricsResponse:
+    ) -> CompareVersionMetricsAgentVersioningVersionsResponse:
         """
         Compare analytics/call metrics between two published versions over an optional date range.
 
@@ -552,7 +556,7 @@ class AsyncAgentVersioningVersionsClient:
 
         Returns
         -------
-        GetAgentIdVersionsCompareMetricsResponse
+        CompareVersionMetricsAgentVersioningVersionsResponse
             Metrics comparison returned
 
         Examples
@@ -568,7 +572,7 @@ class AsyncAgentVersioningVersionsClient:
 
 
         async def main() -> None:
-            await client.atoms.agent_versioning_versions.compare_metrics_between_two_versions(
+            await client.atoms.agent_versioning_versions.compare_version_metrics(
                 id="60d0fe4f5311236168a109ca",
                 version_a="versionA",
                 version_b="versionB",
@@ -583,7 +587,7 @@ class AsyncAgentVersioningVersionsClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.compare_metrics_between_two_versions(
+        _response = await self._raw_client.compare_version_metrics(
             id,
             version_a=version_a,
             version_b=version_b,
@@ -640,7 +644,7 @@ class AsyncAgentVersioningVersionsClient:
         _response = await self._raw_client.get_version_detail(id, version_id, request_options=request_options)
         return _response.data
 
-    async def update_version_metadata_label_description_pin_only(
+    async def update_version_metadata(
         self,
         id: str,
         version_id: str,
@@ -649,7 +653,7 @@ class AsyncAgentVersioningVersionsClient:
         description: typing.Optional[str] = OMIT,
         is_pinned: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PatchAgentIdVersionsVersionIdResponse:
+    ) -> UpdateVersionMetadataAgentVersioningVersionsResponse:
         """
         Update a published version's label, description, or pinned status. At least one field is required.
         Published versions (both active and inactive) are config-immutable — their agent
@@ -678,7 +682,7 @@ class AsyncAgentVersioningVersionsClient:
 
         Returns
         -------
-        PatchAgentIdVersionsVersionIdResponse
+        UpdateVersionMetadataAgentVersioningVersionsResponse
             Version metadata updated
 
         Examples
@@ -693,7 +697,7 @@ class AsyncAgentVersioningVersionsClient:
 
 
         async def main() -> None:
-            await client.atoms.agent_versioning_versions.update_version_metadata_label_description_pin_only(
+            await client.atoms.agent_versioning_versions.update_version_metadata(
                 id="60d0fe4f5311236168a109ca",
                 version_id="versionId",
             )
@@ -701,14 +705,14 @@ class AsyncAgentVersioningVersionsClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.update_version_metadata_label_description_pin_only(
+        _response = await self._raw_client.update_version_metadata(
             id, version_id, label=label, description=description, is_pinned=is_pinned, request_options=request_options
         )
         return _response.data
 
-    async def activate_a_version(
+    async def activate_version(
         self, id: str, version_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> PatchAgentIdVersionsVersionIdActivateResponse:
+    ) -> ActivateVersionAgentVersioningVersionsResponse:
         """
         Set a published version as the active version for the agent. The previously
         active version is deactivated. This does not modify the version's config — it
@@ -729,7 +733,7 @@ class AsyncAgentVersioningVersionsClient:
 
         Returns
         -------
-        PatchAgentIdVersionsVersionIdActivateResponse
+        ActivateVersionAgentVersioningVersionsResponse
             Version activated successfully
 
         Examples
@@ -744,7 +748,7 @@ class AsyncAgentVersioningVersionsClient:
 
 
         async def main() -> None:
-            await client.atoms.agent_versioning_versions.activate_a_version(
+            await client.atoms.agent_versioning_versions.activate_version(
                 id="60d0fe4f5311236168a109ca",
                 version_id="versionId",
             )
@@ -752,7 +756,7 @@ class AsyncAgentVersioningVersionsClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.activate_a_version(id, version_id, request_options=request_options)
+        _response = await self._raw_client.activate_version(id, version_id, request_options=request_options)
         return _response.data
 
     async def test_call_with_version_config(

@@ -33,11 +33,11 @@ def test_atoms_compliance_get_compliance_requirements() -> None:
     )
 
 
-def test_atoms_compliance_submit_a_compliance_application() -> None:
-    """Test submitAComplianceApplication endpoint with WireMock"""
-    test_id = "atoms.compliance.submit_a_compliance_application.0"
+def test_atoms_compliance_submit() -> None:
+    """Test submit endpoint with WireMock"""
+    test_id = "atoms.compliance.submit.0"
     client = get_client(test_id)
-    client.atoms.compliance.submit_a_compliance_application(
+    client.atoms.compliance.submit(
         files=["example_files"],
         country_iso="countryIso",
         number_type="local",
@@ -48,11 +48,11 @@ def test_atoms_compliance_submit_a_compliance_application() -> None:
     verify_request_count(test_id, "POST", "/compliance/applications", None, 1)
 
 
-def test_atoms_compliance_resubmit_a_rejected_compliance_application() -> None:
-    """Test resubmitARejectedComplianceApplication endpoint with WireMock"""
-    test_id = "atoms.compliance.resubmit_a_rejected_compliance_application.0"
+def test_atoms_compliance_resubmit() -> None:
+    """Test resubmit endpoint with WireMock"""
+    test_id = "atoms.compliance.resubmit.0"
     client = get_client(test_id)
-    client.atoms.compliance.resubmit_a_rejected_compliance_application(
+    client.atoms.compliance.resubmit(
         id="id",
         files=["example_files"],
         documents="documents",

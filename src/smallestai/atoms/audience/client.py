@@ -10,8 +10,8 @@ from .types.delete_audience_id_members_response import DeleteAudienceIdMembersRe
 from .types.delete_audience_id_response import DeleteAudienceIdResponse
 from .types.get_audience_id_members_response import GetAudienceIdMembersResponse
 from .types.get_audience_id_members_search_response import GetAudienceIdMembersSearchResponse
-from .types.get_audience_id_response import GetAudienceIdResponse
 from .types.get_audience_response import GetAudienceResponse
+from .types.list_audience_response import ListAudienceResponse
 from .types.post_audience_id_members_response import PostAudienceIdMembersResponse
 from .types.post_audience_response import PostAudienceResponse
 
@@ -34,7 +34,7 @@ class AudienceClient:
         """
         return self._raw_client
 
-    def get_all_audiences(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetAudienceResponse:
+    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListAudienceResponse:
         """
         Retrieve all audiences created by the authenticated user. Users can only access audiences they have created.
 
@@ -45,7 +45,7 @@ class AudienceClient:
 
         Returns
         -------
-        GetAudienceResponse
+        ListAudienceResponse
             Successfully retrieved audiences
 
         Examples
@@ -55,9 +55,9 @@ class AudienceClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.audience.get_all_audiences()
+        client.atoms.audience.list()
         """
-        _response = self._raw_client.get_all_audiences(request_options=request_options)
+        _response = self._raw_client.list(request_options=request_options)
         return _response.data
 
     def create_audience_with_csv_upload(
@@ -125,9 +125,7 @@ class AudienceClient:
         )
         return _response.data
 
-    def get_audience_by_id(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetAudienceIdResponse:
+    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> GetAudienceResponse:
         """
         Retrieve a specific audience by its ID.
         Note: if the audience belongs to a different organization, the API returns 404 (not 403) — ownership is deliberately obscured.
@@ -142,7 +140,7 @@ class AudienceClient:
 
         Returns
         -------
-        GetAudienceIdResponse
+        GetAudienceResponse
             Successfully retrieved audience
 
         Examples
@@ -152,11 +150,11 @@ class AudienceClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.audience.get_audience_by_id(
+        client.atoms.audience.get(
             id="60d0fe4f5311236168a109ca",
         )
         """
-        _response = self._raw_client.get_audience_by_id(id, request_options=request_options)
+        _response = self._raw_client.get(id, request_options=request_options)
         return _response.data
 
     def delete_audience(
@@ -400,9 +398,7 @@ class AsyncAudienceClient:
         """
         return self._raw_client
 
-    async def get_all_audiences(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetAudienceResponse:
+    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListAudienceResponse:
         """
         Retrieve all audiences created by the authenticated user. Users can only access audiences they have created.
 
@@ -413,7 +409,7 @@ class AsyncAudienceClient:
 
         Returns
         -------
-        GetAudienceResponse
+        ListAudienceResponse
             Successfully retrieved audiences
 
         Examples
@@ -428,12 +424,12 @@ class AsyncAudienceClient:
 
 
         async def main() -> None:
-            await client.atoms.audience.get_all_audiences()
+            await client.atoms.audience.list()
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_all_audiences(request_options=request_options)
+        _response = await self._raw_client.list(request_options=request_options)
         return _response.data
 
     async def create_audience_with_csv_upload(
@@ -509,9 +505,7 @@ class AsyncAudienceClient:
         )
         return _response.data
 
-    async def get_audience_by_id(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetAudienceIdResponse:
+    async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> GetAudienceResponse:
         """
         Retrieve a specific audience by its ID.
         Note: if the audience belongs to a different organization, the API returns 404 (not 403) — ownership is deliberately obscured.
@@ -526,7 +520,7 @@ class AsyncAudienceClient:
 
         Returns
         -------
-        GetAudienceIdResponse
+        GetAudienceResponse
             Successfully retrieved audience
 
         Examples
@@ -541,14 +535,14 @@ class AsyncAudienceClient:
 
 
         async def main() -> None:
-            await client.atoms.audience.get_audience_by_id(
+            await client.atoms.audience.get(
                 id="60d0fe4f5311236168a109ca",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_audience_by_id(id, request_options=request_options)
+        _response = await self._raw_client.get(id, request_options=request_options)
         return _response.data
 
     async def delete_audience(

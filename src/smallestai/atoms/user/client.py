@@ -5,6 +5,7 @@ import typing
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.request_options import RequestOptions
 from .raw_client import AsyncRawUserClient, RawUserClient
+from .types.get_subscription_user_response import GetSubscriptionUserResponse
 from .types.get_user_response import GetUserResponse
 
 
@@ -45,6 +46,38 @@ class UserClient:
         client.atoms.user.get_user_details()
         """
         _response = self._raw_client.get_user_details(request_options=request_options)
+        return _response.data
+
+    def get_subscription(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> GetSubscriptionUserResponse:
+        """
+        Returns the caller's subscription details (plan ID + plan-tier limits) and
+        feature-flag map. Useful for client-side gating of paid features.
+
+        **`limits` is omitted** for the `ENTERPRISE` plan (and for unknown plan IDs) —
+        only `features` is returned in those cases.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetSubscriptionUserResponse
+            Subscription details + limits + features.
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.user.get_subscription()
+        """
+        _response = self._raw_client.get_subscription(request_options=request_options)
         return _response.data
 
 
@@ -93,4 +126,44 @@ class AsyncUserClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.get_user_details(request_options=request_options)
+        return _response.data
+
+    async def get_subscription(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> GetSubscriptionUserResponse:
+        """
+        Returns the caller's subscription details (plan ID + plan-tier limits) and
+        feature-flag map. Useful for client-side gating of paid features.
+
+        **`limits` is omitted** for the `ENTERPRISE` plan (and for unknown plan IDs) —
+        only `features` is returned in those cases.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetSubscriptionUserResponse
+            Subscription details + limits + features.
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.user.get_subscription()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_subscription(request_options=request_options)
         return _response.data

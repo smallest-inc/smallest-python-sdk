@@ -47,6 +47,7 @@ class TestMakeDefaultAsyncClientWithAiohttp(unittest.TestCase):
     def test_returns_aiohttp_client(self) -> None:
         """When httpx_aiohttp is installed, returns HttpxAiohttpClient."""
         import httpx_aiohttp  # type: ignore[import-not-found]
+
         from smallestai.client import _make_default_async_client
 
         client = _make_default_async_client(timeout=60, follow_redirects=True)
@@ -57,6 +58,7 @@ class TestMakeDefaultAsyncClientWithAiohttp(unittest.TestCase):
     def test_follow_redirects_none(self) -> None:
         """When httpx_aiohttp is installed and follow_redirects is None, omits it."""
         import httpx_aiohttp  # type: ignore[import-not-found]
+
         from smallestai.client import _make_default_async_client
 
         client = _make_default_async_client(timeout=60, follow_redirects=None)
@@ -93,7 +95,7 @@ class TestDefaultClientsWithoutAiohttp(unittest.TestCase):
 
             with self.assertRaises(RuntimeError) as ctx:
                 smallestai._default_clients.DefaultAioHttpClient()
-            self.assertIn("pip install smallestai[aiohttp]", str(ctx.exception))
+            self.assertIn("pip install smallest-ai[aiohttp]", str(ctx.exception))
 
         importlib.reload(smallestai._default_clients)
 
@@ -105,6 +107,7 @@ class TestDefaultClientsWithAiohttp(unittest.TestCase):
     def test_default_aiohttp_client_defaults(self) -> None:
         """DefaultAioHttpClient works when httpx_aiohttp is installed."""
         import httpx_aiohttp  # type: ignore[import-not-found]
+
         from smallestai._default_clients import SDK_DEFAULT_TIMEOUT, DefaultAioHttpClient
 
         client = DefaultAioHttpClient()

@@ -1,11 +1,11 @@
 from .conftest import get_client, verify_request_count
 
 
-def test_atoms_audience_get_all_audiences() -> None:
-    """Test getAllAudiences endpoint with WireMock"""
-    test_id = "atoms.audience.get_all_audiences.0"
+def test_atoms_audience_list_() -> None:
+    """Test list endpoint with WireMock"""
+    test_id = "atoms.audience.list_.0"
     client = get_client(test_id)
-    client.atoms.audience.get_all_audiences()
+    client.atoms.audience.list()
     verify_request_count(test_id, "GET", "/audience", None, 1)
 
 
@@ -21,11 +21,11 @@ def test_atoms_audience_create_audience_with_csv_upload() -> None:
     verify_request_count(test_id, "POST", "/audience", None, 1)
 
 
-def test_atoms_audience_get_audience_by_id() -> None:
-    """Test getAudienceById endpoint with WireMock"""
-    test_id = "atoms.audience.get_audience_by_id.0"
+def test_atoms_audience_get() -> None:
+    """Test get endpoint with WireMock"""
+    test_id = "atoms.audience.get.0"
     client = get_client(test_id)
-    client.atoms.audience.get_audience_by_id(
+    client.atoms.audience.get(
         id="60d0fe4f5311236168a109ca",
     )
     verify_request_count(test_id, "GET", "/audience/60d0fe4f5311236168a109ca", None, 1)

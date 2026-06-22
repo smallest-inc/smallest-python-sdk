@@ -20,8 +20,8 @@ from .types.delete_audience_id_members_response import DeleteAudienceIdMembersRe
 from .types.delete_audience_id_response import DeleteAudienceIdResponse
 from .types.get_audience_id_members_response import GetAudienceIdMembersResponse
 from .types.get_audience_id_members_search_response import GetAudienceIdMembersSearchResponse
-from .types.get_audience_id_response import GetAudienceIdResponse
 from .types.get_audience_response import GetAudienceResponse
+from .types.list_audience_response import ListAudienceResponse
 from .types.post_audience_id_members_response import PostAudienceIdMembersResponse
 from .types.post_audience_response import PostAudienceResponse
 from pydantic import ValidationError
@@ -34,9 +34,7 @@ class RawAudienceClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get_all_audiences(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[GetAudienceResponse]:
+    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> HttpResponse[ListAudienceResponse]:
         """
         Retrieve all audiences created by the authenticated user. Users can only access audiences they have created.
 
@@ -47,7 +45,7 @@ class RawAudienceClient:
 
         Returns
         -------
-        HttpResponse[GetAudienceResponse]
+        HttpResponse[ListAudienceResponse]
             Successfully retrieved audiences
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -59,9 +57,9 @@ class RawAudienceClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetAudienceResponse,
+                    ListAudienceResponse,
                     construct_type(
-                        type_=GetAudienceResponse,  # type: ignore
+                        type_=ListAudienceResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -209,9 +207,9 @@ class RawAudienceClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_audience_by_id(
+    def get(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[GetAudienceIdResponse]:
+    ) -> HttpResponse[GetAudienceResponse]:
         """
         Retrieve a specific audience by its ID.
         Note: if the audience belongs to a different organization, the API returns 404 (not 403) — ownership is deliberately obscured.
@@ -226,7 +224,7 @@ class RawAudienceClient:
 
         Returns
         -------
-        HttpResponse[GetAudienceIdResponse]
+        HttpResponse[GetAudienceResponse]
             Successfully retrieved audience
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -238,9 +236,9 @@ class RawAudienceClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetAudienceIdResponse,
+                    GetAudienceResponse,
                     construct_type(
-                        type_=GetAudienceIdResponse,  # type: ignore
+                        type_=GetAudienceResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -824,9 +822,9 @@ class AsyncRawAudienceClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get_all_audiences(
+    async def list(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[GetAudienceResponse]:
+    ) -> AsyncHttpResponse[ListAudienceResponse]:
         """
         Retrieve all audiences created by the authenticated user. Users can only access audiences they have created.
 
@@ -837,7 +835,7 @@ class AsyncRawAudienceClient:
 
         Returns
         -------
-        AsyncHttpResponse[GetAudienceResponse]
+        AsyncHttpResponse[ListAudienceResponse]
             Successfully retrieved audiences
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -849,9 +847,9 @@ class AsyncRawAudienceClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetAudienceResponse,
+                    ListAudienceResponse,
                     construct_type(
-                        type_=GetAudienceResponse,  # type: ignore
+                        type_=ListAudienceResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -999,9 +997,9 @@ class AsyncRawAudienceClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def get_audience_by_id(
+    async def get(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[GetAudienceIdResponse]:
+    ) -> AsyncHttpResponse[GetAudienceResponse]:
         """
         Retrieve a specific audience by its ID.
         Note: if the audience belongs to a different organization, the API returns 404 (not 403) — ownership is deliberately obscured.
@@ -1016,7 +1014,7 @@ class AsyncRawAudienceClient:
 
         Returns
         -------
-        AsyncHttpResponse[GetAudienceIdResponse]
+        AsyncHttpResponse[GetAudienceResponse]
             Successfully retrieved audience
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1028,9 +1026,9 @@ class AsyncRawAudienceClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    GetAudienceIdResponse,
+                    GetAudienceResponse,
                     construct_type(
-                        type_=GetAudienceIdResponse,  # type: ignore
+                        type_=GetAudienceResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

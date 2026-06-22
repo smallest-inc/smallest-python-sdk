@@ -3,7 +3,7 @@
 __pycache__/
 dist/
 poetry.toml
+
+# Local secrets + venv (hand-added; .gitignore is .fernignore-preserved)
 .env
-.venv-test/
-*.pyc
-.DS_Store
+.venv*/

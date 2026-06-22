@@ -6,15 +6,16 @@ import typing
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.request_options import RequestOptions
 from .raw_client import AsyncRawCampaignsClient, RawCampaignsClient
-from .types.delete_campaign_id_response import DeleteCampaignIdResponse
-from .types.get_campaign_id_response import GetCampaignIdResponse
-from .types.get_campaign_request_sort_field import GetCampaignRequestSortField
-from .types.get_campaign_request_sort_order import GetCampaignRequestSortOrder
-from .types.get_campaign_request_status import GetCampaignRequestStatus
-from .types.get_campaign_response import GetCampaignResponse
-from .types.post_campaign_id_pause_response import PostCampaignIdPauseResponse
-from .types.post_campaign_id_start_response import PostCampaignIdStartResponse
-from .types.post_campaign_response import PostCampaignResponse
+from .types.create_campaigns_response import CreateCampaignsResponse
+from .types.delete_campaigns_response import DeleteCampaignsResponse
+from .types.export_logs_campaigns_response_item import ExportLogsCampaignsResponseItem
+from .types.get_campaigns_response import GetCampaignsResponse
+from .types.list_campaigns_request_sort_field import ListCampaignsRequestSortField
+from .types.list_campaigns_request_sort_order import ListCampaignsRequestSortOrder
+from .types.list_campaigns_request_status import ListCampaignsRequestStatus
+from .types.list_campaigns_response import ListCampaignsResponse
+from .types.pause_campaigns_response import PauseCampaignsResponse
+from .types.start_or_resume_campaigns_response import StartOrResumeCampaignsResponse
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -35,17 +36,17 @@ class CampaignsClient:
         """
         return self._raw_client
 
-    def retrieve_all_campaigns(
+    def list(
         self,
         *,
         page: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
-        status: typing.Optional[GetCampaignRequestStatus] = None,
+        status: typing.Optional[ListCampaignsRequestStatus] = None,
         search: typing.Optional[str] = None,
-        sort_field: typing.Optional[GetCampaignRequestSortField] = None,
-        sort_order: typing.Optional[GetCampaignRequestSortOrder] = None,
+        sort_field: typing.Optional[ListCampaignsRequestSortField] = None,
+        sort_order: typing.Optional[ListCampaignsRequestSortOrder] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetCampaignResponse:
+    ) -> ListCampaignsResponse:
         """
         Get all campaigns for the authenticated organization.
 
@@ -57,16 +58,16 @@ class CampaignsClient:
         offset : typing.Optional[int]
             Number of campaigns per page
 
-        status : typing.Optional[GetCampaignRequestStatus]
+        status : typing.Optional[ListCampaignsRequestStatus]
             Filter campaigns by status
 
         search : typing.Optional[str]
             Search campaigns by name
 
-        sort_field : typing.Optional[GetCampaignRequestSortField]
+        sort_field : typing.Optional[ListCampaignsRequestSortField]
             Field to sort by
 
-        sort_order : typing.Optional[GetCampaignRequestSortOrder]
+        sort_order : typing.Optional[ListCampaignsRequestSortOrder]
             Sort direction
 
         request_options : typing.Optional[RequestOptions]
@@ -74,7 +75,7 @@ class CampaignsClient:
 
         Returns
         -------
-        GetCampaignResponse
+        ListCampaignsResponse
             A list of campaigns
 
         Examples
@@ -84,9 +85,9 @@ class CampaignsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.campaigns.retrieve_all_campaigns()
+        client.atoms.campaigns.list()
         """
-        _response = self._raw_client.retrieve_all_campaigns(
+        _response = self._raw_client.list(
             page=page,
             offset=offset,
             status=status,
@@ -97,7 +98,7 @@ class CampaignsClient:
         )
         return _response.data
 
-    def create_a_campaign(
+    def create(
         self,
         *,
         name: str,
@@ -109,7 +110,7 @@ class CampaignsClient:
         max_retries: typing.Optional[int] = OMIT,
         retry_delay: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostCampaignResponse:
+    ) -> CreateCampaignsResponse:
         """
         Create a campaign
 
@@ -150,7 +151,7 @@ class CampaignsClient:
 
         Returns
         -------
-        PostCampaignResponse
+        CreateCampaignsResponse
             Campaign created successfully. Note: the response is the raw Mongoose document — `agentId`
             and `audienceId` are plain ObjectId strings here, not nested objects as returned by GET endpoints.
 
@@ -161,13 +162,13 @@ class CampaignsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.campaigns.create_a_campaign(
+        client.atoms.campaigns.create(
             name="My Campaign",
             audience_id="60d0fe4f5311236168a109ca",
             agent_id="60d0fe4f5311236168a109ca",
         )
         """
-        _response = self._raw_client.create_a_campaign(
+        _response = self._raw_client.create(
             name=name,
             audience_id=audience_id,
             agent_id=agent_id,
@@ -180,9 +181,7 @@ class CampaignsClient:
         )
         return _response.data
 
-    def get_a_campaign(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetCampaignIdResponse:
+    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> GetCampaignsResponse:
         """
         Get a campaign with detailed metrics
 
@@ -196,7 +195,7 @@ class CampaignsClient:
 
         Returns
         -------
-        GetCampaignIdResponse
+        GetCampaignsResponse
             Campaign details with metrics
 
         Examples
@@ -206,16 +205,14 @@ class CampaignsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.campaigns.get_a_campaign(
+        client.atoms.campaigns.get(
             id="id",
         )
         """
-        _response = self._raw_client.get_a_campaign(id, request_options=request_options)
+        _response = self._raw_client.get(id, request_options=request_options)
         return _response.data
 
-    def delete_a_campaign(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> DeleteCampaignIdResponse:
+    def delete(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> DeleteCampaignsResponse:
         """
         Delete a campaign
 
@@ -229,7 +226,7 @@ class CampaignsClient:
 
         Returns
         -------
-        DeleteCampaignIdResponse
+        DeleteCampaignsResponse
             Campaign deleted successfully
 
         Examples
@@ -239,16 +236,16 @@ class CampaignsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.campaigns.delete_a_campaign(
+        client.atoms.campaigns.delete(
             id="id",
         )
         """
-        _response = self._raw_client.delete_a_campaign(id, request_options=request_options)
+        _response = self._raw_client.delete(id, request_options=request_options)
         return _response.data
 
-    def start_or_resume_a_campaign(
+    def start_or_resume(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> PostCampaignIdStartResponse:
+    ) -> StartOrResumeCampaignsResponse:
         """
         Queues the campaign for processing and returns immediately — the campaign is **not** yet
         running when the 202 is returned. Poll `GET /campaign/{id}` and watch for `status: "running"`.
@@ -266,7 +263,7 @@ class CampaignsClient:
 
         Returns
         -------
-        PostCampaignIdStartResponse
+        StartOrResumeCampaignsResponse
             Campaign queued for processing
 
         Examples
@@ -276,16 +273,14 @@ class CampaignsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.campaigns.start_or_resume_a_campaign(
+        client.atoms.campaigns.start_or_resume(
             id="id",
         )
         """
-        _response = self._raw_client.start_or_resume_a_campaign(id, request_options=request_options)
+        _response = self._raw_client.start_or_resume(id, request_options=request_options)
         return _response.data
 
-    def pause_a_campaign(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> PostCampaignIdPauseResponse:
+    def pause(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> PauseCampaignsResponse:
         """
         Queues a pause task and returns immediately — the campaign is **not** immediately paused.
         Poll `GET /campaign/{id}` and watch for `status: "paused"`.
@@ -300,7 +295,7 @@ class CampaignsClient:
 
         Returns
         -------
-        PostCampaignIdPauseResponse
+        PauseCampaignsResponse
             Pause task queued successfully
 
         Examples
@@ -310,11 +305,49 @@ class CampaignsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.campaigns.pause_a_campaign(
+        client.atoms.campaigns.pause(
             id="id",
         )
         """
-        _response = self._raw_client.pause_a_campaign(id, request_options=request_options)
+        _response = self._raw_client.pause(id, request_options=request_options)
+        return _response.data
+
+    def export_logs(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.List[ExportLogsCampaignsResponseItem]:
+        """
+        Streams a JSON file containing every call log for a campaign.
+
+        Response is a **file download** (`Content-Disposition: attachment`), not the
+        standard `{status, data}` envelope. Body is a raw JSON array of log objects.
+        When the relay-service is configured and reachable, each row also includes an
+        `events` array; otherwise the field is omitted.
+
+        Parameters
+        ----------
+        id : str
+            Campaign ID.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.List[ExportLogsCampaignsResponseItem]
+            Campaign-logs JSON file. `Content-Disposition: attachment; filename=campaign-logs-<campaignName>-<createdAt>.json`.
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.campaigns.export_logs(
+            id="id",
+        )
+        """
+        _response = self._raw_client.export_logs(id, request_options=request_options)
         return _response.data
 
 
@@ -333,17 +366,17 @@ class AsyncCampaignsClient:
         """
         return self._raw_client
 
-    async def retrieve_all_campaigns(
+    async def list(
         self,
         *,
         page: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
-        status: typing.Optional[GetCampaignRequestStatus] = None,
+        status: typing.Optional[ListCampaignsRequestStatus] = None,
         search: typing.Optional[str] = None,
-        sort_field: typing.Optional[GetCampaignRequestSortField] = None,
-        sort_order: typing.Optional[GetCampaignRequestSortOrder] = None,
+        sort_field: typing.Optional[ListCampaignsRequestSortField] = None,
+        sort_order: typing.Optional[ListCampaignsRequestSortOrder] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetCampaignResponse:
+    ) -> ListCampaignsResponse:
         """
         Get all campaigns for the authenticated organization.
 
@@ -355,16 +388,16 @@ class AsyncCampaignsClient:
         offset : typing.Optional[int]
             Number of campaigns per page
 
-        status : typing.Optional[GetCampaignRequestStatus]
+        status : typing.Optional[ListCampaignsRequestStatus]
             Filter campaigns by status
 
         search : typing.Optional[str]
             Search campaigns by name
 
-        sort_field : typing.Optional[GetCampaignRequestSortField]
+        sort_field : typing.Optional[ListCampaignsRequestSortField]
             Field to sort by
 
-        sort_order : typing.Optional[GetCampaignRequestSortOrder]
+        sort_order : typing.Optional[ListCampaignsRequestSortOrder]
             Sort direction
 
         request_options : typing.Optional[RequestOptions]
@@ -372,7 +405,7 @@ class AsyncCampaignsClient:
 
         Returns
         -------
-        GetCampaignResponse
+        ListCampaignsResponse
             A list of campaigns
 
         Examples
@@ -387,12 +420,12 @@ class AsyncCampaignsClient:
 
 
         async def main() -> None:
-            await client.atoms.campaigns.retrieve_all_campaigns()
+            await client.atoms.campaigns.list()
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.retrieve_all_campaigns(
+        _response = await self._raw_client.list(
             page=page,
             offset=offset,
             status=status,
@@ -403,7 +436,7 @@ class AsyncCampaignsClient:
         )
         return _response.data
 
-    async def create_a_campaign(
+    async def create(
         self,
         *,
         name: str,
@@ -415,7 +448,7 @@ class AsyncCampaignsClient:
         max_retries: typing.Optional[int] = OMIT,
         retry_delay: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostCampaignResponse:
+    ) -> CreateCampaignsResponse:
         """
         Create a campaign
 
@@ -456,7 +489,7 @@ class AsyncCampaignsClient:
 
         Returns
         -------
-        PostCampaignResponse
+        CreateCampaignsResponse
             Campaign created successfully. Note: the response is the raw Mongoose document — `agentId`
             and `audienceId` are plain ObjectId strings here, not nested objects as returned by GET endpoints.
 
@@ -472,7 +505,7 @@ class AsyncCampaignsClient:
 
 
         async def main() -> None:
-            await client.atoms.campaigns.create_a_campaign(
+            await client.atoms.campaigns.create(
                 name="My Campaign",
                 audience_id="60d0fe4f5311236168a109ca",
                 agent_id="60d0fe4f5311236168a109ca",
@@ -481,7 +514,7 @@ class AsyncCampaignsClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.create_a_campaign(
+        _response = await self._raw_client.create(
             name=name,
             audience_id=audience_id,
             agent_id=agent_id,
@@ -494,9 +527,7 @@ class AsyncCampaignsClient:
         )
         return _response.data
 
-    async def get_a_campaign(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetCampaignIdResponse:
+    async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> GetCampaignsResponse:
         """
         Get a campaign with detailed metrics
 
@@ -510,7 +541,7 @@ class AsyncCampaignsClient:
 
         Returns
         -------
-        GetCampaignIdResponse
+        GetCampaignsResponse
             Campaign details with metrics
 
         Examples
@@ -525,19 +556,19 @@ class AsyncCampaignsClient:
 
 
         async def main() -> None:
-            await client.atoms.campaigns.get_a_campaign(
+            await client.atoms.campaigns.get(
                 id="id",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_a_campaign(id, request_options=request_options)
+        _response = await self._raw_client.get(id, request_options=request_options)
         return _response.data
 
-    async def delete_a_campaign(
+    async def delete(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> DeleteCampaignIdResponse:
+    ) -> DeleteCampaignsResponse:
         """
         Delete a campaign
 
@@ -551,7 +582,7 @@ class AsyncCampaignsClient:
 
         Returns
         -------
-        DeleteCampaignIdResponse
+        DeleteCampaignsResponse
             Campaign deleted successfully
 
         Examples
@@ -566,19 +597,19 @@ class AsyncCampaignsClient:
 
 
         async def main() -> None:
-            await client.atoms.campaigns.delete_a_campaign(
+            await client.atoms.campaigns.delete(
                 id="id",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.delete_a_campaign(id, request_options=request_options)
+        _response = await self._raw_client.delete(id, request_options=request_options)
         return _response.data
 
-    async def start_or_resume_a_campaign(
+    async def start_or_resume(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> PostCampaignIdStartResponse:
+    ) -> StartOrResumeCampaignsResponse:
         """
         Queues the campaign for processing and returns immediately — the campaign is **not** yet
         running when the 202 is returned. Poll `GET /campaign/{id}` and watch for `status: "running"`.
@@ -596,7 +627,7 @@ class AsyncCampaignsClient:
 
         Returns
         -------
-        PostCampaignIdStartResponse
+        StartOrResumeCampaignsResponse
             Campaign queued for processing
 
         Examples
@@ -611,19 +642,19 @@ class AsyncCampaignsClient:
 
 
         async def main() -> None:
-            await client.atoms.campaigns.start_or_resume_a_campaign(
+            await client.atoms.campaigns.start_or_resume(
                 id="id",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.start_or_resume_a_campaign(id, request_options=request_options)
+        _response = await self._raw_client.start_or_resume(id, request_options=request_options)
         return _response.data
 
-    async def pause_a_campaign(
+    async def pause(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> PostCampaignIdPauseResponse:
+    ) -> PauseCampaignsResponse:
         """
         Queues a pause task and returns immediately — the campaign is **not** immediately paused.
         Poll `GET /campaign/{id}` and watch for `status: "paused"`.
@@ -638,7 +669,7 @@ class AsyncCampaignsClient:
 
         Returns
         -------
-        PostCampaignIdPauseResponse
+        PauseCampaignsResponse
             Pause task queued successfully
 
         Examples
@@ -653,12 +684,58 @@ class AsyncCampaignsClient:
 
 
         async def main() -> None:
-            await client.atoms.campaigns.pause_a_campaign(
+            await client.atoms.campaigns.pause(
                 id="id",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.pause_a_campaign(id, request_options=request_options)
+        _response = await self._raw_client.pause(id, request_options=request_options)
+        return _response.data
+
+    async def export_logs(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.List[ExportLogsCampaignsResponseItem]:
+        """
+        Streams a JSON file containing every call log for a campaign.
+
+        Response is a **file download** (`Content-Disposition: attachment`), not the
+        standard `{status, data}` envelope. Body is a raw JSON array of log objects.
+        When the relay-service is configured and reachable, each row also includes an
+        `events` array; otherwise the field is omitted.
+
+        Parameters
+        ----------
+        id : str
+            Campaign ID.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.List[ExportLogsCampaignsResponseItem]
+            Campaign-logs JSON file. `Content-Disposition: attachment; filename=campaign-logs-<campaignName>-<createdAt>.json`.
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.campaigns.export_logs(
+                id="id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.export_logs(id, request_options=request_options)
         return _response.data

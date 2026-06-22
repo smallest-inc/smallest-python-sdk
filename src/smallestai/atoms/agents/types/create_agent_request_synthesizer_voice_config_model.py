@@ -4,14 +4,13 @@ import typing
 
 CreateAgentRequestSynthesizerVoiceConfigModel = typing.Union[
     typing.Literal[
+        "waves_lightning_v3_1",
+        "gpt-realtime",
+        "gpt-realtime-mini",
         "waves",
         "waves_lightning_large",
         "waves_lightning_v2",
-        "waves_lightning_v3_1",
         "waves_lightning_v3",
-        "waves_lightning_v2_http",
-        "gpt-realtime",
-        "gpt-realtime-mini",
     ],
     typing.Any,
 ]

@@ -16,6 +16,7 @@ if typing.TYPE_CHECKING:
         campaigns,
         compliance,
         conversations,
+        dnc,
         knowledge_base,
         live_transcripts,
         organization,
@@ -24,7 +25,13 @@ if typing.TYPE_CHECKING:
         user,
         webhooks,
     )
+
+    # .fernignore-preserved: generator 5.12.12 strips this atoms-root type export
+    # (exclude_types_from_init_exports), but the agents wire test imports it from
+    # `smallestai.atoms`. Re-export so the import resolves. See SDK_ESCALATIONS.log [1].
+    from .types.widget_config import WidgetConfig
 _dynamic_imports: typing.Dict[str, str] = {
+    "WidgetConfig": ".types.widget_config",
     "agent_templates": ".agent_templates",
     "agent_versioning_drafts": ".agent_versioning_drafts",
     "agent_versioning_versions": ".agent_versioning_versions",
@@ -34,6 +41,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "campaigns": ".campaigns",
     "compliance": ".compliance",
     "conversations": ".conversations",
+    "dnc": ".dnc",
     "knowledge_base": ".knowledge_base",
     "live_transcripts": ".live_transcripts",
     "organization": ".organization",
@@ -66,6 +74,7 @@ def __dir__():
 
 
 __all__ = [
+    "WidgetConfig",
     "agent_templates",
     "agent_versioning_drafts",
     "agent_versioning_versions",
@@ -75,6 +84,7 @@ __all__ = [
     "campaigns",
     "compliance",
     "conversations",
+    "dnc",
     "knowledge_base",
     "live_transcripts",
     "organization",

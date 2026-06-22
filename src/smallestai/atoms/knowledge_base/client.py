@@ -6,24 +6,24 @@ from ... import core
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.request_options import RequestOptions
 from .raw_client import AsyncRawKnowledgeBaseClient, RawKnowledgeBaseClient
-from .types.delete_knowledgebase_id_response import DeleteKnowledgebaseIdResponse
+from .types.create_knowledge_base_response import CreateKnowledgeBaseResponse
+from .types.delete_knowledge_base_response import DeleteKnowledgeBaseResponse
 from .types.delete_knowledgebase_knowledge_base_id_items_knowledge_base_item_id_response import (
     DeleteKnowledgebaseKnowledgeBaseIdItemsKnowledgeBaseItemIdResponse,
 )
 from .types.delete_knowledgebase_knowledge_base_id_scraped_urls_knowledge_base_scraped_urls_id_response import (
     DeleteKnowledgebaseKnowledgeBaseIdScrapedUrlsKnowledgeBaseScrapedUrlsIdResponse,
 )
+from .types.extract_sitemap_urls_knowledge_base_response import ExtractSitemapUrlsKnowledgeBaseResponse
+from .types.get_knowledge_base_response import GetKnowledgeBaseResponse
 from .types.get_knowledgebase_id_items_response import GetKnowledgebaseIdItemsResponse
-from .types.get_knowledgebase_id_response import GetKnowledgebaseIdResponse
 from .types.get_knowledgebase_id_scraped_urls_response import GetKnowledgebaseIdScrapedUrlsResponse
-from .types.get_knowledgebase_response import GetKnowledgebaseResponse
+from .types.list_knowledge_base_response import ListKnowledgeBaseResponse
 from .types.post_knowledgebase_compelete_file_upload_response import PostKnowledgebaseCompeleteFileUploadResponse
 from .types.post_knowledgebase_get_presigned_url_response import PostKnowledgebaseGetPresignedUrlResponse
-from .types.post_knowledgebase_get_sitemap_urls_response import PostKnowledgebaseGetSitemapUrlsResponse
 from .types.post_knowledgebase_id_items_upload_media_response import PostKnowledgebaseIdItemsUploadMediaResponse
 from .types.post_knowledgebase_id_response import PostKnowledgebaseIdResponse
-from .types.post_knowledgebase_id_scrape_urls_response import PostKnowledgebaseIdScrapeUrlsResponse
-from .types.post_knowledgebase_response import PostKnowledgebaseResponse
+from .types.scrape_urls_knowledge_base_response import ScrapeUrlsKnowledgeBaseResponse
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -44,9 +44,7 @@ class KnowledgeBaseClient:
         """
         return self._raw_client
 
-    def get_all_knowledge_bases(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetKnowledgebaseResponse:
+    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListKnowledgeBaseResponse:
         """
         Get all knowledge bases
 
@@ -57,7 +55,7 @@ class KnowledgeBaseClient:
 
         Returns
         -------
-        GetKnowledgebaseResponse
+        ListKnowledgeBaseResponse
             A list of knowledge bases
 
         Examples
@@ -67,18 +65,18 @@ class KnowledgeBaseClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.knowledge_base.get_all_knowledge_bases()
+        client.atoms.knowledge_base.list()
         """
-        _response = self._raw_client.get_all_knowledge_bases(request_options=request_options)
+        _response = self._raw_client.list(request_options=request_options)
         return _response.data
 
-    def create_a_knowledge_base(
+    def create(
         self,
         *,
         name: str,
         description: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostKnowledgebaseResponse:
+    ) -> CreateKnowledgeBaseResponse:
         """
         Create a knowledge base
 
@@ -94,7 +92,7 @@ class KnowledgeBaseClient:
 
         Returns
         -------
-        PostKnowledgebaseResponse
+        CreateKnowledgeBaseResponse
             Knowledge base created successfully
 
         Examples
@@ -104,18 +102,14 @@ class KnowledgeBaseClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.knowledge_base.create_a_knowledge_base(
+        client.atoms.knowledge_base.create(
             name="name",
         )
         """
-        _response = self._raw_client.create_a_knowledge_base(
-            name=name, description=description, request_options=request_options
-        )
+        _response = self._raw_client.create(name=name, description=description, request_options=request_options)
         return _response.data
 
-    def get_a_knowledge_base(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetKnowledgebaseIdResponse:
+    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> GetKnowledgeBaseResponse:
         """
         Get a knowledge base
 
@@ -129,7 +123,7 @@ class KnowledgeBaseClient:
 
         Returns
         -------
-        GetKnowledgebaseIdResponse
+        GetKnowledgeBaseResponse
             A knowledge base
 
         Examples
@@ -139,11 +133,11 @@ class KnowledgeBaseClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.knowledge_base.get_a_knowledge_base(
+        client.atoms.knowledge_base.get(
             id="id",
         )
         """
-        _response = self._raw_client.get_a_knowledge_base(id, request_options=request_options)
+        _response = self._raw_client.get(id, request_options=request_options)
         return _response.data
 
     def update_a_knowledge_base_name_description(
@@ -195,9 +189,9 @@ class KnowledgeBaseClient:
         )
         return _response.data
 
-    def delete_a_knowledge_base(
+    def delete(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> DeleteKnowledgebaseIdResponse:
+    ) -> DeleteKnowledgeBaseResponse:
         """
         Delete a knowledge base.
 
@@ -215,7 +209,7 @@ class KnowledgeBaseClient:
 
         Returns
         -------
-        DeleteKnowledgebaseIdResponse
+        DeleteKnowledgeBaseResponse
             Knowledge base deleted successfully
 
         Examples
@@ -225,11 +219,11 @@ class KnowledgeBaseClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.knowledge_base.delete_a_knowledge_base(
+        client.atoms.knowledge_base.delete(
             id="id",
         )
         """
-        _response = self._raw_client.delete_a_knowledge_base(id, request_options=request_options)
+        _response = self._raw_client.delete(id, request_options=request_options)
         return _response.data
 
     def get_all_knowledge_base_items(
@@ -478,9 +472,9 @@ class KnowledgeBaseClient:
         )
         return _response.data
 
-    def extract_ur_ls_from_a_sitemap_xml(
+    def extract_sitemap_urls(
         self, *, site_url: str, knowledge_base_id: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> PostKnowledgebaseGetSitemapUrlsResponse:
+    ) -> ExtractSitemapUrlsKnowledgeBaseResponse:
         """
         Fetches a website's `sitemap.xml`, parses it, and returns the list of URLs inside. Use this before calling `POST /knowledgebase/{id}/scrape-urls` to let the customer pick which URLs they actually want indexed.
 
@@ -499,7 +493,7 @@ class KnowledgeBaseClient:
 
         Returns
         -------
-        PostKnowledgebaseGetSitemapUrlsResponse
+        ExtractSitemapUrlsKnowledgeBaseResponse
             Extracted URLs, ready to be filtered + passed to `/scrape-urls`.
 
         Examples
@@ -509,19 +503,19 @@ class KnowledgeBaseClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.knowledge_base.extract_ur_ls_from_a_sitemap_xml(
+        client.atoms.knowledge_base.extract_sitemap_urls(
             site_url="https://example.com/sitemap.xml",
             knowledge_base_id="6867ca76d0f8f2e0f4201281",
         )
         """
-        _response = self._raw_client.extract_ur_ls_from_a_sitemap_xml(
+        _response = self._raw_client.extract_sitemap_urls(
             site_url=site_url, knowledge_base_id=knowledge_base_id, request_options=request_options
         )
         return _response.data
 
-    def scrape_a_list_of_ur_ls_into_a_knowledge_base(
+    def scrape_urls(
         self, id: str, *, urls: typing.Sequence[str], request_options: typing.Optional[RequestOptions] = None
-    ) -> PostKnowledgebaseIdScrapeUrlsResponse:
+    ) -> ScrapeUrlsKnowledgeBaseResponse:
         """
         Adds one or more URLs to a knowledge base by scraping each page's content, chunking it, and indexing for retrieval. Typical flow:
 
@@ -543,7 +537,7 @@ class KnowledgeBaseClient:
 
         Returns
         -------
-        PostKnowledgebaseIdScrapeUrlsResponse
+        ScrapeUrlsKnowledgeBaseResponse
             Scrape job(s) queued. Poll `/scraped-urls` for per-URL status.
 
         Examples
@@ -553,14 +547,12 @@ class KnowledgeBaseClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.knowledge_base.scrape_a_list_of_ur_ls_into_a_knowledge_base(
+        client.atoms.knowledge_base.scrape_urls(
             id="id",
             urls=["https://example.com/pricing", "https://example.com/faq"],
         )
         """
-        _response = self._raw_client.scrape_a_list_of_ur_ls_into_a_knowledge_base(
-            id, urls=urls, request_options=request_options
-        )
+        _response = self._raw_client.scrape_urls(id, urls=urls, request_options=request_options)
         return _response.data
 
     def list_scraped_ur_ls_in_a_knowledge_base_their_status(
@@ -657,9 +649,7 @@ class AsyncKnowledgeBaseClient:
         """
         return self._raw_client
 
-    async def get_all_knowledge_bases(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetKnowledgebaseResponse:
+    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListKnowledgeBaseResponse:
         """
         Get all knowledge bases
 
@@ -670,7 +660,7 @@ class AsyncKnowledgeBaseClient:
 
         Returns
         -------
-        GetKnowledgebaseResponse
+        ListKnowledgeBaseResponse
             A list of knowledge bases
 
         Examples
@@ -685,21 +675,21 @@ class AsyncKnowledgeBaseClient:
 
 
         async def main() -> None:
-            await client.atoms.knowledge_base.get_all_knowledge_bases()
+            await client.atoms.knowledge_base.list()
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_all_knowledge_bases(request_options=request_options)
+        _response = await self._raw_client.list(request_options=request_options)
         return _response.data
 
-    async def create_a_knowledge_base(
+    async def create(
         self,
         *,
         name: str,
         description: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostKnowledgebaseResponse:
+    ) -> CreateKnowledgeBaseResponse:
         """
         Create a knowledge base
 
@@ -715,7 +705,7 @@ class AsyncKnowledgeBaseClient:
 
         Returns
         -------
-        PostKnowledgebaseResponse
+        CreateKnowledgeBaseResponse
             Knowledge base created successfully
 
         Examples
@@ -730,21 +720,19 @@ class AsyncKnowledgeBaseClient:
 
 
         async def main() -> None:
-            await client.atoms.knowledge_base.create_a_knowledge_base(
+            await client.atoms.knowledge_base.create(
                 name="name",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.create_a_knowledge_base(
-            name=name, description=description, request_options=request_options
-        )
+        _response = await self._raw_client.create(name=name, description=description, request_options=request_options)
         return _response.data
 
-    async def get_a_knowledge_base(
+    async def get(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetKnowledgebaseIdResponse:
+    ) -> GetKnowledgeBaseResponse:
         """
         Get a knowledge base
 
@@ -758,7 +746,7 @@ class AsyncKnowledgeBaseClient:
 
         Returns
         -------
-        GetKnowledgebaseIdResponse
+        GetKnowledgeBaseResponse
             A knowledge base
 
         Examples
@@ -773,14 +761,14 @@ class AsyncKnowledgeBaseClient:
 
 
         async def main() -> None:
-            await client.atoms.knowledge_base.get_a_knowledge_base(
+            await client.atoms.knowledge_base.get(
                 id="id",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_a_knowledge_base(id, request_options=request_options)
+        _response = await self._raw_client.get(id, request_options=request_options)
         return _response.data
 
     async def update_a_knowledge_base_name_description(
@@ -840,9 +828,9 @@ class AsyncKnowledgeBaseClient:
         )
         return _response.data
 
-    async def delete_a_knowledge_base(
+    async def delete(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> DeleteKnowledgebaseIdResponse:
+    ) -> DeleteKnowledgeBaseResponse:
         """
         Delete a knowledge base.
 
@@ -860,7 +848,7 @@ class AsyncKnowledgeBaseClient:
 
         Returns
         -------
-        DeleteKnowledgebaseIdResponse
+        DeleteKnowledgeBaseResponse
             Knowledge base deleted successfully
 
         Examples
@@ -875,14 +863,14 @@ class AsyncKnowledgeBaseClient:
 
 
         async def main() -> None:
-            await client.atoms.knowledge_base.delete_a_knowledge_base(
+            await client.atoms.knowledge_base.delete(
                 id="id",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.delete_a_knowledge_base(id, request_options=request_options)
+        _response = await self._raw_client.delete(id, request_options=request_options)
         return _response.data
 
     async def get_all_knowledge_base_items(
@@ -1171,9 +1159,9 @@ class AsyncKnowledgeBaseClient:
         )
         return _response.data
 
-    async def extract_ur_ls_from_a_sitemap_xml(
+    async def extract_sitemap_urls(
         self, *, site_url: str, knowledge_base_id: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> PostKnowledgebaseGetSitemapUrlsResponse:
+    ) -> ExtractSitemapUrlsKnowledgeBaseResponse:
         """
         Fetches a website's `sitemap.xml`, parses it, and returns the list of URLs inside. Use this before calling `POST /knowledgebase/{id}/scrape-urls` to let the customer pick which URLs they actually want indexed.
 
@@ -1192,7 +1180,7 @@ class AsyncKnowledgeBaseClient:
 
         Returns
         -------
-        PostKnowledgebaseGetSitemapUrlsResponse
+        ExtractSitemapUrlsKnowledgeBaseResponse
             Extracted URLs, ready to be filtered + passed to `/scrape-urls`.
 
         Examples
@@ -1207,7 +1195,7 @@ class AsyncKnowledgeBaseClient:
 
 
         async def main() -> None:
-            await client.atoms.knowledge_base.extract_ur_ls_from_a_sitemap_xml(
+            await client.atoms.knowledge_base.extract_sitemap_urls(
                 site_url="https://example.com/sitemap.xml",
                 knowledge_base_id="6867ca76d0f8f2e0f4201281",
             )
@@ -1215,14 +1203,14 @@ class AsyncKnowledgeBaseClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.extract_ur_ls_from_a_sitemap_xml(
+        _response = await self._raw_client.extract_sitemap_urls(
             site_url=site_url, knowledge_base_id=knowledge_base_id, request_options=request_options
         )
         return _response.data
 
-    async def scrape_a_list_of_ur_ls_into_a_knowledge_base(
+    async def scrape_urls(
         self, id: str, *, urls: typing.Sequence[str], request_options: typing.Optional[RequestOptions] = None
-    ) -> PostKnowledgebaseIdScrapeUrlsResponse:
+    ) -> ScrapeUrlsKnowledgeBaseResponse:
         """
         Adds one or more URLs to a knowledge base by scraping each page's content, chunking it, and indexing for retrieval. Typical flow:
 
@@ -1244,7 +1232,7 @@ class AsyncKnowledgeBaseClient:
 
         Returns
         -------
-        PostKnowledgebaseIdScrapeUrlsResponse
+        ScrapeUrlsKnowledgeBaseResponse
             Scrape job(s) queued. Poll `/scraped-urls` for per-URL status.
 
         Examples
@@ -1259,7 +1247,7 @@ class AsyncKnowledgeBaseClient:
 
 
         async def main() -> None:
-            await client.atoms.knowledge_base.scrape_a_list_of_ur_ls_into_a_knowledge_base(
+            await client.atoms.knowledge_base.scrape_urls(
                 id="id",
                 urls=["https://example.com/pricing", "https://example.com/faq"],
             )
@@ -1267,9 +1255,7 @@ class AsyncKnowledgeBaseClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.scrape_a_list_of_ur_ls_into_a_knowledge_base(
-            id, urls=urls, request_options=request_options
-        )
+        _response = await self._raw_client.scrape_urls(id, urls=urls, request_options=request_options)
         return _response.data
 
     async def list_scraped_ur_ls_in_a_knowledge_base_their_status(

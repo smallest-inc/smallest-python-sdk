@@ -1,29 +1,29 @@
 from .conftest import get_client, verify_request_count
 
 
-def test_atoms_knowledgeBase_get_all_knowledge_bases() -> None:
-    """Test getAllKnowledgeBases endpoint with WireMock"""
-    test_id = "atoms.knowledge_base.get_all_knowledge_bases.0"
+def test_atoms_knowledgeBase_list_() -> None:
+    """Test list endpoint with WireMock"""
+    test_id = "atoms.knowledge_base.list_.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.get_all_knowledge_bases()
+    client.atoms.knowledge_base.list()
     verify_request_count(test_id, "GET", "/knowledgebase", None, 1)
 
 
-def test_atoms_knowledgeBase_create_a_knowledge_base() -> None:
-    """Test createAKnowledgeBase endpoint with WireMock"""
-    test_id = "atoms.knowledge_base.create_a_knowledge_base.0"
+def test_atoms_knowledgeBase_create() -> None:
+    """Test create endpoint with WireMock"""
+    test_id = "atoms.knowledge_base.create.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.create_a_knowledge_base(
+    client.atoms.knowledge_base.create(
         name="name",
     )
     verify_request_count(test_id, "POST", "/knowledgebase", None, 1)
 
 
-def test_atoms_knowledgeBase_get_a_knowledge_base() -> None:
-    """Test getAKnowledgeBase endpoint with WireMock"""
-    test_id = "atoms.knowledge_base.get_a_knowledge_base.0"
+def test_atoms_knowledgeBase_get() -> None:
+    """Test get endpoint with WireMock"""
+    test_id = "atoms.knowledge_base.get.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.get_a_knowledge_base(
+    client.atoms.knowledge_base.get(
         id="id",
     )
     verify_request_count(test_id, "GET", "/knowledgebase/id", None, 1)
@@ -40,11 +40,11 @@ def test_atoms_knowledgeBase_update_a_knowledge_base_name_description() -> None:
     verify_request_count(test_id, "POST", "/knowledgebase/id", None, 1)
 
 
-def test_atoms_knowledgeBase_delete_a_knowledge_base() -> None:
-    """Test deleteAKnowledgeBase endpoint with WireMock"""
-    test_id = "atoms.knowledge_base.delete_a_knowledge_base.0"
+def test_atoms_knowledgeBase_delete() -> None:
+    """Test delete endpoint with WireMock"""
+    test_id = "atoms.knowledge_base.delete.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.delete_a_knowledge_base(
+    client.atoms.knowledge_base.delete(
         id="id",
     )
     verify_request_count(test_id, "DELETE", "/knowledgebase/id", None, 1)
@@ -109,22 +109,22 @@ def test_atoms_knowledgeBase_complete_a_presigned_url_upload_and_start_processin
     verify_request_count(test_id, "POST", "/knowledgebase/compelete-file-upload", None, 1)
 
 
-def test_atoms_knowledgeBase_extract_ur_ls_from_a_sitemap_xml() -> None:
-    """Test extractUrLsFromASitemapXml endpoint with WireMock"""
-    test_id = "atoms.knowledge_base.extract_ur_ls_from_a_sitemap_xml.0"
+def test_atoms_knowledgeBase_extract_sitemap_urls() -> None:
+    """Test extract_sitemap_urls endpoint with WireMock"""
+    test_id = "atoms.knowledge_base.extract_sitemap_urls.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.extract_ur_ls_from_a_sitemap_xml(
+    client.atoms.knowledge_base.extract_sitemap_urls(
         site_url="https://example.com/sitemap.xml",
         knowledge_base_id="6867ca76d0f8f2e0f4201281",
     )
     verify_request_count(test_id, "POST", "/knowledgebase/get-sitemap-urls", None, 1)
 
 
-def test_atoms_knowledgeBase_scrape_a_list_of_ur_ls_into_a_knowledge_base() -> None:
-    """Test scrapeAListOfUrLsIntoAKnowledgeBase endpoint with WireMock"""
-    test_id = "atoms.knowledge_base.scrape_a_list_of_ur_ls_into_a_knowledge_base.0"
+def test_atoms_knowledgeBase_scrape_urls() -> None:
+    """Test scrape_urls endpoint with WireMock"""
+    test_id = "atoms.knowledge_base.scrape_urls.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.scrape_a_list_of_ur_ls_into_a_knowledge_base(
+    client.atoms.knowledge_base.scrape_urls(
         id="id",
         urls=["https://example.com/pricing", "https://example.com/faq"],
     )

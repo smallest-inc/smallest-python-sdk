@@ -2,6 +2,11 @@
 
 # isort: skip_file
 
-from .types.post_webhook_request_events_item import PostWebhookRequestEventsItem
+# .fernignore-preserved: generator 5.12.12 strips sub-package type exports
+# (exclude_types_from_init_exports), but the generated wire test imports this type
+# from the package root. Re-export it so `from smallestai.atoms.webhooks import
+# CreateWebhooksRequestEventsItem` works and the wire test passes.
+# See SDK_ESCALATIONS.log [1] + memory generator-config-needs-regen-proof.
+from .types.create_webhooks_request_events_item import CreateWebhooksRequestEventsItem
 
-__all__ = ["PostWebhookRequestEventsItem"]
+__all__ = ["CreateWebhooksRequestEventsItem"]

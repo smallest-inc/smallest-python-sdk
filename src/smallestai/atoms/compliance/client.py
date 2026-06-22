@@ -12,11 +12,11 @@ from .types.get_compliance_requirements_response import GetComplianceRequirement
 from .types.get_compliance_status_request_number_type import GetComplianceStatusRequestNumberType
 from .types.get_compliance_status_request_user_type import GetComplianceStatusRequestUserType
 from .types.get_compliance_status_response import GetComplianceStatusResponse
-from .types.patch_compliance_applications_id_response import PatchComplianceApplicationsIdResponse
 from .types.post_compliance_applications_id_refresh_response import PostComplianceApplicationsIdRefreshResponse
-from .types.post_compliance_applications_request_number_type import PostComplianceApplicationsRequestNumberType
-from .types.post_compliance_applications_request_user_type import PostComplianceApplicationsRequestUserType
-from .types.post_compliance_applications_response import PostComplianceApplicationsResponse
+from .types.resubmit_compliance_response import ResubmitComplianceResponse
+from .types.submit_compliance_request_number_type import SubmitComplianceRequestNumberType
+from .types.submit_compliance_request_user_type import SubmitComplianceRequestUserType
+from .types.submit_compliance_response import SubmitComplianceResponse
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -137,17 +137,17 @@ class ComplianceClient:
         )
         return _response.data
 
-    def submit_a_compliance_application(
+    def submit(
         self,
         *,
         country_iso: str,
-        number_type: PostComplianceApplicationsRequestNumberType,
-        user_type: PostComplianceApplicationsRequestUserType,
+        number_type: SubmitComplianceRequestNumberType,
+        user_type: SubmitComplianceRequestUserType,
         end_user: str,
         documents: str,
         files: typing.List[core.File],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostComplianceApplicationsResponse:
+    ) -> SubmitComplianceResponse:
         """
         Submit a new compliance application with end-user details and supporting documents.
         One application is allowed per organization per country per number type per user type.
@@ -160,10 +160,10 @@ class ComplianceClient:
         country_iso : str
             ISO 3166-1 alpha-2 country code
 
-        number_type : PostComplianceApplicationsRequestNumberType
+        number_type : SubmitComplianceRequestNumberType
             The type of phone number
 
-        user_type : PostComplianceApplicationsRequestUserType
+        user_type : SubmitComplianceRequestUserType
             The type of end user
 
         end_user : str
@@ -197,7 +197,7 @@ class ComplianceClient:
 
         Returns
         -------
-        PostComplianceApplicationsResponse
+        SubmitComplianceResponse
             Application submitted successfully
 
         Examples
@@ -207,7 +207,7 @@ class ComplianceClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.compliance.submit_a_compliance_application(
+        client.atoms.compliance.submit(
             country_iso="countryIso",
             number_type="local",
             user_type="individual",
@@ -215,7 +215,7 @@ class ComplianceClient:
             documents="documents",
         )
         """
-        _response = self._raw_client.submit_a_compliance_application(
+        _response = self._raw_client.submit(
             country_iso=country_iso,
             number_type=number_type,
             user_type=user_type,
@@ -226,14 +226,14 @@ class ComplianceClient:
         )
         return _response.data
 
-    def resubmit_a_rejected_compliance_application(
+    def resubmit(
         self,
         id: str,
         *,
         documents: str,
         files: typing.List[core.File],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PatchComplianceApplicationsIdResponse:
+    ) -> ResubmitComplianceResponse:
         """
         Resubmit a previously rejected compliance application with corrected documents.
         Only applications in `rejected` status can be resubmitted. All documents must be
@@ -258,7 +258,7 @@ class ComplianceClient:
 
         Returns
         -------
-        PatchComplianceApplicationsIdResponse
+        ResubmitComplianceResponse
             Application resubmitted successfully
 
         Examples
@@ -268,14 +268,12 @@ class ComplianceClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.compliance.resubmit_a_rejected_compliance_application(
+        client.atoms.compliance.resubmit(
             id="id",
             documents="documents",
         )
         """
-        _response = self._raw_client.resubmit_a_rejected_compliance_application(
-            id, documents=documents, files=files, request_options=request_options
-        )
+        _response = self._raw_client.resubmit(id, documents=documents, files=files, request_options=request_options)
         return _response.data
 
     def refresh_compliance_application_status(
@@ -445,17 +443,17 @@ class AsyncComplianceClient:
         )
         return _response.data
 
-    async def submit_a_compliance_application(
+    async def submit(
         self,
         *,
         country_iso: str,
-        number_type: PostComplianceApplicationsRequestNumberType,
-        user_type: PostComplianceApplicationsRequestUserType,
+        number_type: SubmitComplianceRequestNumberType,
+        user_type: SubmitComplianceRequestUserType,
         end_user: str,
         documents: str,
         files: typing.List[core.File],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PostComplianceApplicationsResponse:
+    ) -> SubmitComplianceResponse:
         """
         Submit a new compliance application with end-user details and supporting documents.
         One application is allowed per organization per country per number type per user type.
@@ -468,10 +466,10 @@ class AsyncComplianceClient:
         country_iso : str
             ISO 3166-1 alpha-2 country code
 
-        number_type : PostComplianceApplicationsRequestNumberType
+        number_type : SubmitComplianceRequestNumberType
             The type of phone number
 
-        user_type : PostComplianceApplicationsRequestUserType
+        user_type : SubmitComplianceRequestUserType
             The type of end user
 
         end_user : str
@@ -505,7 +503,7 @@ class AsyncComplianceClient:
 
         Returns
         -------
-        PostComplianceApplicationsResponse
+        SubmitComplianceResponse
             Application submitted successfully
 
         Examples
@@ -520,7 +518,7 @@ class AsyncComplianceClient:
 
 
         async def main() -> None:
-            await client.atoms.compliance.submit_a_compliance_application(
+            await client.atoms.compliance.submit(
                 country_iso="countryIso",
                 number_type="local",
                 user_type="individual",
@@ -531,7 +529,7 @@ class AsyncComplianceClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.submit_a_compliance_application(
+        _response = await self._raw_client.submit(
             country_iso=country_iso,
             number_type=number_type,
             user_type=user_type,
@@ -542,14 +540,14 @@ class AsyncComplianceClient:
         )
         return _response.data
 
-    async def resubmit_a_rejected_compliance_application(
+    async def resubmit(
         self,
         id: str,
         *,
         documents: str,
         files: typing.List[core.File],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PatchComplianceApplicationsIdResponse:
+    ) -> ResubmitComplianceResponse:
         """
         Resubmit a previously rejected compliance application with corrected documents.
         Only applications in `rejected` status can be resubmitted. All documents must be
@@ -574,7 +572,7 @@ class AsyncComplianceClient:
 
         Returns
         -------
-        PatchComplianceApplicationsIdResponse
+        ResubmitComplianceResponse
             Application resubmitted successfully
 
         Examples
@@ -589,7 +587,7 @@ class AsyncComplianceClient:
 
 
         async def main() -> None:
-            await client.atoms.compliance.resubmit_a_rejected_compliance_application(
+            await client.atoms.compliance.resubmit(
                 id="id",
                 documents="documents",
             )
@@ -597,7 +595,7 @@ class AsyncComplianceClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.resubmit_a_rejected_compliance_application(
+        _response = await self._raw_client.resubmit(
             id, documents=documents, files=files, request_options=request_options
         )
         return _response.data

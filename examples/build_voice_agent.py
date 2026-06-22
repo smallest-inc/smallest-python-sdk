@@ -1,5 +1,5 @@
 """
-Build a voice agent with smallestai 5.0.0 — full lifecycle, end to end.
+Build a voice agent with smallestai 5.1.0 — full lifecycle, end to end.
 
 Walks the real one-shot flow you'd use in an app:
   create agent -> inspect -> (optional) knowledge base -> draft a new version
@@ -69,7 +69,7 @@ def main() -> None:
     print("4. (optional) knowledge base for the menu")
     created_kb = None
     try:
-        kb = c.atoms.knowledge_base.create_a_knowledge_base(
+        kb = c.atoms.knowledge_base.create(
             name="mario-menu", description="Pizza menu + prices"
         )
         created_kb = getattr(kb, "data", None)
@@ -82,12 +82,12 @@ def main() -> None:
     active = next((v for v in versions.items if getattr(v, "is_active", False)), None) or versions.items[0]
     src_version_id = _id_of(active)
     print("    source version:", src_version_id)
-    draft = c.atoms.agent_versioning_drafts.create_a_draft(id=agent_id, source_version_id=src_version_id)
+    draft = c.atoms.agent_versioning_drafts.create_draft(id=agent_id, source_version_id=src_version_id)
     draft_id = getattr(draft.data, "draft_id", None) or _id_of(draft.data)
     print("    draft id:", draft_id)
 
     print("6. publish the draft with activate=True (go live)")
-    published = c.atoms.agent_versioning_drafts.publish_a_draft(
+    published = c.atoms.agent_versioning_drafts.publish_draft(
         id=agent_id, draft_id=draft_id, label="v2-live", activate=True
     )
     new_version_id = _id_of(published.data)
@@ -114,7 +114,7 @@ def main() -> None:
     print("9. cleanup (archive the demo agent + delete the demo KB)")
     if created_kb:
         try:
-            c.atoms.knowledge_base.delete_a_knowledge_base(id=created_kb)
+            c.atoms.knowledge_base.delete(id=created_kb)
             print("    deleted KB:", created_kb)
         except Exception as e:
             print("    KB delete skipped:", type(e).__name__, str(e)[:60])
