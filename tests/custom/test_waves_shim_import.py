@@ -33,3 +33,18 @@ def test_tts_config_rejects_v2_only_consistency_param() -> None:
 
     with pytest.raises(TypeError):
         TTSConfig(voice_id="magnus", api_key="test-key", consistency=0.5)  # type: ignore[call-arg]
+
+
+def test_streaming_url_is_current_tts_live() -> None:
+    # The per-model `.../lightning-v3.1/get_speech/stream` URL retired 2026-07-14.
+    # Guard against regressing back to a retired endpoint.
+    from smallestai.waves import WavesStreamingTTS
+
+    assert WavesStreamingTTS.WS_URL == "wss://api.smallest.ai/waves/v1/tts/live"
+
+
+def test_tts_config_model_default() -> None:
+    from smallestai.waves import TTSConfig
+
+    assert TTSConfig(voice_id="magnus", api_key="k").model == "lightning_v3.1"
+    assert TTSConfig(voice_id="magnus", api_key="k", model="lightning_v3.1_pro").model == "lightning_v3.1_pro"
