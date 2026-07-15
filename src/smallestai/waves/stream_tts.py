@@ -3,10 +3,13 @@ WavesStreamingTTS — thin compatibility shim for the legacy
 `from smallestai.waves import WavesStreamingTTS, TTSConfig` pattern
 shipped in smallestai==4.3.1.
 
-This wraps the Lightning v3.1 streaming WebSocket endpoint
-(`wss://api.smallest.ai/waves/v1/lightning-v3.1/get_speech/stream`).
+This wraps the unified TTS streaming WebSocket endpoint
+(`wss://api.smallest.ai/waves/v1/tts/live`). The old per-model URL
+`.../waves/v1/lightning-v3.1/get_speech/stream` retired 2026-07-14, so the
+model is now selected via the `model` payload field (default `lightning_v3.1`;
+set `lightning_v3.1_pro` for the Pro pool).
 
-Code that worked on 4.3.1 keeps working on 4.4.0 with one
+Code that worked on 4.3.1 keeps working with one
 behavior change: the underlying model is `lightning-v3.1` (not the
 deprecated `lightning-v2`). This means:
   - Removed `consistency` param (v2-only — silently dropped if passed).
@@ -39,6 +42,7 @@ class TTSConfig:
     """
     voice_id: str
     api_key: str
+    model: str = "lightning_v3.1"
     language: str = "en"
     sample_rate: int = 24000
     speed: float = 1.0
@@ -59,9 +63,10 @@ class WavesStreamingTTS:
         audio_chunks = list(streaming_tts.synthesize("Hello world"))
     """
 
-    # Lightning v3.1 streaming endpoint. Old 4.3.1 hardcoded the deprecated
-    # v2 endpoint — that was a bug and is fixed in 4.4.0.
-    WS_URL = "wss://api.smallest.ai/waves/v1/lightning-v3.1/get_speech/stream"
+    # Unified TTS streaming endpoint. The old per-model URL
+    # `.../waves/v1/lightning-v3.1/get_speech/stream` retired 2026-07-14; this shim
+    # now targets /tts/live and picks the model via the `model` payload field.
+    WS_URL = "wss://api.smallest.ai/waves/v1/tts/live"
 
     def __init__(self, config: TTSConfig):
         self.config = config
@@ -79,6 +84,7 @@ class WavesStreamingTTS:
     def _create_payload(self, text: str, continue_stream: bool = False, flush: bool = False) -> dict:
         payload: dict = {
             "voice_id": self.config.voice_id,
+            "model": self.config.model,
             "text": text,
             "language": self.config.language,
             "sample_rate": self.config.sample_rate,

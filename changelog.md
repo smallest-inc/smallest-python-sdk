@@ -1,3 +1,14 @@
+## 5.1.1 - 2026-07-15
+
+Patch — fix the streaming-TTS compat shim (`WavesStreamingTTS`/`TTSConfig`).
+
+* The legacy per-model endpoint `wss://.../waves/v1/lightning-v3.1/get_speech/stream`
+  **retired 2026-07-14**, which broke `WavesStreamingTTS` on 5.0.0/5.1.0. The shim now
+  targets the unified `wss://api.smallest.ai/waves/v1/tts/live`.
+* `TTSConfig` gains a `model` field (default `lightning_v3.1`; set `lightning_v3.1_pro`
+  for the Pro pool) — the model was previously encoded in the URL path.
+* Verified live end-to-end (streams PCM chunks from `/tts/live`). No other changes.
+
 ## 5.1.0 - 2026-06-22
 
 Additive completeness, naming, and spec-correctness release (generator pinned to 5.12.12).
