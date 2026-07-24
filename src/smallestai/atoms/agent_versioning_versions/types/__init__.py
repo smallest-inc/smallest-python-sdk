@@ -2,3 +2,68 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .activate_version_agent_versioning_versions_response import ActivateVersionAgentVersioningVersionsResponse
+    from .get_agent_id_versions_diff_response import GetAgentIdVersionsDiffResponse
+    from .get_agent_id_versions_response import GetAgentIdVersionsResponse
+    from .get_agent_id_versions_response_data import GetAgentIdVersionsResponseData
+    from .get_agent_id_versions_response_data_versions_item import GetAgentIdVersionsResponseDataVersionsItem
+    from .get_agent_id_versions_version_id_response import GetAgentIdVersionsVersionIdResponse
+    from .get_agent_id_versions_version_id_response_data import GetAgentIdVersionsVersionIdResponseData
+    from .post_agent_id_versions_version_id_test_call_response import PostAgentIdVersionsVersionIdTestCallResponse
+    from .post_agent_id_versions_version_id_test_call_response_data import (
+        PostAgentIdVersionsVersionIdTestCallResponseData,
+    )
+    from .update_version_metadata_agent_versioning_versions_response import (
+        UpdateVersionMetadataAgentVersioningVersionsResponse,
+    )
+_dynamic_imports: typing.Dict[str, str] = {
+    "ActivateVersionAgentVersioningVersionsResponse": ".activate_version_agent_versioning_versions_response",
+    "GetAgentIdVersionsDiffResponse": ".get_agent_id_versions_diff_response",
+    "GetAgentIdVersionsResponse": ".get_agent_id_versions_response",
+    "GetAgentIdVersionsResponseData": ".get_agent_id_versions_response_data",
+    "GetAgentIdVersionsResponseDataVersionsItem": ".get_agent_id_versions_response_data_versions_item",
+    "GetAgentIdVersionsVersionIdResponse": ".get_agent_id_versions_version_id_response",
+    "GetAgentIdVersionsVersionIdResponseData": ".get_agent_id_versions_version_id_response_data",
+    "PostAgentIdVersionsVersionIdTestCallResponse": ".post_agent_id_versions_version_id_test_call_response",
+    "PostAgentIdVersionsVersionIdTestCallResponseData": ".post_agent_id_versions_version_id_test_call_response_data",
+    "UpdateVersionMetadataAgentVersioningVersionsResponse": ".update_version_metadata_agent_versioning_versions_response",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "ActivateVersionAgentVersioningVersionsResponse",
+    "GetAgentIdVersionsDiffResponse",
+    "GetAgentIdVersionsResponse",
+    "GetAgentIdVersionsResponseData",
+    "GetAgentIdVersionsResponseDataVersionsItem",
+    "GetAgentIdVersionsVersionIdResponse",
+    "GetAgentIdVersionsVersionIdResponseData",
+    "PostAgentIdVersionsVersionIdTestCallResponse",
+    "PostAgentIdVersionsVersionIdTestCallResponseData",
+    "UpdateVersionMetadataAgentVersioningVersionsResponse",
+]

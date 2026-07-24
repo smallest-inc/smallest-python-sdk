@@ -2,3 +2,543 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .agent_dto import AgentDto
+    from .agent_dto_background_sound import AgentDtoBackgroundSound
+    from .agent_dto_config_source import AgentDtoConfigSource
+    from .agent_dto_denoising_config import AgentDtoDenoisingConfig
+    from .agent_dto_language import AgentDtoLanguage
+    from .agent_dto_language_default import AgentDtoLanguageDefault
+    from .agent_dto_language_switching import AgentDtoLanguageSwitching
+    from .agent_dto_llm_idle_timeout_config import AgentDtoLlmIdleTimeoutConfig
+    from .agent_dto_pre_call_api import AgentDtoPreCallApi
+    from .agent_dto_pre_call_api_method import AgentDtoPreCallApiMethod
+    from .agent_dto_pre_call_api_response_variables_item import AgentDtoPreCallApiResponseVariablesItem
+    from .agent_dto_pronunciation_dicts_item import AgentDtoPronunciationDictsItem
+    from .agent_dto_redaction_config import AgentDtoRedactionConfig
+    from .agent_dto_resolved_config import AgentDtoResolvedConfig
+    from .agent_dto_resolved_config_default_language import AgentDtoResolvedConfigDefaultLanguage
+    from .agent_dto_session_timeout_config import AgentDtoSessionTimeoutConfig
+    from .agent_dto_slm_model import AgentDtoSlmModel
+    from .agent_dto_smart_turn_config import AgentDtoSmartTurnConfig
+    from .agent_dto_synthesizer import AgentDtoSynthesizer
+    from .agent_dto_synthesizer_voice_config import AgentDtoSynthesizerVoiceConfig
+    from .agent_dto_synthesizer_voice_config_gender import AgentDtoSynthesizerVoiceConfigGender
+    from .agent_dto_synthesizer_voice_config_model import AgentDtoSynthesizerVoiceConfigModel
+    from .agent_dto_timezone import AgentDtoTimezone
+    from .agent_dto_versioned_workflow import AgentDtoVersionedWorkflow
+    from .agent_dto_voice_detection_config import AgentDtoVoiceDetectionConfig
+    from .agent_dto_voice_mail_detection_config import AgentDtoVoiceMailDetectionConfig
+    from .agent_dto_widget_config import AgentDtoWidgetConfig
+    from .agent_dto_widget_config_mode import AgentDtoWidgetConfigMode
+    from .agent_dto_widget_config_position import AgentDtoWidgetConfigPosition
+    from .agent_dto_widget_config_size import AgentDtoWidgetConfigSize
+    from .agent_dto_widget_config_theme import AgentDtoWidgetConfigTheme
+    from .agent_version import AgentVersion
+    from .agent_version_blocks import AgentVersionBlocks
+    from .agent_version_diff import AgentVersionDiff
+    from .agent_version_diff_diffs_item import AgentVersionDiffDiffsItem
+    from .agent_version_diff_diffs_item_changes_item import AgentVersionDiffDiffsItemChangesItem
+    from .agent_version_diff_diffs_item_changes_item_new_value import AgentVersionDiffDiffsItemChangesItemNewValue
+    from .agent_version_diff_diffs_item_changes_item_old_value import AgentVersionDiffDiffsItemChangesItemOldValue
+    from .agent_version_metrics import AgentVersionMetrics
+    from .agent_version_metrics_comparison import AgentVersionMetricsComparison
+    from .agent_version_metrics_comparison_metrics import AgentVersionMetricsComparisonMetrics
+    from .agent_version_metrics_comparison_metrics_deltas import AgentVersionMetricsComparisonMetricsDeltas
+    from .agent_version_status import AgentVersionStatus
+    from .analytics_date_range import AnalyticsDateRange
+    from .analytics_trend_metric import AnalyticsTrendMetric
+    from .api_response import ApiResponse
+    from .bad_request_error_body import BadRequestErrorBody
+    from .bad_request_error_response import BadRequestErrorResponse
+    from .branch import Branch
+    from .branch_status import BranchStatus
+    from .branch_summary import BranchSummary
+    from .call_action import CallAction
+    from .call_action_action_type import CallActionActionType
+    from .call_action_category import CallActionCategory
+    from .call_action_condition import CallActionCondition
+    from .call_action_condition_operator import CallActionConditionOperator
+    from .call_action_config import CallActionConfig
+    from .compliance_application import ComplianceApplication
+    from .compliance_application_number_type import ComplianceApplicationNumberType
+    from .compliance_application_status import ComplianceApplicationStatus
+    from .compliance_application_user_type import ComplianceApplicationUserType
+    from .compliance_requirement import ComplianceRequirement
+    from .conflict_error_response import ConflictErrorResponse
+    from .diff_change import DiffChange
+    from .diff_result import DiffResult
+    from .diff_section import DiffSection
+    from .disposition_metric import DispositionMetric
+    from .disposition_metric_disposition_metric_type import DispositionMetricDispositionMetricType
+    from .draft_conflict_error import DraftConflictError
+    from .draft_conflict_error_data import DraftConflictErrorData
+    from .draft_conflict_error_data_conflict import DraftConflictErrorDataConflict
+    from .draft_detail import DraftDetail
+    from .draft_detail_edit_history_item import DraftDetailEditHistoryItem
+    from .draft_edit_history_entry import DraftEditHistoryEntry
+    from .forbidden_error_body import ForbiddenErrorBody
+    from .internal_server_error_body import InternalServerErrorBody
+    from .internal_server_error_response import InternalServerErrorResponse
+    from .knowledge_base import KnowledgeBase
+    from .knowledge_base_item import KnowledgeBaseItem
+    from .knowledge_base_item_item_type import KnowledgeBaseItemItemType
+    from .knowledge_base_item_processing_status import KnowledgeBaseItemProcessingStatus
+    from .knowledge_base_processing_status import KnowledgeBaseProcessingStatus
+    from .locked_error_response import LockedErrorResponse
+    from .locked_error_response_error_type import LockedErrorResponseErrorType
+    from .not_found_error_body import NotFoundErrorBody
+    from .post_call_analytics_config import PostCallAnalyticsConfig
+    from .post_call_analytics_config_success_metrics_item import PostCallAnalyticsConfigSuccessMetricsItem
+    from .post_call_analytics_config_success_metrics_item_success_metric_type import (
+        PostCallAnalyticsConfigSuccessMetricsItemSuccessMetricType,
+    )
+    from .product import Product
+    from .product_attributes import ProductAttributes
+    from .product_attributes_provider import ProductAttributesProvider
+    from .product_product_type import ProductProductType
+    from .prompt_score import PromptScore
+    from .prompt_score_dimensions_item import PromptScoreDimensionsItem
+    from .publish_result import PublishResult
+    from .publish_result_state import PublishResultState
+    from .required_document_type import RequiredDocumentType
+    from .required_document_type_required_fields_item import RequiredDocumentTypeRequiredFieldsItem
+    from .revision import Revision
+    from .revision_pending_publish import RevisionPendingPublish
+    from .revision_pending_publish_state import RevisionPendingPublishState
+    from .revision_security_check import RevisionSecurityCheck
+    from .revision_status import RevisionStatus
+    from .single_prompt_config import SinglePromptConfig
+    from .single_prompt_data import SinglePromptData
+    from .test_call_request import TestCallRequest
+    from .test_call_request_mode import TestCallRequestMode
+    from .test_call_result import TestCallResult
+    from .too_many_requests_error_body import TooManyRequestsErrorBody
+    from .too_many_requests_error_body_rate_limit import TooManyRequestsErrorBodyRateLimit
+    from .tool import Tool
+    from .tool_headers_array_item import ToolHeadersArrayItem
+    from .tool_llm_parameters_item import ToolLlmParametersItem
+    from .tool_llm_parameters_item_type import ToolLlmParametersItemType
+    from .tool_method import ToolMethod
+    from .tool_on_hold_music import ToolOnHoldMusic
+    from .tool_query_params_item import ToolQueryParamsItem
+    from .tool_response_variables_item import ToolResponseVariablesItem
+    from .tool_transfer_option import ToolTransferOption
+    from .tool_transfer_option_private_handoff_option import ToolTransferOptionPrivateHandoffOption
+    from .tool_transfer_option_private_handoff_option_type import ToolTransferOptionPrivateHandoffOptionType
+    from .tool_transfer_option_public_handoff_option import ToolTransferOptionPublicHandoffOption
+    from .tool_transfer_option_public_handoff_option_type import ToolTransferOptionPublicHandoffOptionType
+    from .tool_transfer_option_type import ToolTransferOptionType
+    from .tool_type import ToolType
+    from .tool_variables_extraction_schema_item import ToolVariablesExtractionSchemaItem
+    from .tool_variables_extraction_schema_item_type import ToolVariablesExtractionSchemaItemType
+    from .unauthorized_error_response import UnauthorizedErrorResponse
+    from .version_blocks import VersionBlocks
+    from .versioning_v2migration_required_response import VersioningV2MigrationRequiredResponse
+    from .versioning_v2migration_required_response_error_type import VersioningV2MigrationRequiredResponseErrorType
+    from .web_engage_integration_set import WebEngageIntegrationSet
+    from .webhook import Webhook
+    from .webhook_agent import WebhookAgent
+    from .webhook_event import WebhookEvent
+    from .webhook_event_analytics_completed import WebhookEventAnalyticsCompleted
+    from .webhook_event_analytics_completed_metadata import WebhookEventAnalyticsCompletedMetadata
+    from .webhook_event_analytics_completed_metadata_analytics import WebhookEventAnalyticsCompletedMetadataAnalytics
+    from .webhook_event_analytics_completed_metadata_event_type import WebhookEventAnalyticsCompletedMetadataEventType
+    from .webhook_event_analytics_metric import WebhookEventAnalyticsMetric
+    from .webhook_event_analytics_metric_disposition_metric_type import WebhookEventAnalyticsMetricDispositionMetricType
+    from .webhook_event_analytics_metric_value import WebhookEventAnalyticsMetricValue
+    from .webhook_event_call_data import WebhookEventCallData
+    from .webhook_event_call_data_call_direction import WebhookEventCallDataCallDirection
+    from .webhook_event_call_data_call_status import WebhookEventCallDataCallStatus
+    from .webhook_event_envelope import WebhookEventEnvelope
+    from .webhook_event_post_conversation import WebhookEventPostConversation
+    from .webhook_event_post_conversation_metadata import WebhookEventPostConversationMetadata
+    from .webhook_event_post_conversation_metadata_event_type import WebhookEventPostConversationMetadataEventType
+    from .webhook_event_pre_conversation import WebhookEventPreConversation
+    from .webhook_event_pre_conversation_metadata import WebhookEventPreConversationMetadata
+    from .webhook_event_pre_conversation_metadata_event_type import WebhookEventPreConversationMetadataEventType
+    from .webhook_event_transcript_turn import WebhookEventTranscriptTurn
+    from .webhook_event_transcript_turn_role import WebhookEventTranscriptTurnRole
+    from .webhook_status import WebhookStatus
+    from .webhook_subscription import WebhookSubscription
+    from .webhook_subscription_event_type import WebhookSubscriptionEventType
+    from .webhook_subscription_populated import WebhookSubscriptionPopulated
+    from .webhook_subscription_populated_event_type import WebhookSubscriptionPopulatedEventType
+    from .widget_config import WidgetConfig
+    from .widget_config_mode import WidgetConfigMode
+    from .widget_config_position import WidgetConfigPosition
+    from .widget_config_size import WidgetConfigSize
+    from .widget_config_theme import WidgetConfigTheme
+    from .workflow_graph_data import WorkflowGraphData
+    from .workflow_graph_data_edges_item import WorkflowGraphDataEdgesItem
+    from .workflow_graph_data_nodes_item import WorkflowGraphDataNodesItem
+    from .workflow_graph_data_nodes_item_position import WorkflowGraphDataNodesItemPosition
+    from .workflow_type import WorkflowType
+_dynamic_imports: typing.Dict[str, str] = {
+    "AgentDto": ".agent_dto",
+    "AgentDtoBackgroundSound": ".agent_dto_background_sound",
+    "AgentDtoConfigSource": ".agent_dto_config_source",
+    "AgentDtoDenoisingConfig": ".agent_dto_denoising_config",
+    "AgentDtoLanguage": ".agent_dto_language",
+    "AgentDtoLanguageDefault": ".agent_dto_language_default",
+    "AgentDtoLanguageSwitching": ".agent_dto_language_switching",
+    "AgentDtoLlmIdleTimeoutConfig": ".agent_dto_llm_idle_timeout_config",
+    "AgentDtoPreCallApi": ".agent_dto_pre_call_api",
+    "AgentDtoPreCallApiMethod": ".agent_dto_pre_call_api_method",
+    "AgentDtoPreCallApiResponseVariablesItem": ".agent_dto_pre_call_api_response_variables_item",
+    "AgentDtoPronunciationDictsItem": ".agent_dto_pronunciation_dicts_item",
+    "AgentDtoRedactionConfig": ".agent_dto_redaction_config",
+    "AgentDtoResolvedConfig": ".agent_dto_resolved_config",
+    "AgentDtoResolvedConfigDefaultLanguage": ".agent_dto_resolved_config_default_language",
+    "AgentDtoSessionTimeoutConfig": ".agent_dto_session_timeout_config",
+    "AgentDtoSlmModel": ".agent_dto_slm_model",
+    "AgentDtoSmartTurnConfig": ".agent_dto_smart_turn_config",
+    "AgentDtoSynthesizer": ".agent_dto_synthesizer",
+    "AgentDtoSynthesizerVoiceConfig": ".agent_dto_synthesizer_voice_config",
+    "AgentDtoSynthesizerVoiceConfigGender": ".agent_dto_synthesizer_voice_config_gender",
+    "AgentDtoSynthesizerVoiceConfigModel": ".agent_dto_synthesizer_voice_config_model",
+    "AgentDtoTimezone": ".agent_dto_timezone",
+    "AgentDtoVersionedWorkflow": ".agent_dto_versioned_workflow",
+    "AgentDtoVoiceDetectionConfig": ".agent_dto_voice_detection_config",
+    "AgentDtoVoiceMailDetectionConfig": ".agent_dto_voice_mail_detection_config",
+    "AgentDtoWidgetConfig": ".agent_dto_widget_config",
+    "AgentDtoWidgetConfigMode": ".agent_dto_widget_config_mode",
+    "AgentDtoWidgetConfigPosition": ".agent_dto_widget_config_position",
+    "AgentDtoWidgetConfigSize": ".agent_dto_widget_config_size",
+    "AgentDtoWidgetConfigTheme": ".agent_dto_widget_config_theme",
+    "AgentVersion": ".agent_version",
+    "AgentVersionBlocks": ".agent_version_blocks",
+    "AgentVersionDiff": ".agent_version_diff",
+    "AgentVersionDiffDiffsItem": ".agent_version_diff_diffs_item",
+    "AgentVersionDiffDiffsItemChangesItem": ".agent_version_diff_diffs_item_changes_item",
+    "AgentVersionDiffDiffsItemChangesItemNewValue": ".agent_version_diff_diffs_item_changes_item_new_value",
+    "AgentVersionDiffDiffsItemChangesItemOldValue": ".agent_version_diff_diffs_item_changes_item_old_value",
+    "AgentVersionMetrics": ".agent_version_metrics",
+    "AgentVersionMetricsComparison": ".agent_version_metrics_comparison",
+    "AgentVersionMetricsComparisonMetrics": ".agent_version_metrics_comparison_metrics",
+    "AgentVersionMetricsComparisonMetricsDeltas": ".agent_version_metrics_comparison_metrics_deltas",
+    "AgentVersionStatus": ".agent_version_status",
+    "AnalyticsDateRange": ".analytics_date_range",
+    "AnalyticsTrendMetric": ".analytics_trend_metric",
+    "ApiResponse": ".api_response",
+    "BadRequestErrorBody": ".bad_request_error_body",
+    "BadRequestErrorResponse": ".bad_request_error_response",
+    "Branch": ".branch",
+    "BranchStatus": ".branch_status",
+    "BranchSummary": ".branch_summary",
+    "CallAction": ".call_action",
+    "CallActionActionType": ".call_action_action_type",
+    "CallActionCategory": ".call_action_category",
+    "CallActionCondition": ".call_action_condition",
+    "CallActionConditionOperator": ".call_action_condition_operator",
+    "CallActionConfig": ".call_action_config",
+    "ComplianceApplication": ".compliance_application",
+    "ComplianceApplicationNumberType": ".compliance_application_number_type",
+    "ComplianceApplicationStatus": ".compliance_application_status",
+    "ComplianceApplicationUserType": ".compliance_application_user_type",
+    "ComplianceRequirement": ".compliance_requirement",
+    "ConflictErrorResponse": ".conflict_error_response",
+    "DiffChange": ".diff_change",
+    "DiffResult": ".diff_result",
+    "DiffSection": ".diff_section",
+    "DispositionMetric": ".disposition_metric",
+    "DispositionMetricDispositionMetricType": ".disposition_metric_disposition_metric_type",
+    "DraftConflictError": ".draft_conflict_error",
+    "DraftConflictErrorData": ".draft_conflict_error_data",
+    "DraftConflictErrorDataConflict": ".draft_conflict_error_data_conflict",
+    "DraftDetail": ".draft_detail",
+    "DraftDetailEditHistoryItem": ".draft_detail_edit_history_item",
+    "DraftEditHistoryEntry": ".draft_edit_history_entry",
+    "ForbiddenErrorBody": ".forbidden_error_body",
+    "InternalServerErrorBody": ".internal_server_error_body",
+    "InternalServerErrorResponse": ".internal_server_error_response",
+    "KnowledgeBase": ".knowledge_base",
+    "KnowledgeBaseItem": ".knowledge_base_item",
+    "KnowledgeBaseItemItemType": ".knowledge_base_item_item_type",
+    "KnowledgeBaseItemProcessingStatus": ".knowledge_base_item_processing_status",
+    "KnowledgeBaseProcessingStatus": ".knowledge_base_processing_status",
+    "LockedErrorResponse": ".locked_error_response",
+    "LockedErrorResponseErrorType": ".locked_error_response_error_type",
+    "NotFoundErrorBody": ".not_found_error_body",
+    "PostCallAnalyticsConfig": ".post_call_analytics_config",
+    "PostCallAnalyticsConfigSuccessMetricsItem": ".post_call_analytics_config_success_metrics_item",
+    "PostCallAnalyticsConfigSuccessMetricsItemSuccessMetricType": ".post_call_analytics_config_success_metrics_item_success_metric_type",
+    "Product": ".product",
+    "ProductAttributes": ".product_attributes",
+    "ProductAttributesProvider": ".product_attributes_provider",
+    "ProductProductType": ".product_product_type",
+    "PromptScore": ".prompt_score",
+    "PromptScoreDimensionsItem": ".prompt_score_dimensions_item",
+    "PublishResult": ".publish_result",
+    "PublishResultState": ".publish_result_state",
+    "RequiredDocumentType": ".required_document_type",
+    "RequiredDocumentTypeRequiredFieldsItem": ".required_document_type_required_fields_item",
+    "Revision": ".revision",
+    "RevisionPendingPublish": ".revision_pending_publish",
+    "RevisionPendingPublishState": ".revision_pending_publish_state",
+    "RevisionSecurityCheck": ".revision_security_check",
+    "RevisionStatus": ".revision_status",
+    "SinglePromptConfig": ".single_prompt_config",
+    "SinglePromptData": ".single_prompt_data",
+    "TestCallRequest": ".test_call_request",
+    "TestCallRequestMode": ".test_call_request_mode",
+    "TestCallResult": ".test_call_result",
+    "TooManyRequestsErrorBody": ".too_many_requests_error_body",
+    "TooManyRequestsErrorBodyRateLimit": ".too_many_requests_error_body_rate_limit",
+    "Tool": ".tool",
+    "ToolHeadersArrayItem": ".tool_headers_array_item",
+    "ToolLlmParametersItem": ".tool_llm_parameters_item",
+    "ToolLlmParametersItemType": ".tool_llm_parameters_item_type",
+    "ToolMethod": ".tool_method",
+    "ToolOnHoldMusic": ".tool_on_hold_music",
+    "ToolQueryParamsItem": ".tool_query_params_item",
+    "ToolResponseVariablesItem": ".tool_response_variables_item",
+    "ToolTransferOption": ".tool_transfer_option",
+    "ToolTransferOptionPrivateHandoffOption": ".tool_transfer_option_private_handoff_option",
+    "ToolTransferOptionPrivateHandoffOptionType": ".tool_transfer_option_private_handoff_option_type",
+    "ToolTransferOptionPublicHandoffOption": ".tool_transfer_option_public_handoff_option",
+    "ToolTransferOptionPublicHandoffOptionType": ".tool_transfer_option_public_handoff_option_type",
+    "ToolTransferOptionType": ".tool_transfer_option_type",
+    "ToolType": ".tool_type",
+    "ToolVariablesExtractionSchemaItem": ".tool_variables_extraction_schema_item",
+    "ToolVariablesExtractionSchemaItemType": ".tool_variables_extraction_schema_item_type",
+    "UnauthorizedErrorResponse": ".unauthorized_error_response",
+    "VersionBlocks": ".version_blocks",
+    "VersioningV2MigrationRequiredResponse": ".versioning_v2migration_required_response",
+    "VersioningV2MigrationRequiredResponseErrorType": ".versioning_v2migration_required_response_error_type",
+    "WebEngageIntegrationSet": ".web_engage_integration_set",
+    "Webhook": ".webhook",
+    "WebhookAgent": ".webhook_agent",
+    "WebhookEvent": ".webhook_event",
+    "WebhookEventAnalyticsCompleted": ".webhook_event_analytics_completed",
+    "WebhookEventAnalyticsCompletedMetadata": ".webhook_event_analytics_completed_metadata",
+    "WebhookEventAnalyticsCompletedMetadataAnalytics": ".webhook_event_analytics_completed_metadata_analytics",
+    "WebhookEventAnalyticsCompletedMetadataEventType": ".webhook_event_analytics_completed_metadata_event_type",
+    "WebhookEventAnalyticsMetric": ".webhook_event_analytics_metric",
+    "WebhookEventAnalyticsMetricDispositionMetricType": ".webhook_event_analytics_metric_disposition_metric_type",
+    "WebhookEventAnalyticsMetricValue": ".webhook_event_analytics_metric_value",
+    "WebhookEventCallData": ".webhook_event_call_data",
+    "WebhookEventCallDataCallDirection": ".webhook_event_call_data_call_direction",
+    "WebhookEventCallDataCallStatus": ".webhook_event_call_data_call_status",
+    "WebhookEventEnvelope": ".webhook_event_envelope",
+    "WebhookEventPostConversation": ".webhook_event_post_conversation",
+    "WebhookEventPostConversationMetadata": ".webhook_event_post_conversation_metadata",
+    "WebhookEventPostConversationMetadataEventType": ".webhook_event_post_conversation_metadata_event_type",
+    "WebhookEventPreConversation": ".webhook_event_pre_conversation",
+    "WebhookEventPreConversationMetadata": ".webhook_event_pre_conversation_metadata",
+    "WebhookEventPreConversationMetadataEventType": ".webhook_event_pre_conversation_metadata_event_type",
+    "WebhookEventTranscriptTurn": ".webhook_event_transcript_turn",
+    "WebhookEventTranscriptTurnRole": ".webhook_event_transcript_turn_role",
+    "WebhookStatus": ".webhook_status",
+    "WebhookSubscription": ".webhook_subscription",
+    "WebhookSubscriptionEventType": ".webhook_subscription_event_type",
+    "WebhookSubscriptionPopulated": ".webhook_subscription_populated",
+    "WebhookSubscriptionPopulatedEventType": ".webhook_subscription_populated_event_type",
+    "WidgetConfig": ".widget_config",
+    "WidgetConfigMode": ".widget_config_mode",
+    "WidgetConfigPosition": ".widget_config_position",
+    "WidgetConfigSize": ".widget_config_size",
+    "WidgetConfigTheme": ".widget_config_theme",
+    "WorkflowGraphData": ".workflow_graph_data",
+    "WorkflowGraphDataEdgesItem": ".workflow_graph_data_edges_item",
+    "WorkflowGraphDataNodesItem": ".workflow_graph_data_nodes_item",
+    "WorkflowGraphDataNodesItemPosition": ".workflow_graph_data_nodes_item_position",
+    "WorkflowType": ".workflow_type",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "AgentDto",
+    "AgentDtoBackgroundSound",
+    "AgentDtoConfigSource",
+    "AgentDtoDenoisingConfig",
+    "AgentDtoLanguage",
+    "AgentDtoLanguageDefault",
+    "AgentDtoLanguageSwitching",
+    "AgentDtoLlmIdleTimeoutConfig",
+    "AgentDtoPreCallApi",
+    "AgentDtoPreCallApiMethod",
+    "AgentDtoPreCallApiResponseVariablesItem",
+    "AgentDtoPronunciationDictsItem",
+    "AgentDtoRedactionConfig",
+    "AgentDtoResolvedConfig",
+    "AgentDtoResolvedConfigDefaultLanguage",
+    "AgentDtoSessionTimeoutConfig",
+    "AgentDtoSlmModel",
+    "AgentDtoSmartTurnConfig",
+    "AgentDtoSynthesizer",
+    "AgentDtoSynthesizerVoiceConfig",
+    "AgentDtoSynthesizerVoiceConfigGender",
+    "AgentDtoSynthesizerVoiceConfigModel",
+    "AgentDtoTimezone",
+    "AgentDtoVersionedWorkflow",
+    "AgentDtoVoiceDetectionConfig",
+    "AgentDtoVoiceMailDetectionConfig",
+    "AgentDtoWidgetConfig",
+    "AgentDtoWidgetConfigMode",
+    "AgentDtoWidgetConfigPosition",
+    "AgentDtoWidgetConfigSize",
+    "AgentDtoWidgetConfigTheme",
+    "AgentVersion",
+    "AgentVersionBlocks",
+    "AgentVersionDiff",
+    "AgentVersionDiffDiffsItem",
+    "AgentVersionDiffDiffsItemChangesItem",
+    "AgentVersionDiffDiffsItemChangesItemNewValue",
+    "AgentVersionDiffDiffsItemChangesItemOldValue",
+    "AgentVersionMetrics",
+    "AgentVersionMetricsComparison",
+    "AgentVersionMetricsComparisonMetrics",
+    "AgentVersionMetricsComparisonMetricsDeltas",
+    "AgentVersionStatus",
+    "AnalyticsDateRange",
+    "AnalyticsTrendMetric",
+    "ApiResponse",
+    "BadRequestErrorBody",
+    "BadRequestErrorResponse",
+    "Branch",
+    "BranchStatus",
+    "BranchSummary",
+    "CallAction",
+    "CallActionActionType",
+    "CallActionCategory",
+    "CallActionCondition",
+    "CallActionConditionOperator",
+    "CallActionConfig",
+    "ComplianceApplication",
+    "ComplianceApplicationNumberType",
+    "ComplianceApplicationStatus",
+    "ComplianceApplicationUserType",
+    "ComplianceRequirement",
+    "ConflictErrorResponse",
+    "DiffChange",
+    "DiffResult",
+    "DiffSection",
+    "DispositionMetric",
+    "DispositionMetricDispositionMetricType",
+    "DraftConflictError",
+    "DraftConflictErrorData",
+    "DraftConflictErrorDataConflict",
+    "DraftDetail",
+    "DraftDetailEditHistoryItem",
+    "DraftEditHistoryEntry",
+    "ForbiddenErrorBody",
+    "InternalServerErrorBody",
+    "InternalServerErrorResponse",
+    "KnowledgeBase",
+    "KnowledgeBaseItem",
+    "KnowledgeBaseItemItemType",
+    "KnowledgeBaseItemProcessingStatus",
+    "KnowledgeBaseProcessingStatus",
+    "LockedErrorResponse",
+    "LockedErrorResponseErrorType",
+    "NotFoundErrorBody",
+    "PostCallAnalyticsConfig",
+    "PostCallAnalyticsConfigSuccessMetricsItem",
+    "PostCallAnalyticsConfigSuccessMetricsItemSuccessMetricType",
+    "Product",
+    "ProductAttributes",
+    "ProductAttributesProvider",
+    "ProductProductType",
+    "PromptScore",
+    "PromptScoreDimensionsItem",
+    "PublishResult",
+    "PublishResultState",
+    "RequiredDocumentType",
+    "RequiredDocumentTypeRequiredFieldsItem",
+    "Revision",
+    "RevisionPendingPublish",
+    "RevisionPendingPublishState",
+    "RevisionSecurityCheck",
+    "RevisionStatus",
+    "SinglePromptConfig",
+    "SinglePromptData",
+    "TestCallRequest",
+    "TestCallRequestMode",
+    "TestCallResult",
+    "TooManyRequestsErrorBody",
+    "TooManyRequestsErrorBodyRateLimit",
+    "Tool",
+    "ToolHeadersArrayItem",
+    "ToolLlmParametersItem",
+    "ToolLlmParametersItemType",
+    "ToolMethod",
+    "ToolOnHoldMusic",
+    "ToolQueryParamsItem",
+    "ToolResponseVariablesItem",
+    "ToolTransferOption",
+    "ToolTransferOptionPrivateHandoffOption",
+    "ToolTransferOptionPrivateHandoffOptionType",
+    "ToolTransferOptionPublicHandoffOption",
+    "ToolTransferOptionPublicHandoffOptionType",
+    "ToolTransferOptionType",
+    "ToolType",
+    "ToolVariablesExtractionSchemaItem",
+    "ToolVariablesExtractionSchemaItemType",
+    "UnauthorizedErrorResponse",
+    "VersionBlocks",
+    "VersioningV2MigrationRequiredResponse",
+    "VersioningV2MigrationRequiredResponseErrorType",
+    "WebEngageIntegrationSet",
+    "Webhook",
+    "WebhookAgent",
+    "WebhookEvent",
+    "WebhookEventAnalyticsCompleted",
+    "WebhookEventAnalyticsCompletedMetadata",
+    "WebhookEventAnalyticsCompletedMetadataAnalytics",
+    "WebhookEventAnalyticsCompletedMetadataEventType",
+    "WebhookEventAnalyticsMetric",
+    "WebhookEventAnalyticsMetricDispositionMetricType",
+    "WebhookEventAnalyticsMetricValue",
+    "WebhookEventCallData",
+    "WebhookEventCallDataCallDirection",
+    "WebhookEventCallDataCallStatus",
+    "WebhookEventEnvelope",
+    "WebhookEventPostConversation",
+    "WebhookEventPostConversationMetadata",
+    "WebhookEventPostConversationMetadataEventType",
+    "WebhookEventPreConversation",
+    "WebhookEventPreConversationMetadata",
+    "WebhookEventPreConversationMetadataEventType",
+    "WebhookEventTranscriptTurn",
+    "WebhookEventTranscriptTurnRole",
+    "WebhookStatus",
+    "WebhookSubscription",
+    "WebhookSubscriptionEventType",
+    "WebhookSubscriptionPopulated",
+    "WebhookSubscriptionPopulatedEventType",
+    "WidgetConfig",
+    "WidgetConfigMode",
+    "WidgetConfigPosition",
+    "WidgetConfigSize",
+    "WidgetConfigTheme",
+    "WorkflowGraphData",
+    "WorkflowGraphDataEdgesItem",
+    "WorkflowGraphDataNodesItem",
+    "WorkflowGraphDataNodesItemPosition",
+    "WorkflowType",
+]

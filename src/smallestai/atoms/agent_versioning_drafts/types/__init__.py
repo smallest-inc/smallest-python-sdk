@@ -2,3 +2,87 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .create_draft_agent_versioning_drafts_response import CreateDraftAgentVersioningDraftsResponse
+    from .discard_draft_agent_versioning_drafts_response import DiscardDraftAgentVersioningDraftsResponse
+    from .draft_config_request_background_sound import DraftConfigRequestBackgroundSound
+    from .draft_config_request_slm_model import DraftConfigRequestSlmModel
+    from .get_agent_id_drafts_draft_id_diff_response import GetAgentIdDraftsDraftIdDiffResponse
+    from .get_agent_id_drafts_draft_id_diff_response_data import GetAgentIdDraftsDraftIdDiffResponseData
+    from .get_agent_id_drafts_draft_id_diff_response_data_sections_value import (
+        GetAgentIdDraftsDraftIdDiffResponseDataSectionsValue,
+    )
+    from .get_agent_id_drafts_draft_id_response import GetAgentIdDraftsDraftIdResponse
+    from .get_agent_id_drafts_draft_id_response_data import GetAgentIdDraftsDraftIdResponseData
+    from .get_agent_id_drafts_response import GetAgentIdDraftsResponse
+    from .get_agent_id_drafts_response_data_item import GetAgentIdDraftsResponseDataItem
+    from .post_agent_id_drafts_draft_id_test_call_response import PostAgentIdDraftsDraftIdTestCallResponse
+    from .post_agent_id_drafts_draft_id_test_call_response_data import PostAgentIdDraftsDraftIdTestCallResponseData
+    from .publish_draft_agent_versioning_drafts_response import PublishDraftAgentVersioningDraftsResponse
+    from .rename_draft_agent_versioning_drafts_response import RenameDraftAgentVersioningDraftsResponse
+    from .rename_draft_agent_versioning_drafts_response_data import RenameDraftAgentVersioningDraftsResponseData
+    from .update_draft_config_agent_versioning_drafts_response import UpdateDraftConfigAgentVersioningDraftsResponse
+_dynamic_imports: typing.Dict[str, str] = {
+    "CreateDraftAgentVersioningDraftsResponse": ".create_draft_agent_versioning_drafts_response",
+    "DiscardDraftAgentVersioningDraftsResponse": ".discard_draft_agent_versioning_drafts_response",
+    "DraftConfigRequestBackgroundSound": ".draft_config_request_background_sound",
+    "DraftConfigRequestSlmModel": ".draft_config_request_slm_model",
+    "GetAgentIdDraftsDraftIdDiffResponse": ".get_agent_id_drafts_draft_id_diff_response",
+    "GetAgentIdDraftsDraftIdDiffResponseData": ".get_agent_id_drafts_draft_id_diff_response_data",
+    "GetAgentIdDraftsDraftIdDiffResponseDataSectionsValue": ".get_agent_id_drafts_draft_id_diff_response_data_sections_value",
+    "GetAgentIdDraftsDraftIdResponse": ".get_agent_id_drafts_draft_id_response",
+    "GetAgentIdDraftsDraftIdResponseData": ".get_agent_id_drafts_draft_id_response_data",
+    "GetAgentIdDraftsResponse": ".get_agent_id_drafts_response",
+    "GetAgentIdDraftsResponseDataItem": ".get_agent_id_drafts_response_data_item",
+    "PostAgentIdDraftsDraftIdTestCallResponse": ".post_agent_id_drafts_draft_id_test_call_response",
+    "PostAgentIdDraftsDraftIdTestCallResponseData": ".post_agent_id_drafts_draft_id_test_call_response_data",
+    "PublishDraftAgentVersioningDraftsResponse": ".publish_draft_agent_versioning_drafts_response",
+    "RenameDraftAgentVersioningDraftsResponse": ".rename_draft_agent_versioning_drafts_response",
+    "RenameDraftAgentVersioningDraftsResponseData": ".rename_draft_agent_versioning_drafts_response_data",
+    "UpdateDraftConfigAgentVersioningDraftsResponse": ".update_draft_config_agent_versioning_drafts_response",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "CreateDraftAgentVersioningDraftsResponse",
+    "DiscardDraftAgentVersioningDraftsResponse",
+    "DraftConfigRequestBackgroundSound",
+    "DraftConfigRequestSlmModel",
+    "GetAgentIdDraftsDraftIdDiffResponse",
+    "GetAgentIdDraftsDraftIdDiffResponseData",
+    "GetAgentIdDraftsDraftIdDiffResponseDataSectionsValue",
+    "GetAgentIdDraftsDraftIdResponse",
+    "GetAgentIdDraftsDraftIdResponseData",
+    "GetAgentIdDraftsResponse",
+    "GetAgentIdDraftsResponseDataItem",
+    "PostAgentIdDraftsDraftIdTestCallResponse",
+    "PostAgentIdDraftsDraftIdTestCallResponseData",
+    "PublishDraftAgentVersioningDraftsResponse",
+    "RenameDraftAgentVersioningDraftsResponse",
+    "RenameDraftAgentVersioningDraftsResponseData",
+    "UpdateDraftConfigAgentVersioningDraftsResponse",
+]

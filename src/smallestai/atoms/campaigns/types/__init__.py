@@ -2,3 +2,109 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .create_campaigns_response import CreateCampaignsResponse
+    from .create_campaigns_response_data import CreateCampaignsResponseData
+    from .create_campaigns_response_data_status import CreateCampaignsResponseDataStatus
+    from .delete_campaigns_response import DeleteCampaignsResponse
+    from .get_campaigns_response import GetCampaignsResponse
+    from .get_campaigns_response_data import GetCampaignsResponseData
+    from .get_campaigns_response_data_campaign import GetCampaignsResponseDataCampaign
+    from .get_campaigns_response_data_campaign_agent import GetCampaignsResponseDataCampaignAgent
+    from .get_campaigns_response_data_campaign_audience import GetCampaignsResponseDataCampaignAudience
+    from .get_campaigns_response_data_campaign_status import GetCampaignsResponseDataCampaignStatus
+    from .get_campaigns_response_data_events_item import GetCampaignsResponseDataEventsItem
+    from .get_campaigns_response_data_metrics import GetCampaignsResponseDataMetrics
+    from .list_campaigns_request_sort_field import ListCampaignsRequestSortField
+    from .list_campaigns_request_sort_order import ListCampaignsRequestSortOrder
+    from .list_campaigns_request_status import ListCampaignsRequestStatus
+    from .list_campaigns_response import ListCampaignsResponse
+    from .list_campaigns_response_data import ListCampaignsResponseData
+    from .list_campaigns_response_data_campaigns_item import ListCampaignsResponseDataCampaignsItem
+    from .list_campaigns_response_data_campaigns_item_agent import ListCampaignsResponseDataCampaignsItemAgent
+    from .list_campaigns_response_data_campaigns_item_audience import ListCampaignsResponseDataCampaignsItemAudience
+    from .list_campaigns_response_data_campaigns_item_status import ListCampaignsResponseDataCampaignsItemStatus
+    from .list_campaigns_response_data_pagination import ListCampaignsResponseDataPagination
+    from .pause_campaigns_response import PauseCampaignsResponse
+    from .start_or_resume_campaigns_response import StartOrResumeCampaignsResponse
+    from .start_or_resume_campaigns_response_data import StartOrResumeCampaignsResponseData
+_dynamic_imports: typing.Dict[str, str] = {
+    "CreateCampaignsResponse": ".create_campaigns_response",
+    "CreateCampaignsResponseData": ".create_campaigns_response_data",
+    "CreateCampaignsResponseDataStatus": ".create_campaigns_response_data_status",
+    "DeleteCampaignsResponse": ".delete_campaigns_response",
+    "GetCampaignsResponse": ".get_campaigns_response",
+    "GetCampaignsResponseData": ".get_campaigns_response_data",
+    "GetCampaignsResponseDataCampaign": ".get_campaigns_response_data_campaign",
+    "GetCampaignsResponseDataCampaignAgent": ".get_campaigns_response_data_campaign_agent",
+    "GetCampaignsResponseDataCampaignAudience": ".get_campaigns_response_data_campaign_audience",
+    "GetCampaignsResponseDataCampaignStatus": ".get_campaigns_response_data_campaign_status",
+    "GetCampaignsResponseDataEventsItem": ".get_campaigns_response_data_events_item",
+    "GetCampaignsResponseDataMetrics": ".get_campaigns_response_data_metrics",
+    "ListCampaignsRequestSortField": ".list_campaigns_request_sort_field",
+    "ListCampaignsRequestSortOrder": ".list_campaigns_request_sort_order",
+    "ListCampaignsRequestStatus": ".list_campaigns_request_status",
+    "ListCampaignsResponse": ".list_campaigns_response",
+    "ListCampaignsResponseData": ".list_campaigns_response_data",
+    "ListCampaignsResponseDataCampaignsItem": ".list_campaigns_response_data_campaigns_item",
+    "ListCampaignsResponseDataCampaignsItemAgent": ".list_campaigns_response_data_campaigns_item_agent",
+    "ListCampaignsResponseDataCampaignsItemAudience": ".list_campaigns_response_data_campaigns_item_audience",
+    "ListCampaignsResponseDataCampaignsItemStatus": ".list_campaigns_response_data_campaigns_item_status",
+    "ListCampaignsResponseDataPagination": ".list_campaigns_response_data_pagination",
+    "PauseCampaignsResponse": ".pause_campaigns_response",
+    "StartOrResumeCampaignsResponse": ".start_or_resume_campaigns_response",
+    "StartOrResumeCampaignsResponseData": ".start_or_resume_campaigns_response_data",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "CreateCampaignsResponse",
+    "CreateCampaignsResponseData",
+    "CreateCampaignsResponseDataStatus",
+    "DeleteCampaignsResponse",
+    "GetCampaignsResponse",
+    "GetCampaignsResponseData",
+    "GetCampaignsResponseDataCampaign",
+    "GetCampaignsResponseDataCampaignAgent",
+    "GetCampaignsResponseDataCampaignAudience",
+    "GetCampaignsResponseDataCampaignStatus",
+    "GetCampaignsResponseDataEventsItem",
+    "GetCampaignsResponseDataMetrics",
+    "ListCampaignsRequestSortField",
+    "ListCampaignsRequestSortOrder",
+    "ListCampaignsRequestStatus",
+    "ListCampaignsResponse",
+    "ListCampaignsResponseData",
+    "ListCampaignsResponseDataCampaignsItem",
+    "ListCampaignsResponseDataCampaignsItemAgent",
+    "ListCampaignsResponseDataCampaignsItemAudience",
+    "ListCampaignsResponseDataCampaignsItemStatus",
+    "ListCampaignsResponseDataPagination",
+    "PauseCampaignsResponse",
+    "StartOrResumeCampaignsResponse",
+    "StartOrResumeCampaignsResponseData",
+]

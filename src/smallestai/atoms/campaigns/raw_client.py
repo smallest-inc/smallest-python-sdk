@@ -18,7 +18,6 @@ from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from .types.create_campaigns_response import CreateCampaignsResponse
 from .types.delete_campaigns_response import DeleteCampaignsResponse
-from .types.export_logs_campaigns_response_item import ExportLogsCampaignsResponseItem
 from .types.get_campaigns_response import GetCampaignsResponse
 from .types.list_campaigns_request_sort_field import ListCampaignsRequestSortField
 from .types.list_campaigns_request_sort_order import ListCampaignsRequestSortOrder
@@ -619,99 +618,6 @@ class RawCampaignsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def export_logs(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[typing.List[ExportLogsCampaignsResponseItem]]:
-        """
-        Streams a JSON file containing every call log for a campaign.
-
-        Response is a **file download** (`Content-Disposition: attachment`), not the
-        standard `{status, data}` envelope. Body is a raw JSON array of log objects.
-        When the relay-service is configured and reachable, each row also includes an
-        `events` array; otherwise the field is omitted.
-
-        Parameters
-        ----------
-        id : str
-            Campaign ID.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[typing.List[ExportLogsCampaignsResponseItem]]
-            Campaign-logs JSON file. `Content-Disposition: attachment; filename=campaign-logs-<campaignName>-<createdAt>.json`.
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"campaign/{encode_path_param(id)}/logs/export",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[ExportLogsCampaignsResponseItem],
-                    construct_type(
-                        type_=typing.List[ExportLogsCampaignsResponseItem],  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
 
 class AsyncRawCampaignsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -1271,99 +1177,6 @@ class AsyncRawCampaignsClient:
                 )
             if _response.status_code == 401:
                 raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def export_logs(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[typing.List[ExportLogsCampaignsResponseItem]]:
-        """
-        Streams a JSON file containing every call log for a campaign.
-
-        Response is a **file download** (`Content-Disposition: attachment`), not the
-        standard `{status, data}` envelope. Body is a raw JSON array of log objects.
-        When the relay-service is configured and reachable, each row also includes an
-        `events` array; otherwise the field is omitted.
-
-        Parameters
-        ----------
-        id : str
-            Campaign ID.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[typing.List[ExportLogsCampaignsResponseItem]]
-            Campaign-logs JSON file. `Content-Disposition: attachment; filename=campaign-logs-<campaignName>-<createdAt>.json`.
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"campaign/{encode_path_param(id)}/logs/export",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[ExportLogsCampaignsResponseItem],
-                    construct_type(
-                        type_=typing.List[ExportLogsCampaignsResponseItem],  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Any,

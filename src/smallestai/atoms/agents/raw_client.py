@@ -17,8 +17,6 @@ from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
-from ..types.single_prompt_config import SinglePromptConfig
-from ..types.widget_config import WidgetConfig
 from ..types.workflow_type import WorkflowType
 from .types.archive_agent_agents_response import ArchiveAgentAgentsResponse
 from .types.create_agent_agents_response import CreateAgentAgentsResponse
@@ -36,25 +34,18 @@ from .types.create_agent_request_synthesizer import CreateAgentRequestSynthesize
 from .types.create_agent_request_timezone import CreateAgentRequestTimezone
 from .types.create_agent_request_voice_detection_config import CreateAgentRequestVoiceDetectionConfig
 from .types.create_agent_request_voice_mail_detection_config import CreateAgentRequestVoiceMailDetectionConfig
-from .types.create_with_ai_agents_request_questions_item import CreateWithAiAgentsRequestQuestionsItem
-from .types.create_with_ai_agents_request_type import CreateWithAiAgentsRequestType
-from .types.create_with_ai_agents_request_voice_model import CreateWithAiAgentsRequestVoiceModel
-from .types.create_with_ai_agents_response import CreateWithAiAgentsResponse
 from .types.duplicate_agent_agents_response import DuplicateAgentAgentsResponse
 from .types.get_agent_agents_response import GetAgentAgentsResponse
-from .types.get_agent_id_workflow_response import GetAgentIdWorkflowResponse
-from .types.get_prompt_config_agents_response import GetPromptConfigAgentsResponse
-from .types.get_widget_config_agents_response import GetWidgetConfigAgentsResponse
+from .types.get_agent_avatar_presigned_url_response import GetAgentAvatarPresignedUrlResponse
+from .types.get_agent_call_logs_response import GetAgentCallLogsResponse
+from .types.get_agent_widget_config_response import GetAgentWidgetConfigResponse
 from .types.list_agents_agents_request_sort_field import ListAgentsAgentsRequestSortField
 from .types.list_agents_agents_request_sort_order import ListAgentsAgentsRequestSortOrder
 from .types.list_agents_agents_request_type import ListAgentsAgentsRequestType
 from .types.list_agents_agents_response import ListAgentsAgentsResponse
-from .types.list_call_logs_agents_response import ListCallLogsAgentsResponse
 from .types.update_agent_agents_response import UpdateAgentAgentsResponse
-from .types.update_widget_config_agents_response import UpdateWidgetConfigAgentsResponse
-from .types.update_workflow_configuration_agents_request_workflow_graph import (
-    UpdateWorkflowConfigurationAgentsRequestWorkflowGraph,
-)
+from .types.update_agent_widget_config_request_widget_config import UpdateAgentWidgetConfigRequestWidgetConfig
+from .types.update_agent_widget_config_response import UpdateAgentWidgetConfigResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -250,10 +241,11 @@ class RawAgentsClient:
             Tamil (`ta`) cannot be combined with other languages in `supported`.
 
         synthesizer : typing.Optional[CreateAgentRequestSynthesizer]
-            Synthesizer (TTS) configuration for the agent.
-            Models `waves`, `waves_lightning_large`, `waves_lightning_v2`, and `waves_lightning_v3_1`
-            validate `voiceId` against the Waves API. All other models accept any voiceId.
-            Cloned voices are regular voiceIds — use them with any compatible Waves model.
+            Synthesizer (TTS) configuration for the agent. Model
+            `waves_lightning_v3_1` validates `voiceId` against the Waves
+            API. `gpt-realtime` and `gpt-realtime-mini` accept any voiceId.
+            Cloned voices are regular voiceIds. Use them with a compatible
+            Waves model.
 
         global_knowledge_base_id : typing.Optional[str]
             The global knowledge base ID of the agent. You can create a global knowledge base by using the /knowledgebase endpoint and assign it to the agent. The agent will use this knowledge base for its responses.
@@ -476,6 +468,126 @@ class RawAgentsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def duplicate_agent(
+        self, id: str, *, target_organization_id: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[DuplicateAgentAgentsResponse]:
+        """
+        Duplicates a SINGLE_PROMPT agent's live active version into a target organization
+        (can also be the same organization). Copies all versioned configuration but strips
+        organization-specific resources: knowledge base tools are removed, default variable
+        values are blanked, and a new avatar is generated. The duplicate starts with a
+        published V1 as its active version.
+
+        **400 is returned when:**
+        - The source agent is archived (`"Cannot duplicate an archived agent"`)
+        - The agent has no `activeVersionId` (`"This agent has no active version and cannot be duplicated"`)
+        - The active version exists but is not published/active (`"This agent has no active published version and cannot be duplicated"`)
+        - The agent is not `SINGLE_PROMPT` workflow type
+
+        Parameters
+        ----------
+        id : str
+            The ID of the source agent to duplicate
+
+        target_organization_id : str
+            MongoDB ObjectId of the target organization. Must be a 24-character hex string.
+            The authenticated user must be a member of this organization.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[DuplicateAgentAgentsResponse]
+            Agent duplicated successfully
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/duplicate",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="POST",
+            json={
+                "targetOrganizationId": target_organization_id,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    DuplicateAgentAgentsResponse,
+                    construct_type(
+                        type_=DuplicateAgentAgentsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
     def get_agent(
         self,
         id: str,
@@ -629,9 +741,7 @@ class RawAgentsClient:
         **Non-versioned agents** (no active version): all configuration fields are accepted,
         the same full set as `POST /agent`.
 
-        **400 is also returned when:**
-        - The agent is locked (`"Agent is locked, please unlock it to update"`)
-        - Cross-field constraint violated (e.g. `north_indic` language requires `transcriberType: pulse`)
+        **400 is also returned when a cross-field constraint is violated** (for example, `north_indic` language requires `transcriberType: pulse`).
 
         **403** is returned when selecting a gated model (`gpt-5.2`, `electron-kogta`, `electron-kogta-v2`)
         without org-level access.
@@ -758,6 +868,380 @@ class RawAgentsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def get_agent_widget_config(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[GetAgentWidgetConfigResponse]:
+        """
+        Returns the current web widget configuration for the agent. Also includes `assistantId` (same as the agent ID) as a convenience field for the widget embed code.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[GetAgentWidgetConfigResponse]
+            Widget configuration
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/widget-config",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GetAgentWidgetConfigResponse,
+                    construct_type(
+                        type_=GetAgentWidgetConfigResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def update_agent_widget_config(
+        self,
+        id: str,
+        *,
+        widget_config: typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[UpdateAgentWidgetConfigResponse]:
+        """
+        Updates the web widget configuration for the agent. Only provided fields are updated (partial update). When `avatarUrl` is changed, the old CDN avatar is automatically deleted from S3. The `avatarUrl` must be a URL from the platform's CDN domain — use `POST /agent/{id}/avatar/presigned-url` to upload first.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        widget_config : typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig]
+            All fields are optional — only provided fields are updated
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[UpdateAgentWidgetConfigResponse]
+            Updated widget configuration
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/widget-config",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="PATCH",
+            json={
+                "widgetConfig": convert_and_respect_annotation_metadata(
+                    object_=widget_config, annotation=UpdateAgentWidgetConfigRequestWidgetConfig, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    UpdateAgentWidgetConfigResponse,
+                    construct_type(
+                        type_=UpdateAgentWidgetConfigResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_agent_avatar_presigned_url(
+        self,
+        id: str,
+        *,
+        file_name: str,
+        content_type: str,
+        file_size: float,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[GetAgentAvatarPresignedUrlResponse]:
+        """
+        Generates a pre-signed S3 upload URL for the agent's widget avatar image. Upload the image directly to S3 using the returned `presignedUrl`, then save `cdnUrl` as the agent's avatar via `PATCH /agent/{id}/widget-config`.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        file_name : str
+            Original file name (used to construct the S3 key)
+
+        content_type : str
+            MIME type — must start with `image/`
+
+        file_size : float
+            File size in bytes — must be > 0 and ≤ 2 MB (2,097,152 bytes)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[GetAgentAvatarPresignedUrlResponse]
+            Pre-signed upload URL and CDN URL
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/avatar/presigned-url",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="POST",
+            json={
+                "fileName": file_name,
+                "contentType": content_type,
+                "fileSize": file_size,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GetAgentAvatarPresignedUrlResponse,
+                    construct_type(
+                        type_=GetAgentAvatarPresignedUrlResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_agent_call_logs(
+        self,
+        id: str,
+        *,
+        page: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[GetAgentCallLogsResponse]:
+        """
+        Returns paginated call logs for a specific agent.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        page : typing.Optional[int]
+            Page number (default 1)
+
+        offset : typing.Optional[int]
+            Records per page (default 10)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[GetAgentCallLogsResponse]
+            Paginated call logs
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/call-logs",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            params={
+                "page": page,
+                "offset": offset,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GetAgentCallLogsResponse,
+                    construct_type(
+                        type_=GetAgentCallLogsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
     def archive_agent(
         self, id: str, *, on: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[ArchiveAgentAgentsResponse]:
@@ -852,804 +1336,6 @@ class RawAgentsClient:
                 )
             if _response.status_code == 409:
                 raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def duplicate_agent(
-        self, id: str, *, target_organization_id: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[DuplicateAgentAgentsResponse]:
-        """
-        Duplicates a SINGLE_PROMPT agent's live active version into a target organization
-        (can also be the same organization). Copies all versioned configuration but strips
-        organization-specific resources: knowledge base tools are removed, default variable
-        values are blanked, and a new avatar is generated. The duplicate starts with a
-        published V1 as its active version.
-
-        **400 is returned when:**
-        - The source agent is archived (`"Cannot duplicate an archived agent"`)
-        - The agent has no `activeVersionId` (`"This agent has no active version and cannot be duplicated"`)
-        - The active version exists but is not published/active (`"This agent has no active published version and cannot be duplicated"`)
-        - The agent is not `SINGLE_PROMPT` workflow type
-
-        Parameters
-        ----------
-        id : str
-            The ID of the source agent to duplicate
-
-        target_organization_id : str
-            MongoDB ObjectId of the target organization. Must be a 24-character hex string.
-            The authenticated user must be a member of this organization.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[DuplicateAgentAgentsResponse]
-            Agent duplicated successfully
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/duplicate",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="POST",
-            json={
-                "targetOrganizationId": target_organization_id,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    DuplicateAgentAgentsResponse,
-                    construct_type(
-                        type_=DuplicateAgentAgentsResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def get_agent_workflow(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[GetAgentIdWorkflowResponse]:
-        """
-        **Deprecated** — prefer `GET /agent/{id}` (config is resolved into `_resolvedConfig`
-        including prompt, tools, and post-call analytics).
-
-        Returns the active version's prompt and tools for single-prompt agents, or the
-        workflow graph data for workflow_graph agents. Customers still rely on this to
-        fetch their current prompt + tools — endpoint is kept live for now.
-
-        **Caveat:** the `versionId` query param (if passed) is silently ignored.
-        The response always reflects the currently-active version. To inspect a
-        non-active version, use `GET /agent/{id}/versions/{versionId}`.
-
-        Parameters
-        ----------
-        id : str
-            The ID of the agent
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[GetAgentIdWorkflowResponse]
-            Successful response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/workflow",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GetAgentIdWorkflowResponse,
-                    construct_type(
-                        type_=GetAgentIdWorkflowResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def update_workflow_configuration(
-        self,
-        id: str,
-        *,
-        type: WorkflowType,
-        workflow_graph: typing.Optional[UpdateWorkflowConfigurationAgentsRequestWorkflowGraph] = OMIT,
-        single_prompt_config: typing.Optional[SinglePromptConfig] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[None]:
-        """
-        **Deprecated** — use `PATCH /agent/{id}/drafts/{draftId}/config` instead.
-
-        Directly mutates the legacy workflow document for an agent. This write path
-        bypasses the versioning system entirely: the change is not captured as a
-        new version, and future version activations may overwrite the legacy doc
-        back to whatever the version snapshot contains.
-
-        ⚠ **Writing here on a versioned agent can silently wipe tools, prompt, or
-        other fields that were missing from the PATCH payload.** Only use this if
-        you know the agent is not using versioning, or if you are intentionally
-        hot-patching the legacy doc.
-
-        Parameters
-        ----------
-        id : str
-            The workflow ID (found at `agent.workflowId` on the agent document).
-
-        type : WorkflowType
-
-        workflow_graph : typing.Optional[UpdateWorkflowConfigurationAgentsRequestWorkflowGraph]
-            Required when `type = workflow_graph`. Exactly one of `workflowGraph` or `singlePromptConfig` must be provided.
-
-        single_prompt_config : typing.Optional[SinglePromptConfig]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[None]
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"workflow/{encode_path_param(id)}",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="PATCH",
-            json={
-                "type": type,
-                "workflowGraph": convert_and_respect_annotation_metadata(
-                    object_=workflow_graph,
-                    annotation=UpdateWorkflowConfigurationAgentsRequestWorkflowGraph,
-                    direction="write",
-                ),
-                "singlePromptConfig": convert_and_respect_annotation_metadata(
-                    object_=single_prompt_config, annotation=SinglePromptConfig, direction="write"
-                ),
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return HttpResponse(response=_response, data=None)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def create_with_ai(
-        self,
-        *,
-        name: typing.Optional[str] = OMIT,
-        description: typing.Optional[str] = OMIT,
-        questions: typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]] = OMIT,
-        type: typing.Optional[CreateWithAiAgentsRequestType] = OMIT,
-        emotive_toggle: typing.Optional[bool] = OMIT,
-        voice_id: typing.Optional[str] = OMIT,
-        voice_model: typing.Optional[CreateWithAiAgentsRequestVoiceModel] = OMIT,
-        knowledge_base_id: typing.Optional[str] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[CreateWithAiAgentsResponse]:
-        """
-        Create a new single-prompt agent from a natural-language brief or structured
-        question/answer pairs. Atoms generates the system prompt for you.
-
-        Provide either `description` (free-form brief) or a non-empty `questions` array,
-        but not both. The `emotiveToggle`, `voiceId`, and `voiceModel` fields must be
-        supplied as a 3-tuple or omitted entirely.
-
-        Parameters
-        ----------
-        name : typing.Optional[str]
-            Agent name (trimmed). Auto-generated when omitted.
-
-        description : typing.Optional[str]
-            Free-form natural-language description of what the agent should do.
-            Atoms turns this into the system prompt. Use this OR `questions`, not both.
-
-        questions : typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]]
-            Structured question/answer pairs. Atoms uses these to compose the
-            system prompt. Use this OR `description`, not both.
-
-        type : typing.Optional[CreateWithAiAgentsRequestType]
-            Currently the only supported agent type.
-
-        emotive_toggle : typing.Optional[bool]
-            Enable emotive synthesis. Must be paired with `voiceId` + `voiceModel`.
-
-        voice_id : typing.Optional[str]
-            Voice ID for synthesis. Must be paired with `emotiveToggle` + `voiceModel`.
-
-        voice_model : typing.Optional[CreateWithAiAgentsRequestVoiceModel]
-            Synthesizer to use. Must be paired with `emotiveToggle` + `voiceId`.
-
-        knowledge_base_id : typing.Optional[str]
-            Optional knowledge-base ID to attach to the new agent.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[CreateWithAiAgentsResponse]
-            Agent created. `data` is the new agent's `_id` (string).
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "agent/with-ai",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="POST",
-            json={
-                "name": name,
-                "description": description,
-                "questions": convert_and_respect_annotation_metadata(
-                    object_=questions,
-                    annotation=typing.Sequence[CreateWithAiAgentsRequestQuestionsItem],
-                    direction="write",
-                ),
-                "type": type,
-                "emotiveToggle": emotive_toggle,
-                "voiceId": voice_id,
-                "voiceModel": voice_model,
-                "knowledgeBaseId": knowledge_base_id,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreateWithAiAgentsResponse,
-                    construct_type(
-                        type_=CreateWithAiAgentsResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def list_call_logs(
-        self,
-        id: str,
-        *,
-        page: typing.Optional[str] = None,
-        offset: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[ListCallLogsAgentsResponse]:
-        """
-        Returns paginated conversation logs (calls) for a specific agent in the caller's
-        organization. Use `GET /conversation` for cross-agent log listing; use this when
-        you already have an agent ID.
-
-        Parameters
-        ----------
-        id : str
-            The agent ID
-
-        page : typing.Optional[str]
-            Page number (string-encoded positive integer).
-
-        offset : typing.Optional[str]
-            Page size (string-encoded positive integer).
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[ListCallLogsAgentsResponse]
-            Paginated list of conversation logs for the agent.
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/call-logs",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="GET",
-            params={
-                "page": page,
-                "offset": offset,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ListCallLogsAgentsResponse,
-                    construct_type(
-                        type_=ListCallLogsAgentsResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def get_widget_config(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[GetWidgetConfigAgentsResponse]:
-        """
-        Returns the embeddable web widget configuration for the agent (theme, copy,
-        consent prompts, branding, voice/chat mode, allowlist). The response merges the
-        stored config with `assistantId: <agentId>` injected.
-
-        Parameters
-        ----------
-        id : str
-            The agent ID
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[GetWidgetConfigAgentsResponse]
-            Widget configuration for the agent.
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/widget-config",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GetWidgetConfigAgentsResponse,
-                    construct_type(
-                        type_=GetWidgetConfigAgentsResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def update_widget_config(
-        self, id: str, *, widget_config: WidgetConfig, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[UpdateWidgetConfigAgentsResponse]:
-        """
-        Merge updates into the agent's embeddable widget config. Only the fields in the
-        request body are overwritten; everything else is preserved. Returns the full
-        widget config after merge.
-
-        Parameters
-        ----------
-        id : str
-            The agent ID
-
-        widget_config : WidgetConfig
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[UpdateWidgetConfigAgentsResponse]
-            Merged widget configuration.
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/widget-config",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="PATCH",
-            json={
-                "widgetConfig": convert_and_respect_annotation_metadata(
-                    object_=widget_config, annotation=WidgetConfig, direction="write"
-                ),
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    UpdateWidgetConfigAgentsResponse,
-                    construct_type(
-                        type_=UpdateWidgetConfigAgentsResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def get_prompt_config(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[GetPromptConfigAgentsResponse]:
-        """
-        Returns the canonical question definitions, option choices, and example labels
-        used by the agent-builder UI when collecting input for `POST /agent/with-ai`.
-
-        Use this to programmatically discover what questions to ask end-users when
-        building agent-creation UIs.
-
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[GetPromptConfigAgentsResponse]
-            Prompt-config catalogue.
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "agent/prompt-config",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GetPromptConfigAgentsResponse,
-                    construct_type(
-                        type_=GetPromptConfigAgentsResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Any,
@@ -1869,10 +1555,11 @@ class AsyncRawAgentsClient:
             Tamil (`ta`) cannot be combined with other languages in `supported`.
 
         synthesizer : typing.Optional[CreateAgentRequestSynthesizer]
-            Synthesizer (TTS) configuration for the agent.
-            Models `waves`, `waves_lightning_large`, `waves_lightning_v2`, and `waves_lightning_v3_1`
-            validate `voiceId` against the Waves API. All other models accept any voiceId.
-            Cloned voices are regular voiceIds — use them with any compatible Waves model.
+            Synthesizer (TTS) configuration for the agent. Model
+            `waves_lightning_v3_1` validates `voiceId` against the Waves
+            API. `gpt-realtime` and `gpt-realtime-mini` accept any voiceId.
+            Cloned voices are regular voiceIds. Use them with a compatible
+            Waves model.
 
         global_knowledge_base_id : typing.Optional[str]
             The global knowledge base ID of the agent. You can create a global knowledge base by using the /knowledgebase endpoint and assign it to the agent. The agent will use this knowledge base for its responses.
@@ -2095,6 +1782,126 @@ class AsyncRawAgentsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    async def duplicate_agent(
+        self, id: str, *, target_organization_id: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[DuplicateAgentAgentsResponse]:
+        """
+        Duplicates a SINGLE_PROMPT agent's live active version into a target organization
+        (can also be the same organization). Copies all versioned configuration but strips
+        organization-specific resources: knowledge base tools are removed, default variable
+        values are blanked, and a new avatar is generated. The duplicate starts with a
+        published V1 as its active version.
+
+        **400 is returned when:**
+        - The source agent is archived (`"Cannot duplicate an archived agent"`)
+        - The agent has no `activeVersionId` (`"This agent has no active version and cannot be duplicated"`)
+        - The active version exists but is not published/active (`"This agent has no active published version and cannot be duplicated"`)
+        - The agent is not `SINGLE_PROMPT` workflow type
+
+        Parameters
+        ----------
+        id : str
+            The ID of the source agent to duplicate
+
+        target_organization_id : str
+            MongoDB ObjectId of the target organization. Must be a 24-character hex string.
+            The authenticated user must be a member of this organization.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[DuplicateAgentAgentsResponse]
+            Agent duplicated successfully
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/duplicate",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="POST",
+            json={
+                "targetOrganizationId": target_organization_id,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    DuplicateAgentAgentsResponse,
+                    construct_type(
+                        type_=DuplicateAgentAgentsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
     async def get_agent(
         self,
         id: str,
@@ -2248,9 +2055,7 @@ class AsyncRawAgentsClient:
         **Non-versioned agents** (no active version): all configuration fields are accepted,
         the same full set as `POST /agent`.
 
-        **400 is also returned when:**
-        - The agent is locked (`"Agent is locked, please unlock it to update"`)
-        - Cross-field constraint violated (e.g. `north_indic` language requires `transcriberType: pulse`)
+        **400 is also returned when a cross-field constraint is violated** (for example, `north_indic` language requires `transcriberType: pulse`).
 
         **403** is returned when selecting a gated model (`gpt-5.2`, `electron-kogta`, `electron-kogta-v2`)
         without org-level access.
@@ -2377,6 +2182,380 @@ class AsyncRawAgentsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    async def get_agent_widget_config(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[GetAgentWidgetConfigResponse]:
+        """
+        Returns the current web widget configuration for the agent. Also includes `assistantId` (same as the agent ID) as a convenience field for the widget embed code.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[GetAgentWidgetConfigResponse]
+            Widget configuration
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/widget-config",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GetAgentWidgetConfigResponse,
+                    construct_type(
+                        type_=GetAgentWidgetConfigResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def update_agent_widget_config(
+        self,
+        id: str,
+        *,
+        widget_config: typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[UpdateAgentWidgetConfigResponse]:
+        """
+        Updates the web widget configuration for the agent. Only provided fields are updated (partial update). When `avatarUrl` is changed, the old CDN avatar is automatically deleted from S3. The `avatarUrl` must be a URL from the platform's CDN domain — use `POST /agent/{id}/avatar/presigned-url` to upload first.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        widget_config : typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig]
+            All fields are optional — only provided fields are updated
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[UpdateAgentWidgetConfigResponse]
+            Updated widget configuration
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/widget-config",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="PATCH",
+            json={
+                "widgetConfig": convert_and_respect_annotation_metadata(
+                    object_=widget_config, annotation=UpdateAgentWidgetConfigRequestWidgetConfig, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    UpdateAgentWidgetConfigResponse,
+                    construct_type(
+                        type_=UpdateAgentWidgetConfigResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_agent_avatar_presigned_url(
+        self,
+        id: str,
+        *,
+        file_name: str,
+        content_type: str,
+        file_size: float,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[GetAgentAvatarPresignedUrlResponse]:
+        """
+        Generates a pre-signed S3 upload URL for the agent's widget avatar image. Upload the image directly to S3 using the returned `presignedUrl`, then save `cdnUrl` as the agent's avatar via `PATCH /agent/{id}/widget-config`.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        file_name : str
+            Original file name (used to construct the S3 key)
+
+        content_type : str
+            MIME type — must start with `image/`
+
+        file_size : float
+            File size in bytes — must be > 0 and ≤ 2 MB (2,097,152 bytes)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[GetAgentAvatarPresignedUrlResponse]
+            Pre-signed upload URL and CDN URL
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/avatar/presigned-url",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="POST",
+            json={
+                "fileName": file_name,
+                "contentType": content_type,
+                "fileSize": file_size,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GetAgentAvatarPresignedUrlResponse,
+                    construct_type(
+                        type_=GetAgentAvatarPresignedUrlResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_agent_call_logs(
+        self,
+        id: str,
+        *,
+        page: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[GetAgentCallLogsResponse]:
+        """
+        Returns paginated call logs for a specific agent.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        page : typing.Optional[int]
+            Page number (default 1)
+
+        offset : typing.Optional[int]
+            Records per page (default 10)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[GetAgentCallLogsResponse]
+            Paginated call logs
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"agent/{encode_path_param(id)}/call-logs",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            params={
+                "page": page,
+                "offset": offset,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GetAgentCallLogsResponse,
+                    construct_type(
+                        type_=GetAgentCallLogsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
     async def archive_agent(
         self, id: str, *, on: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[ArchiveAgentAgentsResponse]:
@@ -2471,804 +2650,6 @@ class AsyncRawAgentsClient:
                 )
             if _response.status_code == 409:
                 raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def duplicate_agent(
-        self, id: str, *, target_organization_id: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[DuplicateAgentAgentsResponse]:
-        """
-        Duplicates a SINGLE_PROMPT agent's live active version into a target organization
-        (can also be the same organization). Copies all versioned configuration but strips
-        organization-specific resources: knowledge base tools are removed, default variable
-        values are blanked, and a new avatar is generated. The duplicate starts with a
-        published V1 as its active version.
-
-        **400 is returned when:**
-        - The source agent is archived (`"Cannot duplicate an archived agent"`)
-        - The agent has no `activeVersionId` (`"This agent has no active version and cannot be duplicated"`)
-        - The active version exists but is not published/active (`"This agent has no active published version and cannot be duplicated"`)
-        - The agent is not `SINGLE_PROMPT` workflow type
-
-        Parameters
-        ----------
-        id : str
-            The ID of the source agent to duplicate
-
-        target_organization_id : str
-            MongoDB ObjectId of the target organization. Must be a 24-character hex string.
-            The authenticated user must be a member of this organization.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[DuplicateAgentAgentsResponse]
-            Agent duplicated successfully
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/duplicate",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="POST",
-            json={
-                "targetOrganizationId": target_organization_id,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    DuplicateAgentAgentsResponse,
-                    construct_type(
-                        type_=DuplicateAgentAgentsResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def get_agent_workflow(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[GetAgentIdWorkflowResponse]:
-        """
-        **Deprecated** — prefer `GET /agent/{id}` (config is resolved into `_resolvedConfig`
-        including prompt, tools, and post-call analytics).
-
-        Returns the active version's prompt and tools for single-prompt agents, or the
-        workflow graph data for workflow_graph agents. Customers still rely on this to
-        fetch their current prompt + tools — endpoint is kept live for now.
-
-        **Caveat:** the `versionId` query param (if passed) is silently ignored.
-        The response always reflects the currently-active version. To inspect a
-        non-active version, use `GET /agent/{id}/versions/{versionId}`.
-
-        Parameters
-        ----------
-        id : str
-            The ID of the agent
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[GetAgentIdWorkflowResponse]
-            Successful response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/workflow",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GetAgentIdWorkflowResponse,
-                    construct_type(
-                        type_=GetAgentIdWorkflowResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def update_workflow_configuration(
-        self,
-        id: str,
-        *,
-        type: WorkflowType,
-        workflow_graph: typing.Optional[UpdateWorkflowConfigurationAgentsRequestWorkflowGraph] = OMIT,
-        single_prompt_config: typing.Optional[SinglePromptConfig] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[None]:
-        """
-        **Deprecated** — use `PATCH /agent/{id}/drafts/{draftId}/config` instead.
-
-        Directly mutates the legacy workflow document for an agent. This write path
-        bypasses the versioning system entirely: the change is not captured as a
-        new version, and future version activations may overwrite the legacy doc
-        back to whatever the version snapshot contains.
-
-        ⚠ **Writing here on a versioned agent can silently wipe tools, prompt, or
-        other fields that were missing from the PATCH payload.** Only use this if
-        you know the agent is not using versioning, or if you are intentionally
-        hot-patching the legacy doc.
-
-        Parameters
-        ----------
-        id : str
-            The workflow ID (found at `agent.workflowId` on the agent document).
-
-        type : WorkflowType
-
-        workflow_graph : typing.Optional[UpdateWorkflowConfigurationAgentsRequestWorkflowGraph]
-            Required when `type = workflow_graph`. Exactly one of `workflowGraph` or `singlePromptConfig` must be provided.
-
-        single_prompt_config : typing.Optional[SinglePromptConfig]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[None]
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"workflow/{encode_path_param(id)}",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="PATCH",
-            json={
-                "type": type,
-                "workflowGraph": convert_and_respect_annotation_metadata(
-                    object_=workflow_graph,
-                    annotation=UpdateWorkflowConfigurationAgentsRequestWorkflowGraph,
-                    direction="write",
-                ),
-                "singlePromptConfig": convert_and_respect_annotation_metadata(
-                    object_=single_prompt_config, annotation=SinglePromptConfig, direction="write"
-                ),
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return AsyncHttpResponse(response=_response, data=None)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def create_with_ai(
-        self,
-        *,
-        name: typing.Optional[str] = OMIT,
-        description: typing.Optional[str] = OMIT,
-        questions: typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]] = OMIT,
-        type: typing.Optional[CreateWithAiAgentsRequestType] = OMIT,
-        emotive_toggle: typing.Optional[bool] = OMIT,
-        voice_id: typing.Optional[str] = OMIT,
-        voice_model: typing.Optional[CreateWithAiAgentsRequestVoiceModel] = OMIT,
-        knowledge_base_id: typing.Optional[str] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[CreateWithAiAgentsResponse]:
-        """
-        Create a new single-prompt agent from a natural-language brief or structured
-        question/answer pairs. Atoms generates the system prompt for you.
-
-        Provide either `description` (free-form brief) or a non-empty `questions` array,
-        but not both. The `emotiveToggle`, `voiceId`, and `voiceModel` fields must be
-        supplied as a 3-tuple or omitted entirely.
-
-        Parameters
-        ----------
-        name : typing.Optional[str]
-            Agent name (trimmed). Auto-generated when omitted.
-
-        description : typing.Optional[str]
-            Free-form natural-language description of what the agent should do.
-            Atoms turns this into the system prompt. Use this OR `questions`, not both.
-
-        questions : typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]]
-            Structured question/answer pairs. Atoms uses these to compose the
-            system prompt. Use this OR `description`, not both.
-
-        type : typing.Optional[CreateWithAiAgentsRequestType]
-            Currently the only supported agent type.
-
-        emotive_toggle : typing.Optional[bool]
-            Enable emotive synthesis. Must be paired with `voiceId` + `voiceModel`.
-
-        voice_id : typing.Optional[str]
-            Voice ID for synthesis. Must be paired with `emotiveToggle` + `voiceModel`.
-
-        voice_model : typing.Optional[CreateWithAiAgentsRequestVoiceModel]
-            Synthesizer to use. Must be paired with `emotiveToggle` + `voiceId`.
-
-        knowledge_base_id : typing.Optional[str]
-            Optional knowledge-base ID to attach to the new agent.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[CreateWithAiAgentsResponse]
-            Agent created. `data` is the new agent's `_id` (string).
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "agent/with-ai",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="POST",
-            json={
-                "name": name,
-                "description": description,
-                "questions": convert_and_respect_annotation_metadata(
-                    object_=questions,
-                    annotation=typing.Sequence[CreateWithAiAgentsRequestQuestionsItem],
-                    direction="write",
-                ),
-                "type": type,
-                "emotiveToggle": emotive_toggle,
-                "voiceId": voice_id,
-                "voiceModel": voice_model,
-                "knowledgeBaseId": knowledge_base_id,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreateWithAiAgentsResponse,
-                    construct_type(
-                        type_=CreateWithAiAgentsResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def list_call_logs(
-        self,
-        id: str,
-        *,
-        page: typing.Optional[str] = None,
-        offset: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[ListCallLogsAgentsResponse]:
-        """
-        Returns paginated conversation logs (calls) for a specific agent in the caller's
-        organization. Use `GET /conversation` for cross-agent log listing; use this when
-        you already have an agent ID.
-
-        Parameters
-        ----------
-        id : str
-            The agent ID
-
-        page : typing.Optional[str]
-            Page number (string-encoded positive integer).
-
-        offset : typing.Optional[str]
-            Page size (string-encoded positive integer).
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[ListCallLogsAgentsResponse]
-            Paginated list of conversation logs for the agent.
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/call-logs",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="GET",
-            params={
-                "page": page,
-                "offset": offset,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ListCallLogsAgentsResponse,
-                    construct_type(
-                        type_=ListCallLogsAgentsResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def get_widget_config(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[GetWidgetConfigAgentsResponse]:
-        """
-        Returns the embeddable web widget configuration for the agent (theme, copy,
-        consent prompts, branding, voice/chat mode, allowlist). The response merges the
-        stored config with `assistantId: <agentId>` injected.
-
-        Parameters
-        ----------
-        id : str
-            The agent ID
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[GetWidgetConfigAgentsResponse]
-            Widget configuration for the agent.
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/widget-config",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GetWidgetConfigAgentsResponse,
-                    construct_type(
-                        type_=GetWidgetConfigAgentsResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def update_widget_config(
-        self, id: str, *, widget_config: WidgetConfig, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[UpdateWidgetConfigAgentsResponse]:
-        """
-        Merge updates into the agent's embeddable widget config. Only the fields in the
-        request body are overwritten; everything else is preserved. Returns the full
-        widget config after merge.
-
-        Parameters
-        ----------
-        id : str
-            The agent ID
-
-        widget_config : WidgetConfig
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[UpdateWidgetConfigAgentsResponse]
-            Merged widget configuration.
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/widget-config",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="PATCH",
-            json={
-                "widgetConfig": convert_and_respect_annotation_metadata(
-                    object_=widget_config, annotation=WidgetConfig, direction="write"
-                ),
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    UpdateWidgetConfigAgentsResponse,
-                    construct_type(
-                        type_=UpdateWidgetConfigAgentsResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def get_prompt_config(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[GetPromptConfigAgentsResponse]:
-        """
-        Returns the canonical question definitions, option choices, and example labels
-        used by the agent-builder UI when collecting input for `POST /agent/with-ai`.
-
-        Use this to programmatically discover what questions to ask end-users when
-        building agent-creation UIs.
-
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[GetPromptConfigAgentsResponse]
-            Prompt-config catalogue.
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "agent/prompt-config",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GetPromptConfigAgentsResponse,
-                    construct_type(
-                        type_=GetPromptConfigAgentsResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Any,

@@ -8,9 +8,19 @@ from ...core.unchecked_base_model import UncheckedBaseModel
 
 
 class AudioChunkData(UncheckedBaseModel):
-    audio: typing.Optional[str] = pydantic.Field(default=None)
+    audio: str = pydantic.Field()
     """
-    Base64-encoded audio chunk
+    Base64-encoded PCM audio chunk
+    """
+
+    format: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Audio format (PCM 16-bit mono)
+    """
+
+    sample_rate: typing.Optional[int] = pydantic.Field(default=None)
+    """
+    Audio sample rate in Hz
     """
 
     if IS_PYDANTIC_V2:

@@ -2,3 +2,73 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .get_compliance_requirements_request_number_type import GetComplianceRequirementsRequestNumberType
+    from .get_compliance_requirements_request_user_type import GetComplianceRequirementsRequestUserType
+    from .get_compliance_requirements_response import GetComplianceRequirementsResponse
+    from .get_compliance_status_request_number_type import GetComplianceStatusRequestNumberType
+    from .get_compliance_status_request_user_type import GetComplianceStatusRequestUserType
+    from .get_compliance_status_response import GetComplianceStatusResponse
+    from .get_compliance_status_response_data import GetComplianceStatusResponseData
+    from .get_compliance_status_response_data_step import GetComplianceStatusResponseDataStep
+    from .post_compliance_applications_id_refresh_response import PostComplianceApplicationsIdRefreshResponse
+    from .resubmit_compliance_response import ResubmitComplianceResponse
+    from .submit_compliance_request_number_type import SubmitComplianceRequestNumberType
+    from .submit_compliance_request_user_type import SubmitComplianceRequestUserType
+    from .submit_compliance_response import SubmitComplianceResponse
+_dynamic_imports: typing.Dict[str, str] = {
+    "GetComplianceRequirementsRequestNumberType": ".get_compliance_requirements_request_number_type",
+    "GetComplianceRequirementsRequestUserType": ".get_compliance_requirements_request_user_type",
+    "GetComplianceRequirementsResponse": ".get_compliance_requirements_response",
+    "GetComplianceStatusRequestNumberType": ".get_compliance_status_request_number_type",
+    "GetComplianceStatusRequestUserType": ".get_compliance_status_request_user_type",
+    "GetComplianceStatusResponse": ".get_compliance_status_response",
+    "GetComplianceStatusResponseData": ".get_compliance_status_response_data",
+    "GetComplianceStatusResponseDataStep": ".get_compliance_status_response_data_step",
+    "PostComplianceApplicationsIdRefreshResponse": ".post_compliance_applications_id_refresh_response",
+    "ResubmitComplianceResponse": ".resubmit_compliance_response",
+    "SubmitComplianceRequestNumberType": ".submit_compliance_request_number_type",
+    "SubmitComplianceRequestUserType": ".submit_compliance_request_user_type",
+    "SubmitComplianceResponse": ".submit_compliance_response",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "GetComplianceRequirementsRequestNumberType",
+    "GetComplianceRequirementsRequestUserType",
+    "GetComplianceRequirementsResponse",
+    "GetComplianceStatusRequestNumberType",
+    "GetComplianceStatusRequestUserType",
+    "GetComplianceStatusResponse",
+    "GetComplianceStatusResponseData",
+    "GetComplianceStatusResponseDataStep",
+    "PostComplianceApplicationsIdRefreshResponse",
+    "ResubmitComplianceResponse",
+    "SubmitComplianceRequestNumberType",
+    "SubmitComplianceRequestUserType",
+    "SubmitComplianceResponse",
+]

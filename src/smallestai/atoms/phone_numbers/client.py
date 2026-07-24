@@ -336,7 +336,7 @@ class PhoneNumbersClient:
             Your existing phone number. E.164 format is recommended but not enforced server-side — any non-empty string is accepted.
 
         sip_termination_url : str
-            The SIP URI where calls should be routed to your infrastructure
+            Your SIP provider's termination host — a hostname or IP address, optionally with a port (e.g. "sip.your-provider.com:5060"). Full SIP URIs ("sip:" / "sips:") are also accepted and automatically normalized to the bare host.
 
         name : typing.Optional[str]
             A friendly display name for this number
@@ -364,7 +364,7 @@ class PhoneNumbersClient:
         )
         client.atoms.phone_numbers.import_sip(
             phone_number="+14155551234",
-            sip_termination_url="sip:trunk.your-provider.com",
+            sip_termination_url="trunk.your-provider.com",
             name="Main Support Line",
             sip_username="",
             sip_password="",
@@ -764,7 +764,7 @@ class AsyncPhoneNumbersClient:
             Your existing phone number. E.164 format is recommended but not enforced server-side — any non-empty string is accepted.
 
         sip_termination_url : str
-            The SIP URI where calls should be routed to your infrastructure
+            Your SIP provider's termination host — a hostname or IP address, optionally with a port (e.g. "sip.your-provider.com:5060"). Full SIP URIs ("sip:" / "sips:") are also accepted and automatically normalized to the bare host.
 
         name : typing.Optional[str]
             A friendly display name for this number
@@ -797,7 +797,7 @@ class AsyncPhoneNumbersClient:
         async def main() -> None:
             await client.atoms.phone_numbers.import_sip(
                 phone_number="+14155551234",
-                sip_termination_url="sip:trunk.your-provider.com",
+                sip_termination_url="trunk.your-provider.com",
                 name="Main Support Line",
                 sip_username="",
                 sip_password="",

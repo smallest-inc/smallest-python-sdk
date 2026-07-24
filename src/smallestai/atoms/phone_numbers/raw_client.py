@@ -667,7 +667,7 @@ class RawPhoneNumbersClient:
             Your existing phone number. E.164 format is recommended but not enforced server-side — any non-empty string is accepted.
 
         sip_termination_url : str
-            The SIP URI where calls should be routed to your infrastructure
+            Your SIP provider's termination host — a hostname or IP address, optionally with a port (e.g. "sip.your-provider.com:5060"). Full SIP URIs ("sip:" / "sips:") are also accepted and automatically normalized to the bare host.
 
         name : typing.Optional[str]
             A friendly display name for this number
@@ -1394,7 +1394,7 @@ class AsyncRawPhoneNumbersClient:
             Your existing phone number. E.164 format is recommended but not enforced server-side — any non-empty string is accepted.
 
         sip_termination_url : str
-            The SIP URI where calls should be routed to your infrastructure
+            Your SIP provider's termination host — a hostname or IP address, optionally with a port (e.g. "sip.your-provider.com:5060"). Full SIP URIs ("sip:" / "sips:") are also accepted and automatically normalized to the bare host.
 
         name : typing.Optional[str]
             A friendly display name for this number

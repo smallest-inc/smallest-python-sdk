@@ -12,6 +12,7 @@ from ...core.request_options import RequestOptions
 from ...core.serialization import convert_and_respect_annotation_metadata
 from ...core.unchecked_base_model import construct_type
 from ..errors.bad_request_error import BadRequestError
+from ..errors.conflict_error import ConflictError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
@@ -45,12 +46,14 @@ class RawAgentVersioningDraftsClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[GetAgentIdDraftsResponse]:
         """
+        **Deprecated on the v2 branch model.** Migrate to `GET /agent/{id}/branches (`openDraftId` / `hasOpenDraft`)`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         List all active (non-discarded) drafts for an agent.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -109,6 +112,17 @@ class RawAgentVersioningDraftsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
                     headers=dict(_response.headers),
@@ -139,12 +153,14 @@ class RawAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CreateDraftAgentVersioningDraftsResponse]:
         """
+        **Deprecated on the v2 branch model.** Migrate to `PUT /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         Create a new draft from an existing published version or another draft. At least one of sourceVersionId or sourceDraftId is required (both may be sent simultaneously).
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         source_version_id : typing.Optional[str]
             ID of a published version to branch from. Must be a valid MongoDB ObjectId (24-char hex).
@@ -233,6 +249,17 @@ class RawAgentVersioningDraftsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
                     headers=dict(_response.headers),
@@ -262,12 +289,14 @@ class RawAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[GetAgentIdDraftsDraftIdResponse]:
         """
+        **Deprecated.** By-id reads are kept working during the v1 coexistence window (~1 month). A v1 `draftId` remains resolvable. Migrate to `GET /agent/{id}/branches/{branchId}/draft`. Will be removed at the sunset date.
+
         Returns the latest revision of a draft along with its edit history.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -370,12 +399,14 @@ class RawAgentVersioningDraftsClient:
         self, id: str, draft_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[DiscardDraftAgentVersioningDraftsResponse]:
         """
+        **Deprecated on the v2 branch model.** Migrate to `DELETE /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         Discard (soft-delete) a draft. Only the draft creator or an admin can discard.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -437,6 +468,17 @@ class RawAgentVersioningDraftsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
                     headers=dict(_response.headers),
@@ -461,12 +503,15 @@ class RawAgentVersioningDraftsClient:
         self, id: str, draft_id: str, *, draft_name: str, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[RenameDraftAgentVersioningDraftsResponse]:
         """
+        **Deprecated on the v2 branch model.** Migrate to `PUT /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
+        |
         Rename a draft. For config changes, use PATCH /agent/{id}/drafts/{draftId}/config instead.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -549,6 +594,17 @@ class RawAgentVersioningDraftsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
                     headers=dict(_response.headers),
@@ -578,12 +634,14 @@ class RawAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[GetAgentIdDraftsDraftIdDiffResponse]:
         """
+        **Deprecated.** Kept working during the v1 coexistence window (~1 month). Migrate to `GET /agent/{id}/diff?a=<branchId>:draft&b=<revisionId>`. Will be removed at the sunset date.
+
         Compare a draft against its source version or another specified version.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -693,12 +751,14 @@ class RawAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[PublishDraftAgentVersioningDraftsResponse]:
         """
+        **Deprecated on the v2 branch model.** Migrate to `POST /agent/{id}/branches/{branchId}/draft/publish`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         Publish a draft as a new versioned release. Optionally activate it immediately.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -789,6 +849,17 @@ class RawAgentVersioningDraftsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
                     headers=dict(_response.headers),
@@ -819,12 +890,14 @@ class RawAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[PostAgentIdDraftsDraftIdTestCallResponse]:
         """
+        **Deprecated.** Test-calls are exempt from the v1 write-block and remain functional. Migrate to `POST /agent/{id}/branches/{branchId}/test-call` with `includeDraft: true`. Will be removed at the sunset date.
+
         Initiate a test call using the draft's resolved configuration.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -970,6 +1043,9 @@ class RawAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[UpdateDraftConfigAgentVersioningDraftsResponse]:
         """
+        **Deprecated on the v2 branch model.** Migrate to `PUT /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
+        |
         Update the configuration of a draft. This single endpoint is how every
         agent-level config field is changed: prompt, tools, voice, language,
         **post-call analytics (disposition metrics)**, and more. There is no
@@ -1003,7 +1079,7 @@ class RawAgentVersioningDraftsClient:
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -1190,6 +1266,17 @@ class RawAgentVersioningDraftsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
                     headers=dict(_response.headers),
@@ -1219,12 +1306,14 @@ class AsyncRawAgentVersioningDraftsClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[GetAgentIdDraftsResponse]:
         """
+        **Deprecated on the v2 branch model.** Migrate to `GET /agent/{id}/branches (`openDraftId` / `hasOpenDraft`)`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         List all active (non-discarded) drafts for an agent.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1283,6 +1372,17 @@ class AsyncRawAgentVersioningDraftsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
                     headers=dict(_response.headers),
@@ -1313,12 +1413,14 @@ class AsyncRawAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CreateDraftAgentVersioningDraftsResponse]:
         """
+        **Deprecated on the v2 branch model.** Migrate to `PUT /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         Create a new draft from an existing published version or another draft. At least one of sourceVersionId or sourceDraftId is required (both may be sent simultaneously).
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         source_version_id : typing.Optional[str]
             ID of a published version to branch from. Must be a valid MongoDB ObjectId (24-char hex).
@@ -1407,6 +1509,17 @@ class AsyncRawAgentVersioningDraftsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
                     headers=dict(_response.headers),
@@ -1436,12 +1549,14 @@ class AsyncRawAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[GetAgentIdDraftsDraftIdResponse]:
         """
+        **Deprecated.** By-id reads are kept working during the v1 coexistence window (~1 month). A v1 `draftId` remains resolvable. Migrate to `GET /agent/{id}/branches/{branchId}/draft`. Will be removed at the sunset date.
+
         Returns the latest revision of a draft along with its edit history.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -1544,12 +1659,14 @@ class AsyncRawAgentVersioningDraftsClient:
         self, id: str, draft_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[DiscardDraftAgentVersioningDraftsResponse]:
         """
+        **Deprecated on the v2 branch model.** Migrate to `DELETE /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         Discard (soft-delete) a draft. Only the draft creator or an admin can discard.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -1611,6 +1728,17 @@ class AsyncRawAgentVersioningDraftsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
                     headers=dict(_response.headers),
@@ -1635,12 +1763,15 @@ class AsyncRawAgentVersioningDraftsClient:
         self, id: str, draft_id: str, *, draft_name: str, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[RenameDraftAgentVersioningDraftsResponse]:
         """
+        **Deprecated on the v2 branch model.** Migrate to `PUT /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
+        |
         Rename a draft. For config changes, use PATCH /agent/{id}/drafts/{draftId}/config instead.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -1723,6 +1854,17 @@ class AsyncRawAgentVersioningDraftsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
                     headers=dict(_response.headers),
@@ -1752,12 +1894,14 @@ class AsyncRawAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[GetAgentIdDraftsDraftIdDiffResponse]:
         """
+        **Deprecated.** Kept working during the v1 coexistence window (~1 month). Migrate to `GET /agent/{id}/diff?a=<branchId>:draft&b=<revisionId>`. Will be removed at the sunset date.
+
         Compare a draft against its source version or another specified version.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -1867,12 +2011,14 @@ class AsyncRawAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[PublishDraftAgentVersioningDraftsResponse]:
         """
+        **Deprecated on the v2 branch model.** Migrate to `POST /agent/{id}/branches/{branchId}/draft/publish`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         Publish a draft as a new versioned release. Optionally activate it immediately.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -1963,6 +2109,17 @@ class AsyncRawAgentVersioningDraftsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
                     headers=dict(_response.headers),
@@ -1993,12 +2150,14 @@ class AsyncRawAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[PostAgentIdDraftsDraftIdTestCallResponse]:
         """
+        **Deprecated.** Test-calls are exempt from the v1 write-block and remain functional. Migrate to `POST /agent/{id}/branches/{branchId}/test-call` with `includeDraft: true`. Will be removed at the sunset date.
+
         Initiate a test call using the draft's resolved configuration.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -2144,6 +2303,9 @@ class AsyncRawAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[UpdateDraftConfigAgentVersioningDraftsResponse]:
         """
+        **Deprecated on the v2 branch model.** Migrate to `PUT /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
+        |
         Update the configuration of a draft. This single endpoint is how every
         agent-level config field is changed: prompt, tools, voice, language,
         **post-call analytics (disposition metrics)**, and more. There is no
@@ -2177,7 +2339,7 @@ class AsyncRawAgentVersioningDraftsClient:
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -2355,6 +2517,17 @@ class AsyncRawAgentVersioningDraftsClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Any,

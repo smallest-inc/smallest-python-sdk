@@ -12,7 +12,7 @@
     "pydantic_config": {
       "skip_validation": true
     },
-    "exclude_types_from_init_exports": true,
+    "exclude_types_from_init_exports": false,
     "should_generate_websocket_clients": true,
     "extra_dependencies": {
       "fastapi": ">=0.115.0",
@@ -45,10 +45,10 @@
       }
     ]
   },
-  "originGitCommit": "9b5e3dc88b2258bd955f7570d3c406f8a62d7a7c",
+  "originGitCommit": "ae4a1383eb215784f2c7a4caf3b1c42b6428c516",
   "originGitCommitIsDirty": false,
   "invokedBy": "ci",
-  "requestedVersion": "5.1.0",
+  "requestedVersion": "5.2.0",
   "ciProvider": "github",
-  "sdkVersion": "5.1.0"
+  "sdkVersion": "5.2.0"
 }

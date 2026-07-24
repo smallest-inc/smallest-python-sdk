@@ -173,11 +173,6 @@ class AgentDto(UncheckedBaseModel):
         FieldMetadata(alias="archivedAt"),
         pydantic.Field(alias="archivedAt", description="The date and time when the agent was archived"),
     ] = None
-    is_locked: typing_extensions.Annotated[
-        typing.Optional[bool],
-        FieldMetadata(alias="isLocked"),
-        pydantic.Field(alias="isLocked", description="Whether the agent is locked and cannot be edited"),
-    ] = None
     active_version_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="activeVersionId"),

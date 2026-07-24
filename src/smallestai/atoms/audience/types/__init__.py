@@ -2,3 +2,103 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .delete_audience_id_members_response import DeleteAudienceIdMembersResponse
+    from .delete_audience_id_members_response_data import DeleteAudienceIdMembersResponseData
+    from .delete_audience_id_response import DeleteAudienceIdResponse
+    from .get_audience_id_members_response import GetAudienceIdMembersResponse
+    from .get_audience_id_members_response_data import GetAudienceIdMembersResponseData
+    from .get_audience_id_members_response_data_members_item import GetAudienceIdMembersResponseDataMembersItem
+    from .get_audience_id_members_search_response import GetAudienceIdMembersSearchResponse
+    from .get_audience_id_members_search_response_data import GetAudienceIdMembersSearchResponseData
+    from .get_audience_id_members_search_response_data_members_item import (
+        GetAudienceIdMembersSearchResponseDataMembersItem,
+    )
+    from .get_audience_id_members_search_response_data_search_info import (
+        GetAudienceIdMembersSearchResponseDataSearchInfo,
+    )
+    from .get_audience_id_members_search_response_data_search_info_search_type import (
+        GetAudienceIdMembersSearchResponseDataSearchInfoSearchType,
+    )
+    from .get_audience_response import GetAudienceResponse
+    from .get_audience_response_data import GetAudienceResponseData
+    from .list_audience_response import ListAudienceResponse
+    from .list_audience_response_data_item import ListAudienceResponseDataItem
+    from .list_audience_response_data_item_campaigns_item import ListAudienceResponseDataItemCampaignsItem
+    from .post_audience_id_members_response import PostAudienceIdMembersResponse
+    from .post_audience_id_members_response_data_item import PostAudienceIdMembersResponseDataItem
+    from .post_audience_id_members_response_data_item_data import PostAudienceIdMembersResponseDataItemData
+    from .post_audience_response import PostAudienceResponse
+    from .post_audience_response_data import PostAudienceResponseData
+_dynamic_imports: typing.Dict[str, str] = {
+    "DeleteAudienceIdMembersResponse": ".delete_audience_id_members_response",
+    "DeleteAudienceIdMembersResponseData": ".delete_audience_id_members_response_data",
+    "DeleteAudienceIdResponse": ".delete_audience_id_response",
+    "GetAudienceIdMembersResponse": ".get_audience_id_members_response",
+    "GetAudienceIdMembersResponseData": ".get_audience_id_members_response_data",
+    "GetAudienceIdMembersResponseDataMembersItem": ".get_audience_id_members_response_data_members_item",
+    "GetAudienceIdMembersSearchResponse": ".get_audience_id_members_search_response",
+    "GetAudienceIdMembersSearchResponseData": ".get_audience_id_members_search_response_data",
+    "GetAudienceIdMembersSearchResponseDataMembersItem": ".get_audience_id_members_search_response_data_members_item",
+    "GetAudienceIdMembersSearchResponseDataSearchInfo": ".get_audience_id_members_search_response_data_search_info",
+    "GetAudienceIdMembersSearchResponseDataSearchInfoSearchType": ".get_audience_id_members_search_response_data_search_info_search_type",
+    "GetAudienceResponse": ".get_audience_response",
+    "GetAudienceResponseData": ".get_audience_response_data",
+    "ListAudienceResponse": ".list_audience_response",
+    "ListAudienceResponseDataItem": ".list_audience_response_data_item",
+    "ListAudienceResponseDataItemCampaignsItem": ".list_audience_response_data_item_campaigns_item",
+    "PostAudienceIdMembersResponse": ".post_audience_id_members_response",
+    "PostAudienceIdMembersResponseDataItem": ".post_audience_id_members_response_data_item",
+    "PostAudienceIdMembersResponseDataItemData": ".post_audience_id_members_response_data_item_data",
+    "PostAudienceResponse": ".post_audience_response",
+    "PostAudienceResponseData": ".post_audience_response_data",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "DeleteAudienceIdMembersResponse",
+    "DeleteAudienceIdMembersResponseData",
+    "DeleteAudienceIdResponse",
+    "GetAudienceIdMembersResponse",
+    "GetAudienceIdMembersResponseData",
+    "GetAudienceIdMembersResponseDataMembersItem",
+    "GetAudienceIdMembersSearchResponse",
+    "GetAudienceIdMembersSearchResponseData",
+    "GetAudienceIdMembersSearchResponseDataMembersItem",
+    "GetAudienceIdMembersSearchResponseDataSearchInfo",
+    "GetAudienceIdMembersSearchResponseDataSearchInfoSearchType",
+    "GetAudienceResponse",
+    "GetAudienceResponseData",
+    "ListAudienceResponse",
+    "ListAudienceResponseDataItem",
+    "ListAudienceResponseDataItemCampaignsItem",
+    "PostAudienceIdMembersResponse",
+    "PostAudienceIdMembersResponseDataItem",
+    "PostAudienceIdMembersResponseDataItemData",
+    "PostAudienceResponse",
+    "PostAudienceResponseData",
+]

@@ -32,6 +32,7 @@ TranscribePulseWavesRequestLanguage = typing.Union[
         "ko",
         "multi-eu",
         "multi-asian",
+        "multi-indic",
     ],
     typing.Any,
 ]

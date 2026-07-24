@@ -2,3 +2,171 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .get_calls_response import GetCallsResponse
+    from .get_calls_response_data import GetCallsResponseData
+    from .get_calls_response_data_post_call_analytics import GetCallsResponseDataPostCallAnalytics
+    from .get_calls_response_data_post_call_analytics_disposition_metrics_item import (
+        GetCallsResponseDataPostCallAnalyticsDispositionMetricsItem,
+    )
+    from .get_calls_response_data_status import GetCallsResponseDataStatus
+    from .get_calls_response_data_transcript_item import GetCallsResponseDataTranscriptItem
+    from .get_calls_response_data_transcript_item_role import GetCallsResponseDataTranscriptItemRole
+    from .get_calls_response_data_turn_latency_metrics import GetCallsResponseDataTurnLatencyMetrics
+    from .get_calls_response_data_turn_latency_metrics_transitions_item import (
+        GetCallsResponseDataTurnLatencyMetricsTransitionsItem,
+    )
+    from .get_calls_response_data_type import GetCallsResponseDataType
+    from .get_calls_response_data_voice_config_used import GetCallsResponseDataVoiceConfigUsed
+    from .list_calls_request_call_types import ListCallsRequestCallTypes
+    from .list_calls_request_sort_by import ListCallsRequestSortBy
+    from .list_calls_request_sort_order import ListCallsRequestSortOrder
+    from .list_calls_response import ListCallsResponse
+    from .list_calls_response_data import ListCallsResponseData
+    from .list_calls_response_data_disposition_metrics_config_item import (
+        ListCallsResponseDataDispositionMetricsConfigItem,
+    )
+    from .list_calls_response_data_logs_item import ListCallsResponseDataLogsItem
+    from .list_calls_response_data_logs_item_agent_disposition_config_item import (
+        ListCallsResponseDataLogsItemAgentDispositionConfigItem,
+    )
+    from .list_calls_response_data_logs_item_post_call_analytics import ListCallsResponseDataLogsItemPostCallAnalytics
+    from .list_calls_response_data_logs_item_post_call_analytics_disposition_metrics_item import (
+        ListCallsResponseDataLogsItemPostCallAnalyticsDispositionMetricsItem,
+    )
+    from .list_calls_response_data_logs_item_status import ListCallsResponseDataLogsItemStatus
+    from .list_calls_response_data_logs_item_turn_latency_metrics import ListCallsResponseDataLogsItemTurnLatencyMetrics
+    from .list_calls_response_data_logs_item_turn_latency_metrics_transitions_item import (
+        ListCallsResponseDataLogsItemTurnLatencyMetricsTransitionsItem,
+    )
+    from .list_calls_response_data_logs_item_type import ListCallsResponseDataLogsItemType
+    from .list_calls_response_data_pagination import ListCallsResponseDataPagination
+    from .search_calls_response import SearchCallsResponse
+    from .search_calls_response_data import SearchCallsResponseData
+    from .search_calls_response_data_logs_item import SearchCallsResponseDataLogsItem
+    from .search_calls_response_data_logs_item_post_call_analytics import (
+        SearchCallsResponseDataLogsItemPostCallAnalytics,
+    )
+    from .search_calls_response_data_logs_item_post_call_analytics_disposition_metrics_item import (
+        SearchCallsResponseDataLogsItemPostCallAnalyticsDispositionMetricsItem,
+    )
+    from .search_calls_response_data_logs_item_status import SearchCallsResponseDataLogsItemStatus
+    from .search_calls_response_data_logs_item_turn_latency_metrics import (
+        SearchCallsResponseDataLogsItemTurnLatencyMetrics,
+    )
+    from .search_calls_response_data_logs_item_turn_latency_metrics_transitions_item import (
+        SearchCallsResponseDataLogsItemTurnLatencyMetricsTransitionsItem,
+    )
+    from .search_calls_response_data_logs_item_type import SearchCallsResponseDataLogsItemType
+    from .start_outbound_call_calls_request_variables_value import StartOutboundCallCallsRequestVariablesValue
+    from .start_outbound_call_calls_request_x_test_call import StartOutboundCallCallsRequestXTestCall
+    from .start_outbound_call_calls_response import StartOutboundCallCallsResponse
+    from .start_outbound_call_calls_response_data import StartOutboundCallCallsResponseData
+_dynamic_imports: typing.Dict[str, str] = {
+    "GetCallsResponse": ".get_calls_response",
+    "GetCallsResponseData": ".get_calls_response_data",
+    "GetCallsResponseDataPostCallAnalytics": ".get_calls_response_data_post_call_analytics",
+    "GetCallsResponseDataPostCallAnalyticsDispositionMetricsItem": ".get_calls_response_data_post_call_analytics_disposition_metrics_item",
+    "GetCallsResponseDataStatus": ".get_calls_response_data_status",
+    "GetCallsResponseDataTranscriptItem": ".get_calls_response_data_transcript_item",
+    "GetCallsResponseDataTranscriptItemRole": ".get_calls_response_data_transcript_item_role",
+    "GetCallsResponseDataTurnLatencyMetrics": ".get_calls_response_data_turn_latency_metrics",
+    "GetCallsResponseDataTurnLatencyMetricsTransitionsItem": ".get_calls_response_data_turn_latency_metrics_transitions_item",
+    "GetCallsResponseDataType": ".get_calls_response_data_type",
+    "GetCallsResponseDataVoiceConfigUsed": ".get_calls_response_data_voice_config_used",
+    "ListCallsRequestCallTypes": ".list_calls_request_call_types",
+    "ListCallsRequestSortBy": ".list_calls_request_sort_by",
+    "ListCallsRequestSortOrder": ".list_calls_request_sort_order",
+    "ListCallsResponse": ".list_calls_response",
+    "ListCallsResponseData": ".list_calls_response_data",
+    "ListCallsResponseDataDispositionMetricsConfigItem": ".list_calls_response_data_disposition_metrics_config_item",
+    "ListCallsResponseDataLogsItem": ".list_calls_response_data_logs_item",
+    "ListCallsResponseDataLogsItemAgentDispositionConfigItem": ".list_calls_response_data_logs_item_agent_disposition_config_item",
+    "ListCallsResponseDataLogsItemPostCallAnalytics": ".list_calls_response_data_logs_item_post_call_analytics",
+    "ListCallsResponseDataLogsItemPostCallAnalyticsDispositionMetricsItem": ".list_calls_response_data_logs_item_post_call_analytics_disposition_metrics_item",
+    "ListCallsResponseDataLogsItemStatus": ".list_calls_response_data_logs_item_status",
+    "ListCallsResponseDataLogsItemTurnLatencyMetrics": ".list_calls_response_data_logs_item_turn_latency_metrics",
+    "ListCallsResponseDataLogsItemTurnLatencyMetricsTransitionsItem": ".list_calls_response_data_logs_item_turn_latency_metrics_transitions_item",
+    "ListCallsResponseDataLogsItemType": ".list_calls_response_data_logs_item_type",
+    "ListCallsResponseDataPagination": ".list_calls_response_data_pagination",
+    "SearchCallsResponse": ".search_calls_response",
+    "SearchCallsResponseData": ".search_calls_response_data",
+    "SearchCallsResponseDataLogsItem": ".search_calls_response_data_logs_item",
+    "SearchCallsResponseDataLogsItemPostCallAnalytics": ".search_calls_response_data_logs_item_post_call_analytics",
+    "SearchCallsResponseDataLogsItemPostCallAnalyticsDispositionMetricsItem": ".search_calls_response_data_logs_item_post_call_analytics_disposition_metrics_item",
+    "SearchCallsResponseDataLogsItemStatus": ".search_calls_response_data_logs_item_status",
+    "SearchCallsResponseDataLogsItemTurnLatencyMetrics": ".search_calls_response_data_logs_item_turn_latency_metrics",
+    "SearchCallsResponseDataLogsItemTurnLatencyMetricsTransitionsItem": ".search_calls_response_data_logs_item_turn_latency_metrics_transitions_item",
+    "SearchCallsResponseDataLogsItemType": ".search_calls_response_data_logs_item_type",
+    "StartOutboundCallCallsRequestVariablesValue": ".start_outbound_call_calls_request_variables_value",
+    "StartOutboundCallCallsRequestXTestCall": ".start_outbound_call_calls_request_x_test_call",
+    "StartOutboundCallCallsResponse": ".start_outbound_call_calls_response",
+    "StartOutboundCallCallsResponseData": ".start_outbound_call_calls_response_data",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "GetCallsResponse",
+    "GetCallsResponseData",
+    "GetCallsResponseDataPostCallAnalytics",
+    "GetCallsResponseDataPostCallAnalyticsDispositionMetricsItem",
+    "GetCallsResponseDataStatus",
+    "GetCallsResponseDataTranscriptItem",
+    "GetCallsResponseDataTranscriptItemRole",
+    "GetCallsResponseDataTurnLatencyMetrics",
+    "GetCallsResponseDataTurnLatencyMetricsTransitionsItem",
+    "GetCallsResponseDataType",
+    "GetCallsResponseDataVoiceConfigUsed",
+    "ListCallsRequestCallTypes",
+    "ListCallsRequestSortBy",
+    "ListCallsRequestSortOrder",
+    "ListCallsResponse",
+    "ListCallsResponseData",
+    "ListCallsResponseDataDispositionMetricsConfigItem",
+    "ListCallsResponseDataLogsItem",
+    "ListCallsResponseDataLogsItemAgentDispositionConfigItem",
+    "ListCallsResponseDataLogsItemPostCallAnalytics",
+    "ListCallsResponseDataLogsItemPostCallAnalyticsDispositionMetricsItem",
+    "ListCallsResponseDataLogsItemStatus",
+    "ListCallsResponseDataLogsItemTurnLatencyMetrics",
+    "ListCallsResponseDataLogsItemTurnLatencyMetricsTransitionsItem",
+    "ListCallsResponseDataLogsItemType",
+    "ListCallsResponseDataPagination",
+    "SearchCallsResponse",
+    "SearchCallsResponseData",
+    "SearchCallsResponseDataLogsItem",
+    "SearchCallsResponseDataLogsItemPostCallAnalytics",
+    "SearchCallsResponseDataLogsItemPostCallAnalyticsDispositionMetricsItem",
+    "SearchCallsResponseDataLogsItemStatus",
+    "SearchCallsResponseDataLogsItemTurnLatencyMetrics",
+    "SearchCallsResponseDataLogsItemTurnLatencyMetricsTransitionsItem",
+    "SearchCallsResponseDataLogsItemType",
+    "StartOutboundCallCallsRequestVariablesValue",
+    "StartOutboundCallCallsRequestXTestCall",
+    "StartOutboundCallCallsResponse",
+    "StartOutboundCallCallsResponseData",
+]

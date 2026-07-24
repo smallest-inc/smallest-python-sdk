@@ -8,7 +8,6 @@ from ...core.request_options import RequestOptions
 from .raw_client import AsyncRawCampaignsClient, RawCampaignsClient
 from .types.create_campaigns_response import CreateCampaignsResponse
 from .types.delete_campaigns_response import DeleteCampaignsResponse
-from .types.export_logs_campaigns_response_item import ExportLogsCampaignsResponseItem
 from .types.get_campaigns_response import GetCampaignsResponse
 from .types.list_campaigns_request_sort_field import ListCampaignsRequestSortField
 from .types.list_campaigns_request_sort_order import ListCampaignsRequestSortOrder
@@ -310,44 +309,6 @@ class CampaignsClient:
         )
         """
         _response = self._raw_client.pause(id, request_options=request_options)
-        return _response.data
-
-    def export_logs(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.List[ExportLogsCampaignsResponseItem]:
-        """
-        Streams a JSON file containing every call log for a campaign.
-
-        Response is a **file download** (`Content-Disposition: attachment`), not the
-        standard `{status, data}` envelope. Body is a raw JSON array of log objects.
-        When the relay-service is configured and reachable, each row also includes an
-        `events` array; otherwise the field is omitted.
-
-        Parameters
-        ----------
-        id : str
-            Campaign ID.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[ExportLogsCampaignsResponseItem]
-            Campaign-logs JSON file. `Content-Disposition: attachment; filename=campaign-logs-<campaignName>-<createdAt>.json`.
-
-        Examples
-        --------
-        from smallestai import SmallestAI
-
-        client = SmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-        client.atoms.campaigns.export_logs(
-            id="id",
-        )
-        """
-        _response = self._raw_client.export_logs(id, request_options=request_options)
         return _response.data
 
 
@@ -692,50 +653,4 @@ class AsyncCampaignsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.pause(id, request_options=request_options)
-        return _response.data
-
-    async def export_logs(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.List[ExportLogsCampaignsResponseItem]:
-        """
-        Streams a JSON file containing every call log for a campaign.
-
-        Response is a **file download** (`Content-Disposition: attachment`), not the
-        standard `{status, data}` envelope. Body is a raw JSON array of log objects.
-        When the relay-service is configured and reachable, each row also includes an
-        `events` array; otherwise the field is omitted.
-
-        Parameters
-        ----------
-        id : str
-            Campaign ID.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[ExportLogsCampaignsResponseItem]
-            Campaign-logs JSON file. `Content-Disposition: attachment; filename=campaign-logs-<campaignName>-<createdAt>.json`.
-
-        Examples
-        --------
-        import asyncio
-
-        from smallestai import AsyncSmallestAI
-
-        client = AsyncSmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.atoms.campaigns.export_logs(
-                id="id",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.export_logs(id, request_options=request_options)
         return _response.data

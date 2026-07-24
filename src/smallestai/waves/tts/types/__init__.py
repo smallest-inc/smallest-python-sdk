@@ -2,3 +2,55 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .tts_request_message import TtsRequestMessage
+    from .tts_request_message_language import TtsRequestMessageLanguage
+    from .tts_request_message_model import TtsRequestMessageModel
+    from .tts_request_message_number_pronunciation_language import TtsRequestMessageNumberPronunciationLanguage
+    from .tts_response_message import TtsResponseMessage
+    from .tts_response_message_data import TtsResponseMessageData
+    from .tts_response_message_status import TtsResponseMessageStatus
+_dynamic_imports: typing.Dict[str, str] = {
+    "TtsRequestMessage": ".tts_request_message",
+    "TtsRequestMessageLanguage": ".tts_request_message_language",
+    "TtsRequestMessageModel": ".tts_request_message_model",
+    "TtsRequestMessageNumberPronunciationLanguage": ".tts_request_message_number_pronunciation_language",
+    "TtsResponseMessage": ".tts_response_message",
+    "TtsResponseMessageData": ".tts_response_message_data",
+    "TtsResponseMessageStatus": ".tts_response_message_status",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "TtsRequestMessage",
+    "TtsRequestMessageLanguage",
+    "TtsRequestMessageModel",
+    "TtsRequestMessageNumberPronunciationLanguage",
+    "TtsResponseMessage",
+    "TtsResponseMessageData",
+    "TtsResponseMessageStatus",
+]
