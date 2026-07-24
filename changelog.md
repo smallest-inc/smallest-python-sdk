@@ -1,3 +1,25 @@
+## 5.2.0 - 2026-07-24
+
+Agent Versioning v2 (branch/revision API) + new namespaces, plus an ergonomic versioning helper.
+Additive; generator pinned to 5.12.12.
+
+* **Agent Versioning v2** — new `agent_versioning_branches` (`create_branch`, `list`, `get`,
+  `rename`, `archive`, `make_live`, `get_draft`, `update_draft`, `discard_draft`, `publish_draft`,
+  `cancel_publish`, `test_call`) and `agent_versioning_revisions` (`list`, `get`, `get_history`,
+  `restore`, `diff`) clients. `update_draft` takes typed config kwargs (`global_prompt`,
+  `first_message`, `synthesizer`, …). The v1 `agent_versioning_drafts`/`agent_versioning_versions`
+  write endpoints are deprecated under the branch model (they return `409
+  versioning_v2_migration_required`).
+* **Versioning helper** (`from smallestai.atoms.helpers import Versioning`): `publish_and_wait` /
+  `wait_for_commit` (publishing runs a security scan asynchronously — this polls until the revision
+  is `published`), `edit_and_publish` (one-call config edit), and typed conflict handling
+  (`DraftConflictError`, `MigrationRequiredError`, `BaseRevisionUnavailableError`).
+* **New namespaces**: `call_actions`, `integrations`, `concurrency`, `disposition_metric_templates`,
+  `realtime`.
+* Generator: `exclude_types_from_init_exports` flipped to `false`.
+* Verified live end-to-end against `api.smallest.ai` (fork → edit → publish → scan → test-call →
+  make-live → restore), via both raw endpoints and the generated SDK.
+
 ## 5.1.1 - 2026-07-15
 
 Patch — fix the streaming-TTS compat shim (`WavesStreamingTTS`/`TTSConfig`).

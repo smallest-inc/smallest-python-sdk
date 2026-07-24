@@ -2,11 +2,66 @@
 
 # isort: skip_file
 
-# .fernignore-preserved: generator 5.12.12 strips sub-package type exports
-# (exclude_types_from_init_exports), but the generated wire test imports this type
-# from the package root. Re-export it so `from smallestai.atoms.webhooks import
-# CreateWebhooksRequestEventsItem` works and the wire test passes.
-# See SDK_ESCALATIONS.log [1] + memory generator-config-needs-regen-proof.
-from .types.create_webhooks_request_events_item import CreateWebhooksRequestEventsItem
+import typing
+from importlib import import_module
 
-__all__ = ["CreateWebhooksRequestEventsItem"]
+if typing.TYPE_CHECKING:
+    from .types import (
+        CreateWebhooksRequestEventsItem,
+        CreateWebhooksRequestEventsItemEventType,
+        CreateWebhooksResponse,
+        DeleteAgentAgentIdWebhookSubscriptionsResponse,
+        DeleteWebhooksResponse,
+        GetAgentAgentIdWebhookSubscriptionsResponse,
+        GetWebhookResponse,
+        GetWebhookResponseData,
+        PostAgentAgentIdWebhookSubscriptionsRequestEventTypesItem,
+        PostAgentAgentIdWebhookSubscriptionsResponse,
+    )
+_dynamic_imports: typing.Dict[str, str] = {
+    "CreateWebhooksRequestEventsItem": ".types",
+    "CreateWebhooksRequestEventsItemEventType": ".types",
+    "CreateWebhooksResponse": ".types",
+    "DeleteAgentAgentIdWebhookSubscriptionsResponse": ".types",
+    "DeleteWebhooksResponse": ".types",
+    "GetAgentAgentIdWebhookSubscriptionsResponse": ".types",
+    "GetWebhookResponse": ".types",
+    "GetWebhookResponseData": ".types",
+    "PostAgentAgentIdWebhookSubscriptionsRequestEventTypesItem": ".types",
+    "PostAgentAgentIdWebhookSubscriptionsResponse": ".types",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "CreateWebhooksRequestEventsItem",
+    "CreateWebhooksRequestEventsItemEventType",
+    "CreateWebhooksResponse",
+    "DeleteAgentAgentIdWebhookSubscriptionsResponse",
+    "DeleteWebhooksResponse",
+    "GetAgentAgentIdWebhookSubscriptionsResponse",
+    "GetWebhookResponse",
+    "GetWebhookResponseData",
+    "PostAgentAgentIdWebhookSubscriptionsRequestEventTypesItem",
+    "PostAgentAgentIdWebhookSubscriptionsResponse",
+]

@@ -13,17 +13,15 @@ src/smallestai/waves/stream_tts.py
 src/smallestai/waves/types/sample_rate.py
 
 # Files with non-IR-expressible customizations
-# (shim block in waves/__init__.py; SampleRate type override in client.py/raw_client.py)
+# (shim block in waves/__init__.py lazy-loads the WavesStreamingTTS compat shim).
+# client.py/raw_client.py are now regen-owned: the unified `tts` client streams bytes
+# natively (verified 282KB audio on prod), so the old SampleRate/streaming override is
+# obsolete. Dropped from .fernignore in 5.2.0 so future regens keep them current.
 src/smallestai/waves/__init__.py
-src/smallestai/waves/client.py
-src/smallestai/waves/raw_client.py
 
-# Sub-package __init__ type re-exports: generator 5.12.12 strips sub-package type
-# exports (exclude_types_from_init_exports), but generated wire tests import these
-# types from the package root. Preserve the re-exports. See SDK_ESCALATIONS.log [1].
-src/smallestai/atoms/webhooks/__init__.py
-src/smallestai/atoms/prompt_scoring/__init__.py
-src/smallestai/atoms/__init__.py
+# (Sub-package __init__ stopgaps removed in 5.2.0: exclude_types_from_init_exports
+#  was flipped to false, so the generator now exports these types natively and the
+#  hand-written re-export stopgaps are obsolete. See SDK_ESCALATIONS.log [8].)
 
 # Customer-owned CI / release automation
 .github/workflows/**
