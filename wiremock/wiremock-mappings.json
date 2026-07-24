@@ -33,38 +33,6 @@
       "postServeActions": []
     },
     {
-      "id": "518bdac0-6c3e-4e8e-be47-41ef25f575df",
-      "name": "Get caller's subscription + plan limits + feature flags - default",
-      "request": {
-        "urlPathTemplate": "/user/subscription",
-        "method": "GET",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"planId\": \"planId\",\n    \"limits\": {\n      \"agents\": 1,\n      \"campaigns\": 1,\n      \"numbers\": 1,\n      \"dailyCalls\": 1,\n      \"concurrentCalls\": 1,\n      \"knowledgeBaseItemLimit\": 1,\n      \"knowledgeBaseLimits\": {\n        \"key\": \"value\"\n      }\n    },\n    \"features\": {\n      \"chat\": true,\n      \"telephony\": true,\n      \"campaign\": true,\n      \"webcall\": true,\n      \"knowledge_base\": true,\n      \"integrations\": true,\n      \"webhooks\": true,\n      \"telephony_inbound\": true,\n      \"telephony_outbound\": true,\n      \"waves_lightning\": true,\n      \"waves_lightning_large\": true,\n      \"waves_lightning_large_voice_clone\": true,\n      \"openai_gpt_4o\": true,\n      \"electron\": true,\n      \"workflow_editor\": true\n    }\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "518bdac0-6c3e-4e8e-be47-41ef25f575df",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      },
-      "postServeActions": []
-    },
-    {
       "id": "3142d983-0755-42b2-a57e-8e870c673b42",
       "name": "Get organization details - default",
       "request": {
@@ -95,69 +63,6 @@
         }
       },
       "postServeActions": []
-    },
-    {
-      "id": "e45e67be-1ec4-4196-83bd-8859310299a2",
-      "name": "Get authenticated user + organizations - default",
-      "request": {
-        "urlPathTemplate": "/account/get-account-details",
-        "method": "GET",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"email\": \"email\",\n  \"phone\": \"phone\",\n  \"firstName\": \"firstName\",\n  \"lastName\": \"lastName\",\n  \"userId\": \"userId\",\n  \"picture\": \"picture\",\n  \"organizations\": [\n    {\n      \"orgId\": \"orgId\",\n      \"roleId\": \"roleId\",\n      \"name\": \"name\",\n      \"ownerEmail\": \"ownerEmail\",\n      \"onPremEnabled\": true\n    }\n  ],\n  \"hasOnboarded\": true\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "e45e67be-1ec4-4196-83bd-8859310299a2",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      },
-      "postServeActions": []
-    },
-    {
-      "id": "96640e02-66c6-4ea9-86ad-9c945a20c28a",
-      "name": "Update organization display name - default",
-      "request": {
-        "urlPathTemplate": "/account/update-org-name",
-        "method": "PUT",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"success\": true,\n  \"name\": \"name\"\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "96640e02-66c6-4ea9-86ad-9c945a20c28a",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
     },
     {
       "id": "1100955a-2a1f-45a0-89e1-b536b8bf9553",
@@ -286,6 +191,42 @@
       }
     },
     {
+      "id": "3210590b-c9d0-4ffb-bf7f-960e80930740",
+      "name": "Duplicate agent to another organization - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/duplicate",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"60d0fe4f5311236168a109cb\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "3210590b-c9d0-4ffb-bf7f-960e80930740",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
       "id": "082fb16e-c097-4973-a8ca-d737cccb9340",
       "name": "Get agent by ID - default",
       "request": {
@@ -304,7 +245,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"name\": \"name\",\n    \"description\": \"description\",\n    \"backgroundSound\": \"\",\n    \"organization\": \"organization\",\n    \"workflowId\": \"workflowId\",\n    \"workflowType\": \"workflow_graph\",\n    \"createdBy\": \"createdBy\",\n    \"globalKnowledgeBaseId\": \"globalKnowledgeBaseId\",\n    \"language\": {\n      \"default\": \"en\",\n      \"supported\": [\n        \"supported\"\n      ]\n    },\n    \"synthesizer\": {\n      \"speed\": 1.1,\n      \"consistency\": 1.1,\n      \"similarity\": 1.1,\n      \"enhancement\": 1.1,\n      \"sampleRate\": 1.1\n    },\n    \"slmModel\": \"electron\",\n    \"defaultVariables\": {\n      \"key\": \"value\"\n    },\n    \"preCallAPI\": {\n      \"isEnabled\": true,\n      \"url\": \"url\",\n      \"method\": \"GET\",\n      \"headers\": {\n        \"key\": \"value\"\n      },\n      \"body\": {\n        \"key\": \"value\"\n      },\n      \"timeout\": 1,\n      \"queryParams\": {\n        \"key\": \"value\"\n      },\n      \"responseVariables\": [\n        {\n          \"variableName\": \"variableName\",\n          \"jsonPath\": \"jsonPath\"\n        }\n      ]\n    },\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\",\n    \"avatarUrl\": \"avatarUrl\",\n    \"firstMessage\": \"firstMessage\",\n    \"allowInterruptions\": true,\n    \"waitForUserToSpeakFirst\": true,\n    \"totalCalls\": 1.1,\n    \"transcriberType\": \"transcriberType\",\n    \"globalPrompt\": \"globalPrompt\",\n    \"archived\": true,\n    \"archivedAt\": \"2024-01-15T09:30:00Z\",\n    \"isLocked\": true,\n    \"activeVersionId\": \"activeVersionId\",\n    \"versionId\": \"versionId\",\n    \"allowInboundCall\": true,\n    \"phoneNumber\": [\n      \"phoneNumber\"\n    ],\n    \"visibleToEveryone\": true,\n    \"speechFormatting\": true,\n    \"muteUserUntilFirstBotResponse\": true,\n    \"interruptionBackoffTimer\": 1.1,\n    \"enableStyleGuide\": true,\n    \"callDispositionConfig\": \"callDispositionConfig\",\n    \"voiceMailDetectionConfig\": {\n      \"enabled\": true,\n      \"endText\": \"endText\"\n    },\n    \"smartTurnConfig\": {\n      \"isEnabled\": true,\n      \"waitTimeInSecs\": 1.1\n    },\n    \"voiceDetectionConfig\": {\n      \"confidence\": 1.1,\n      \"minVolume\": 1.1,\n      \"triggerTimeInSecs\": 1.1,\n      \"releaseTimeInSecs\": 1.1\n    },\n    \"denoisingConfig\": {\n      \"isEnabled\": true\n    },\n    \"redactionConfig\": {\n      \"isEnabled\": true\n    },\n    \"pronunciationDicts\": [\n      {\n        \"word\": \"word\",\n        \"pronunciation\": \"pronunciation\"\n      }\n    ],\n    \"llmIdleTimeoutConfig\": {\n      \"chatTimeoutTimeInSecs\": 1.1,\n      \"webcallTimeoutTimeInSecs\": 1.1,\n      \"telephonyTimeoutTimeInSecs\": 1.1,\n      \"maxRetries\": 1.1\n    },\n    \"sessionTimeoutConfig\": {\n      \"timeoutTimeInSecs\": 1.1\n    },\n    \"timezone\": {\n      \"label\": \"label\",\n      \"offset\": 1.1\n    },\n    \"postCallAnalyticsConfig\": {\n      \"dispositionMetrics\": [\n        {\n          \"identifier\": \"call_resolved\",\n          \"dispositionMetricPrompt\": \"Was the customer issue resolved by the end of the call?\",\n          \"dispositionMetricType\": \"STRING\",\n          \"choices\": [\n            \"resolved\",\n            \"escalated\",\n            \"callback_scheduled\",\n            \"no_action\"\n          ]\n        }\n      ],\n      \"useInternalAnalyticsModel\": true,\n      \"useReasoningModel\": true\n    },\n    \"widgetConfig\": {\n      \"position\": \"bottom-right\",\n      \"size\": \"tiny\",\n      \"mode\": \"chat\",\n      \"theme\": \"light\",\n      \"baseColor\": \"baseColor\",\n      \"accentColor\": \"accentColor\",\n      \"agentBubbleColor\": \"agentBubbleColor\",\n      \"textOnAccentColor\": \"textOnAccentColor\",\n      \"secondaryTextColor\": \"secondaryTextColor\",\n      \"primaryTextColor\": \"primaryTextColor\",\n      \"startButtonText\": \"startButtonText\",\n      \"endButtonText\": \"endButtonText\",\n      \"ctaName\": \"ctaName\",\n      \"widgetName\": \"widgetName\",\n      \"avatarUrl\": \"avatarUrl\",\n      \"chatPlaceholder\": \"chatPlaceholder\",\n      \"consentRequired\": true,\n      \"consentTitle\": \"consentTitle\",\n      \"consentContent\": \"consentContent\",\n      \"assistantId\": \"assistantId\",\n      \"allowlist\": [\n        \"allowlist\"\n      ]\n    },\n    \"_resolvedConfig\": {\n      \"prompt\": \"prompt\",\n      \"tools\": [\n        {\n          \"type\": \"end_call\",\n          \"name\": \"end_call\",\n          \"description\": \"End the conversation when the user is satisfied\",\n          \"transferNumber\": \"+1234567890\",\n          \"url\": \"https://api.example.com/orders\",\n          \"headers\": {\n            \"Authorization\": \"Bearer TOKEN\",\n            \"Content-Type\": \"application/json\"\n          },\n          \"headersArray\": [\n            {\n              \"key\": \"Authorization\",\n              \"value\": \"Bearer TOKEN\"\n            }\n          ],\n          \"queryParams\": [\n            {\n              \"key\": \"id\",\n              \"value\": \"{{order_id}}\"\n            }\n          ],\n          \"requestBody\": \"{\\\"customer_id\\\": \\\"{{customer_id}}\\\"}\",\n          \"responseVariables\": [\n            {\n              \"variableName\": \"orderStatus\",\n              \"jsonPath\": \"$.data.status\"\n            }\n          ],\n          \"variablesExtractionSchema\": [\n            {\n              \"name\": \"customer_name\",\n              \"description\": \"The customer's full name\",\n              \"type\": \"text\",\n              \"values\": [\n                \"satisfied\",\n                \"unsatisfied\",\n                \"neutral\"\n              ]\n            }\n          ],\n          \"knowledgeBaseId\": \"60d0fe4f5311236168a109ca\",\n          \"fillerPhrases\": [\n            \"Let me check that for you\",\n            \"One moment please\"\n          ]\n        }\n      ],\n      \"postCallAnalyticsConfig\": {\n        \"dispositionMetrics\": [\n          {\n            \"identifier\": \"call_resolved\",\n            \"dispositionMetricPrompt\": \"Was the customer issue resolved by the end of the call?\",\n            \"dispositionMetricType\": \"STRING\",\n            \"choices\": [\n              \"resolved\",\n              \"escalated\",\n              \"callback_scheduled\",\n              \"no_action\"\n            ]\n          }\n        ]\n      },\n      \"callDispositionConfig\": \"callDispositionConfig\",\n      \"modelName\": \"modelName\",\n      \"transcriberType\": \"transcriberType\",\n      \"defaultLanguage\": \"en\",\n      \"supportedLanguages\": [\n        \"supportedLanguages\"\n      ],\n      \"languageSwitching\": {\n        \"key\": \"value\"\n      },\n      \"firstMessage\": \"firstMessage\",\n      \"globalPrompt\": \"globalPrompt\",\n      \"preCallAPI\": {\n        \"key\": \"value\"\n      },\n      \"workflowGraph\": {\n        \"key\": \"value\"\n      },\n      \"muteUserUntilFirstBotResponse\": true,\n      \"allowInterruptions\": true,\n      \"voiceDetectionConfig\": {\n        \"key\": \"value\"\n      },\n      \"smartTurnConfig\": {\n        \"key\": \"value\"\n      },\n      \"backgroundSound\": \"backgroundSound\",\n      \"denoisingConfig\": {\n        \"key\": \"value\"\n      },\n      \"redactionConfig\": {\n        \"key\": \"value\"\n      },\n      \"llmIdleTimeoutConfig\": {\n        \"key\": \"value\"\n      },\n      \"sessionTimeoutConfig\": {\n        \"key\": \"value\"\n      }\n    },\n    \"_configSource\": \"active\",\n    \"_versionedWorkflow\": {\n      \"prompt\": \"prompt\",\n      \"tools\": [\n        {\n          \"type\": \"end_call\",\n          \"name\": \"end_call\",\n          \"description\": \"End the conversation when the user is satisfied\",\n          \"transferNumber\": \"+1234567890\",\n          \"url\": \"https://api.example.com/orders\",\n          \"headers\": {\n            \"Authorization\": \"Bearer TOKEN\",\n            \"Content-Type\": \"application/json\"\n          },\n          \"headersArray\": [\n            {\n              \"key\": \"Authorization\",\n              \"value\": \"Bearer TOKEN\"\n            }\n          ],\n          \"queryParams\": [\n            {\n              \"key\": \"id\",\n              \"value\": \"{{order_id}}\"\n            }\n          ],\n          \"requestBody\": \"{\\\"customer_id\\\": \\\"{{customer_id}}\\\"}\",\n          \"responseVariables\": [\n            {\n              \"variableName\": \"orderStatus\",\n              \"jsonPath\": \"$.data.status\"\n            }\n          ],\n          \"variablesExtractionSchema\": [\n            {\n              \"name\": \"customer_name\",\n              \"description\": \"The customer's full name\",\n              \"type\": \"text\",\n              \"values\": [\n                \"satisfied\",\n                \"unsatisfied\",\n                \"neutral\"\n              ]\n            }\n          ],\n          \"knowledgeBaseId\": \"60d0fe4f5311236168a109ca\",\n          \"fillerPhrases\": [\n            \"Let me check that for you\",\n            \"One moment please\"\n          ]\n        }\n      ],\n      \"workflowGraph\": {\n        \"key\": \"value\"\n      }\n    }\n  }\n}",
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"name\": \"name\",\n    \"description\": \"description\",\n    \"backgroundSound\": \"\",\n    \"organization\": \"organization\",\n    \"workflowId\": \"workflowId\",\n    \"workflowType\": \"workflow_graph\",\n    \"createdBy\": \"createdBy\",\n    \"globalKnowledgeBaseId\": \"globalKnowledgeBaseId\",\n    \"language\": {\n      \"default\": \"en\",\n      \"supported\": [\n        \"supported\"\n      ]\n    },\n    \"synthesizer\": {\n      \"speed\": 1.1,\n      \"consistency\": 1.1,\n      \"similarity\": 1.1,\n      \"enhancement\": 1.1,\n      \"sampleRate\": 1.1\n    },\n    \"slmModel\": \"electron\",\n    \"defaultVariables\": {\n      \"key\": \"value\"\n    },\n    \"preCallAPI\": {\n      \"isEnabled\": true,\n      \"url\": \"url\",\n      \"method\": \"GET\",\n      \"headers\": {\n        \"key\": \"value\"\n      },\n      \"body\": {\n        \"key\": \"value\"\n      },\n      \"timeout\": 1,\n      \"queryParams\": {\n        \"key\": \"value\"\n      },\n      \"responseVariables\": [\n        {\n          \"variableName\": \"variableName\",\n          \"jsonPath\": \"jsonPath\"\n        }\n      ]\n    },\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\",\n    \"avatarUrl\": \"avatarUrl\",\n    \"firstMessage\": \"firstMessage\",\n    \"allowInterruptions\": true,\n    \"waitForUserToSpeakFirst\": true,\n    \"totalCalls\": 1.1,\n    \"transcriberType\": \"transcriberType\",\n    \"globalPrompt\": \"globalPrompt\",\n    \"archived\": true,\n    \"archivedAt\": \"2024-01-15T09:30:00Z\",\n    \"activeVersionId\": \"activeVersionId\",\n    \"versionId\": \"versionId\",\n    \"allowInboundCall\": true,\n    \"phoneNumber\": [\n      \"phoneNumber\"\n    ],\n    \"visibleToEveryone\": true,\n    \"speechFormatting\": true,\n    \"muteUserUntilFirstBotResponse\": true,\n    \"interruptionBackoffTimer\": 1.1,\n    \"enableStyleGuide\": true,\n    \"callDispositionConfig\": \"callDispositionConfig\",\n    \"voiceMailDetectionConfig\": {\n      \"enabled\": true,\n      \"endText\": \"endText\"\n    },\n    \"smartTurnConfig\": {\n      \"isEnabled\": true,\n      \"waitTimeInSecs\": 1.1\n    },\n    \"voiceDetectionConfig\": {\n      \"confidence\": 1.1,\n      \"minVolume\": 1.1,\n      \"triggerTimeInSecs\": 1.1,\n      \"releaseTimeInSecs\": 1.1\n    },\n    \"denoisingConfig\": {\n      \"isEnabled\": true\n    },\n    \"redactionConfig\": {\n      \"isEnabled\": true\n    },\n    \"pronunciationDicts\": [\n      {\n        \"word\": \"word\",\n        \"pronunciation\": \"pronunciation\"\n      }\n    ],\n    \"llmIdleTimeoutConfig\": {\n      \"chatTimeoutTimeInSecs\": 1.1,\n      \"webcallTimeoutTimeInSecs\": 1.1,\n      \"telephonyTimeoutTimeInSecs\": 1.1,\n      \"maxRetries\": 1.1\n    },\n    \"sessionTimeoutConfig\": {\n      \"timeoutTimeInSecs\": 1.1\n    },\n    \"timezone\": {\n      \"label\": \"label\",\n      \"offset\": 1.1\n    },\n    \"postCallAnalyticsConfig\": {\n      \"dispositionMetrics\": [\n        {\n          \"identifier\": \"call_resolved\",\n          \"dispositionMetricPrompt\": \"Was the customer issue resolved by the end of the call?\",\n          \"dispositionMetricType\": \"STRING\",\n          \"choices\": [\n            \"resolved\",\n            \"escalated\",\n            \"callback_scheduled\",\n            \"no_action\"\n          ]\n        }\n      ],\n      \"useInternalAnalyticsModel\": true,\n      \"useReasoningModel\": true\n    },\n    \"widgetConfig\": {\n      \"position\": \"bottom-right\",\n      \"size\": \"tiny\",\n      \"mode\": \"chat\",\n      \"theme\": \"light\",\n      \"baseColor\": \"baseColor\",\n      \"accentColor\": \"accentColor\",\n      \"agentBubbleColor\": \"agentBubbleColor\",\n      \"textOnAccentColor\": \"textOnAccentColor\",\n      \"secondaryTextColor\": \"secondaryTextColor\",\n      \"primaryTextColor\": \"primaryTextColor\",\n      \"startButtonText\": \"startButtonText\",\n      \"endButtonText\": \"endButtonText\",\n      \"ctaName\": \"ctaName\",\n      \"widgetName\": \"widgetName\",\n      \"avatarUrl\": \"avatarUrl\",\n      \"chatPlaceholder\": \"chatPlaceholder\",\n      \"consentRequired\": true,\n      \"consentTitle\": \"consentTitle\",\n      \"consentContent\": \"consentContent\",\n      \"assistantId\": \"assistantId\",\n      \"allowlist\": [\n        \"allowlist\"\n      ]\n    },\n    \"_resolvedConfig\": {\n      \"prompt\": \"prompt\",\n      \"tools\": [\n        {\n          \"type\": \"end_call\",\n          \"name\": \"end_call\",\n          \"description\": \"End the conversation when the user is satisfied\",\n          \"transferNumber\": \"+1234567890\",\n          \"url\": \"https://api.example.com/orders\",\n          \"headers\": {\n            \"Authorization\": \"Bearer TOKEN\",\n            \"Content-Type\": \"application/json\"\n          },\n          \"headersArray\": [\n            {\n              \"key\": \"Authorization\",\n              \"value\": \"Bearer TOKEN\"\n            }\n          ],\n          \"queryParams\": [\n            {\n              \"key\": \"id\",\n              \"value\": \"{{order_id}}\"\n            }\n          ],\n          \"requestBody\": \"{\\\"customer_id\\\": \\\"{{customer_id}}\\\"}\",\n          \"responseVariables\": [\n            {\n              \"variableName\": \"orderStatus\",\n              \"jsonPath\": \"$.data.status\"\n            }\n          ],\n          \"variablesExtractionSchema\": [\n            {\n              \"name\": \"customer_name\",\n              \"description\": \"The customer's full name\",\n              \"type\": \"text\",\n              \"values\": [\n                \"satisfied\",\n                \"unsatisfied\",\n                \"neutral\"\n              ]\n            }\n          ],\n          \"knowledgeBaseId\": \"60d0fe4f5311236168a109ca\",\n          \"fillerPhrases\": [\n            \"Let me check that for you\",\n            \"One moment please\"\n          ]\n        }\n      ],\n      \"postCallAnalyticsConfig\": {\n        \"dispositionMetrics\": [\n          {\n            \"identifier\": \"call_resolved\",\n            \"dispositionMetricPrompt\": \"Was the customer issue resolved by the end of the call?\",\n            \"dispositionMetricType\": \"STRING\",\n            \"choices\": [\n              \"resolved\",\n              \"escalated\",\n              \"callback_scheduled\",\n              \"no_action\"\n            ]\n          }\n        ]\n      },\n      \"callDispositionConfig\": \"callDispositionConfig\",\n      \"modelName\": \"modelName\",\n      \"transcriberType\": \"transcriberType\",\n      \"defaultLanguage\": \"en\",\n      \"supportedLanguages\": [\n        \"supportedLanguages\"\n      ],\n      \"languageSwitching\": {\n        \"key\": \"value\"\n      },\n      \"firstMessage\": \"firstMessage\",\n      \"globalPrompt\": \"globalPrompt\",\n      \"preCallAPI\": {\n        \"key\": \"value\"\n      },\n      \"workflowGraph\": {\n        \"key\": \"value\"\n      },\n      \"muteUserUntilFirstBotResponse\": true,\n      \"allowInterruptions\": true,\n      \"voiceDetectionConfig\": {\n        \"key\": \"value\"\n      },\n      \"smartTurnConfig\": {\n        \"key\": \"value\"\n      },\n      \"backgroundSound\": \"backgroundSound\",\n      \"denoisingConfig\": {\n        \"key\": \"value\"\n      },\n      \"redactionConfig\": {\n        \"key\": \"value\"\n      },\n      \"llmIdleTimeoutConfig\": {\n        \"key\": \"value\"\n      },\n      \"sessionTimeoutConfig\": {\n        \"key\": \"value\"\n      }\n    },\n    \"_configSource\": \"active\",\n    \"_versionedWorkflow\": {\n      \"prompt\": \"prompt\",\n      \"tools\": [\n        {\n          \"type\": \"end_call\",\n          \"name\": \"end_call\",\n          \"description\": \"End the conversation when the user is satisfied\",\n          \"transferNumber\": \"+1234567890\",\n          \"url\": \"https://api.example.com/orders\",\n          \"headers\": {\n            \"Authorization\": \"Bearer TOKEN\",\n            \"Content-Type\": \"application/json\"\n          },\n          \"headersArray\": [\n            {\n              \"key\": \"Authorization\",\n              \"value\": \"Bearer TOKEN\"\n            }\n          ],\n          \"queryParams\": [\n            {\n              \"key\": \"id\",\n              \"value\": \"{{order_id}}\"\n            }\n          ],\n          \"requestBody\": \"{\\\"customer_id\\\": \\\"{{customer_id}}\\\"}\",\n          \"responseVariables\": [\n            {\n              \"variableName\": \"orderStatus\",\n              \"jsonPath\": \"$.data.status\"\n            }\n          ],\n          \"variablesExtractionSchema\": [\n            {\n              \"name\": \"customer_name\",\n              \"description\": \"The customer's full name\",\n              \"type\": \"text\",\n              \"values\": [\n                \"satisfied\",\n                \"unsatisfied\",\n                \"neutral\"\n              ]\n            }\n          ],\n          \"knowledgeBaseId\": \"60d0fe4f5311236168a109ca\",\n          \"fillerPhrases\": [\n            \"Let me check that for you\",\n            \"One moment please\"\n          ]\n        }\n      ],\n      \"workflowGraph\": {\n        \"key\": \"value\"\n      }\n    }\n  }\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -358,6 +299,150 @@
       }
     },
     {
+      "id": "28dfba80-4c28-4bbf-adb1-509f91e93511",
+      "name": "Get widget configuration - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/widget-config",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"assistantId\": \"assistantId\",\n    \"position\": \"bottom-right\",\n    \"size\": \"tiny\",\n    \"borderRadius\": 1.1,\n    \"mode\": \"chat\",\n    \"theme\": \"light\",\n    \"baseColor\": \"baseColor\",\n    \"accentColor\": \"accentColor\",\n    \"title\": \"title\",\n    \"startButtonText\": \"startButtonText\",\n    \"endButtonText\": \"endButtonText\",\n    \"avatarUrl\": \"avatarUrl\",\n    \"voiceShowTranscript\": true,\n    \"consentRequired\": true\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "28dfba80-4c28-4bbf-adb1-509f91e93511",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "a3147775-2206-4de1-889b-5390dacb7ec3",
+      "name": "Update widget configuration - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/widget-config",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"key\": \"value\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "a3147775-2206-4de1-889b-5390dacb7ec3",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "f14ee553-4809-4987-94bf-a2396a7fc00d",
+      "name": "Get avatar upload URL - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/avatar/presigned-url",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"presignedUrl\": \"presignedUrl\",\n    \"cdnUrl\": \"cdnUrl\",\n    \"key\": \"key\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "f14ee553-4809-4987-94bf-a2396a7fc00d",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "8e6d23ea-b98e-409c-8d95-0525c9d67350",
+      "name": "Get agent call logs - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/call-logs",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"callLogs\": [\n      {}\n    ],\n    \"totalCount\": 1.1,\n    \"page\": 1.1,\n    \"offset\": 1.1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "8e6d23ea-b98e-409c-8d95-0525c9d67350",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
       "id": "25c363b2-c864-42fb-a287-4dfe08d8f415",
       "name": "Archive or unarchive an agent - default",
       "request": {
@@ -394,118 +479,10 @@
       }
     },
     {
-      "id": "3210590b-c9d0-4ffb-bf7f-960e80930740",
-      "name": "Duplicate agent to another organization - default",
+      "id": "c04e81c5-80ee-4829-a45a-4390ca4cc3ab",
+      "name": "Register a realtime agent call - default",
       "request": {
-        "urlPathTemplate": "/agent/{id}/duplicate",
-        "method": "POST",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        },
-        "pathParameters": {
-          "id": {
-            "equalTo": "id"
-          }
-        }
-      },
-      "response": {
-        "status": 201,
-        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"60d0fe4f5311236168a109cb\"\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "3210590b-c9d0-4ffb-bf7f-960e80930740",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "24a71b84-4392-4201-9b9f-7e672c1a6662",
-      "name": "Get agent workflow - default",
-      "request": {
-        "urlPathTemplate": "/agent/{id}/workflow",
-        "method": "GET",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        },
-        "pathParameters": {
-          "id": {
-            "equalTo": "id"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"prompt\": \"prompt\",\n    \"tools\": [\n      {\n        \"type\": \"end_call\",\n        \"name\": \"end_call\",\n        \"description\": \"End the conversation when the user is satisfied\",\n        \"transferNumber\": \"+1234567890\",\n        \"url\": \"https://api.example.com/orders\",\n        \"headers\": {\n          \"Authorization\": \"Bearer TOKEN\",\n          \"Content-Type\": \"application/json\"\n        },\n        \"headersArray\": [\n          {\n            \"key\": \"Authorization\",\n            \"value\": \"Bearer TOKEN\"\n          }\n        ],\n        \"queryParams\": [\n          {\n            \"key\": \"id\",\n            \"value\": \"{{order_id}}\"\n          }\n        ],\n        \"requestBody\": \"{\\\"customer_id\\\": \\\"{{customer_id}}\\\"}\",\n        \"responseVariables\": [\n          {\n            \"variableName\": \"orderStatus\",\n            \"jsonPath\": \"$.data.status\"\n          }\n        ],\n        \"variablesExtractionSchema\": [\n          {\n            \"name\": \"customer_name\",\n            \"description\": \"The customer's full name\",\n            \"type\": \"text\",\n            \"values\": [\n              \"satisfied\",\n              \"unsatisfied\",\n              \"neutral\"\n            ]\n          }\n        ],\n        \"knowledgeBaseId\": \"60d0fe4f5311236168a109ca\",\n        \"fillerPhrases\": [\n          \"Let me check that for you\",\n          \"One moment please\"\n        ]\n      }\n    ],\n    \"type\": \"workflow_graph\",\n    \"data\": {\n      \"nodes\": [\n        {}\n      ],\n      \"edges\": [\n        {}\n      ]\n    }\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "24a71b84-4392-4201-9b9f-7e672c1a6662",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "bcd0cab9-501c-4dba-ab50-31b159dbc68b",
-      "name": "Update workflow configuration - default",
-      "request": {
-        "urlPathTemplate": "/workflow/{id}",
-        "method": "PATCH",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        },
-        "pathParameters": {
-          "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "\"\"",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "bcd0cab9-501c-4dba-ab50-31b159dbc68b",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "d7d9d0f0-c6fb-492b-9409-833a40a406c6",
-      "name": "Create agent with AI brief - default",
-      "request": {
-        "urlPathTemplate": "/agent/with-ai",
+        "urlPathTemplate": "/conversation/register-call",
         "method": "POST",
         "headers": {
           "Authorization": {
@@ -515,12 +492,12 @@
       },
       "response": {
         "status": 201,
-        "body": "{\n  \"status\": true,\n  \"data\": \"60d0fe4f5311236168a109ca\"\n}",
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"access_token\": \"wct_9f8c2b1e-4d5a-4e6f-a7b8-c9d0e1f2a3b4\",\n    \"expires_in\": 30,\n    \"sample_rate\": 24000\n  }\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "d7d9d0f0-c6fb-492b-9409-833a40a406c6",
+      "uuid": "c04e81c5-80ee-4829-a45a-4390ca4cc3ab",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -531,146 +508,6 @@
           }
         }
       }
-    },
-    {
-      "id": "68618a7e-0429-4aa5-9e98-0dbd3c0ce1da",
-      "name": "Get conversation logs for an agent - default",
-      "request": {
-        "urlPathTemplate": "/agent/{id}/call-logs",
-        "method": "GET",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        },
-        "pathParameters": {
-          "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"callLogs\": [\n      {}\n    ],\n    \"pagination\": {\n      \"currentPage\": 1,\n      \"totalPages\": 1,\n      \"totalCount\": 1,\n      \"offset\": 1\n    }\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "68618a7e-0429-4aa5-9e98-0dbd3c0ce1da",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "c6014ed5-e8dd-4537-824d-a07ac4c44e18",
-      "name": "Get widget configuration for an agent - default",
-      "request": {
-        "urlPathTemplate": "/agent/{id}/widget-config",
-        "method": "GET",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        },
-        "pathParameters": {
-          "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"position\": \"bottom-right\",\n    \"size\": \"tiny\",\n    \"borderRadius\": 1.1,\n    \"mode\": \"chat\",\n    \"theme\": \"light\",\n    \"baseColor\": \"baseColor\",\n    \"accentColor\": \"accentColor\",\n    \"agentBubbleColor\": \"agentBubbleColor\",\n    \"textOnAccentColor\": \"textOnAccentColor\",\n    \"secondaryTextColor\": \"secondaryTextColor\",\n    \"primaryTextColor\": \"primaryTextColor\",\n    \"title\": \"title\",\n    \"startButtonText\": \"startButtonText\",\n    \"endButtonText\": \"endButtonText\",\n    \"ctaTitle\": \"ctaTitle\",\n    \"ctaSubtitle\": \"ctaSubtitle\",\n    \"ctaName\": \"ctaName\",\n    \"widgetName\": \"widgetName\",\n    \"avatarUrl\": \"avatarUrl\",\n    \"voiceEmptyMessage\": \"voiceEmptyMessage\",\n    \"voiceActiveEmptyMessage\": \"voiceActiveEmptyMessage\",\n    \"chatEmptyMessage\": \"chatEmptyMessage\",\n    \"chatFirstMessage\": \"chatFirstMessage\",\n    \"chatPlaceholder\": \"chatPlaceholder\",\n    \"voiceShowTranscript\": true,\n    \"consentRequired\": true,\n    \"consentTitle\": \"consentTitle\",\n    \"consentContent\": \"consentContent\",\n    \"consentStorageKey\": \"consentStorageKey\",\n    \"publicKey\": \"publicKey\",\n    \"assistantId\": \"assistantId\",\n    \"allowlist\": [\n      \"allowlist\"\n    ]\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "c6014ed5-e8dd-4537-824d-a07ac4c44e18",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "49dc3f3f-8c33-42df-8d71-a300d9f04b59",
-      "name": "Update widget configuration for an agent - default",
-      "request": {
-        "urlPathTemplate": "/agent/{id}/widget-config",
-        "method": "PATCH",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        },
-        "pathParameters": {
-          "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"position\": \"bottom-right\",\n    \"size\": \"tiny\",\n    \"borderRadius\": 1.1,\n    \"mode\": \"chat\",\n    \"theme\": \"light\",\n    \"baseColor\": \"baseColor\",\n    \"accentColor\": \"accentColor\",\n    \"agentBubbleColor\": \"agentBubbleColor\",\n    \"textOnAccentColor\": \"textOnAccentColor\",\n    \"secondaryTextColor\": \"secondaryTextColor\",\n    \"primaryTextColor\": \"primaryTextColor\",\n    \"title\": \"title\",\n    \"startButtonText\": \"startButtonText\",\n    \"endButtonText\": \"endButtonText\",\n    \"ctaTitle\": \"ctaTitle\",\n    \"ctaSubtitle\": \"ctaSubtitle\",\n    \"ctaName\": \"ctaName\",\n    \"widgetName\": \"widgetName\",\n    \"avatarUrl\": \"avatarUrl\",\n    \"voiceEmptyMessage\": \"voiceEmptyMessage\",\n    \"voiceActiveEmptyMessage\": \"voiceActiveEmptyMessage\",\n    \"chatEmptyMessage\": \"chatEmptyMessage\",\n    \"chatFirstMessage\": \"chatFirstMessage\",\n    \"chatPlaceholder\": \"chatPlaceholder\",\n    \"voiceShowTranscript\": true,\n    \"consentRequired\": true,\n    \"consentTitle\": \"consentTitle\",\n    \"consentContent\": \"consentContent\",\n    \"consentStorageKey\": \"consentStorageKey\",\n    \"publicKey\": \"publicKey\",\n    \"assistantId\": \"assistantId\",\n    \"allowlist\": [\n      \"allowlist\"\n    ]\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "49dc3f3f-8c33-42df-8d71-a300d9f04b59",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "2cecf2d1-fc91-431d-9a4d-2648cce2b40f",
-      "name": "Get prompt-config metadata (question definitions + labels) - default",
-      "request": {
-        "urlPathTemplate": "/agent/prompt-config",
-        "method": "GET",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"questions\": [\n      {}\n    ],\n    \"exampleLabels\": [\n      \"exampleLabels\"\n    ],\n    \"defaultLabel\": \"defaultLabel\"\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "2cecf2d1-fc91-431d-9a4d-2648cce2b40f",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      },
-      "postServeActions": []
     },
     {
       "id": "6447319e-1409-4d0d-b668-1def86a791ff",
@@ -783,7 +620,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"60d0fe4f5311236168a109ca\",\n    \"callId\": \"CALL-1737000000000-abc123\",\n    \"agent\": {\n      \"_id\": \"_id\",\n      \"name\": \"name\",\n      \"description\": \"description\",\n      \"backgroundSound\": \"\",\n      \"organization\": \"organization\",\n      \"workflowId\": \"workflowId\",\n      \"workflowType\": \"workflow_graph\",\n      \"createdBy\": \"createdBy\",\n      \"globalKnowledgeBaseId\": \"globalKnowledgeBaseId\",\n      \"slmModel\": \"electron\",\n      \"defaultVariables\": {\n        \"key\": \"value\"\n      },\n      \"preCallAPI\": {\n        \"url\": \"url\",\n        \"method\": \"GET\"\n      },\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\",\n      \"avatarUrl\": \"avatarUrl\",\n      \"firstMessage\": \"firstMessage\",\n      \"allowInterruptions\": true,\n      \"waitForUserToSpeakFirst\": true,\n      \"totalCalls\": 1.1,\n      \"transcriberType\": \"transcriberType\",\n      \"globalPrompt\": \"globalPrompt\",\n      \"archived\": true,\n      \"archivedAt\": \"2024-01-15T09:30:00Z\",\n      \"isLocked\": true,\n      \"activeVersionId\": \"activeVersionId\",\n      \"versionId\": \"versionId\",\n      \"allowInboundCall\": true,\n      \"phoneNumber\": [\n        \"phoneNumber\"\n      ],\n      \"visibleToEveryone\": true,\n      \"speechFormatting\": true,\n      \"muteUserUntilFirstBotResponse\": true,\n      \"interruptionBackoffTimer\": 1.1,\n      \"enableStyleGuide\": true,\n      \"callDispositionConfig\": \"callDispositionConfig\",\n      \"pronunciationDicts\": [\n        {\n          \"word\": \"word\",\n          \"pronunciation\": \"pronunciation\"\n        }\n      ],\n      \"postCallAnalyticsConfig\": {\n        \"dispositionMetrics\": [\n          {\n            \"identifier\": \"call_resolved\",\n            \"dispositionMetricPrompt\": \"Was the customer issue resolved by the end of the call?\",\n            \"dispositionMetricType\": \"STRING\",\n            \"choices\": [\n              \"resolved\",\n              \"escalated\",\n              \"callback_scheduled\",\n              \"no_action\"\n            ]\n          }\n        ]\n      },\n      \"_resolvedConfig\": {\n        \"tools\": [\n          {\n            \"type\": \"end_call\",\n            \"name\": \"end_call\",\n            \"description\": \"End the conversation when the user is satisfied\",\n            \"transferNumber\": \"+1234567890\",\n            \"url\": \"https://api.example.com/orders\",\n            \"headers\": {\n              \"Authorization\": \"Bearer TOKEN\",\n              \"Content-Type\": \"application/json\"\n            },\n            \"headersArray\": [\n              {\n                \"key\": \"Authorization\",\n                \"value\": \"Bearer TOKEN\"\n              }\n            ],\n            \"queryParams\": [\n              {\n                \"key\": \"id\",\n                \"value\": \"{{order_id}}\"\n              }\n            ],\n            \"requestBody\": \"{\\\"customer_id\\\": \\\"{{customer_id}}\\\"}\",\n            \"responseVariables\": [\n              {\n                \"variableName\": \"orderStatus\",\n                \"jsonPath\": \"$.data.status\"\n              }\n            ],\n            \"variablesExtractionSchema\": [\n              {\n                \"name\": \"customer_name\",\n                \"description\": \"The customer's full name\",\n                \"type\": \"text\",\n                \"values\": [\n                  \"satisfied\",\n                  \"unsatisfied\",\n                  \"neutral\"\n                ]\n              }\n            ],\n            \"knowledgeBaseId\": \"60d0fe4f5311236168a109ca\",\n            \"fillerPhrases\": [\n              \"Let me check that for you\",\n              \"One moment please\"\n            ]\n          }\n        ],\n        \"postCallAnalyticsConfig\": {\n          \"dispositionMetrics\": [\n            {\n              \"identifier\": \"call_resolved\",\n              \"dispositionMetricPrompt\": \"Was the customer issue resolved by the end of the call?\",\n              \"dispositionMetricType\": \"STRING\",\n              \"choices\": [\n                \"resolved\",\n                \"escalated\",\n                \"callback_scheduled\",\n                \"no_action\"\n              ]\n            }\n          ]\n        }\n      },\n      \"_configSource\": \"active\",\n      \"_versionedWorkflow\": {\n        \"tools\": [\n          {\n            \"type\": \"end_call\",\n            \"name\": \"end_call\",\n            \"description\": \"End the conversation when the user is satisfied\",\n            \"transferNumber\": \"+1234567890\",\n            \"url\": \"https://api.example.com/orders\",\n            \"headers\": {\n              \"Authorization\": \"Bearer TOKEN\",\n              \"Content-Type\": \"application/json\"\n            },\n            \"headersArray\": [\n              {\n                \"key\": \"Authorization\",\n                \"value\": \"Bearer TOKEN\"\n              }\n            ],\n            \"queryParams\": [\n              {\n                \"key\": \"id\",\n                \"value\": \"{{order_id}}\"\n              }\n            ],\n            \"requestBody\": \"{\\\"customer_id\\\": \\\"{{customer_id}}\\\"}\",\n            \"responseVariables\": [\n              {\n                \"variableName\": \"orderStatus\",\n                \"jsonPath\": \"$.data.status\"\n              }\n            ],\n            \"variablesExtractionSchema\": [\n              {\n                \"name\": \"customer_name\",\n                \"description\": \"The customer's full name\",\n                \"type\": \"text\",\n                \"values\": [\n                  \"satisfied\",\n                  \"unsatisfied\",\n                  \"neutral\"\n                ]\n              }\n            ],\n            \"knowledgeBaseId\": \"60d0fe4f5311236168a109ca\",\n            \"fillerPhrases\": [\n              \"Let me check that for you\",\n              \"One moment please\"\n            ]\n          }\n        ]\n      }\n    },\n    \"status\": \"pending\",\n    \"duration\": 300,\n    \"recordingUrl\": \"recordingUrl\",\n    \"recordingDualUrl\": \"recordingDualUrl\",\n    \"from\": \"from\",\n    \"to\": \"to\",\n    \"type\": \"telephony_inbound\",\n    \"transcript\": [\n      {}\n    ],\n    \"variables\": {\n      \"key\": \"value\"\n    },\n    \"events\": [\n      {\n        \"key\": \"value\"\n      }\n    ],\n    \"callCost\": 1.1,\n    \"callFailureReason\": \"callFailureReason\",\n    \"retryCallId\": \"retryCallId\",\n    \"postCallAnalytics\": {\n      \"summary\": \"summary\",\n      \"dispositionMetrics\": [\n        {}\n      ]\n    },\n    \"turnLatencyMetrics\": {\n      \"turns\": 1.1,\n      \"avgLatency\": 1.1,\n      \"medianLatency\": 1.1,\n      \"minLatency\": 1.1,\n      \"maxLatency\": 1.1,\n      \"latencies\": [\n        1.1\n      ],\n      \"transitions\": [\n        {}\n      ],\n      \"processedAt\": \"2024-01-15T09:30:00Z\"\n    },\n    \"voiceConfigUsed\": {\n      \"model\": \"model\",\n      \"voiceId\": \"voiceId\",\n      \"gender\": \"gender\"\n    },\n    \"slmModelUsed\": \"slmModelUsed\"\n  }\n}",
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"60d0fe4f5311236168a109ca\",\n    \"callId\": \"CALL-1737000000000-abc123\",\n    \"agent\": {\n      \"_id\": \"_id\",\n      \"name\": \"name\",\n      \"description\": \"description\",\n      \"backgroundSound\": \"\",\n      \"organization\": \"organization\",\n      \"workflowId\": \"workflowId\",\n      \"workflowType\": \"workflow_graph\",\n      \"createdBy\": \"createdBy\",\n      \"globalKnowledgeBaseId\": \"globalKnowledgeBaseId\",\n      \"slmModel\": \"electron\",\n      \"defaultVariables\": {\n        \"key\": \"value\"\n      },\n      \"preCallAPI\": {\n        \"url\": \"url\",\n        \"method\": \"GET\"\n      },\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\",\n      \"avatarUrl\": \"avatarUrl\",\n      \"firstMessage\": \"firstMessage\",\n      \"allowInterruptions\": true,\n      \"waitForUserToSpeakFirst\": true,\n      \"totalCalls\": 1.1,\n      \"transcriberType\": \"transcriberType\",\n      \"globalPrompt\": \"globalPrompt\",\n      \"archived\": true,\n      \"archivedAt\": \"2024-01-15T09:30:00Z\",\n      \"activeVersionId\": \"activeVersionId\",\n      \"versionId\": \"versionId\",\n      \"allowInboundCall\": true,\n      \"phoneNumber\": [\n        \"phoneNumber\"\n      ],\n      \"visibleToEveryone\": true,\n      \"speechFormatting\": true,\n      \"muteUserUntilFirstBotResponse\": true,\n      \"interruptionBackoffTimer\": 1.1,\n      \"enableStyleGuide\": true,\n      \"callDispositionConfig\": \"callDispositionConfig\",\n      \"pronunciationDicts\": [\n        {\n          \"word\": \"word\",\n          \"pronunciation\": \"pronunciation\"\n        }\n      ],\n      \"postCallAnalyticsConfig\": {\n        \"dispositionMetrics\": [\n          {\n            \"identifier\": \"call_resolved\",\n            \"dispositionMetricPrompt\": \"Was the customer issue resolved by the end of the call?\",\n            \"dispositionMetricType\": \"STRING\",\n            \"choices\": [\n              \"resolved\",\n              \"escalated\",\n              \"callback_scheduled\",\n              \"no_action\"\n            ]\n          }\n        ]\n      },\n      \"_resolvedConfig\": {\n        \"tools\": [\n          {\n            \"type\": \"end_call\",\n            \"name\": \"end_call\",\n            \"description\": \"End the conversation when the user is satisfied\",\n            \"transferNumber\": \"+1234567890\",\n            \"url\": \"https://api.example.com/orders\",\n            \"headers\": {\n              \"Authorization\": \"Bearer TOKEN\",\n              \"Content-Type\": \"application/json\"\n            },\n            \"headersArray\": [\n              {\n                \"key\": \"Authorization\",\n                \"value\": \"Bearer TOKEN\"\n              }\n            ],\n            \"queryParams\": [\n              {\n                \"key\": \"id\",\n                \"value\": \"{{order_id}}\"\n              }\n            ],\n            \"requestBody\": \"{\\\"customer_id\\\": \\\"{{customer_id}}\\\"}\",\n            \"responseVariables\": [\n              {\n                \"variableName\": \"orderStatus\",\n                \"jsonPath\": \"$.data.status\"\n              }\n            ],\n            \"variablesExtractionSchema\": [\n              {\n                \"name\": \"customer_name\",\n                \"description\": \"The customer's full name\",\n                \"type\": \"text\",\n                \"values\": [\n                  \"satisfied\",\n                  \"unsatisfied\",\n                  \"neutral\"\n                ]\n              }\n            ],\n            \"knowledgeBaseId\": \"60d0fe4f5311236168a109ca\",\n            \"fillerPhrases\": [\n              \"Let me check that for you\",\n              \"One moment please\"\n            ]\n          }\n        ],\n        \"postCallAnalyticsConfig\": {\n          \"dispositionMetrics\": [\n            {\n              \"identifier\": \"call_resolved\",\n              \"dispositionMetricPrompt\": \"Was the customer issue resolved by the end of the call?\",\n              \"dispositionMetricType\": \"STRING\",\n              \"choices\": [\n                \"resolved\",\n                \"escalated\",\n                \"callback_scheduled\",\n                \"no_action\"\n              ]\n            }\n          ]\n        }\n      },\n      \"_configSource\": \"active\",\n      \"_versionedWorkflow\": {\n        \"tools\": [\n          {\n            \"type\": \"end_call\",\n            \"name\": \"end_call\",\n            \"description\": \"End the conversation when the user is satisfied\",\n            \"transferNumber\": \"+1234567890\",\n            \"url\": \"https://api.example.com/orders\",\n            \"headers\": {\n              \"Authorization\": \"Bearer TOKEN\",\n              \"Content-Type\": \"application/json\"\n            },\n            \"headersArray\": [\n              {\n                \"key\": \"Authorization\",\n                \"value\": \"Bearer TOKEN\"\n              }\n            ],\n            \"queryParams\": [\n              {\n                \"key\": \"id\",\n                \"value\": \"{{order_id}}\"\n              }\n            ],\n            \"requestBody\": \"{\\\"customer_id\\\": \\\"{{customer_id}}\\\"}\",\n            \"responseVariables\": [\n              {\n                \"variableName\": \"orderStatus\",\n                \"jsonPath\": \"$.data.status\"\n              }\n            ],\n            \"variablesExtractionSchema\": [\n              {\n                \"name\": \"customer_name\",\n                \"description\": \"The customer's full name\",\n                \"type\": \"text\",\n                \"values\": [\n                  \"satisfied\",\n                  \"unsatisfied\",\n                  \"neutral\"\n                ]\n              }\n            ],\n            \"knowledgeBaseId\": \"60d0fe4f5311236168a109ca\",\n            \"fillerPhrases\": [\n              \"Let me check that for you\",\n              \"One moment please\"\n            ]\n          }\n        ]\n      }\n    },\n    \"status\": \"pending\",\n    \"duration\": 300,\n    \"recordingUrl\": \"recordingUrl\",\n    \"recordingDualUrl\": \"recordingDualUrl\",\n    \"from\": \"from\",\n    \"to\": \"to\",\n    \"type\": \"telephony_inbound\",\n    \"transcript\": [\n      {}\n    ],\n    \"variables\": {\n      \"key\": \"value\"\n    },\n    \"events\": [\n      {\n        \"key\": \"value\"\n      }\n    ],\n    \"callCost\": 1.1,\n    \"callFailureReason\": \"callFailureReason\",\n    \"retryCallId\": \"retryCallId\",\n    \"postCallAnalytics\": {\n      \"summary\": \"summary\",\n      \"dispositionMetrics\": [\n        {}\n      ]\n    },\n    \"turnLatencyMetrics\": {\n      \"turns\": 1.1,\n      \"avgLatency\": 1.1,\n      \"medianLatency\": 1.1,\n      \"minLatency\": 1.1,\n      \"maxLatency\": 1.1,\n      \"latencies\": [\n        1.1\n      ],\n      \"transitions\": [\n        {}\n      ],\n      \"processedAt\": \"2024-01-15T09:30:00Z\"\n    },\n    \"voiceConfigUsed\": {\n      \"model\": \"model\",\n      \"voiceId\": \"voiceId\",\n      \"gender\": \"gender\"\n    },\n    \"slmModelUsed\": \"slmModelUsed\"\n  }\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -1203,42 +1040,6 @@
         }
       },
       "uuid": "337c07b6-561c-4a7d-981d-09338b486b66",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "8db7fb9b-e77b-4ae6-b013-87dbed43ffac",
-      "name": "Export campaign call logs as a JSON file - default",
-      "request": {
-        "urlPathTemplate": "/campaign/{id}/logs/export",
-        "method": "GET",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        },
-        "pathParameters": {
-          "id": {
-            "equalTo": "id"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "[\n  {\n    \"_id\": \"_id\",\n    \"callId\": \"callId\",\n    \"status\": \"status\",\n    \"duration\": 1.1,\n    \"recordingUrl\": \"recordingUrl\",\n    \"from\": \"from\",\n    \"to\": \"to\",\n    \"agentId\": \"agentId\",\n    \"statusDetails\": [\n      \"statusDetails\"\n    ],\n    \"events\": [\n      {\n        \"key\": \"value\"\n      }\n    ]\n  }\n]",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "8db7fb9b-e77b-4ae6-b013-87dbed43ffac",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -2730,7 +2531,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           }
         }
       },
@@ -2766,7 +2567,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           }
         }
       },
@@ -2802,7 +2603,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           },
           "draftId": {
             "equalTo": "draftId"
@@ -2841,7 +2642,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           },
           "draftId": {
             "equalTo": "draftId"
@@ -2880,7 +2681,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           },
           "draftId": {
             "equalTo": "draftId"
@@ -2919,7 +2720,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           },
           "draftId": {
             "equalTo": "draftId"
@@ -2928,7 +2729,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"key\": \"value\"\n  }\n}",
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"sections\": {\n      \"key\": {}\n    },\n    \"hasChanges\": true\n  }\n}",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -2958,7 +2759,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           },
           "draftId": {
             "equalTo": "draftId"
@@ -2997,7 +2798,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           },
           "draftId": {
             "equalTo": "draftId"
@@ -3036,7 +2837,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           },
           "draftId": {
             "equalTo": "draftId"
@@ -3075,7 +2876,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           }
         }
       },
@@ -3111,7 +2912,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           }
         },
         "queryParameters": {
@@ -3143,56 +2944,6 @@
       }
     },
     {
-      "id": "26c4525d-4fbe-4ec2-a2e3-c1a28c075982",
-      "name": "Compare metrics between two versions - default",
-      "request": {
-        "urlPathTemplate": "/agent/{id}/versions/compare-metrics",
-        "method": "GET",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        },
-        "pathParameters": {
-          "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
-          }
-        },
-        "queryParameters": {
-          "versionA": {
-            "equalTo": "versionA"
-          },
-          "versionB": {
-            "equalTo": "versionB"
-          },
-          "dateFrom": {
-            "equalTo": "2026-05-01"
-          },
-          "dateTo": {
-            "equalTo": "2026-05-31"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"configDiff\": {\n      \"unchangedSections\": [\n        \"unchangedSections\"\n      ],\n      \"diffs\": [\n        {}\n      ]\n    }\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "26c4525d-4fbe-4ec2-a2e3-c1a28c075982",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
       "id": "b355fc5e-fddf-4949-add8-e692d3aba429",
       "name": "Get version detail - default",
       "request": {
@@ -3205,7 +2956,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           },
           "versionId": {
             "equalTo": "versionId"
@@ -3244,7 +2995,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           },
           "versionId": {
             "equalTo": "versionId"
@@ -3283,7 +3034,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           },
           "versionId": {
             "equalTo": "versionId"
@@ -3322,7 +3073,7 @@
         },
         "pathParameters": {
           "id": {
-            "equalTo": "60d0fe4f5311236168a109ca"
+            "equalTo": "id"
           },
           "versionId": {
             "equalTo": "versionId"
@@ -3337,6 +3088,677 @@
         }
       },
       "uuid": "7b7e705f-1223-4d8a-a526-569267345501",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "8db4663c-b278-4b3f-90c4-c9c2fd9ab7e7",
+      "name": "List branches - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"branches\": [\n      {}\n    ]\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "8db4663c-b278-4b3f-90c4-c9c2fd9ab7e7",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "4296d204-bb40-47b5-85ef-509a030f7414",
+      "name": "Create a branch - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"agent\": \"agent\",\n    \"name\": \"name\",\n    \"isDefault\": true,\n    \"sourceBranchId\": \"sourceBranchId\",\n    \"sourceRevisionId\": \"sourceRevisionId\",\n    \"headRevisionId\": \"headRevisionId\",\n    \"openDraftId\": \"openDraftId\",\n    \"status\": \"active\",\n    \"createdBy\": \"createdBy\",\n    \"updatedBy\": \"updatedBy\",\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "4296d204-bb40-47b5-85ef-509a030f7414",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "64d2622f-ec62-4dc1-bd39-94548f1617ab",
+      "name": "Get branch - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches/{branchId}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          },
+          "branchId": {
+            "equalTo": "branchId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"branch\": {\n      \"_id\": \"_id\",\n      \"agent\": \"agent\",\n      \"name\": \"name\",\n      \"isDefault\": true,\n      \"sourceBranchId\": \"sourceBranchId\",\n      \"sourceRevisionId\": \"sourceRevisionId\",\n      \"headRevisionId\": \"headRevisionId\",\n      \"openDraftId\": \"openDraftId\",\n      \"status\": \"active\",\n      \"createdBy\": \"createdBy\",\n      \"updatedBy\": \"updatedBy\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\"\n    },\n    \"isLive\": true,\n    \"hasOpenDraft\": true,\n    \"revisionsCount\": 1,\n    \"headRevisionNumber\": 1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "64d2622f-ec62-4dc1-bd39-94548f1617ab",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "be8b5ab2-c05e-41be-89a2-80773cc1a170",
+      "name": "Rename a branch - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches/{branchId}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          },
+          "branchId": {
+            "equalTo": "branchId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"agent\": \"agent\",\n    \"name\": \"name\",\n    \"isDefault\": true,\n    \"sourceBranchId\": \"sourceBranchId\",\n    \"sourceRevisionId\": \"sourceRevisionId\",\n    \"headRevisionId\": \"headRevisionId\",\n    \"openDraftId\": \"openDraftId\",\n    \"status\": \"active\",\n    \"createdBy\": \"createdBy\",\n    \"updatedBy\": \"updatedBy\",\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "be8b5ab2-c05e-41be-89a2-80773cc1a170",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "84519979-c98a-4e67-8a0e-b587405878ac",
+      "name": "Archive a branch - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches/{branchId}/archive",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          },
+          "branchId": {
+            "equalTo": "branchId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"archived\": true\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "84519979-c98a-4e67-8a0e-b587405878ac",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "b618d43f-f3ad-405b-90f0-bfa2f6dc7066",
+      "name": "Make a branch live - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches/{branchId}/live",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          },
+          "branchId": {
+            "equalTo": "branchId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"branch\": {\n      \"_id\": \"_id\",\n      \"agent\": \"agent\",\n      \"name\": \"name\",\n      \"isDefault\": true,\n      \"sourceBranchId\": \"sourceBranchId\",\n      \"sourceRevisionId\": \"sourceRevisionId\",\n      \"headRevisionId\": \"headRevisionId\",\n      \"openDraftId\": \"openDraftId\",\n      \"status\": \"active\",\n      \"createdBy\": \"createdBy\",\n      \"updatedBy\": \"updatedBy\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\"\n    },\n    \"isLive\": true,\n    \"hasOpenDraft\": true,\n    \"revisionsCount\": 1,\n    \"headRevisionNumber\": 1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "b618d43f-f3ad-405b-90f0-bfa2f6dc7066",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "22f7ca99-8694-40c1-9944-e27c16467190",
+      "name": "Get open draft - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches/{branchId}/draft",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          },
+          "branchId": {
+            "equalTo": "branchId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"latest\": {\n      \"_id\": \"_id\",\n      \"agent\": \"agent\",\n      \"status\": \"published\",\n      \"branch\": \"branch\",\n      \"revisionNumber\": 1,\n      \"versionNumber\": 1,\n      \"label\": \"label\",\n      \"description\": \"description\",\n      \"isPinned\": true,\n      \"publishedBy\": \"publishedBy\",\n      \"publishedAt\": \"2024-01-15T09:30:00Z\",\n      \"publishedByName\": \"publishedByName\",\n      \"restoredFromLabel\": \"restoredFromLabel\",\n      \"draftId\": \"draftId\",\n      \"draftName\": \"draftName\",\n      \"draftRevision\": 1,\n      \"sourceVersionId\": \"sourceVersionId\",\n      \"workflowType\": \"workflowType\",\n      \"parentVersion\": \"parentVersion\",\n      \"isActive\": true,\n      \"activatedBy\": \"activatedBy\",\n      \"activatedAt\": \"2024-01-15T09:30:00Z\",\n      \"restoredFromRevisionId\": \"restoredFromRevisionId\",\n      \"sourceDraftId\": \"sourceDraftId\",\n      \"promptScoreStale\": true,\n      \"createdBy\": \"createdBy\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\"\n    },\n    \"editCount\": 1,\n    \"editHistory\": [\n      {}\n    ]\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "22f7ca99-8694-40c1-9944-e27c16467190",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "5cf384e2-c1c1-4197-accb-419080aebc67",
+      "name": "Write to draft - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches/{branchId}/draft",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          },
+          "branchId": {
+            "equalTo": "branchId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"agent\": \"agent\",\n    \"status\": \"published\",\n    \"branch\": \"branch\",\n    \"revisionNumber\": 1,\n    \"versionNumber\": 1,\n    \"label\": \"label\",\n    \"description\": \"description\",\n    \"isPinned\": true,\n    \"publishedBy\": \"publishedBy\",\n    \"publishedAt\": \"2024-01-15T09:30:00Z\",\n    \"publishedByName\": \"publishedByName\",\n    \"restoredFromLabel\": \"restoredFromLabel\",\n    \"draftId\": \"draftId\",\n    \"draftName\": \"draftName\",\n    \"draftRevision\": 1,\n    \"sourceVersionId\": \"sourceVersionId\",\n    \"blocks\": {\n      \"workflow_prompt\": \"workflow_prompt\",\n      \"workflow_tools\": \"workflow_tools\",\n      \"workflow_graph\": \"workflow_graph\",\n      \"llm\": \"llm\",\n      \"voice\": \"voice\",\n      \"language\": \"language\",\n      \"call_handling\": \"call_handling\",\n      \"detection\": \"detection\",\n      \"analytics\": \"analytics\",\n      \"timeouts\": \"timeouts\",\n      \"audio\": \"audio\",\n      \"privacy\": \"privacy\",\n      \"widget\": \"widget\",\n      \"playbooks\": \"playbooks\"\n    },\n    \"workflowType\": \"workflowType\",\n    \"parentVersion\": \"parentVersion\",\n    \"isActive\": true,\n    \"activatedBy\": \"activatedBy\",\n    \"activatedAt\": \"2024-01-15T09:30:00Z\",\n    \"securityCheck\": {\n      \"status\": \"status\",\n      \"reason\": \"reason\",\n      \"triggeredAt\": \"2024-01-15T09:30:00Z\",\n      \"completedAt\": \"2024-01-15T09:30:00Z\"\n    },\n    \"pendingPublish\": {\n      \"state\": \"active\",\n      \"startedBy\": \"startedBy\",\n      \"startedAt\": \"2024-01-15T09:30:00Z\"\n    },\n    \"restoredFromRevisionId\": \"restoredFromRevisionId\",\n    \"sourceDraftId\": \"sourceDraftId\",\n    \"promptScore\": {\n      \"overall_score\": 1.1,\n      \"overall_grade\": \"overall_grade\",\n      \"band\": \"band\",\n      \"estimated_ttft_overhead_ms\": 1.1,\n      \"scoredAt\": \"2024-01-15T09:30:00Z\",\n      \"dimensions\": [\n        {}\n      ]\n    },\n    \"promptScoreStale\": true,\n    \"createdBy\": \"createdBy\",\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "5cf384e2-c1c1-4197-accb-419080aebc67",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "2fd42108-766f-4d44-b25b-f3533d207961",
+      "name": "Discard open draft - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches/{branchId}/draft",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          },
+          "branchId": {
+            "equalTo": "branchId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"discarded\": true\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "2fd42108-766f-4d44-b25b-f3533d207961",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "61391cd6-5f1b-43c0-9a3c-73279e03f37f",
+      "name": "Publish draft - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches/{branchId}/draft/publish",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          },
+          "branchId": {
+            "equalTo": "branchId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"state\": \"scanning\",\n    \"revision\": {\n      \"_id\": \"_id\",\n      \"agent\": \"agent\",\n      \"status\": \"published\",\n      \"branch\": \"branch\",\n      \"revisionNumber\": 1,\n      \"versionNumber\": 1,\n      \"label\": \"label\",\n      \"description\": \"description\",\n      \"isPinned\": true,\n      \"publishedBy\": \"publishedBy\",\n      \"publishedAt\": \"2024-01-15T09:30:00Z\",\n      \"publishedByName\": \"publishedByName\",\n      \"restoredFromLabel\": \"restoredFromLabel\",\n      \"draftId\": \"draftId\",\n      \"draftName\": \"draftName\",\n      \"draftRevision\": 1,\n      \"sourceVersionId\": \"sourceVersionId\",\n      \"workflowType\": \"workflowType\",\n      \"parentVersion\": \"parentVersion\",\n      \"isActive\": true,\n      \"activatedBy\": \"activatedBy\",\n      \"activatedAt\": \"2024-01-15T09:30:00Z\",\n      \"restoredFromRevisionId\": \"restoredFromRevisionId\",\n      \"sourceDraftId\": \"sourceDraftId\",\n      \"promptScoreStale\": true,\n      \"createdBy\": \"createdBy\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "61391cd6-5f1b-43c0-9a3c-73279e03f37f",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "0854ebc2-2391-447e-ab99-9067191ca609",
+      "name": "Cancel in-flight publish - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches/{branchId}/draft/publish/cancel",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          },
+          "branchId": {
+            "equalTo": "branchId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"cancelled\": true\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "0854ebc2-2391-447e-ab99-9067191ca609",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "83fb15ac-e235-47f5-9752-b1c3ef424a5a",
+      "name": "Start a test call against a branch - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches/{branchId}/test-call",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          },
+          "branchId": {
+            "equalTo": "branchId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"conversationId\": \"conversationId\",\n    \"callId\": \"callId\",\n    \"token\": \"token\",\n    \"roomName\": \"roomName\",\n    \"host\": \"host\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "83fb15ac-e235-47f5-9752-b1c3ef424a5a",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "340854e2-87f1-44c9-96a0-410ea3da2b2a",
+      "name": "List revisions on a branch - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches/{branchId}/revisions",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          },
+          "branchId": {
+            "equalTo": "branchId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"revisions\": [\n      {}\n    ],\n    \"total\": 1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "340854e2-87f1-44c9-96a0-410ea3da2b2a",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "63471a9e-d72a-4d63-a4d3-fb7ccf8cb83d",
+      "name": "Get revision - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches/{branchId}/revisions/{revisionId}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          },
+          "branchId": {
+            "equalTo": "branchId"
+          },
+          "revisionId": {
+            "equalTo": "revisionId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"revision\": {\n      \"_id\": \"_id\",\n      \"agent\": \"agent\",\n      \"status\": \"published\",\n      \"branch\": \"branch\",\n      \"revisionNumber\": 1,\n      \"versionNumber\": 1,\n      \"label\": \"label\",\n      \"description\": \"description\",\n      \"isPinned\": true,\n      \"publishedBy\": \"publishedBy\",\n      \"publishedAt\": \"2024-01-15T09:30:00Z\",\n      \"publishedByName\": \"publishedByName\",\n      \"restoredFromLabel\": \"restoredFromLabel\",\n      \"draftId\": \"draftId\",\n      \"draftName\": \"draftName\",\n      \"draftRevision\": 1,\n      \"sourceVersionId\": \"sourceVersionId\",\n      \"workflowType\": \"workflowType\",\n      \"parentVersion\": \"parentVersion\",\n      \"isActive\": true,\n      \"activatedBy\": \"activatedBy\",\n      \"activatedAt\": \"2024-01-15T09:30:00Z\",\n      \"restoredFromRevisionId\": \"restoredFromRevisionId\",\n      \"sourceDraftId\": \"sourceDraftId\",\n      \"promptScoreStale\": true,\n      \"createdBy\": \"createdBy\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\"\n    },\n    \"resolvedConfig\": {\n      \"key\": \"value\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "63471a9e-d72a-4d63-a4d3-fb7ccf8cb83d",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "ddf3db6f-7be7-41b6-a4c5-def01cd66158",
+      "name": "Get revision publish trail - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches/{branchId}/revisions/{revisionId}/history",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          },
+          "branchId": {
+            "equalTo": "branchId"
+          },
+          "revisionId": {
+            "equalTo": "revisionId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"revision\": {\n      \"_id\": \"_id\",\n      \"agent\": \"agent\",\n      \"status\": \"published\",\n      \"branch\": \"branch\",\n      \"revisionNumber\": 1,\n      \"versionNumber\": 1,\n      \"label\": \"label\",\n      \"description\": \"description\",\n      \"isPinned\": true,\n      \"publishedBy\": \"publishedBy\",\n      \"publishedAt\": \"2024-01-15T09:30:00Z\",\n      \"publishedByName\": \"publishedByName\",\n      \"restoredFromLabel\": \"restoredFromLabel\",\n      \"draftId\": \"draftId\",\n      \"draftName\": \"draftName\",\n      \"draftRevision\": 1,\n      \"sourceVersionId\": \"sourceVersionId\",\n      \"workflowType\": \"workflowType\",\n      \"parentVersion\": \"parentVersion\",\n      \"isActive\": true,\n      \"activatedBy\": \"activatedBy\",\n      \"activatedAt\": \"2024-01-15T09:30:00Z\",\n      \"restoredFromRevisionId\": \"restoredFromRevisionId\",\n      \"sourceDraftId\": \"sourceDraftId\",\n      \"promptScoreStale\": true,\n      \"createdBy\": \"createdBy\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\"\n    },\n    \"publishedBy\": \"publishedBy\",\n    \"trail\": [\n      {}\n    ]\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "ddf3db6f-7be7-41b6-a4c5-def01cd66158",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "dcf5fea3-9a5b-400f-9f98-6b736ab69894",
+      "name": "Restore a revision - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/branches/{branchId}/revisions/{revisionId}/restore",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          },
+          "branchId": {
+            "equalTo": "branchId"
+          },
+          "revisionId": {
+            "equalTo": "revisionId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"state\": \"scanning\",\n    \"revision\": {\n      \"_id\": \"_id\",\n      \"agent\": \"agent\",\n      \"status\": \"published\",\n      \"branch\": \"branch\",\n      \"revisionNumber\": 1,\n      \"versionNumber\": 1,\n      \"label\": \"label\",\n      \"description\": \"description\",\n      \"isPinned\": true,\n      \"publishedBy\": \"publishedBy\",\n      \"publishedAt\": \"2024-01-15T09:30:00Z\",\n      \"publishedByName\": \"publishedByName\",\n      \"restoredFromLabel\": \"restoredFromLabel\",\n      \"draftId\": \"draftId\",\n      \"draftName\": \"draftName\",\n      \"draftRevision\": 1,\n      \"sourceVersionId\": \"sourceVersionId\",\n      \"workflowType\": \"workflowType\",\n      \"parentVersion\": \"parentVersion\",\n      \"isActive\": true,\n      \"activatedBy\": \"activatedBy\",\n      \"activatedAt\": \"2024-01-15T09:30:00Z\",\n      \"restoredFromRevisionId\": \"restoredFromRevisionId\",\n      \"sourceDraftId\": \"sourceDraftId\",\n      \"promptScoreStale\": true,\n      \"createdBy\": \"createdBy\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\",\n      \"updatedAt\": \"2024-01-15T09:30:00Z\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "dcf5fea3-9a5b-400f-9f98-6b736ab69894",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "71ad59b3-a207-4405-81d2-5b7c6096e9c4",
+      "name": "Diff two revisions or drafts - default",
+      "request": {
+        "urlPathTemplate": "/agent/{id}/diff",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        },
+        "queryParameters": {
+          "a": {
+            "equalTo": "a"
+          },
+          "b": {
+            "equalTo": "b"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"unchangedSections\": [\n      \"unchangedSections\"\n    ],\n    \"diffs\": [\n      {}\n    ]\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "71ad59b3-a207-4405-81d2-5b7c6096e9c4",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -3378,6 +3800,935 @@
           }
         }
       }
+    },
+    {
+      "id": "17528ba0-8c57-4113-b903-e9562b906e3c",
+      "name": "List call records - default",
+      "request": {
+        "urlPathTemplate": "/analytics/call-counts-log",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"calls\": [\n      {}\n    ],\n    \"totalCalls\": 1.1,\n    \"totalPages\": 1.1,\n    \"currentPage\": 1.1,\n    \"limit\": 1.1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "17528ba0-8c57-4113-b903-e9562b906e3c",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "44c3afc9-1bcb-4e37-872b-7b4ead15acc9",
+      "name": "Call counts by day - default",
+      "request": {
+        "urlPathTemplate": "/analytics/call-counts-by-day",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"orgId\": \"orgId\",\n    \"callCountsByDay\": [\n      {}\n    ]\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "44c3afc9-1bcb-4e37-872b-7b4ead15acc9",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "16b34a40-1115-4568-a69e-add4d8c2ed4b",
+      "name": "Get conversation details - default",
+      "request": {
+        "urlPathTemplate": "/analytics/conversation-details/{callId}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "callId": {
+            "equalTo": "callId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"orgId\": \"orgId\",\n    \"callId\": \"callId\",\n    \"agentName\": \"agentName\",\n    \"workflowType\": \"workflowType\",\n    \"transcript\": [\n      {}\n    ],\n    \"events\": [\n      {}\n    ],\n    \"fromNumber\": \"fromNumber\",\n    \"toNumber\": \"toNumber\",\n    \"callDurationMs\": 1.1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "16b34a40-1115-4568-a69e-add4d8c2ed4b",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "01bb585e-df63-4031-939d-d85bd0a6b45f",
+      "name": "Credit usage timeseries - default",
+      "request": {
+        "urlPathTemplate": "/analytics/usage/timeseries",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"dateRange\": {\n      \"from\": \"2023-01-15\",\n      \"to\": \"2023-01-15\"\n    },\n    \"dayWiseCredits\": [\n      {}\n    ],\n    \"totalCredits\": 1.1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "01bb585e-df63-4031-939d-d85bd0a6b45f",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "af4367df-67de-4f64-8a22-85797af130cc",
+      "name": "Full dashboard data - default",
+      "request": {
+        "urlPathTemplate": "/analytics/dashboard",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"summary\": {\n      \"key\": \"value\"\n    },\n    \"callVolumeTimeseries\": {\n      \"key\": \"value\"\n    },\n    \"callOutcomesTimeseries\": {\n      \"key\": \"value\"\n    },\n    \"pickupRateByNumber\": {\n      \"key\": \"value\"\n    },\n    \"hourlyPerformance\": {\n      \"key\": \"value\"\n    },\n    \"durationStats\": {\n      \"key\": \"value\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "af4367df-67de-4f64-8a22-85797af130cc",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "cd7a6dc3-a47a-4687-b5e8-5085df2aaeb6",
+      "name": "Dashboard summary KPIs - default",
+      "request": {
+        "urlPathTemplate": "/analytics/summary",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"orgId\": \"orgId\",\n    \"totalCalls\": {\n      \"current\": 1.1,\n      \"previous\": 1.1,\n      \"percentChange\": 1.1\n    },\n    \"pickupRate\": {\n      \"current\": 1.1,\n      \"previous\": 1.1,\n      \"percentChange\": 1.1\n    },\n    \"avgDurationMs\": {\n      \"current\": 1.1,\n      \"previous\": 1.1,\n      \"percentChange\": 1.1\n    },\n    \"medianDurationMs\": 1.1,\n    \"totalDurationMs\": {\n      \"current\": 1.1,\n      \"previous\": 1.1,\n      \"percentChange\": 1.1\n    },\n    \"uniqueUsersReached\": {\n      \"current\": 1.1,\n      \"previous\": 1.1,\n      \"percentChange\": 1.1\n    },\n    \"totalCost\": {\n      \"current\": 1.1,\n      \"previous\": 1.1,\n      \"percentChange\": 1.1\n    },\n    \"period\": {\n      \"from\": \"2023-01-15\",\n      \"to\": \"2023-01-15\"\n    },\n    \"previousPeriod\": {\n      \"from\": \"2023-01-15\",\n      \"to\": \"2023-01-15\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "cd7a6dc3-a47a-4687-b5e8-5085df2aaeb6",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "87bfa6c6-d269-43f4-910d-b8daacfe2309",
+      "name": "Call volume timeseries - default",
+      "request": {
+        "urlPathTemplate": "/analytics/call-volume-timeseries",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"orgId\": \"orgId\",\n    \"dataPoints\": [\n      {}\n    ],\n    \"period\": {\n      \"from\": \"2023-01-15\",\n      \"to\": \"2023-01-15\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "87bfa6c6-d269-43f4-910d-b8daacfe2309",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "cabf5bda-63a4-4055-be75-974a5c176cdb",
+      "name": "Pickup rate by phone number - default",
+      "request": {
+        "urlPathTemplate": "/analytics/pickup-rate-by-number",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"orgId\": \"orgId\",\n    \"numbers\": [\n      {}\n    ],\n    \"period\": {\n      \"from\": \"2023-01-15\",\n      \"to\": \"2023-01-15\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "cabf5bda-63a4-4055-be75-974a5c176cdb",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "88508c66-a9be-4e84-8178-60c6dd93f6dc",
+      "name": "Phone number trends - default",
+      "request": {
+        "urlPathTemplate": "/analytics/phone-number-trends",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"orgId\": \"orgId\",\n    \"trends\": [\n      {}\n    ],\n    \"period\": {\n      \"from\": \"2023-01-15\",\n      \"to\": \"2023-01-15\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "88508c66-a9be-4e84-8178-60c6dd93f6dc",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "a760a1f7-167d-4010-8361-bc0a6bf0c8ae",
+      "name": "Hourly performance - default",
+      "request": {
+        "urlPathTemplate": "/analytics/hourly-performance",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"orgId\": \"orgId\",\n    \"hours\": [\n      {}\n    ],\n    \"period\": {\n      \"from\": \"2023-01-15\",\n      \"to\": \"2023-01-15\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "a760a1f7-167d-4010-8361-bc0a6bf0c8ae",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "95d92802-41db-4330-a96c-bcbcbec057cd",
+      "name": "Call outcomes timeseries - default",
+      "request": {
+        "urlPathTemplate": "/analytics/call-outcomes-timeseries",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"orgId\": \"orgId\",\n    \"dataPoints\": [\n      {}\n    ],\n    \"totals\": {\n      \"answered\": 1.1,\n      \"noAnswer\": 1.1,\n      \"failed\": 1.1,\n      \"cancelled\": 1.1,\n      \"total\": 1.1\n    },\n    \"period\": {\n      \"from\": \"2023-01-15\",\n      \"to\": \"2023-01-15\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "95d92802-41db-4330-a96c-bcbcbec057cd",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "23d56d91-cb25-4509-a411-323c9ce8797d",
+      "name": "Call duration statistics - default",
+      "request": {
+        "urlPathTemplate": "/analytics/duration-stats",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"orgId\": \"orgId\",\n    \"avgDurationMs\": 1.1,\n    \"medianDurationMs\": 1.1,\n    \"p90DurationMs\": 1.1,\n    \"p95DurationMs\": 1.1,\n    \"shortCallsPercent\": 1.1,\n    \"longCallsPercent\": 1.1,\n    \"totalCalls\": 1.1,\n    \"totalDurationMs\": 1.1,\n    \"period\": {\n      \"from\": \"2023-01-15\",\n      \"to\": \"2023-01-15\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "23d56d91-cb25-4509-a411-323c9ce8797d",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "8abd879f-8d27-466d-8d1a-7bd8011c22bb",
+      "name": "Weekly call trends - default",
+      "request": {
+        "urlPathTemplate": "/analytics/weekly-trends",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"orgId\": \"orgId\",\n    \"weeks\": [\n      {}\n    ],\n    \"period\": {\n      \"from\": \"2023-01-15\",\n      \"to\": \"2023-01-15\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "8abd879f-8d27-466d-8d1a-7bd8011c22bb",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "05f5fb00-5f49-48dd-9026-05c7492c6716",
+      "name": "Agent performance - default",
+      "request": {
+        "urlPathTemplate": "/analytics/agent-performance",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"orgId\": \"orgId\",\n    \"agents\": [\n      {}\n    ],\n    \"period\": {\n      \"from\": \"2023-01-15\",\n      \"to\": \"2023-01-15\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "05f5fb00-5f49-48dd-9026-05c7492c6716",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "3bb1e74a-a753-43e7-be62-66a906316a68",
+      "name": "Concurrent call counts - default",
+      "request": {
+        "urlPathTemplate": "/analytics/concurrency",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "queryParameters": {
+          "date": {
+            "equalTo": "2023-01-15"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"date\": \"2023-01-15\",\n    \"dataPoints\": [\n      {}\n    ],\n    \"peakConcurrent\": 1.1,\n    \"avgConcurrent\": 1.1,\n    \"totalMinutes\": 1.1,\n    \"byAgent\": [\n      {}\n    ]\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "3bb1e74a-a753-43e7-be62-66a906316a68",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "ea5c6908-8ddf-4ff7-954e-3fa39881c045",
+      "name": "Call start distribution - default",
+      "request": {
+        "urlPathTemplate": "/analytics/call-start-distribution",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "queryParameters": {
+          "date": {
+            "equalTo": "2023-01-15"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"date\": \"2023-01-15\",\n    \"dataPoints\": [\n      {}\n    ],\n    \"totalCalls\": 1.1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "ea5c6908-8ddf-4ff7-954e-3fa39881c045",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "e60a862a-e4f7-4734-b450-701ed196edd9",
+      "name": "Daily call summary - default",
+      "request": {
+        "urlPathTemplate": "/analytics/daily-call-summary",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "queryParameters": {
+          "date": {
+            "equalTo": "2023-01-15"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"date\": \"2023-01-15\",\n    \"totalCalls\": 1.1,\n    \"answeredCalls\": 1.1,\n    \"unansweredCalls\": 1.1,\n    \"failedCalls\": 1.1,\n    \"pickupRate\": 1.1,\n    \"inProgressCalls\": 1.1,\n    \"inQueueCalls\": 1.1,\n    \"totalDurationMs\": 1.1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "e60a862a-e4f7-4734-b450-701ed196edd9",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "802a40f0-2fd5-4a9f-b0f3-dc30603aeee2",
+      "name": "Attempt cohort analysis - default",
+      "request": {
+        "urlPathTemplate": "/analytics/attempt-cohort",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"orgId\": \"orgId\",\n    \"cohorts\": [\n      {}\n    ],\n    \"totalUniqueNumbers\": 1.1,\n    \"maxAttemptsSeen\": 1.1,\n    \"avgAttemptsToPickup\": 1.1,\n    \"period\": {\n      \"from\": \"2023-01-15\",\n      \"to\": \"2023-01-15\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "802a40f0-2fd5-4a9f-b0f3-dc30603aeee2",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "ed84a9b0-9db6-4150-ab53-3c7f20e022af",
+      "name": "List call actions - default",
+      "request": {
+        "urlPathTemplate": "/call-actions",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "queryParameters": {
+          "agentId": {
+            "equalTo": "agentId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"callActions\": [\n      {}\n    ],\n    \"totalCount\": 1.1,\n    \"page\": 1.1,\n    \"limit\": 1.1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "ed84a9b0-9db6-4150-ab53-3c7f20e022af",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "7a565f20-c86d-4f37-b81b-cd880b01ef4a",
+      "name": "Create a call action - default",
+      "request": {
+        "urlPathTemplate": "/call-actions",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"organization\": \"organization\",\n    \"agentId\": \"agentId\",\n    \"category\": \"trigger\",\n    \"provider\": \"provider\",\n    \"action_type\": \"create\",\n    \"object\": \"object\",\n    \"config\": {\n      \"phoneNumberFieldName\": \"phoneNumberFieldName\",\n      \"conditions\": [\n        {\n          \"field\": \"field\",\n          \"operator\": \"eq\",\n          \"value\": \"value\"\n        }\n      ],\n      \"body\": \"body\"\n    },\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "7a565f20-c86d-4f37-b81b-cd880b01ef4a",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "e83872f8-3e8b-4ccb-a64c-5657aa60633d",
+      "name": "Get a call action - default",
+      "request": {
+        "urlPathTemplate": "/call-actions/{id}",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"organization\": \"organization\",\n    \"agentId\": \"agentId\",\n    \"category\": \"trigger\",\n    \"provider\": \"provider\",\n    \"action_type\": \"create\",\n    \"object\": \"object\",\n    \"config\": {\n      \"phoneNumberFieldName\": \"phoneNumberFieldName\",\n      \"conditions\": [\n        {\n          \"field\": \"field\",\n          \"operator\": \"eq\",\n          \"value\": \"value\"\n        }\n      ],\n      \"body\": \"body\"\n    },\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "e83872f8-3e8b-4ccb-a64c-5657aa60633d",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "f6025a6e-aa60-4430-b4cd-d2c3621bef20",
+      "name": "Update a call action - default",
+      "request": {
+        "urlPathTemplate": "/call-actions/{id}",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"organization\": \"organization\",\n    \"agentId\": \"agentId\",\n    \"category\": \"trigger\",\n    \"provider\": \"provider\",\n    \"action_type\": \"create\",\n    \"object\": \"object\",\n    \"config\": {\n      \"phoneNumberFieldName\": \"phoneNumberFieldName\",\n      \"conditions\": [\n        {\n          \"field\": \"field\",\n          \"operator\": \"eq\",\n          \"value\": \"value\"\n        }\n      ],\n      \"body\": \"body\"\n    },\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"updatedAt\": \"2024-01-15T09:30:00Z\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "f6025a6e-aa60-4430-b4cd-d2c3621bef20",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "163f7034-7312-4049-9872-2bc209d34f76",
+      "name": "Delete a call action - default",
+      "request": {
+        "urlPathTemplate": "/call-actions/{id}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"message\": \"Call action deleted successfully\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "163f7034-7312-4049-9872-2bc209d34f76",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "8902d6c5-e12e-4c9f-ac6d-e6ac9c95c7a8",
+      "name": "Create or update WebEngage integration - default",
+      "request": {
+        "urlPathTemplate": "/integration/modify-webengage-integration",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"message\": \"Integration created successfully\",\n  \"data\": {\n    \"key\": \"value\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "8902d6c5-e12e-4c9f-ac6d-e6ac9c95c7a8",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "1d880580-66fd-41c1-9b8d-9c96a8d6ccc8",
+      "name": "Get WebEngage integration details - default",
+      "request": {
+        "urlPathTemplate": "/integration/get-webengage-details",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"message\": \"Integration details retrieved successfully\",\n  \"data\": {\n    \"key\": \"value\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "1d880580-66fd-41c1-9b8d-9c96a8d6ccc8",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "d679ddd0-68da-4eb1-8df8-b4a43acc63a7",
+      "name": "Get concurrency limits - default",
+      "request": {
+        "urlPathTemplate": "/concurrency",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"orgLimit\": 1.1,\n    \"totalReserved\": 1.1,\n    \"unreservedPool\": 1.1,\n    \"agents\": [\n      {}\n    ]\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "d679ddd0-68da-4eb1-8df8-b4a43acc63a7",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "7aaeab46-63ab-4926-8a0b-e04f6e2c68d8",
+      "name": "Update concurrency reservations - default",
+      "request": {
+        "urlPathTemplate": "/concurrency/reservations",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"updated\": 1.1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "7aaeab46-63ab-4926-8a0b-e04f6e2c68d8",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "ca88fcaf-e959-4688-b984-ac97564ae4b3",
+      "name": "List disposition metric templates - default",
+      "request": {
+        "urlPathTemplate": "/disposition-metric-templates",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"identifier\": \"call_resolved\",\n      \"dispositionMetricPrompt\": \"dispositionMetricPrompt\",\n      \"dispositionMetricType\": \"STRING\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "ca88fcaf-e959-4688-b984-ac97564ae4b3",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
     },
     {
       "id": "f4e9658c-d989-4ba4-b1c5-cadf2a257164",
@@ -3550,7 +4901,7 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"key\": \"value\"\n}",
+        "body": "\"\"",
         "headers": {
           "Content-Type": "application/json"
         }
@@ -3581,43 +4932,12 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"key\": \"value\"\n}",
+        "body": "\"\"",
         "headers": {
           "Content-Type": "application/json"
         }
       },
       "uuid": "5d2a1219-21eb-4b3a-93ed-adfb791795c4",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "cf20eee5-9ffc-407a-82e7-0fd54d9c7143",
-      "name": "Text to Speech (Deprecated) - default",
-      "request": {
-        "urlPathTemplate": "/waves/v1/lightning-v2/get_speech",
-        "method": "POST",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"key\": \"value\"\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "cf20eee5-9ffc-407a-82e7-0fd54d9c7143",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -3643,12 +4963,43 @@
       },
       "response": {
         "status": 200,
-        "body": "event: message\ndata: {\"data\":\"event: chunk\\ndata: <WAV_DATA>\\ndone: false\\n\"}\n",
+        "body": "\"\"",
         "headers": {
-          "Content-Type": "text/event-stream"
+          "Content-Type": "application/json"
         }
       },
       "uuid": "f88779d9-9c06-4e6b-91c0-a066bcf5d281",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "cf20eee5-9ffc-407a-82e7-0fd54d9c7143",
+      "name": "Text to Speech (Deprecated) - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/lightning-v2/get_speech",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "\"\"",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "cf20eee5-9ffc-407a-82e7-0fd54d9c7143",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -3674,9 +5025,9 @@
       },
       "response": {
         "status": 200,
-        "body": "event: message\ndata: {\"data\":\"event: chunk\\ndata: <WAV_DATA>\\ndone: false\\n\"}\n",
+        "body": "\"\"",
         "headers": {
-          "Content-Type": "text/event-stream"
+          "Content-Type": "application/json"
         }
       },
       "uuid": "a9a97526-65c8-44f5-8bdf-7b346e329612",
@@ -3710,106 +5061,12 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"voices\": [\n    {\n      \"voiceId\": \"voiceId\",\n      \"displayName\": \"displayName\"\n    }\n  ]\n}",
+        "body": "{\n  \"voices\": [\n    {\n      \"voiceId\": \"avery\",\n      \"displayName\": \"Avery\",\n      \"tags\": {\n        \"language\": [\n          \"english\"\n        ],\n        \"accent\": \"american\",\n        \"gender\": \"female\",\n        \"age\": \"young\",\n        \"emotions\": [\n          \"emotions\"\n        ],\n        \"usecases\": [\n          \"conversational\"\n        ]\n      }\n    },\n    {\n      \"voiceId\": \"liam\",\n      \"displayName\": \"Liam\",\n      \"tags\": {\n        \"language\": [\n          \"english\"\n        ],\n        \"accent\": \"british\",\n        \"gender\": \"male\",\n        \"age\": \"young\",\n        \"emotions\": [\n          \"emotions\"\n        ],\n        \"usecases\": [\n          \"conversational\"\n        ]\n      }\n    },\n    {\n      \"voiceId\": \"devansh\",\n      \"displayName\": \"Devansh\",\n      \"tags\": {\n        \"language\": [\n          \"hindi\",\n          \"english\"\n        ],\n        \"accent\": \"indian\",\n        \"gender\": \"male\",\n        \"age\": \"young\",\n        \"emotions\": [\n          \"emotions\"\n        ],\n        \"usecases\": [\n          \"conversational\"\n        ]\n      }\n    }\n  ]\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
       "uuid": "d6ae9792-3284-4584-b16b-2fab02164aae",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "70067508-7499-413e-a2f8-f646931bc3e2",
-      "name": "Add your Voice (Deprecated) - default",
-      "request": {
-        "urlPathTemplate": "/waves/v1/lightning-large/add_voice",
-        "method": "POST",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"message\": \"message\",\n  \"data\": {\n    \"voiceId\": \"voiceId\",\n    \"model\": \"model\",\n    \"status\": \"status\"\n  }\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "70067508-7499-413e-a2f8-f646931bc3e2",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "fb9b09ba-fd73-4dc0-b53a-c9be394e795b",
-      "name": "Get your cloned Voices (Deprecated) - default",
-      "request": {
-        "urlPathTemplate": "/waves/v1/lightning-large/get_cloned_voices",
-        "method": "GET",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"voices\": [\n    {\n      \"displayName\": \"displayName\",\n      \"accent\": \"accent\",\n      \"tags\": [\n        \"tags\"\n      ],\n      \"voiceId\": \"voiceId\",\n      \"model\": \"model\",\n      \"status\": \"status\",\n      \"createdAt\": \"2024-01-15T09:30:00Z\"\n    }\n  ]\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "fb9b09ba-fd73-4dc0-b53a-c9be394e795b",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      },
-      "postServeActions": []
-    },
-    {
-      "id": "48873c09-b04d-4590-a674-e14ae9e5a580",
-      "name": "Delete a Voice Clone (Deprecated) - default",
-      "request": {
-        "urlPathTemplate": "/waves/v1/lightning-large",
-        "method": "DELETE",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"success\": true,\n  \"voiceId\": \"voiceId\"\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "48873c09-b04d-4590-a674-e14ae9e5a580",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -3882,71 +5139,9 @@
           }
         }
       }
-    },
-    {
-      "id": "d81cf6f0-55d5-4181-8a33-79bb51c9ea42",
-      "name": "Generate speech (Lightning v3.1, Endpoint Deprecated) - default",
-      "request": {
-        "urlPathTemplate": "/waves/v1/lightning-v3.1/get_speech",
-        "method": "POST",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "{\n  \"key\": \"value\"\n}",
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      },
-      "uuid": "d81cf6f0-55d5-4181-8a33-79bb51c9ea42",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
-    },
-    {
-      "id": "6d332fd5-07f6-40ed-81e7-5650ec38135e",
-      "name": "Stream speech (Lightning v3.1 SSE, Endpoint Deprecated) - default",
-      "request": {
-        "urlPathTemplate": "/waves/v1/lightning-v3.1/stream",
-        "method": "POST",
-        "headers": {
-          "Authorization": {
-            "matches": "Bearer .+"
-          }
-        }
-      },
-      "response": {
-        "status": 200,
-        "body": "event: message\ndata: {\"data\":\"event: chunk\\ndata: <WAV_DATA>\\ndone: false\\n\"}\n",
-        "headers": {
-          "Content-Type": "text/event-stream"
-        }
-      },
-      "uuid": "6d332fd5-07f6-40ed-81e7-5650ec38135e",
-      "persistent": true,
-      "priority": 3,
-      "metadata": {
-        "mocklab": {
-          "created": {
-            "at": "2020-01-01T00:00:00.000Z",
-            "via": "SYSTEM"
-          }
-        }
-      }
     }
   ],
   "meta": {
-    "total": 113
+    "total": 146
   }
 }

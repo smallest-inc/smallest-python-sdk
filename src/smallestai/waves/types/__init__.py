@@ -2,3 +2,240 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .audio_chunk import AudioChunk
+    from .audio_chunk_data import AudioChunkData
+    from .audio_chunk_status import AudioChunkStatus
+    from .bad_request_error_body import BadRequestErrorBody
+    from .completion_status import CompletionStatus
+    from .completion_status_status import CompletionStatusStatus
+    from .conversation_item import ConversationItem
+    from .conversation_item_content_item import ConversationItemContentItem
+    from .conversation_item_content_item_type import ConversationItemContentItemType
+    from .conversation_item_role import ConversationItemRole
+    from .conversation_item_status import ConversationItemStatus
+    from .conversation_item_type import ConversationItemType
+    from .delete_pronunciation_dict_response import DeletePronunciationDictResponse
+    from .error_response import ErrorResponse
+    from .error_response_error import ErrorResponseError
+    from .error_response_status import ErrorResponseStatus
+    from .get_voices_waves_request_model import GetVoicesWavesRequestModel
+    from .get_voices_waves_response import GetVoicesWavesResponse
+    from .get_voices_waves_response_voices_item import GetVoicesWavesResponseVoicesItem
+    from .get_voices_waves_response_voices_item_tags import GetVoicesWavesResponseVoicesItemTags
+    from .internal_server_error_body import InternalServerErrorBody
+    from .lightning_large_request import LightningLargeRequest
+    from .lightning_large_request_language import LightningLargeRequestLanguage
+    from .lightning_large_request_output_format import LightningLargeRequestOutputFormat
+    from .lightning_request import LightningRequest
+    from .lightning_request_language import LightningRequestLanguage
+    from .lightning_request_output_format import LightningRequestOutputFormat
+    from .lightningv2request import Lightningv2Request
+    from .lightningv2request_language import Lightningv2RequestLanguage
+    from .lightningv2request_output_format import Lightningv2RequestOutputFormat
+    from .pronunciation_dict import PronunciationDict
+    from .pronunciation_item import PronunciationItem
+    from .pulse_stt_auth_missing_response import PulseSttAuthMissingResponse
+    from .pulse_stt_error_response import PulseSttErrorResponse
+    from .pulse_stt_error_response_legacy import PulseSttErrorResponseLegacy
+    from .pulse_stt_error_response_status import PulseSttErrorResponseStatus
+    from .session_config import SessionConfig
+    from .session_config_voice import SessionConfigVoice
+    from .streaming_tts_config import StreamingTtsConfig
+    from .synthesize_lightning_large_waves_request_output_format import SynthesizeLightningLargeWavesRequestOutputFormat
+    from .synthesize_lightning_v2waves_request_output_format import SynthesizeLightningV2WavesRequestOutputFormat
+    from .synthesize_lightning_waves_request_output_format import SynthesizeLightningWavesRequestOutputFormat
+    from .synthesize_sse_lightning_large_waves_request_output_format import (
+        SynthesizeSseLightningLargeWavesRequestOutputFormat,
+    )
+    from .synthesize_sse_lightning_v2waves_request_output_format import SynthesizeSseLightningV2WavesRequestOutputFormat
+    from .tool import Tool
+    from .tool_type import ToolType
+    from .transcribe_pulse_waves_request_capitalize import TranscribePulseWavesRequestCapitalize
+    from .transcribe_pulse_waves_request_emotion_detection import TranscribePulseWavesRequestEmotionDetection
+    from .transcribe_pulse_waves_request_encoding import TranscribePulseWavesRequestEncoding
+    from .transcribe_pulse_waves_request_format import TranscribePulseWavesRequestFormat
+    from .transcribe_pulse_waves_request_gender_detection import TranscribePulseWavesRequestGenderDetection
+    from .transcribe_pulse_waves_request_language import TranscribePulseWavesRequestLanguage
+    from .transcribe_pulse_waves_request_punctuate import TranscribePulseWavesRequestPunctuate
+    from .transcribe_pulse_waves_response import TranscribePulseWavesResponse
+    from .transcribe_pulse_waves_response_emotions import TranscribePulseWavesResponseEmotions
+    from .transcribe_pulse_waves_response_gender import TranscribePulseWavesResponseGender
+    from .transcribe_pulse_waves_response_metadata import TranscribePulseWavesResponseMetadata
+    from .transcribe_pulse_waves_response_utterances_item import TranscribePulseWavesResponseUtterancesItem
+    from .transcribe_pulse_waves_response_words_item import TranscribePulseWavesResponseWordsItem
+    from .transcription_result import TranscriptionResult
+    from .tts_error import TtsError
+    from .tts_request import TtsRequest
+    from .tts_request_language import TtsRequestLanguage
+    from .tts_request_model import TtsRequestModel
+    from .tts_request_number_pronunciation_language import TtsRequestNumberPronunciationLanguage
+    from .tts_request_output_format import TtsRequestOutputFormat
+    from .unauthorized_error_body import UnauthorizedErrorBody
+    from .update_pronunciation_dict_response import UpdatePronunciationDictResponse
+_dynamic_imports: typing.Dict[str, str] = {
+    "AudioChunk": ".audio_chunk",
+    "AudioChunkData": ".audio_chunk_data",
+    "AudioChunkStatus": ".audio_chunk_status",
+    "BadRequestErrorBody": ".bad_request_error_body",
+    "CompletionStatus": ".completion_status",
+    "CompletionStatusStatus": ".completion_status_status",
+    "ConversationItem": ".conversation_item",
+    "ConversationItemContentItem": ".conversation_item_content_item",
+    "ConversationItemContentItemType": ".conversation_item_content_item_type",
+    "ConversationItemRole": ".conversation_item_role",
+    "ConversationItemStatus": ".conversation_item_status",
+    "ConversationItemType": ".conversation_item_type",
+    "DeletePronunciationDictResponse": ".delete_pronunciation_dict_response",
+    "ErrorResponse": ".error_response",
+    "ErrorResponseError": ".error_response_error",
+    "ErrorResponseStatus": ".error_response_status",
+    "GetVoicesWavesRequestModel": ".get_voices_waves_request_model",
+    "GetVoicesWavesResponse": ".get_voices_waves_response",
+    "GetVoicesWavesResponseVoicesItem": ".get_voices_waves_response_voices_item",
+    "GetVoicesWavesResponseVoicesItemTags": ".get_voices_waves_response_voices_item_tags",
+    "InternalServerErrorBody": ".internal_server_error_body",
+    "LightningLargeRequest": ".lightning_large_request",
+    "LightningLargeRequestLanguage": ".lightning_large_request_language",
+    "LightningLargeRequestOutputFormat": ".lightning_large_request_output_format",
+    "LightningRequest": ".lightning_request",
+    "LightningRequestLanguage": ".lightning_request_language",
+    "LightningRequestOutputFormat": ".lightning_request_output_format",
+    "Lightningv2Request": ".lightningv2request",
+    "Lightningv2RequestLanguage": ".lightningv2request_language",
+    "Lightningv2RequestOutputFormat": ".lightningv2request_output_format",
+    "PronunciationDict": ".pronunciation_dict",
+    "PronunciationItem": ".pronunciation_item",
+    "PulseSttAuthMissingResponse": ".pulse_stt_auth_missing_response",
+    "PulseSttErrorResponse": ".pulse_stt_error_response",
+    "PulseSttErrorResponseLegacy": ".pulse_stt_error_response_legacy",
+    "PulseSttErrorResponseStatus": ".pulse_stt_error_response_status",
+    "SessionConfig": ".session_config",
+    "SessionConfigVoice": ".session_config_voice",
+    "StreamingTtsConfig": ".streaming_tts_config",
+    "SynthesizeLightningLargeWavesRequestOutputFormat": ".synthesize_lightning_large_waves_request_output_format",
+    "SynthesizeLightningV2WavesRequestOutputFormat": ".synthesize_lightning_v2waves_request_output_format",
+    "SynthesizeLightningWavesRequestOutputFormat": ".synthesize_lightning_waves_request_output_format",
+    "SynthesizeSseLightningLargeWavesRequestOutputFormat": ".synthesize_sse_lightning_large_waves_request_output_format",
+    "SynthesizeSseLightningV2WavesRequestOutputFormat": ".synthesize_sse_lightning_v2waves_request_output_format",
+    "Tool": ".tool",
+    "ToolType": ".tool_type",
+    "TranscribePulseWavesRequestCapitalize": ".transcribe_pulse_waves_request_capitalize",
+    "TranscribePulseWavesRequestEmotionDetection": ".transcribe_pulse_waves_request_emotion_detection",
+    "TranscribePulseWavesRequestEncoding": ".transcribe_pulse_waves_request_encoding",
+    "TranscribePulseWavesRequestFormat": ".transcribe_pulse_waves_request_format",
+    "TranscribePulseWavesRequestGenderDetection": ".transcribe_pulse_waves_request_gender_detection",
+    "TranscribePulseWavesRequestLanguage": ".transcribe_pulse_waves_request_language",
+    "TranscribePulseWavesRequestPunctuate": ".transcribe_pulse_waves_request_punctuate",
+    "TranscribePulseWavesResponse": ".transcribe_pulse_waves_response",
+    "TranscribePulseWavesResponseEmotions": ".transcribe_pulse_waves_response_emotions",
+    "TranscribePulseWavesResponseGender": ".transcribe_pulse_waves_response_gender",
+    "TranscribePulseWavesResponseMetadata": ".transcribe_pulse_waves_response_metadata",
+    "TranscribePulseWavesResponseUtterancesItem": ".transcribe_pulse_waves_response_utterances_item",
+    "TranscribePulseWavesResponseWordsItem": ".transcribe_pulse_waves_response_words_item",
+    "TranscriptionResult": ".transcription_result",
+    "TtsError": ".tts_error",
+    "TtsRequest": ".tts_request",
+    "TtsRequestLanguage": ".tts_request_language",
+    "TtsRequestModel": ".tts_request_model",
+    "TtsRequestNumberPronunciationLanguage": ".tts_request_number_pronunciation_language",
+    "TtsRequestOutputFormat": ".tts_request_output_format",
+    "UnauthorizedErrorBody": ".unauthorized_error_body",
+    "UpdatePronunciationDictResponse": ".update_pronunciation_dict_response",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "AudioChunk",
+    "AudioChunkData",
+    "AudioChunkStatus",
+    "BadRequestErrorBody",
+    "CompletionStatus",
+    "CompletionStatusStatus",
+    "ConversationItem",
+    "ConversationItemContentItem",
+    "ConversationItemContentItemType",
+    "ConversationItemRole",
+    "ConversationItemStatus",
+    "ConversationItemType",
+    "DeletePronunciationDictResponse",
+    "ErrorResponse",
+    "ErrorResponseError",
+    "ErrorResponseStatus",
+    "GetVoicesWavesRequestModel",
+    "GetVoicesWavesResponse",
+    "GetVoicesWavesResponseVoicesItem",
+    "GetVoicesWavesResponseVoicesItemTags",
+    "InternalServerErrorBody",
+    "LightningLargeRequest",
+    "LightningLargeRequestLanguage",
+    "LightningLargeRequestOutputFormat",
+    "LightningRequest",
+    "LightningRequestLanguage",
+    "LightningRequestOutputFormat",
+    "Lightningv2Request",
+    "Lightningv2RequestLanguage",
+    "Lightningv2RequestOutputFormat",
+    "PronunciationDict",
+    "PronunciationItem",
+    "PulseSttAuthMissingResponse",
+    "PulseSttErrorResponse",
+    "PulseSttErrorResponseLegacy",
+    "PulseSttErrorResponseStatus",
+    "SessionConfig",
+    "SessionConfigVoice",
+    "StreamingTtsConfig",
+    "SynthesizeLightningLargeWavesRequestOutputFormat",
+    "SynthesizeLightningV2WavesRequestOutputFormat",
+    "SynthesizeLightningWavesRequestOutputFormat",
+    "SynthesizeSseLightningLargeWavesRequestOutputFormat",
+    "SynthesizeSseLightningV2WavesRequestOutputFormat",
+    "Tool",
+    "ToolType",
+    "TranscribePulseWavesRequestCapitalize",
+    "TranscribePulseWavesRequestEmotionDetection",
+    "TranscribePulseWavesRequestEncoding",
+    "TranscribePulseWavesRequestFormat",
+    "TranscribePulseWavesRequestGenderDetection",
+    "TranscribePulseWavesRequestLanguage",
+    "TranscribePulseWavesRequestPunctuate",
+    "TranscribePulseWavesResponse",
+    "TranscribePulseWavesResponseEmotions",
+    "TranscribePulseWavesResponseGender",
+    "TranscribePulseWavesResponseMetadata",
+    "TranscribePulseWavesResponseUtterancesItem",
+    "TranscribePulseWavesResponseWordsItem",
+    "TranscriptionResult",
+    "TtsError",
+    "TtsRequest",
+    "TtsRequestLanguage",
+    "TtsRequestModel",
+    "TtsRequestNumberPronunciationLanguage",
+    "TtsRequestOutputFormat",
+    "UnauthorizedErrorBody",
+    "UpdatePronunciationDictResponse",
+]

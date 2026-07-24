@@ -11,6 +11,8 @@ from ...core.events import EventEmitterMixin, EventType
 from ...core.unchecked_base_model import construct_type
 from .types.pulse_close_stream_signal_message import PulseCloseStreamSignalMessage
 from .types.pulse_finalize_signal_message import PulseFinalizeSignalMessage
+from .types.pulse_speech_ended_event_message import PulseSpeechEndedEventMessage
+from .types.pulse_speech_started_event_message import PulseSpeechStartedEventMessage
 from .types.pulse_transcription_response_message import PulseTranscriptionResponseMessage
 
 try:
@@ -19,7 +21,9 @@ except ImportError:
     from websockets import WebSocketClientProtocol  # type: ignore
 
 _logger = logging.getLogger(__name__)
-PulseSttStreamingSocketClientResponse = typing.Union[PulseTranscriptionResponseMessage]
+PulseSttStreamingSocketClientResponse = typing.Union[
+    PulseTranscriptionResponseMessage, PulseSpeechStartedEventMessage, PulseSpeechEndedEventMessage
+]
 
 
 class AsyncPulseSttStreamingSocketClient(EventEmitterMixin):

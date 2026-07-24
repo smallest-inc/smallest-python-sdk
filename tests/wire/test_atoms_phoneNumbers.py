@@ -81,7 +81,7 @@ def test_atoms_phoneNumbers_import_sip() -> None:
     client = get_client(test_id)
     client.atoms.phone_numbers.import_sip(
         phone_number="+14155551234",
-        sip_termination_url="sip:trunk.your-provider.com",
+        sip_termination_url="trunk.your-provider.com",
         name="Main Support Line",
         sip_username="",
         sip_password="",

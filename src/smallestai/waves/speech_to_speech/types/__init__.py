@@ -2,3 +2,187 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .conversation_item_added import ConversationItemAdded
+    from .conversation_item_added_type import ConversationItemAddedType
+    from .conversation_item_create import ConversationItemCreate
+    from .conversation_item_create_type import ConversationItemCreateType
+    from .conversation_item_done import ConversationItemDone
+    from .conversation_item_done_type import ConversationItemDoneType
+    from .error_event import ErrorEvent
+    from .error_event_error import ErrorEventError
+    from .error_event_error_code import ErrorEventErrorCode
+    from .error_event_type import ErrorEventType
+    from .input_audio_buffer_append import InputAudioBufferAppend
+    from .input_audio_buffer_append_type import InputAudioBufferAppendType
+    from .input_audio_buffer_speech_started import InputAudioBufferSpeechStarted
+    from .input_audio_buffer_speech_started_type import InputAudioBufferSpeechStartedType
+    from .input_audio_buffer_speech_stopped import InputAudioBufferSpeechStopped
+    from .input_audio_buffer_speech_stopped_type import InputAudioBufferSpeechStoppedType
+    from .response_cancel import ResponseCancel
+    from .response_cancel_type import ResponseCancelType
+    from .response_create import ResponseCreate
+    from .response_create_type import ResponseCreateType
+    from .response_created import ResponseCreated
+    from .response_created_response import ResponseCreatedResponse
+    from .response_created_type import ResponseCreatedType
+    from .response_done import ResponseDone
+    from .response_done_response import ResponseDoneResponse
+    from .response_done_response_status import ResponseDoneResponseStatus
+    from .response_done_response_status_details import ResponseDoneResponseStatusDetails
+    from .response_done_response_status_details_error import ResponseDoneResponseStatusDetailsError
+    from .response_done_response_status_details_reason import ResponseDoneResponseStatusDetailsReason
+    from .response_done_response_usage import ResponseDoneResponseUsage
+    from .response_done_type import ResponseDoneType
+    from .response_function_call_arguments_delta import ResponseFunctionCallArgumentsDelta
+    from .response_function_call_arguments_delta_type import ResponseFunctionCallArgumentsDeltaType
+    from .response_function_call_arguments_done import ResponseFunctionCallArgumentsDone
+    from .response_function_call_arguments_done_type import ResponseFunctionCallArgumentsDoneType
+    from .response_output_audio_delta import ResponseOutputAudioDelta
+    from .response_output_audio_delta_type import ResponseOutputAudioDeltaType
+    from .response_output_audio_done import ResponseOutputAudioDone
+    from .response_output_audio_done_type import ResponseOutputAudioDoneType
+    from .session_configure import SessionConfigure
+    from .session_configure_type import SessionConfigureType
+    from .session_configured import SessionConfigured
+    from .session_configured_session import SessionConfiguredSession
+    from .session_configured_type import SessionConfiguredType
+    from .session_created import SessionCreated
+    from .session_created_type import SessionCreatedType
+    from .session_update import SessionUpdate
+    from .session_update_session import SessionUpdateSession
+    from .session_update_type import SessionUpdateType
+    from .session_updated import SessionUpdated
+    from .session_updated_type import SessionUpdatedType
+_dynamic_imports: typing.Dict[str, str] = {
+    "ConversationItemAdded": ".conversation_item_added",
+    "ConversationItemAddedType": ".conversation_item_added_type",
+    "ConversationItemCreate": ".conversation_item_create",
+    "ConversationItemCreateType": ".conversation_item_create_type",
+    "ConversationItemDone": ".conversation_item_done",
+    "ConversationItemDoneType": ".conversation_item_done_type",
+    "ErrorEvent": ".error_event",
+    "ErrorEventError": ".error_event_error",
+    "ErrorEventErrorCode": ".error_event_error_code",
+    "ErrorEventType": ".error_event_type",
+    "InputAudioBufferAppend": ".input_audio_buffer_append",
+    "InputAudioBufferAppendType": ".input_audio_buffer_append_type",
+    "InputAudioBufferSpeechStarted": ".input_audio_buffer_speech_started",
+    "InputAudioBufferSpeechStartedType": ".input_audio_buffer_speech_started_type",
+    "InputAudioBufferSpeechStopped": ".input_audio_buffer_speech_stopped",
+    "InputAudioBufferSpeechStoppedType": ".input_audio_buffer_speech_stopped_type",
+    "ResponseCancel": ".response_cancel",
+    "ResponseCancelType": ".response_cancel_type",
+    "ResponseCreate": ".response_create",
+    "ResponseCreateType": ".response_create_type",
+    "ResponseCreated": ".response_created",
+    "ResponseCreatedResponse": ".response_created_response",
+    "ResponseCreatedType": ".response_created_type",
+    "ResponseDone": ".response_done",
+    "ResponseDoneResponse": ".response_done_response",
+    "ResponseDoneResponseStatus": ".response_done_response_status",
+    "ResponseDoneResponseStatusDetails": ".response_done_response_status_details",
+    "ResponseDoneResponseStatusDetailsError": ".response_done_response_status_details_error",
+    "ResponseDoneResponseStatusDetailsReason": ".response_done_response_status_details_reason",
+    "ResponseDoneResponseUsage": ".response_done_response_usage",
+    "ResponseDoneType": ".response_done_type",
+    "ResponseFunctionCallArgumentsDelta": ".response_function_call_arguments_delta",
+    "ResponseFunctionCallArgumentsDeltaType": ".response_function_call_arguments_delta_type",
+    "ResponseFunctionCallArgumentsDone": ".response_function_call_arguments_done",
+    "ResponseFunctionCallArgumentsDoneType": ".response_function_call_arguments_done_type",
+    "ResponseOutputAudioDelta": ".response_output_audio_delta",
+    "ResponseOutputAudioDeltaType": ".response_output_audio_delta_type",
+    "ResponseOutputAudioDone": ".response_output_audio_done",
+    "ResponseOutputAudioDoneType": ".response_output_audio_done_type",
+    "SessionConfigure": ".session_configure",
+    "SessionConfigureType": ".session_configure_type",
+    "SessionConfigured": ".session_configured",
+    "SessionConfiguredSession": ".session_configured_session",
+    "SessionConfiguredType": ".session_configured_type",
+    "SessionCreated": ".session_created",
+    "SessionCreatedType": ".session_created_type",
+    "SessionUpdate": ".session_update",
+    "SessionUpdateSession": ".session_update_session",
+    "SessionUpdateType": ".session_update_type",
+    "SessionUpdated": ".session_updated",
+    "SessionUpdatedType": ".session_updated_type",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "ConversationItemAdded",
+    "ConversationItemAddedType",
+    "ConversationItemCreate",
+    "ConversationItemCreateType",
+    "ConversationItemDone",
+    "ConversationItemDoneType",
+    "ErrorEvent",
+    "ErrorEventError",
+    "ErrorEventErrorCode",
+    "ErrorEventType",
+    "InputAudioBufferAppend",
+    "InputAudioBufferAppendType",
+    "InputAudioBufferSpeechStarted",
+    "InputAudioBufferSpeechStartedType",
+    "InputAudioBufferSpeechStopped",
+    "InputAudioBufferSpeechStoppedType",
+    "ResponseCancel",
+    "ResponseCancelType",
+    "ResponseCreate",
+    "ResponseCreateType",
+    "ResponseCreated",
+    "ResponseCreatedResponse",
+    "ResponseCreatedType",
+    "ResponseDone",
+    "ResponseDoneResponse",
+    "ResponseDoneResponseStatus",
+    "ResponseDoneResponseStatusDetails",
+    "ResponseDoneResponseStatusDetailsError",
+    "ResponseDoneResponseStatusDetailsReason",
+    "ResponseDoneResponseUsage",
+    "ResponseDoneType",
+    "ResponseFunctionCallArgumentsDelta",
+    "ResponseFunctionCallArgumentsDeltaType",
+    "ResponseFunctionCallArgumentsDone",
+    "ResponseFunctionCallArgumentsDoneType",
+    "ResponseOutputAudioDelta",
+    "ResponseOutputAudioDeltaType",
+    "ResponseOutputAudioDone",
+    "ResponseOutputAudioDoneType",
+    "SessionConfigure",
+    "SessionConfigureType",
+    "SessionConfigured",
+    "SessionConfiguredSession",
+    "SessionConfiguredType",
+    "SessionCreated",
+    "SessionCreatedType",
+    "SessionUpdate",
+    "SessionUpdateSession",
+    "SessionUpdateType",
+    "SessionUpdated",
+    "SessionUpdatedType",
+]

@@ -2,3 +2,89 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .create_knowledge_base_response import CreateKnowledgeBaseResponse
+    from .delete_knowledge_base_response import DeleteKnowledgeBaseResponse
+    from .delete_knowledgebase_knowledge_base_id_items_knowledge_base_item_id_response import (
+        DeleteKnowledgebaseKnowledgeBaseIdItemsKnowledgeBaseItemIdResponse,
+    )
+    from .delete_knowledgebase_knowledge_base_id_scraped_urls_knowledge_base_scraped_urls_id_response import (
+        DeleteKnowledgebaseKnowledgeBaseIdScrapedUrlsKnowledgeBaseScrapedUrlsIdResponse,
+    )
+    from .extract_sitemap_urls_knowledge_base_response import ExtractSitemapUrlsKnowledgeBaseResponse
+    from .extract_sitemap_urls_knowledge_base_response_data import ExtractSitemapUrlsKnowledgeBaseResponseData
+    from .get_knowledge_base_response import GetKnowledgeBaseResponse
+    from .get_knowledgebase_id_items_response import GetKnowledgebaseIdItemsResponse
+    from .get_knowledgebase_id_scraped_urls_response import GetKnowledgebaseIdScrapedUrlsResponse
+    from .get_knowledgebase_id_scraped_urls_response_data_item import GetKnowledgebaseIdScrapedUrlsResponseDataItem
+    from .list_knowledge_base_response import ListKnowledgeBaseResponse
+    from .post_knowledgebase_compelete_file_upload_response import PostKnowledgebaseCompeleteFileUploadResponse
+    from .post_knowledgebase_get_presigned_url_response import PostKnowledgebaseGetPresignedUrlResponse
+    from .post_knowledgebase_get_presigned_url_response_data import PostKnowledgebaseGetPresignedUrlResponseData
+    from .post_knowledgebase_id_items_upload_media_response import PostKnowledgebaseIdItemsUploadMediaResponse
+    from .post_knowledgebase_id_response import PostKnowledgebaseIdResponse
+    from .scrape_urls_knowledge_base_response import ScrapeUrlsKnowledgeBaseResponse
+_dynamic_imports: typing.Dict[str, str] = {
+    "CreateKnowledgeBaseResponse": ".create_knowledge_base_response",
+    "DeleteKnowledgeBaseResponse": ".delete_knowledge_base_response",
+    "DeleteKnowledgebaseKnowledgeBaseIdItemsKnowledgeBaseItemIdResponse": ".delete_knowledgebase_knowledge_base_id_items_knowledge_base_item_id_response",
+    "DeleteKnowledgebaseKnowledgeBaseIdScrapedUrlsKnowledgeBaseScrapedUrlsIdResponse": ".delete_knowledgebase_knowledge_base_id_scraped_urls_knowledge_base_scraped_urls_id_response",
+    "ExtractSitemapUrlsKnowledgeBaseResponse": ".extract_sitemap_urls_knowledge_base_response",
+    "ExtractSitemapUrlsKnowledgeBaseResponseData": ".extract_sitemap_urls_knowledge_base_response_data",
+    "GetKnowledgeBaseResponse": ".get_knowledge_base_response",
+    "GetKnowledgebaseIdItemsResponse": ".get_knowledgebase_id_items_response",
+    "GetKnowledgebaseIdScrapedUrlsResponse": ".get_knowledgebase_id_scraped_urls_response",
+    "GetKnowledgebaseIdScrapedUrlsResponseDataItem": ".get_knowledgebase_id_scraped_urls_response_data_item",
+    "ListKnowledgeBaseResponse": ".list_knowledge_base_response",
+    "PostKnowledgebaseCompeleteFileUploadResponse": ".post_knowledgebase_compelete_file_upload_response",
+    "PostKnowledgebaseGetPresignedUrlResponse": ".post_knowledgebase_get_presigned_url_response",
+    "PostKnowledgebaseGetPresignedUrlResponseData": ".post_knowledgebase_get_presigned_url_response_data",
+    "PostKnowledgebaseIdItemsUploadMediaResponse": ".post_knowledgebase_id_items_upload_media_response",
+    "PostKnowledgebaseIdResponse": ".post_knowledgebase_id_response",
+    "ScrapeUrlsKnowledgeBaseResponse": ".scrape_urls_knowledge_base_response",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "CreateKnowledgeBaseResponse",
+    "DeleteKnowledgeBaseResponse",
+    "DeleteKnowledgebaseKnowledgeBaseIdItemsKnowledgeBaseItemIdResponse",
+    "DeleteKnowledgebaseKnowledgeBaseIdScrapedUrlsKnowledgeBaseScrapedUrlsIdResponse",
+    "ExtractSitemapUrlsKnowledgeBaseResponse",
+    "ExtractSitemapUrlsKnowledgeBaseResponseData",
+    "GetKnowledgeBaseResponse",
+    "GetKnowledgebaseIdItemsResponse",
+    "GetKnowledgebaseIdScrapedUrlsResponse",
+    "GetKnowledgebaseIdScrapedUrlsResponseDataItem",
+    "ListKnowledgeBaseResponse",
+    "PostKnowledgebaseCompeleteFileUploadResponse",
+    "PostKnowledgebaseGetPresignedUrlResponse",
+    "PostKnowledgebaseGetPresignedUrlResponseData",
+    "PostKnowledgebaseIdItemsUploadMediaResponse",
+    "PostKnowledgebaseIdResponse",
+    "ScrapeUrlsKnowledgeBaseResponse",
+]

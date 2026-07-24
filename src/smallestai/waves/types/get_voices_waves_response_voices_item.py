@@ -12,7 +12,12 @@ from .get_voices_waves_response_voices_item_tags import GetVoicesWavesResponseVo
 
 class GetVoicesWavesResponseVoicesItem(UncheckedBaseModel):
     voice_id: typing_extensions.Annotated[
-        str, FieldMetadata(alias="voiceId"), pydantic.Field(alias="voiceId", description="Unique Voice ID.")
+        str,
+        FieldMetadata(alias="voiceId"),
+        pydantic.Field(
+            alias="voiceId",
+            description="Unique Voice ID. Pass this value as `voice_id` on `POST /waves/v1/tts` (or the streaming route).",
+        ),
     ]
     display_name: typing_extensions.Annotated[
         str,
@@ -21,7 +26,7 @@ class GetVoicesWavesResponseVoicesItem(UncheckedBaseModel):
     ]
     tags: typing.Optional[GetVoicesWavesResponseVoicesItemTags] = pydantic.Field(default=None)
     """
-    Tag metadata used to identify the voice's characteristics. Filter on these fields to find voices for a target language, accent, or use case.
+    Tag metadata used to identify the voice's characteristics. Filter on these fields to find voices for a target language, accent, or use case. Fields may be empty on some voices.
     """
 
     if IS_PYDANTIC_V2:

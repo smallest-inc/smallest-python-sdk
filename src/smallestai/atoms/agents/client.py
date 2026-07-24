@@ -4,8 +4,6 @@ import typing
 
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.request_options import RequestOptions
-from ..types.single_prompt_config import SinglePromptConfig
-from ..types.widget_config import WidgetConfig
 from ..types.workflow_type import WorkflowType
 from .raw_client import AsyncRawAgentsClient, RawAgentsClient
 from .types.archive_agent_agents_response import ArchiveAgentAgentsResponse
@@ -24,25 +22,18 @@ from .types.create_agent_request_synthesizer import CreateAgentRequestSynthesize
 from .types.create_agent_request_timezone import CreateAgentRequestTimezone
 from .types.create_agent_request_voice_detection_config import CreateAgentRequestVoiceDetectionConfig
 from .types.create_agent_request_voice_mail_detection_config import CreateAgentRequestVoiceMailDetectionConfig
-from .types.create_with_ai_agents_request_questions_item import CreateWithAiAgentsRequestQuestionsItem
-from .types.create_with_ai_agents_request_type import CreateWithAiAgentsRequestType
-from .types.create_with_ai_agents_request_voice_model import CreateWithAiAgentsRequestVoiceModel
-from .types.create_with_ai_agents_response import CreateWithAiAgentsResponse
 from .types.duplicate_agent_agents_response import DuplicateAgentAgentsResponse
 from .types.get_agent_agents_response import GetAgentAgentsResponse
-from .types.get_agent_id_workflow_response import GetAgentIdWorkflowResponse
-from .types.get_prompt_config_agents_response import GetPromptConfigAgentsResponse
-from .types.get_widget_config_agents_response import GetWidgetConfigAgentsResponse
+from .types.get_agent_avatar_presigned_url_response import GetAgentAvatarPresignedUrlResponse
+from .types.get_agent_call_logs_response import GetAgentCallLogsResponse
+from .types.get_agent_widget_config_response import GetAgentWidgetConfigResponse
 from .types.list_agents_agents_request_sort_field import ListAgentsAgentsRequestSortField
 from .types.list_agents_agents_request_sort_order import ListAgentsAgentsRequestSortOrder
 from .types.list_agents_agents_request_type import ListAgentsAgentsRequestType
 from .types.list_agents_agents_response import ListAgentsAgentsResponse
-from .types.list_call_logs_agents_response import ListCallLogsAgentsResponse
 from .types.update_agent_agents_response import UpdateAgentAgentsResponse
-from .types.update_widget_config_agents_response import UpdateWidgetConfigAgentsResponse
-from .types.update_workflow_configuration_agents_request_workflow_graph import (
-    UpdateWorkflowConfigurationAgentsRequestWorkflowGraph,
-)
+from .types.update_agent_widget_config_request_widget_config import UpdateAgentWidgetConfigRequestWidgetConfig
+from .types.update_agent_widget_config_response import UpdateAgentWidgetConfigResponse
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -191,10 +182,11 @@ class AgentsClient:
             Tamil (`ta`) cannot be combined with other languages in `supported`.
 
         synthesizer : typing.Optional[CreateAgentRequestSynthesizer]
-            Synthesizer (TTS) configuration for the agent.
-            Models `waves`, `waves_lightning_large`, `waves_lightning_v2`, and `waves_lightning_v3_1`
-            validate `voiceId` against the Waves API. All other models accept any voiceId.
-            Cloned voices are regular voiceIds — use them with any compatible Waves model.
+            Synthesizer (TTS) configuration for the agent. Model
+            `waves_lightning_v3_1` validates `voiceId` against the Waves
+            API. `gpt-realtime` and `gpt-realtime-mini` accept any voiceId.
+            Cloned voices are regular voiceIds. Use them with a compatible
+            Waves model.
 
         global_knowledge_base_id : typing.Optional[str]
             The global knowledge base ID of the agent. You can create a global knowledge base by using the /knowledgebase endpoint and assign it to the agent. The agent will use this knowledge base for its responses.
@@ -328,6 +320,56 @@ class AgentsClient:
         )
         return _response.data
 
+    def duplicate_agent(
+        self, id: str, *, target_organization_id: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> DuplicateAgentAgentsResponse:
+        """
+        Duplicates a SINGLE_PROMPT agent's live active version into a target organization
+        (can also be the same organization). Copies all versioned configuration but strips
+        organization-specific resources: knowledge base tools are removed, default variable
+        values are blanked, and a new avatar is generated. The duplicate starts with a
+        published V1 as its active version.
+
+        **400 is returned when:**
+        - The source agent is archived (`"Cannot duplicate an archived agent"`)
+        - The agent has no `activeVersionId` (`"This agent has no active version and cannot be duplicated"`)
+        - The active version exists but is not published/active (`"This agent has no active published version and cannot be duplicated"`)
+        - The agent is not `SINGLE_PROMPT` workflow type
+
+        Parameters
+        ----------
+        id : str
+            The ID of the source agent to duplicate
+
+        target_organization_id : str
+            MongoDB ObjectId of the target organization. Must be a 24-character hex string.
+            The authenticated user must be a member of this organization.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        DuplicateAgentAgentsResponse
+            Agent duplicated successfully
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.agents.duplicate_agent(
+            id="id",
+            target_organization_id="60d0fe4f5311236168a109ca",
+        )
+        """
+        _response = self._raw_client.duplicate_agent(
+            id, target_organization_id=target_organization_id, request_options=request_options
+        )
+        return _response.data
+
     def get_agent(
         self,
         id: str,
@@ -424,9 +466,7 @@ class AgentsClient:
         **Non-versioned agents** (no active version): all configuration fields are accepted,
         the same full set as `POST /agent`.
 
-        **400 is also returned when:**
-        - The agent is locked (`"Agent is locked, please unlock it to update"`)
-        - Cross-field constraint violated (e.g. `north_indic` language requires `transcriberType: pulse`)
+        **400 is also returned when a cross-field constraint is violated** (for example, `north_indic` language requires `transcriberType: pulse`).
 
         **403** is returned when selecting a gated model (`gpt-5.2`, `electron-kogta`, `electron-kogta-v2`)
         without org-level access.
@@ -484,6 +524,178 @@ class AgentsClient:
         )
         return _response.data
 
+    def get_agent_widget_config(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> GetAgentWidgetConfigResponse:
+        """
+        Returns the current web widget configuration for the agent. Also includes `assistantId` (same as the agent ID) as a convenience field for the widget embed code.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetAgentWidgetConfigResponse
+            Widget configuration
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.agents.get_agent_widget_config(
+            id="id",
+        )
+        """
+        _response = self._raw_client.get_agent_widget_config(id, request_options=request_options)
+        return _response.data
+
+    def update_agent_widget_config(
+        self,
+        id: str,
+        *,
+        widget_config: typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> UpdateAgentWidgetConfigResponse:
+        """
+        Updates the web widget configuration for the agent. Only provided fields are updated (partial update). When `avatarUrl` is changed, the old CDN avatar is automatically deleted from S3. The `avatarUrl` must be a URL from the platform's CDN domain — use `POST /agent/{id}/avatar/presigned-url` to upload first.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        widget_config : typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig]
+            All fields are optional — only provided fields are updated
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        UpdateAgentWidgetConfigResponse
+            Updated widget configuration
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.agents.update_agent_widget_config(
+            id="id",
+        )
+        """
+        _response = self._raw_client.update_agent_widget_config(
+            id, widget_config=widget_config, request_options=request_options
+        )
+        return _response.data
+
+    def get_agent_avatar_presigned_url(
+        self,
+        id: str,
+        *,
+        file_name: str,
+        content_type: str,
+        file_size: float,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> GetAgentAvatarPresignedUrlResponse:
+        """
+        Generates a pre-signed S3 upload URL for the agent's widget avatar image. Upload the image directly to S3 using the returned `presignedUrl`, then save `cdnUrl` as the agent's avatar via `PATCH /agent/{id}/widget-config`.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        file_name : str
+            Original file name (used to construct the S3 key)
+
+        content_type : str
+            MIME type — must start with `image/`
+
+        file_size : float
+            File size in bytes — must be > 0 and ≤ 2 MB (2,097,152 bytes)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetAgentAvatarPresignedUrlResponse
+            Pre-signed upload URL and CDN URL
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.agents.get_agent_avatar_presigned_url(
+            id="id",
+            file_name="fileName",
+            content_type="contentType",
+            file_size=1.1,
+        )
+        """
+        _response = self._raw_client.get_agent_avatar_presigned_url(
+            id, file_name=file_name, content_type=content_type, file_size=file_size, request_options=request_options
+        )
+        return _response.data
+
+    def get_agent_call_logs(
+        self,
+        id: str,
+        *,
+        page: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> GetAgentCallLogsResponse:
+        """
+        Returns paginated call logs for a specific agent.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        page : typing.Optional[int]
+            Page number (default 1)
+
+        offset : typing.Optional[int]
+            Records per page (default 10)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetAgentCallLogsResponse
+            Paginated call logs
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.agents.get_agent_call_logs(
+            id="id",
+        )
+        """
+        _response = self._raw_client.get_agent_call_logs(id, page=page, offset=offset, request_options=request_options)
+        return _response.data
+
     def archive_agent(
         self, id: str, *, on: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> ArchiveAgentAgentsResponse:
@@ -525,393 +737,6 @@ class AgentsClient:
         )
         """
         _response = self._raw_client.archive_agent(id, on=on, request_options=request_options)
-        return _response.data
-
-    def duplicate_agent(
-        self, id: str, *, target_organization_id: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> DuplicateAgentAgentsResponse:
-        """
-        Duplicates a SINGLE_PROMPT agent's live active version into a target organization
-        (can also be the same organization). Copies all versioned configuration but strips
-        organization-specific resources: knowledge base tools are removed, default variable
-        values are blanked, and a new avatar is generated. The duplicate starts with a
-        published V1 as its active version.
-
-        **400 is returned when:**
-        - The source agent is archived (`"Cannot duplicate an archived agent"`)
-        - The agent has no `activeVersionId` (`"This agent has no active version and cannot be duplicated"`)
-        - The active version exists but is not published/active (`"This agent has no active published version and cannot be duplicated"`)
-        - The agent is not `SINGLE_PROMPT` workflow type
-
-        Parameters
-        ----------
-        id : str
-            The ID of the source agent to duplicate
-
-        target_organization_id : str
-            MongoDB ObjectId of the target organization. Must be a 24-character hex string.
-            The authenticated user must be a member of this organization.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        DuplicateAgentAgentsResponse
-            Agent duplicated successfully
-
-        Examples
-        --------
-        from smallestai import SmallestAI
-
-        client = SmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-        client.atoms.agents.duplicate_agent(
-            id="id",
-            target_organization_id="60d0fe4f5311236168a109ca",
-        )
-        """
-        _response = self._raw_client.duplicate_agent(
-            id, target_organization_id=target_organization_id, request_options=request_options
-        )
-        return _response.data
-
-    def get_agent_workflow(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetAgentIdWorkflowResponse:
-        """
-        **Deprecated** — prefer `GET /agent/{id}` (config is resolved into `_resolvedConfig`
-        including prompt, tools, and post-call analytics).
-
-        Returns the active version's prompt and tools for single-prompt agents, or the
-        workflow graph data for workflow_graph agents. Customers still rely on this to
-        fetch their current prompt + tools — endpoint is kept live for now.
-
-        **Caveat:** the `versionId` query param (if passed) is silently ignored.
-        The response always reflects the currently-active version. To inspect a
-        non-active version, use `GET /agent/{id}/versions/{versionId}`.
-
-        Parameters
-        ----------
-        id : str
-            The ID of the agent
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        GetAgentIdWorkflowResponse
-            Successful response
-
-        Examples
-        --------
-        from smallestai import SmallestAI
-
-        client = SmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-        client.atoms.agents.get_agent_workflow(
-            id="id",
-        )
-        """
-        _response = self._raw_client.get_agent_workflow(id, request_options=request_options)
-        return _response.data
-
-    def update_workflow_configuration(
-        self,
-        id: str,
-        *,
-        type: WorkflowType,
-        workflow_graph: typing.Optional[UpdateWorkflowConfigurationAgentsRequestWorkflowGraph] = OMIT,
-        single_prompt_config: typing.Optional[SinglePromptConfig] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> None:
-        """
-        **Deprecated** — use `PATCH /agent/{id}/drafts/{draftId}/config` instead.
-
-        Directly mutates the legacy workflow document for an agent. This write path
-        bypasses the versioning system entirely: the change is not captured as a
-        new version, and future version activations may overwrite the legacy doc
-        back to whatever the version snapshot contains.
-
-        ⚠ **Writing here on a versioned agent can silently wipe tools, prompt, or
-        other fields that were missing from the PATCH payload.** Only use this if
-        you know the agent is not using versioning, or if you are intentionally
-        hot-patching the legacy doc.
-
-        Parameters
-        ----------
-        id : str
-            The workflow ID (found at `agent.workflowId` on the agent document).
-
-        type : WorkflowType
-
-        workflow_graph : typing.Optional[UpdateWorkflowConfigurationAgentsRequestWorkflowGraph]
-            Required when `type = workflow_graph`. Exactly one of `workflowGraph` or `singlePromptConfig` must be provided.
-
-        single_prompt_config : typing.Optional[SinglePromptConfig]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        from smallestai import SmallestAI
-
-        client = SmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-        client.atoms.agents.update_workflow_configuration(
-            id="60d0fe4f5311236168a109ca",
-            type="workflow_graph",
-        )
-        """
-        _response = self._raw_client.update_workflow_configuration(
-            id,
-            type=type,
-            workflow_graph=workflow_graph,
-            single_prompt_config=single_prompt_config,
-            request_options=request_options,
-        )
-        return _response.data
-
-    def create_with_ai(
-        self,
-        *,
-        name: typing.Optional[str] = OMIT,
-        description: typing.Optional[str] = OMIT,
-        questions: typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]] = OMIT,
-        type: typing.Optional[CreateWithAiAgentsRequestType] = OMIT,
-        emotive_toggle: typing.Optional[bool] = OMIT,
-        voice_id: typing.Optional[str] = OMIT,
-        voice_model: typing.Optional[CreateWithAiAgentsRequestVoiceModel] = OMIT,
-        knowledge_base_id: typing.Optional[str] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> CreateWithAiAgentsResponse:
-        """
-        Create a new single-prompt agent from a natural-language brief or structured
-        question/answer pairs. Atoms generates the system prompt for you.
-
-        Provide either `description` (free-form brief) or a non-empty `questions` array,
-        but not both. The `emotiveToggle`, `voiceId`, and `voiceModel` fields must be
-        supplied as a 3-tuple or omitted entirely.
-
-        Parameters
-        ----------
-        name : typing.Optional[str]
-            Agent name (trimmed). Auto-generated when omitted.
-
-        description : typing.Optional[str]
-            Free-form natural-language description of what the agent should do.
-            Atoms turns this into the system prompt. Use this OR `questions`, not both.
-
-        questions : typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]]
-            Structured question/answer pairs. Atoms uses these to compose the
-            system prompt. Use this OR `description`, not both.
-
-        type : typing.Optional[CreateWithAiAgentsRequestType]
-            Currently the only supported agent type.
-
-        emotive_toggle : typing.Optional[bool]
-            Enable emotive synthesis. Must be paired with `voiceId` + `voiceModel`.
-
-        voice_id : typing.Optional[str]
-            Voice ID for synthesis. Must be paired with `emotiveToggle` + `voiceModel`.
-
-        voice_model : typing.Optional[CreateWithAiAgentsRequestVoiceModel]
-            Synthesizer to use. Must be paired with `emotiveToggle` + `voiceId`.
-
-        knowledge_base_id : typing.Optional[str]
-            Optional knowledge-base ID to attach to the new agent.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        CreateWithAiAgentsResponse
-            Agent created. `data` is the new agent's `_id` (string).
-
-        Examples
-        --------
-        from smallestai import SmallestAI
-
-        client = SmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-        client.atoms.agents.create_with_ai()
-        """
-        _response = self._raw_client.create_with_ai(
-            name=name,
-            description=description,
-            questions=questions,
-            type=type,
-            emotive_toggle=emotive_toggle,
-            voice_id=voice_id,
-            voice_model=voice_model,
-            knowledge_base_id=knowledge_base_id,
-            request_options=request_options,
-        )
-        return _response.data
-
-    def list_call_logs(
-        self,
-        id: str,
-        *,
-        page: typing.Optional[str] = None,
-        offset: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListCallLogsAgentsResponse:
-        """
-        Returns paginated conversation logs (calls) for a specific agent in the caller's
-        organization. Use `GET /conversation` for cross-agent log listing; use this when
-        you already have an agent ID.
-
-        Parameters
-        ----------
-        id : str
-            The agent ID
-
-        page : typing.Optional[str]
-            Page number (string-encoded positive integer).
-
-        offset : typing.Optional[str]
-            Page size (string-encoded positive integer).
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        ListCallLogsAgentsResponse
-            Paginated list of conversation logs for the agent.
-
-        Examples
-        --------
-        from smallestai import SmallestAI
-
-        client = SmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-        client.atoms.agents.list_call_logs(
-            id="60d0fe4f5311236168a109ca",
-        )
-        """
-        _response = self._raw_client.list_call_logs(id, page=page, offset=offset, request_options=request_options)
-        return _response.data
-
-    def get_widget_config(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetWidgetConfigAgentsResponse:
-        """
-        Returns the embeddable web widget configuration for the agent (theme, copy,
-        consent prompts, branding, voice/chat mode, allowlist). The response merges the
-        stored config with `assistantId: <agentId>` injected.
-
-        Parameters
-        ----------
-        id : str
-            The agent ID
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        GetWidgetConfigAgentsResponse
-            Widget configuration for the agent.
-
-        Examples
-        --------
-        from smallestai import SmallestAI
-
-        client = SmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-        client.atoms.agents.get_widget_config(
-            id="60d0fe4f5311236168a109ca",
-        )
-        """
-        _response = self._raw_client.get_widget_config(id, request_options=request_options)
-        return _response.data
-
-    def update_widget_config(
-        self, id: str, *, widget_config: WidgetConfig, request_options: typing.Optional[RequestOptions] = None
-    ) -> UpdateWidgetConfigAgentsResponse:
-        """
-        Merge updates into the agent's embeddable widget config. Only the fields in the
-        request body are overwritten; everything else is preserved. Returns the full
-        widget config after merge.
-
-        Parameters
-        ----------
-        id : str
-            The agent ID
-
-        widget_config : WidgetConfig
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        UpdateWidgetConfigAgentsResponse
-            Merged widget configuration.
-
-        Examples
-        --------
-        from smallestai import SmallestAI
-        from smallestai.atoms import WidgetConfig
-
-        client = SmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-        client.atoms.agents.update_widget_config(
-            id="60d0fe4f5311236168a109ca",
-            widget_config=WidgetConfig(),
-        )
-        """
-        _response = self._raw_client.update_widget_config(
-            id, widget_config=widget_config, request_options=request_options
-        )
-        return _response.data
-
-    def get_prompt_config(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetPromptConfigAgentsResponse:
-        """
-        Returns the canonical question definitions, option choices, and example labels
-        used by the agent-builder UI when collecting input for `POST /agent/with-ai`.
-
-        Use this to programmatically discover what questions to ask end-users when
-        building agent-creation UIs.
-
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        GetPromptConfigAgentsResponse
-            Prompt-config catalogue.
-
-        Examples
-        --------
-        from smallestai import SmallestAI
-
-        client = SmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-        client.atoms.agents.get_prompt_config()
-        """
-        _response = self._raw_client.get_prompt_config(request_options=request_options)
         return _response.data
 
 
@@ -1066,10 +891,11 @@ class AsyncAgentsClient:
             Tamil (`ta`) cannot be combined with other languages in `supported`.
 
         synthesizer : typing.Optional[CreateAgentRequestSynthesizer]
-            Synthesizer (TTS) configuration for the agent.
-            Models `waves`, `waves_lightning_large`, `waves_lightning_v2`, and `waves_lightning_v3_1`
-            validate `voiceId` against the Waves API. All other models accept any voiceId.
-            Cloned voices are regular voiceIds — use them with any compatible Waves model.
+            Synthesizer (TTS) configuration for the agent. Model
+            `waves_lightning_v3_1` validates `voiceId` against the Waves
+            API. `gpt-realtime` and `gpt-realtime-mini` accept any voiceId.
+            Cloned voices are regular voiceIds. Use them with a compatible
+            Waves model.
 
         global_knowledge_base_id : typing.Optional[str]
             The global knowledge base ID of the agent. You can create a global knowledge base by using the /knowledgebase endpoint and assign it to the agent. The agent will use this knowledge base for its responses.
@@ -1211,6 +1037,64 @@ class AsyncAgentsClient:
         )
         return _response.data
 
+    async def duplicate_agent(
+        self, id: str, *, target_organization_id: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> DuplicateAgentAgentsResponse:
+        """
+        Duplicates a SINGLE_PROMPT agent's live active version into a target organization
+        (can also be the same organization). Copies all versioned configuration but strips
+        organization-specific resources: knowledge base tools are removed, default variable
+        values are blanked, and a new avatar is generated. The duplicate starts with a
+        published V1 as its active version.
+
+        **400 is returned when:**
+        - The source agent is archived (`"Cannot duplicate an archived agent"`)
+        - The agent has no `activeVersionId` (`"This agent has no active version and cannot be duplicated"`)
+        - The active version exists but is not published/active (`"This agent has no active published version and cannot be duplicated"`)
+        - The agent is not `SINGLE_PROMPT` workflow type
+
+        Parameters
+        ----------
+        id : str
+            The ID of the source agent to duplicate
+
+        target_organization_id : str
+            MongoDB ObjectId of the target organization. Must be a 24-character hex string.
+            The authenticated user must be a member of this organization.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        DuplicateAgentAgentsResponse
+            Agent duplicated successfully
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.agents.duplicate_agent(
+                id="id",
+                target_organization_id="60d0fe4f5311236168a109ca",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.duplicate_agent(
+            id, target_organization_id=target_organization_id, request_options=request_options
+        )
+        return _response.data
+
     async def get_agent(
         self,
         id: str,
@@ -1315,9 +1199,7 @@ class AsyncAgentsClient:
         **Non-versioned agents** (no active version): all configuration fields are accepted,
         the same full set as `POST /agent`.
 
-        **400 is also returned when:**
-        - The agent is locked (`"Agent is locked, please unlock it to update"`)
-        - Cross-field constraint violated (e.g. `north_indic` language requires `transcriberType: pulse`)
+        **400 is also returned when a cross-field constraint is violated** (for example, `north_indic` language requires `transcriberType: pulse`).
 
         **403** is returned when selecting a gated model (`gpt-5.2`, `electron-kogta`, `electron-kogta-v2`)
         without org-level access.
@@ -1383,6 +1265,212 @@ class AsyncAgentsClient:
         )
         return _response.data
 
+    async def get_agent_widget_config(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> GetAgentWidgetConfigResponse:
+        """
+        Returns the current web widget configuration for the agent. Also includes `assistantId` (same as the agent ID) as a convenience field for the widget embed code.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetAgentWidgetConfigResponse
+            Widget configuration
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.agents.get_agent_widget_config(
+                id="id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_agent_widget_config(id, request_options=request_options)
+        return _response.data
+
+    async def update_agent_widget_config(
+        self,
+        id: str,
+        *,
+        widget_config: typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> UpdateAgentWidgetConfigResponse:
+        """
+        Updates the web widget configuration for the agent. Only provided fields are updated (partial update). When `avatarUrl` is changed, the old CDN avatar is automatically deleted from S3. The `avatarUrl` must be a URL from the platform's CDN domain — use `POST /agent/{id}/avatar/presigned-url` to upload first.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        widget_config : typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig]
+            All fields are optional — only provided fields are updated
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        UpdateAgentWidgetConfigResponse
+            Updated widget configuration
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.agents.update_agent_widget_config(
+                id="id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.update_agent_widget_config(
+            id, widget_config=widget_config, request_options=request_options
+        )
+        return _response.data
+
+    async def get_agent_avatar_presigned_url(
+        self,
+        id: str,
+        *,
+        file_name: str,
+        content_type: str,
+        file_size: float,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> GetAgentAvatarPresignedUrlResponse:
+        """
+        Generates a pre-signed S3 upload URL for the agent's widget avatar image. Upload the image directly to S3 using the returned `presignedUrl`, then save `cdnUrl` as the agent's avatar via `PATCH /agent/{id}/widget-config`.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        file_name : str
+            Original file name (used to construct the S3 key)
+
+        content_type : str
+            MIME type — must start with `image/`
+
+        file_size : float
+            File size in bytes — must be > 0 and ≤ 2 MB (2,097,152 bytes)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetAgentAvatarPresignedUrlResponse
+            Pre-signed upload URL and CDN URL
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.agents.get_agent_avatar_presigned_url(
+                id="id",
+                file_name="fileName",
+                content_type="contentType",
+                file_size=1.1,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_agent_avatar_presigned_url(
+            id, file_name=file_name, content_type=content_type, file_size=file_size, request_options=request_options
+        )
+        return _response.data
+
+    async def get_agent_call_logs(
+        self,
+        id: str,
+        *,
+        page: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> GetAgentCallLogsResponse:
+        """
+        Returns paginated call logs for a specific agent.
+
+        Parameters
+        ----------
+        id : str
+            Agent ObjectId
+
+        page : typing.Optional[int]
+            Page number (default 1)
+
+        offset : typing.Optional[int]
+            Records per page (default 10)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetAgentCallLogsResponse
+            Paginated call logs
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.agents.get_agent_call_logs(
+                id="id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_agent_call_logs(
+            id, page=page, offset=offset, request_options=request_options
+        )
+        return _response.data
+
     async def archive_agent(
         self, id: str, *, on: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> ArchiveAgentAgentsResponse:
@@ -1432,455 +1520,4 @@ class AsyncAgentsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.archive_agent(id, on=on, request_options=request_options)
-        return _response.data
-
-    async def duplicate_agent(
-        self, id: str, *, target_organization_id: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> DuplicateAgentAgentsResponse:
-        """
-        Duplicates a SINGLE_PROMPT agent's live active version into a target organization
-        (can also be the same organization). Copies all versioned configuration but strips
-        organization-specific resources: knowledge base tools are removed, default variable
-        values are blanked, and a new avatar is generated. The duplicate starts with a
-        published V1 as its active version.
-
-        **400 is returned when:**
-        - The source agent is archived (`"Cannot duplicate an archived agent"`)
-        - The agent has no `activeVersionId` (`"This agent has no active version and cannot be duplicated"`)
-        - The active version exists but is not published/active (`"This agent has no active published version and cannot be duplicated"`)
-        - The agent is not `SINGLE_PROMPT` workflow type
-
-        Parameters
-        ----------
-        id : str
-            The ID of the source agent to duplicate
-
-        target_organization_id : str
-            MongoDB ObjectId of the target organization. Must be a 24-character hex string.
-            The authenticated user must be a member of this organization.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        DuplicateAgentAgentsResponse
-            Agent duplicated successfully
-
-        Examples
-        --------
-        import asyncio
-
-        from smallestai import AsyncSmallestAI
-
-        client = AsyncSmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.atoms.agents.duplicate_agent(
-                id="id",
-                target_organization_id="60d0fe4f5311236168a109ca",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.duplicate_agent(
-            id, target_organization_id=target_organization_id, request_options=request_options
-        )
-        return _response.data
-
-    async def get_agent_workflow(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetAgentIdWorkflowResponse:
-        """
-        **Deprecated** — prefer `GET /agent/{id}` (config is resolved into `_resolvedConfig`
-        including prompt, tools, and post-call analytics).
-
-        Returns the active version's prompt and tools for single-prompt agents, or the
-        workflow graph data for workflow_graph agents. Customers still rely on this to
-        fetch their current prompt + tools — endpoint is kept live for now.
-
-        **Caveat:** the `versionId` query param (if passed) is silently ignored.
-        The response always reflects the currently-active version. To inspect a
-        non-active version, use `GET /agent/{id}/versions/{versionId}`.
-
-        Parameters
-        ----------
-        id : str
-            The ID of the agent
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        GetAgentIdWorkflowResponse
-            Successful response
-
-        Examples
-        --------
-        import asyncio
-
-        from smallestai import AsyncSmallestAI
-
-        client = AsyncSmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.atoms.agents.get_agent_workflow(
-                id="id",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.get_agent_workflow(id, request_options=request_options)
-        return _response.data
-
-    async def update_workflow_configuration(
-        self,
-        id: str,
-        *,
-        type: WorkflowType,
-        workflow_graph: typing.Optional[UpdateWorkflowConfigurationAgentsRequestWorkflowGraph] = OMIT,
-        single_prompt_config: typing.Optional[SinglePromptConfig] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> None:
-        """
-        **Deprecated** — use `PATCH /agent/{id}/drafts/{draftId}/config` instead.
-
-        Directly mutates the legacy workflow document for an agent. This write path
-        bypasses the versioning system entirely: the change is not captured as a
-        new version, and future version activations may overwrite the legacy doc
-        back to whatever the version snapshot contains.
-
-        ⚠ **Writing here on a versioned agent can silently wipe tools, prompt, or
-        other fields that were missing from the PATCH payload.** Only use this if
-        you know the agent is not using versioning, or if you are intentionally
-        hot-patching the legacy doc.
-
-        Parameters
-        ----------
-        id : str
-            The workflow ID (found at `agent.workflowId` on the agent document).
-
-        type : WorkflowType
-
-        workflow_graph : typing.Optional[UpdateWorkflowConfigurationAgentsRequestWorkflowGraph]
-            Required when `type = workflow_graph`. Exactly one of `workflowGraph` or `singlePromptConfig` must be provided.
-
-        single_prompt_config : typing.Optional[SinglePromptConfig]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        import asyncio
-
-        from smallestai import AsyncSmallestAI
-
-        client = AsyncSmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.atoms.agents.update_workflow_configuration(
-                id="60d0fe4f5311236168a109ca",
-                type="workflow_graph",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.update_workflow_configuration(
-            id,
-            type=type,
-            workflow_graph=workflow_graph,
-            single_prompt_config=single_prompt_config,
-            request_options=request_options,
-        )
-        return _response.data
-
-    async def create_with_ai(
-        self,
-        *,
-        name: typing.Optional[str] = OMIT,
-        description: typing.Optional[str] = OMIT,
-        questions: typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]] = OMIT,
-        type: typing.Optional[CreateWithAiAgentsRequestType] = OMIT,
-        emotive_toggle: typing.Optional[bool] = OMIT,
-        voice_id: typing.Optional[str] = OMIT,
-        voice_model: typing.Optional[CreateWithAiAgentsRequestVoiceModel] = OMIT,
-        knowledge_base_id: typing.Optional[str] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> CreateWithAiAgentsResponse:
-        """
-        Create a new single-prompt agent from a natural-language brief or structured
-        question/answer pairs. Atoms generates the system prompt for you.
-
-        Provide either `description` (free-form brief) or a non-empty `questions` array,
-        but not both. The `emotiveToggle`, `voiceId`, and `voiceModel` fields must be
-        supplied as a 3-tuple or omitted entirely.
-
-        Parameters
-        ----------
-        name : typing.Optional[str]
-            Agent name (trimmed). Auto-generated when omitted.
-
-        description : typing.Optional[str]
-            Free-form natural-language description of what the agent should do.
-            Atoms turns this into the system prompt. Use this OR `questions`, not both.
-
-        questions : typing.Optional[typing.Sequence[CreateWithAiAgentsRequestQuestionsItem]]
-            Structured question/answer pairs. Atoms uses these to compose the
-            system prompt. Use this OR `description`, not both.
-
-        type : typing.Optional[CreateWithAiAgentsRequestType]
-            Currently the only supported agent type.
-
-        emotive_toggle : typing.Optional[bool]
-            Enable emotive synthesis. Must be paired with `voiceId` + `voiceModel`.
-
-        voice_id : typing.Optional[str]
-            Voice ID for synthesis. Must be paired with `emotiveToggle` + `voiceModel`.
-
-        voice_model : typing.Optional[CreateWithAiAgentsRequestVoiceModel]
-            Synthesizer to use. Must be paired with `emotiveToggle` + `voiceId`.
-
-        knowledge_base_id : typing.Optional[str]
-            Optional knowledge-base ID to attach to the new agent.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        CreateWithAiAgentsResponse
-            Agent created. `data` is the new agent's `_id` (string).
-
-        Examples
-        --------
-        import asyncio
-
-        from smallestai import AsyncSmallestAI
-
-        client = AsyncSmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.atoms.agents.create_with_ai()
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.create_with_ai(
-            name=name,
-            description=description,
-            questions=questions,
-            type=type,
-            emotive_toggle=emotive_toggle,
-            voice_id=voice_id,
-            voice_model=voice_model,
-            knowledge_base_id=knowledge_base_id,
-            request_options=request_options,
-        )
-        return _response.data
-
-    async def list_call_logs(
-        self,
-        id: str,
-        *,
-        page: typing.Optional[str] = None,
-        offset: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListCallLogsAgentsResponse:
-        """
-        Returns paginated conversation logs (calls) for a specific agent in the caller's
-        organization. Use `GET /conversation` for cross-agent log listing; use this when
-        you already have an agent ID.
-
-        Parameters
-        ----------
-        id : str
-            The agent ID
-
-        page : typing.Optional[str]
-            Page number (string-encoded positive integer).
-
-        offset : typing.Optional[str]
-            Page size (string-encoded positive integer).
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        ListCallLogsAgentsResponse
-            Paginated list of conversation logs for the agent.
-
-        Examples
-        --------
-        import asyncio
-
-        from smallestai import AsyncSmallestAI
-
-        client = AsyncSmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.atoms.agents.list_call_logs(
-                id="60d0fe4f5311236168a109ca",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.list_call_logs(id, page=page, offset=offset, request_options=request_options)
-        return _response.data
-
-    async def get_widget_config(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetWidgetConfigAgentsResponse:
-        """
-        Returns the embeddable web widget configuration for the agent (theme, copy,
-        consent prompts, branding, voice/chat mode, allowlist). The response merges the
-        stored config with `assistantId: <agentId>` injected.
-
-        Parameters
-        ----------
-        id : str
-            The agent ID
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        GetWidgetConfigAgentsResponse
-            Widget configuration for the agent.
-
-        Examples
-        --------
-        import asyncio
-
-        from smallestai import AsyncSmallestAI
-
-        client = AsyncSmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.atoms.agents.get_widget_config(
-                id="60d0fe4f5311236168a109ca",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.get_widget_config(id, request_options=request_options)
-        return _response.data
-
-    async def update_widget_config(
-        self, id: str, *, widget_config: WidgetConfig, request_options: typing.Optional[RequestOptions] = None
-    ) -> UpdateWidgetConfigAgentsResponse:
-        """
-        Merge updates into the agent's embeddable widget config. Only the fields in the
-        request body are overwritten; everything else is preserved. Returns the full
-        widget config after merge.
-
-        Parameters
-        ----------
-        id : str
-            The agent ID
-
-        widget_config : WidgetConfig
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        UpdateWidgetConfigAgentsResponse
-            Merged widget configuration.
-
-        Examples
-        --------
-        import asyncio
-
-        from smallestai import AsyncSmallestAI
-        from smallestai.atoms import WidgetConfig
-
-        client = AsyncSmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.atoms.agents.update_widget_config(
-                id="60d0fe4f5311236168a109ca",
-                widget_config=WidgetConfig(),
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.update_widget_config(
-            id, widget_config=widget_config, request_options=request_options
-        )
-        return _response.data
-
-    async def get_prompt_config(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetPromptConfigAgentsResponse:
-        """
-        Returns the canonical question definitions, option choices, and example labels
-        used by the agent-builder UI when collecting input for `POST /agent/with-ai`.
-
-        Use this to programmatically discover what questions to ask end-users when
-        building agent-creation UIs.
-
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        GetPromptConfigAgentsResponse
-            Prompt-config catalogue.
-
-        Examples
-        --------
-        import asyncio
-
-        from smallestai import AsyncSmallestAI
-
-        client = AsyncSmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.atoms.agents.get_prompt_config()
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.get_prompt_config(request_options=request_options)
         return _response.data

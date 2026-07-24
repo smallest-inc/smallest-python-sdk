@@ -2,3 +2,65 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .post_prompt_scoring_score_request import PostPromptScoringScoreRequest
+    from .post_prompt_scoring_score_request_draft_id import PostPromptScoringScoreRequestDraftId
+    from .post_prompt_scoring_score_request_version_id import PostPromptScoringScoreRequestVersionId
+    from .post_prompt_scoring_score_response import PostPromptScoringScoreResponse
+    from .post_prompt_scoring_score_response_data import PostPromptScoringScoreResponseData
+    from .post_prompt_scoring_score_response_data_band import PostPromptScoringScoreResponseDataBand
+    from .post_prompt_scoring_score_response_data_dimensions_item import (
+        PostPromptScoringScoreResponseDataDimensionsItem,
+    )
+    from .post_prompt_scoring_score_response_data_dimensions_item_level import (
+        PostPromptScoringScoreResponseDataDimensionsItemLevel,
+    )
+    from .post_prompt_scoring_score_response_data_overall_grade import PostPromptScoringScoreResponseDataOverallGrade
+_dynamic_imports: typing.Dict[str, str] = {
+    "PostPromptScoringScoreRequest": ".post_prompt_scoring_score_request",
+    "PostPromptScoringScoreRequestDraftId": ".post_prompt_scoring_score_request_draft_id",
+    "PostPromptScoringScoreRequestVersionId": ".post_prompt_scoring_score_request_version_id",
+    "PostPromptScoringScoreResponse": ".post_prompt_scoring_score_response",
+    "PostPromptScoringScoreResponseData": ".post_prompt_scoring_score_response_data",
+    "PostPromptScoringScoreResponseDataBand": ".post_prompt_scoring_score_response_data_band",
+    "PostPromptScoringScoreResponseDataDimensionsItem": ".post_prompt_scoring_score_response_data_dimensions_item",
+    "PostPromptScoringScoreResponseDataDimensionsItemLevel": ".post_prompt_scoring_score_response_data_dimensions_item_level",
+    "PostPromptScoringScoreResponseDataOverallGrade": ".post_prompt_scoring_score_response_data_overall_grade",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "PostPromptScoringScoreRequest",
+    "PostPromptScoringScoreRequestDraftId",
+    "PostPromptScoringScoreRequestVersionId",
+    "PostPromptScoringScoreResponse",
+    "PostPromptScoringScoreResponseData",
+    "PostPromptScoringScoreResponseDataBand",
+    "PostPromptScoringScoreResponseDataDimensionsItem",
+    "PostPromptScoringScoreResponseDataDimensionsItemLevel",
+    "PostPromptScoringScoreResponseDataOverallGrade",
+]

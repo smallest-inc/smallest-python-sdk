@@ -50,18 +50,29 @@ class RawTtsClient:
         Pass `"model": "lightning_v3.1"` (default) or
         `"model": "lightning_v3.1_pro"` on each request. Concurrency and latency
         are identical across both. Voice catalogs differ — see the
-        [Lightning v3.1](/waves/model-cards/text-to-speech/lightning-v-3-1) and
-        [Lightning v3.1 Pro](/waves/model-cards/text-to-speech/lightning-v-3-1-pro)
+        [Lightning v3.1](/models/model-cards/text-to-speech/lightning-v-3-1) and
+        [Lightning v3.1 Pro](/models/model-cards/text-to-speech/lightning-v-3-1-pro)
         model cards for the per-model catalog.
 
         ## Language behaviour
 
-        On `lightning_v3.1` the full 12-language catalog applies (see voice
-        catalog).
+        **`auto` (recommended for cross-language use cases):** routes internally
+        based on the input text. Any English or Hindi voice can be used across
+        all supported languages when `auto` is set.
 
-        On `lightning_v3.1_pro`:
+        On `lightning_v3.1` — 20 accepted language codes (10 European + 10
+        Indic). The trained voice catalog covers 12 of these directly; the
+        other 8 route through English or Hindi voices.
+
+        On `lightning_v3.1_pro` — 31 languages with dedicated voices (10
+        Indic, 8 Asian & Middle Eastern, 13 European including Dutch and
+        Swedish):
         - Pass `language: en` → UK + American accented English.
         - Pass `language: hi` → Indian accented English + Hindi (code-switching).
+        - Pass the ISO 639-1 code of any other Pro language (e.g. `ta`, `de`,
+          `ja`) with a matching Pro voice. See the
+          [Lightning v3.1 Pro model card](/models/model-cards/text-to-speech/lightning-v-3-1-pro#supported-languages)
+          for the full list.
         - Omit `language` → defaults to `en + hi` (mixed Indian + Western
           English coverage).
 
@@ -70,7 +81,7 @@ class RawTtsClient:
         Set `word_timestamps: true` to receive per-word timing events
         interleaved with the audio chunks (`status: "word_timestamp"`).
         Supported on English + Hindi base-queue voices. See
-        [Word-level timestamps](/waves/documentation/text-to-speech-lightning/word-timestamps).
+        [Word-level timestamps](/models/documentation/text-to-speech-lightning/word-timestamps).
 
         ## Connection timeout
 
@@ -191,18 +202,29 @@ class AsyncRawTtsClient:
         Pass `"model": "lightning_v3.1"` (default) or
         `"model": "lightning_v3.1_pro"` on each request. Concurrency and latency
         are identical across both. Voice catalogs differ — see the
-        [Lightning v3.1](/waves/model-cards/text-to-speech/lightning-v-3-1) and
-        [Lightning v3.1 Pro](/waves/model-cards/text-to-speech/lightning-v-3-1-pro)
+        [Lightning v3.1](/models/model-cards/text-to-speech/lightning-v-3-1) and
+        [Lightning v3.1 Pro](/models/model-cards/text-to-speech/lightning-v-3-1-pro)
         model cards for the per-model catalog.
 
         ## Language behaviour
 
-        On `lightning_v3.1` the full 12-language catalog applies (see voice
-        catalog).
+        **`auto` (recommended for cross-language use cases):** routes internally
+        based on the input text. Any English or Hindi voice can be used across
+        all supported languages when `auto` is set.
 
-        On `lightning_v3.1_pro`:
+        On `lightning_v3.1` — 20 accepted language codes (10 European + 10
+        Indic). The trained voice catalog covers 12 of these directly; the
+        other 8 route through English or Hindi voices.
+
+        On `lightning_v3.1_pro` — 31 languages with dedicated voices (10
+        Indic, 8 Asian & Middle Eastern, 13 European including Dutch and
+        Swedish):
         - Pass `language: en` → UK + American accented English.
         - Pass `language: hi` → Indian accented English + Hindi (code-switching).
+        - Pass the ISO 639-1 code of any other Pro language (e.g. `ta`, `de`,
+          `ja`) with a matching Pro voice. See the
+          [Lightning v3.1 Pro model card](/models/model-cards/text-to-speech/lightning-v-3-1-pro#supported-languages)
+          for the full list.
         - Omit `language` → defaults to `en + hi` (mixed Indian + Western
           English coverage).
 
@@ -211,7 +233,7 @@ class AsyncRawTtsClient:
         Set `word_timestamps: true` to receive per-word timing events
         interleaved with the audio chunks (`status: "word_timestamp"`).
         Supported on English + Hindi base-queue voices. See
-        [Word-level timestamps](/waves/documentation/text-to-speech-lightning/word-timestamps).
+        [Word-level timestamps](/models/documentation/text-to-speech-lightning/word-timestamps).
 
         ## Connection timeout
 

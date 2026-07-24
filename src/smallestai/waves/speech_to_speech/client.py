@@ -78,7 +78,7 @@ class SpeechToSpeechClient:
         - `1000` — normal close (including the ~30 s server-side idle timeout).
         - `1013` — server at capacity. An `error` event with `code: "server_full"` precedes the close frame; back off with jitter and retry.
 
-        See the [Hydra realtime guide](/waves/documentation/speech-to-speech-hydra/overview) for the full protocol reference, tool-calling pattern, interruption handling, and complete Python + browser examples.
+        See the [Hydra realtime guide](/models/documentation/speech-to-speech-hydra/overview) for the full protocol reference, tool-calling pattern, interruption handling, and complete Python + browser examples.
 
         Parameters
         ----------
@@ -183,7 +183,7 @@ class AsyncSpeechToSpeechClient:
         - `1000` — normal close (including the ~30 s server-side idle timeout).
         - `1013` — server at capacity. An `error` event with `code: "server_full"` precedes the close frame; back off with jitter and retry.
 
-        See the [Hydra realtime guide](/waves/documentation/speech-to-speech-hydra/overview) for the full protocol reference, tool-calling pattern, interruption handling, and complete Python + browser examples.
+        See the [Hydra realtime guide](/models/documentation/speech-to-speech-hydra/overview) for the full protocol reference, tool-calling pattern, interruption handling, and complete Python + browser examples.
 
         Parameters
         ----------

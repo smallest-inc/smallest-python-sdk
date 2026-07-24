@@ -2,3 +2,116 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .get_product_all_numbers_response import GetProductAllNumbersResponse
+    from .get_product_all_numbers_response_data import GetProductAllNumbersResponseData
+    from .get_product_manage_subscription_response import GetProductManageSubscriptionResponse
+    from .get_product_manage_subscription_response_data import GetProductManageSubscriptionResponseData
+    from .get_product_proration_amount_response import GetProductProrationAmountResponse
+    from .get_product_proration_amount_response_data import GetProductProrationAmountResponseData
+    from .get_product_unpaid_invoices_response import GetProductUnpaidInvoicesResponse
+    from .get_product_unpaid_invoices_response_data import GetProductUnpaidInvoicesResponseData
+    from .import_sip_phone_numbers_response import ImportSipPhoneNumbersResponse
+    from .import_sip_phone_numbers_response_data import ImportSipPhoneNumbersResponseData
+    from .import_sip_phone_numbers_response_data_attributes import ImportSipPhoneNumbersResponseDataAttributes
+    from .import_sip_phone_numbers_response_data_product_type import ImportSipPhoneNumbersResponseDataProductType
+    from .list_phone_numbers_response import ListPhoneNumbersResponse
+    from .list_phone_numbers_response_data_item import ListPhoneNumbersResponseDataItem
+    from .list_phone_numbers_response_data_item_attributes import ListPhoneNumbersResponseDataItemAttributes
+    from .list_phone_numbers_response_data_item_attributes_provider import (
+        ListPhoneNumbersResponseDataItemAttributesProvider,
+    )
+    from .list_phone_numbers_response_data_item_product_type import ListPhoneNumbersResponseDataItemProductType
+    from .release_phone_numbers_response import ReleasePhoneNumbersResponse
+    from .release_phone_numbers_response_data import ReleasePhoneNumbersResponseData
+    from .rent_phone_numbers_request_provider import RentPhoneNumbersRequestProvider
+    from .rent_phone_numbers_response import RentPhoneNumbersResponse
+    from .rent_phone_numbers_response_data import RentPhoneNumbersResponseData
+    from .search_rentable_phone_numbers_request_provider import SearchRentablePhoneNumbersRequestProvider
+    from .search_rentable_phone_numbers_response import SearchRentablePhoneNumbersResponse
+    from .search_rentable_phone_numbers_response_data_item import SearchRentablePhoneNumbersResponseDataItem
+    from .search_rentable_phone_numbers_response_data_item_provider import (
+        SearchRentablePhoneNumbersResponseDataItemProvider,
+    )
+_dynamic_imports: typing.Dict[str, str] = {
+    "GetProductAllNumbersResponse": ".get_product_all_numbers_response",
+    "GetProductAllNumbersResponseData": ".get_product_all_numbers_response_data",
+    "GetProductManageSubscriptionResponse": ".get_product_manage_subscription_response",
+    "GetProductManageSubscriptionResponseData": ".get_product_manage_subscription_response_data",
+    "GetProductProrationAmountResponse": ".get_product_proration_amount_response",
+    "GetProductProrationAmountResponseData": ".get_product_proration_amount_response_data",
+    "GetProductUnpaidInvoicesResponse": ".get_product_unpaid_invoices_response",
+    "GetProductUnpaidInvoicesResponseData": ".get_product_unpaid_invoices_response_data",
+    "ImportSipPhoneNumbersResponse": ".import_sip_phone_numbers_response",
+    "ImportSipPhoneNumbersResponseData": ".import_sip_phone_numbers_response_data",
+    "ImportSipPhoneNumbersResponseDataAttributes": ".import_sip_phone_numbers_response_data_attributes",
+    "ImportSipPhoneNumbersResponseDataProductType": ".import_sip_phone_numbers_response_data_product_type",
+    "ListPhoneNumbersResponse": ".list_phone_numbers_response",
+    "ListPhoneNumbersResponseDataItem": ".list_phone_numbers_response_data_item",
+    "ListPhoneNumbersResponseDataItemAttributes": ".list_phone_numbers_response_data_item_attributes",
+    "ListPhoneNumbersResponseDataItemAttributesProvider": ".list_phone_numbers_response_data_item_attributes_provider",
+    "ListPhoneNumbersResponseDataItemProductType": ".list_phone_numbers_response_data_item_product_type",
+    "ReleasePhoneNumbersResponse": ".release_phone_numbers_response",
+    "ReleasePhoneNumbersResponseData": ".release_phone_numbers_response_data",
+    "RentPhoneNumbersRequestProvider": ".rent_phone_numbers_request_provider",
+    "RentPhoneNumbersResponse": ".rent_phone_numbers_response",
+    "RentPhoneNumbersResponseData": ".rent_phone_numbers_response_data",
+    "SearchRentablePhoneNumbersRequestProvider": ".search_rentable_phone_numbers_request_provider",
+    "SearchRentablePhoneNumbersResponse": ".search_rentable_phone_numbers_response",
+    "SearchRentablePhoneNumbersResponseDataItem": ".search_rentable_phone_numbers_response_data_item",
+    "SearchRentablePhoneNumbersResponseDataItemProvider": ".search_rentable_phone_numbers_response_data_item_provider",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "GetProductAllNumbersResponse",
+    "GetProductAllNumbersResponseData",
+    "GetProductManageSubscriptionResponse",
+    "GetProductManageSubscriptionResponseData",
+    "GetProductProrationAmountResponse",
+    "GetProductProrationAmountResponseData",
+    "GetProductUnpaidInvoicesResponse",
+    "GetProductUnpaidInvoicesResponseData",
+    "ImportSipPhoneNumbersResponse",
+    "ImportSipPhoneNumbersResponseData",
+    "ImportSipPhoneNumbersResponseDataAttributes",
+    "ImportSipPhoneNumbersResponseDataProductType",
+    "ListPhoneNumbersResponse",
+    "ListPhoneNumbersResponseDataItem",
+    "ListPhoneNumbersResponseDataItemAttributes",
+    "ListPhoneNumbersResponseDataItemAttributesProvider",
+    "ListPhoneNumbersResponseDataItemProductType",
+    "ReleasePhoneNumbersResponse",
+    "ReleasePhoneNumbersResponseData",
+    "RentPhoneNumbersRequestProvider",
+    "RentPhoneNumbersResponse",
+    "RentPhoneNumbersResponseData",
+    "SearchRentablePhoneNumbersRequestProvider",
+    "SearchRentablePhoneNumbersResponse",
+    "SearchRentablePhoneNumbersResponseDataItem",
+    "SearchRentablePhoneNumbersResponseDataItemProvider",
+]

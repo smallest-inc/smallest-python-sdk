@@ -2,3 +2,83 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .list_agent_templates_agent_templates_request_region import ListAgentTemplatesAgentTemplatesRequestRegion
+    from .list_agent_templates_agent_templates_response import ListAgentTemplatesAgentTemplatesResponse
+    from .list_agent_templates_agent_templates_response_data_item import (
+        ListAgentTemplatesAgentTemplatesResponseDataItem,
+    )
+    from .list_agent_templates_agent_templates_response_data_item_call_type import (
+        ListAgentTemplatesAgentTemplatesResponseDataItemCallType,
+    )
+    from .list_agent_templates_agent_templates_response_data_item_default_language import (
+        ListAgentTemplatesAgentTemplatesResponseDataItemDefaultLanguage,
+    )
+    from .list_agent_templates_agent_templates_response_data_item_region import (
+        ListAgentTemplatesAgentTemplatesResponseDataItemRegion,
+    )
+    from .list_agent_templates_agent_templates_response_data_item_single_prompt_config import (
+        ListAgentTemplatesAgentTemplatesResponseDataItemSinglePromptConfig,
+    )
+    from .list_agent_templates_agent_templates_response_data_item_single_prompt_config_tools_item import (
+        ListAgentTemplatesAgentTemplatesResponseDataItemSinglePromptConfigToolsItem,
+    )
+    from .list_agent_templates_agent_templates_response_data_item_single_prompt_config_tools_item_type import (
+        ListAgentTemplatesAgentTemplatesResponseDataItemSinglePromptConfigToolsItemType,
+    )
+    from .list_agent_templates_agent_templates_response_data_item_workflow_type import (
+        ListAgentTemplatesAgentTemplatesResponseDataItemWorkflowType,
+    )
+    from .post_agent_from_template_response import PostAgentFromTemplateResponse
+_dynamic_imports: typing.Dict[str, str] = {
+    "ListAgentTemplatesAgentTemplatesRequestRegion": ".list_agent_templates_agent_templates_request_region",
+    "ListAgentTemplatesAgentTemplatesResponse": ".list_agent_templates_agent_templates_response",
+    "ListAgentTemplatesAgentTemplatesResponseDataItem": ".list_agent_templates_agent_templates_response_data_item",
+    "ListAgentTemplatesAgentTemplatesResponseDataItemCallType": ".list_agent_templates_agent_templates_response_data_item_call_type",
+    "ListAgentTemplatesAgentTemplatesResponseDataItemDefaultLanguage": ".list_agent_templates_agent_templates_response_data_item_default_language",
+    "ListAgentTemplatesAgentTemplatesResponseDataItemRegion": ".list_agent_templates_agent_templates_response_data_item_region",
+    "ListAgentTemplatesAgentTemplatesResponseDataItemSinglePromptConfig": ".list_agent_templates_agent_templates_response_data_item_single_prompt_config",
+    "ListAgentTemplatesAgentTemplatesResponseDataItemSinglePromptConfigToolsItem": ".list_agent_templates_agent_templates_response_data_item_single_prompt_config_tools_item",
+    "ListAgentTemplatesAgentTemplatesResponseDataItemSinglePromptConfigToolsItemType": ".list_agent_templates_agent_templates_response_data_item_single_prompt_config_tools_item_type",
+    "ListAgentTemplatesAgentTemplatesResponseDataItemWorkflowType": ".list_agent_templates_agent_templates_response_data_item_workflow_type",
+    "PostAgentFromTemplateResponse": ".post_agent_from_template_response",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "ListAgentTemplatesAgentTemplatesRequestRegion",
+    "ListAgentTemplatesAgentTemplatesResponse",
+    "ListAgentTemplatesAgentTemplatesResponseDataItem",
+    "ListAgentTemplatesAgentTemplatesResponseDataItemCallType",
+    "ListAgentTemplatesAgentTemplatesResponseDataItemDefaultLanguage",
+    "ListAgentTemplatesAgentTemplatesResponseDataItemRegion",
+    "ListAgentTemplatesAgentTemplatesResponseDataItemSinglePromptConfig",
+    "ListAgentTemplatesAgentTemplatesResponseDataItemSinglePromptConfigToolsItem",
+    "ListAgentTemplatesAgentTemplatesResponseDataItemSinglePromptConfigToolsItemType",
+    "ListAgentTemplatesAgentTemplatesResponseDataItemWorkflowType",
+    "PostAgentFromTemplateResponse",
+]

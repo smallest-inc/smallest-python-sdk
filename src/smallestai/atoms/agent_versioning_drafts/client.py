@@ -44,12 +44,14 @@ class AgentVersioningDraftsClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> GetAgentIdDraftsResponse:
         """
+        **Deprecated on the v2 branch model.** Migrate to `GET /agent/{id}/branches (`openDraftId` / `hasOpenDraft`)`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         List all active (non-discarded) drafts for an agent.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -67,7 +69,7 @@ class AgentVersioningDraftsClient:
             api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.list_active_drafts(
-            id="60d0fe4f5311236168a109ca",
+            id="id",
         )
         """
         _response = self._raw_client.list_active_drafts(id, request_options=request_options)
@@ -83,12 +85,14 @@ class AgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CreateDraftAgentVersioningDraftsResponse:
         """
+        **Deprecated on the v2 branch model.** Migrate to `PUT /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         Create a new draft from an existing published version or another draft. At least one of sourceVersionId or sourceDraftId is required (both may be sent simultaneously).
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         source_version_id : typing.Optional[str]
             ID of a published version to branch from. Must be a valid MongoDB ObjectId (24-char hex).
@@ -116,7 +120,7 @@ class AgentVersioningDraftsClient:
             api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.create_draft(
-            id="60d0fe4f5311236168a109ca",
+            id="id",
         )
         """
         _response = self._raw_client.create_draft(
@@ -137,12 +141,14 @@ class AgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetAgentIdDraftsDraftIdResponse:
         """
+        **Deprecated.** By-id reads are kept working during the v1 coexistence window (~1 month). A v1 `draftId` remains resolvable. Migrate to `GET /agent/{id}/branches/{branchId}/draft`. Will be removed at the sunset date.
+
         Returns the latest revision of a draft along with its edit history.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -166,7 +172,7 @@ class AgentVersioningDraftsClient:
             api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.get_draft_detail(
-            id="60d0fe4f5311236168a109ca",
+            id="id",
             draft_id="draftId",
         )
         """
@@ -177,12 +183,14 @@ class AgentVersioningDraftsClient:
         self, id: str, draft_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> DiscardDraftAgentVersioningDraftsResponse:
         """
+        **Deprecated on the v2 branch model.** Migrate to `DELETE /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         Discard (soft-delete) a draft. Only the draft creator or an admin can discard.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -203,7 +211,7 @@ class AgentVersioningDraftsClient:
             api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.discard_draft(
-            id="60d0fe4f5311236168a109ca",
+            id="id",
             draft_id="draftId",
         )
         """
@@ -214,12 +222,15 @@ class AgentVersioningDraftsClient:
         self, id: str, draft_id: str, *, draft_name: str, request_options: typing.Optional[RequestOptions] = None
     ) -> RenameDraftAgentVersioningDraftsResponse:
         """
+        **Deprecated on the v2 branch model.** Migrate to `PUT /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
+        |
         Rename a draft. For config changes, use PATCH /agent/{id}/drafts/{draftId}/config instead.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -243,7 +254,7 @@ class AgentVersioningDraftsClient:
             api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.rename_draft(
-            id="60d0fe4f5311236168a109ca",
+            id="id",
             draft_id="draftId",
             draft_name="draftName",
         )
@@ -260,12 +271,14 @@ class AgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetAgentIdDraftsDraftIdDiffResponse:
         """
+        **Deprecated.** Kept working during the v1 coexistence window (~1 month). Migrate to `GET /agent/{id}/diff?a=<branchId>:draft&b=<revisionId>`. Will be removed at the sunset date.
+
         Compare a draft against its source version or another specified version.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -289,7 +302,7 @@ class AgentVersioningDraftsClient:
             api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.get_draft_diff(
-            id="60d0fe4f5311236168a109ca",
+            id="id",
             draft_id="draftId",
         )
         """
@@ -309,12 +322,14 @@ class AgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> PublishDraftAgentVersioningDraftsResponse:
         """
+        **Deprecated on the v2 branch model.** Migrate to `POST /agent/{id}/branches/{branchId}/draft/publish`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         Publish a draft as a new versioned release. Optionally activate it immediately.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -344,7 +359,7 @@ class AgentVersioningDraftsClient:
             api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.publish_draft(
-            id="60d0fe4f5311236168a109ca",
+            id="id",
             draft_id="draftId",
         )
         """
@@ -363,12 +378,14 @@ class AgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> PostAgentIdDraftsDraftIdTestCallResponse:
         """
+        **Deprecated.** Test-calls are exempt from the v1 write-block and remain functional. Migrate to `POST /agent/{id}/branches/{branchId}/test-call` with `includeDraft: true`. Will be removed at the sunset date.
+
         Initiate a test call using the draft's resolved configuration.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -395,7 +412,7 @@ class AgentVersioningDraftsClient:
             api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.test_call_with_draft_config(
-            id="60d0fe4f5311236168a109ca",
+            id="id",
             draft_id="draftId",
         )
         """
@@ -443,6 +460,9 @@ class AgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UpdateDraftConfigAgentVersioningDraftsResponse:
         """
+        **Deprecated on the v2 branch model.** Migrate to `PUT /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
+        |
         Update the configuration of a draft. This single endpoint is how every
         agent-level config field is changed: prompt, tools, voice, language,
         **post-call analytics (disposition metrics)**, and more. There is no
@@ -476,7 +496,7 @@ class AgentVersioningDraftsClient:
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -570,7 +590,7 @@ class AgentVersioningDraftsClient:
             api_key="YOUR_API_KEY",
         )
         client.atoms.agent_versioning_drafts.update_draft_config(
-            id="60d0fe4f5311236168a109ca",
+            id="id",
             draft_id="draftId",
         )
         """
@@ -632,12 +652,14 @@ class AsyncAgentVersioningDraftsClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> GetAgentIdDraftsResponse:
         """
+        **Deprecated on the v2 branch model.** Migrate to `GET /agent/{id}/branches (`openDraftId` / `hasOpenDraft`)`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         List all active (non-discarded) drafts for an agent.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -660,7 +682,7 @@ class AsyncAgentVersioningDraftsClient:
 
         async def main() -> None:
             await client.atoms.agent_versioning_drafts.list_active_drafts(
-                id="60d0fe4f5311236168a109ca",
+                id="id",
             )
 
 
@@ -679,12 +701,14 @@ class AsyncAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CreateDraftAgentVersioningDraftsResponse:
         """
+        **Deprecated on the v2 branch model.** Migrate to `PUT /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         Create a new draft from an existing published version or another draft. At least one of sourceVersionId or sourceDraftId is required (both may be sent simultaneously).
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         source_version_id : typing.Optional[str]
             ID of a published version to branch from. Must be a valid MongoDB ObjectId (24-char hex).
@@ -717,7 +741,7 @@ class AsyncAgentVersioningDraftsClient:
 
         async def main() -> None:
             await client.atoms.agent_versioning_drafts.create_draft(
-                id="60d0fe4f5311236168a109ca",
+                id="id",
             )
 
 
@@ -741,12 +765,14 @@ class AsyncAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetAgentIdDraftsDraftIdResponse:
         """
+        **Deprecated.** By-id reads are kept working during the v1 coexistence window (~1 month). A v1 `draftId` remains resolvable. Migrate to `GET /agent/{id}/branches/{branchId}/draft`. Will be removed at the sunset date.
+
         Returns the latest revision of a draft along with its edit history.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -775,7 +801,7 @@ class AsyncAgentVersioningDraftsClient:
 
         async def main() -> None:
             await client.atoms.agent_versioning_drafts.get_draft_detail(
-                id="60d0fe4f5311236168a109ca",
+                id="id",
                 draft_id="draftId",
             )
 
@@ -789,12 +815,14 @@ class AsyncAgentVersioningDraftsClient:
         self, id: str, draft_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> DiscardDraftAgentVersioningDraftsResponse:
         """
+        **Deprecated on the v2 branch model.** Migrate to `DELETE /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         Discard (soft-delete) a draft. Only the draft creator or an admin can discard.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -820,7 +848,7 @@ class AsyncAgentVersioningDraftsClient:
 
         async def main() -> None:
             await client.atoms.agent_versioning_drafts.discard_draft(
-                id="60d0fe4f5311236168a109ca",
+                id="id",
                 draft_id="draftId",
             )
 
@@ -834,12 +862,15 @@ class AsyncAgentVersioningDraftsClient:
         self, id: str, draft_id: str, *, draft_name: str, request_options: typing.Optional[RequestOptions] = None
     ) -> RenameDraftAgentVersioningDraftsResponse:
         """
+        **Deprecated on the v2 branch model.** Migrate to `PUT /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
+        |
         Rename a draft. For config changes, use PATCH /agent/{id}/drafts/{draftId}/config instead.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -868,7 +899,7 @@ class AsyncAgentVersioningDraftsClient:
 
         async def main() -> None:
             await client.atoms.agent_versioning_drafts.rename_draft(
-                id="60d0fe4f5311236168a109ca",
+                id="id",
                 draft_id="draftId",
                 draft_name="draftName",
             )
@@ -890,12 +921,14 @@ class AsyncAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetAgentIdDraftsDraftIdDiffResponse:
         """
+        **Deprecated.** Kept working during the v1 coexistence window (~1 month). Migrate to `GET /agent/{id}/diff?a=<branchId>:draft&b=<revisionId>`. Will be removed at the sunset date.
+
         Compare a draft against its source version or another specified version.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -924,7 +957,7 @@ class AsyncAgentVersioningDraftsClient:
 
         async def main() -> None:
             await client.atoms.agent_versioning_drafts.get_draft_diff(
-                id="60d0fe4f5311236168a109ca",
+                id="id",
                 draft_id="draftId",
             )
 
@@ -947,12 +980,14 @@ class AsyncAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> PublishDraftAgentVersioningDraftsResponse:
         """
+        **Deprecated on the v2 branch model.** Migrate to `POST /agent/{id}/branches/{branchId}/draft/publish`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
         Publish a draft as a new versioned release. Optionally activate it immediately.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -987,7 +1022,7 @@ class AsyncAgentVersioningDraftsClient:
 
         async def main() -> None:
             await client.atoms.agent_versioning_drafts.publish_draft(
-                id="60d0fe4f5311236168a109ca",
+                id="id",
                 draft_id="draftId",
             )
 
@@ -1009,12 +1044,14 @@ class AsyncAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> PostAgentIdDraftsDraftIdTestCallResponse:
         """
+        **Deprecated.** Test-calls are exempt from the v1 write-block and remain functional. Migrate to `POST /agent/{id}/branches/{branchId}/test-call` with `includeDraft: true`. Will be removed at the sunset date.
+
         Initiate a test call using the draft's resolved configuration.
 
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -1046,7 +1083,7 @@ class AsyncAgentVersioningDraftsClient:
 
         async def main() -> None:
             await client.atoms.agent_versioning_drafts.test_call_with_draft_config(
-                id="60d0fe4f5311236168a109ca",
+                id="id",
                 draft_id="draftId",
             )
 
@@ -1097,6 +1134,9 @@ class AsyncAgentVersioningDraftsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UpdateDraftConfigAgentVersioningDraftsResponse:
         """
+        **Deprecated on the v2 branch model.** Migrate to `PUT /agent/{id}/branches/{branchId}/draft`. When `ENABLE_BRANCH_MODEL` is on, this endpoint returns `409 versioning_v2_migration_required` with the `Deprecation: true` header. See the [migration guide](/voice-agents/deprecations/agent-versioning-migration).
+
+        |
         Update the configuration of a draft. This single endpoint is how every
         agent-level config field is changed: prompt, tools, voice, language,
         **post-call analytics (disposition metrics)**, and more. There is no
@@ -1130,7 +1170,7 @@ class AsyncAgentVersioningDraftsClient:
         Parameters
         ----------
         id : str
-            The agent ID
+            The agent ID.
 
         draft_id : str
             The draft ID
@@ -1229,7 +1269,7 @@ class AsyncAgentVersioningDraftsClient:
 
         async def main() -> None:
             await client.atoms.agent_versioning_drafts.update_draft_config(
-                id="60d0fe4f5311236168a109ca",
+                id="id",
                 draft_id="draftId",
             )
 

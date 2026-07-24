@@ -2,3 +2,67 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .pulse_close_stream_signal_message import PulseCloseStreamSignalMessage
+    from .pulse_close_stream_signal_message_type import PulseCloseStreamSignalMessageType
+    from .pulse_finalize_signal_message import PulseFinalizeSignalMessage
+    from .pulse_finalize_signal_message_type import PulseFinalizeSignalMessageType
+    from .pulse_speech_ended_event_message import PulseSpeechEndedEventMessage
+    from .pulse_speech_ended_event_message_type import PulseSpeechEndedEventMessageType
+    from .pulse_speech_started_event_message import PulseSpeechStartedEventMessage
+    from .pulse_speech_started_event_message_type import PulseSpeechStartedEventMessageType
+    from .pulse_transcription_response_message import PulseTranscriptionResponseMessage
+    from .pulse_transcription_response_message_utterances_item import PulseTranscriptionResponseMessageUtterancesItem
+    from .pulse_transcription_response_message_words_item import PulseTranscriptionResponseMessageWordsItem
+_dynamic_imports: typing.Dict[str, str] = {
+    "PulseCloseStreamSignalMessage": ".pulse_close_stream_signal_message",
+    "PulseCloseStreamSignalMessageType": ".pulse_close_stream_signal_message_type",
+    "PulseFinalizeSignalMessage": ".pulse_finalize_signal_message",
+    "PulseFinalizeSignalMessageType": ".pulse_finalize_signal_message_type",
+    "PulseSpeechEndedEventMessage": ".pulse_speech_ended_event_message",
+    "PulseSpeechEndedEventMessageType": ".pulse_speech_ended_event_message_type",
+    "PulseSpeechStartedEventMessage": ".pulse_speech_started_event_message",
+    "PulseSpeechStartedEventMessageType": ".pulse_speech_started_event_message_type",
+    "PulseTranscriptionResponseMessage": ".pulse_transcription_response_message",
+    "PulseTranscriptionResponseMessageUtterancesItem": ".pulse_transcription_response_message_utterances_item",
+    "PulseTranscriptionResponseMessageWordsItem": ".pulse_transcription_response_message_words_item",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "PulseCloseStreamSignalMessage",
+    "PulseCloseStreamSignalMessageType",
+    "PulseFinalizeSignalMessage",
+    "PulseFinalizeSignalMessageType",
+    "PulseSpeechEndedEventMessage",
+    "PulseSpeechEndedEventMessageType",
+    "PulseSpeechStartedEventMessage",
+    "PulseSpeechStartedEventMessageType",
+    "PulseTranscriptionResponseMessage",
+    "PulseTranscriptionResponseMessageUtterancesItem",
+    "PulseTranscriptionResponseMessageWordsItem",
+]

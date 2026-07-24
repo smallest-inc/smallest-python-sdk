@@ -12,10 +12,11 @@ from .create_agent_request_synthesizer_voice_config import CreateAgentRequestSyn
 
 class CreateAgentRequestSynthesizer(UncheckedBaseModel):
     """
-    Synthesizer (TTS) configuration for the agent.
-    Models `waves`, `waves_lightning_large`, `waves_lightning_v2`, and `waves_lightning_v3_1`
-    validate `voiceId` against the Waves API. All other models accept any voiceId.
-    Cloned voices are regular voiceIds — use them with any compatible Waves model.
+    Synthesizer (TTS) configuration for the agent. Model
+    `waves_lightning_v3_1` validates `voiceId` against the Waves
+    API. `gpt-realtime` and `gpt-realtime-mini` accept any voiceId.
+    Cloned voices are regular voiceIds. Use them with a compatible
+    Waves model.
     """
 
     voice_config: typing_extensions.Annotated[

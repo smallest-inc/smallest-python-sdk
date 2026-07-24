@@ -2,3 +2,114 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .types import (
+        GetProductAllNumbersResponse,
+        GetProductAllNumbersResponseData,
+        GetProductManageSubscriptionResponse,
+        GetProductManageSubscriptionResponseData,
+        GetProductProrationAmountResponse,
+        GetProductProrationAmountResponseData,
+        GetProductUnpaidInvoicesResponse,
+        GetProductUnpaidInvoicesResponseData,
+        ImportSipPhoneNumbersResponse,
+        ImportSipPhoneNumbersResponseData,
+        ImportSipPhoneNumbersResponseDataAttributes,
+        ImportSipPhoneNumbersResponseDataProductType,
+        ListPhoneNumbersResponse,
+        ListPhoneNumbersResponseDataItem,
+        ListPhoneNumbersResponseDataItemAttributes,
+        ListPhoneNumbersResponseDataItemAttributesProvider,
+        ListPhoneNumbersResponseDataItemProductType,
+        ReleasePhoneNumbersResponse,
+        ReleasePhoneNumbersResponseData,
+        RentPhoneNumbersRequestProvider,
+        RentPhoneNumbersResponse,
+        RentPhoneNumbersResponseData,
+        SearchRentablePhoneNumbersRequestProvider,
+        SearchRentablePhoneNumbersResponse,
+        SearchRentablePhoneNumbersResponseDataItem,
+        SearchRentablePhoneNumbersResponseDataItemProvider,
+    )
+_dynamic_imports: typing.Dict[str, str] = {
+    "GetProductAllNumbersResponse": ".types",
+    "GetProductAllNumbersResponseData": ".types",
+    "GetProductManageSubscriptionResponse": ".types",
+    "GetProductManageSubscriptionResponseData": ".types",
+    "GetProductProrationAmountResponse": ".types",
+    "GetProductProrationAmountResponseData": ".types",
+    "GetProductUnpaidInvoicesResponse": ".types",
+    "GetProductUnpaidInvoicesResponseData": ".types",
+    "ImportSipPhoneNumbersResponse": ".types",
+    "ImportSipPhoneNumbersResponseData": ".types",
+    "ImportSipPhoneNumbersResponseDataAttributes": ".types",
+    "ImportSipPhoneNumbersResponseDataProductType": ".types",
+    "ListPhoneNumbersResponse": ".types",
+    "ListPhoneNumbersResponseDataItem": ".types",
+    "ListPhoneNumbersResponseDataItemAttributes": ".types",
+    "ListPhoneNumbersResponseDataItemAttributesProvider": ".types",
+    "ListPhoneNumbersResponseDataItemProductType": ".types",
+    "ReleasePhoneNumbersResponse": ".types",
+    "ReleasePhoneNumbersResponseData": ".types",
+    "RentPhoneNumbersRequestProvider": ".types",
+    "RentPhoneNumbersResponse": ".types",
+    "RentPhoneNumbersResponseData": ".types",
+    "SearchRentablePhoneNumbersRequestProvider": ".types",
+    "SearchRentablePhoneNumbersResponse": ".types",
+    "SearchRentablePhoneNumbersResponseDataItem": ".types",
+    "SearchRentablePhoneNumbersResponseDataItemProvider": ".types",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "GetProductAllNumbersResponse",
+    "GetProductAllNumbersResponseData",
+    "GetProductManageSubscriptionResponse",
+    "GetProductManageSubscriptionResponseData",
+    "GetProductProrationAmountResponse",
+    "GetProductProrationAmountResponseData",
+    "GetProductUnpaidInvoicesResponse",
+    "GetProductUnpaidInvoicesResponseData",
+    "ImportSipPhoneNumbersResponse",
+    "ImportSipPhoneNumbersResponseData",
+    "ImportSipPhoneNumbersResponseDataAttributes",
+    "ImportSipPhoneNumbersResponseDataProductType",
+    "ListPhoneNumbersResponse",
+    "ListPhoneNumbersResponseDataItem",
+    "ListPhoneNumbersResponseDataItemAttributes",
+    "ListPhoneNumbersResponseDataItemAttributesProvider",
+    "ListPhoneNumbersResponseDataItemProductType",
+    "ReleasePhoneNumbersResponse",
+    "ReleasePhoneNumbersResponseData",
+    "RentPhoneNumbersRequestProvider",
+    "RentPhoneNumbersResponse",
+    "RentPhoneNumbersResponseData",
+    "SearchRentablePhoneNumbersRequestProvider",
+    "SearchRentablePhoneNumbersResponse",
+    "SearchRentablePhoneNumbersResponseDataItem",
+    "SearchRentablePhoneNumbersResponseDataItemProvider",
+]

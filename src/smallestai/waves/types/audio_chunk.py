@@ -6,10 +6,17 @@ import pydantic
 from ...core.pydantic_utilities import IS_PYDANTIC_V2
 from ...core.unchecked_base_model import UncheckedBaseModel
 from .audio_chunk_data import AudioChunkData
+from .audio_chunk_status import AudioChunkStatus
 
 
 class AudioChunk(UncheckedBaseModel):
-    data: typing.Optional[AudioChunkData] = None
+    request_id: str = pydantic.Field()
+    """
+    Unique identifier for the TTS request
+    """
+
+    status: AudioChunkStatus
+    data: AudioChunkData
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

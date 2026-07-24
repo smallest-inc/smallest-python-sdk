@@ -5,14 +5,12 @@ import typing
 import pydantic
 from ....core.pydantic_utilities import IS_PYDANTIC_V2
 from ....core.unchecked_base_model import UncheckedBaseModel
+from .get_agent_id_drafts_draft_id_diff_response_data import GetAgentIdDraftsDraftIdDiffResponseData
 
 
 class GetAgentIdDraftsDraftIdDiffResponse(UncheckedBaseModel):
     status: typing.Optional[bool] = None
-    data: typing.Optional[typing.Dict[str, typing.Any]] = pydantic.Field(default=None)
-    """
-    Section-by-section diff between the draft and the comparison target
-    """
+    data: typing.Optional[GetAgentIdDraftsDraftIdDiffResponseData] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -59,13 +59,3 @@ def test_atoms_campaigns_pause() -> None:
         id="id",
     )
     verify_request_count(test_id, "POST", "/campaign/id/pause", None, 1)
-
-
-def test_atoms_campaigns_export_logs() -> None:
-    """Test export_logs endpoint with WireMock"""
-    test_id = "atoms.campaigns.export_logs.0"
-    client = get_client(test_id)
-    client.atoms.campaigns.export_logs(
-        id="id",
-    )
-    verify_request_count(test_id, "GET", "/campaign/id/logs/export", None, 1)

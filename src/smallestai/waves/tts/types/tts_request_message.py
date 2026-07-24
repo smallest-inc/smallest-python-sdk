@@ -9,6 +9,7 @@ from ....core.serialization import FieldMetadata
 from ....core.unchecked_base_model import UncheckedBaseModel
 from .tts_request_message_language import TtsRequestMessageLanguage
 from .tts_request_message_model import TtsRequestMessageModel
+from .tts_request_message_number_pronunciation_language import TtsRequestMessageNumberPronunciationLanguage
 
 
 class TtsRequestMessage(UncheckedBaseModel):
@@ -30,7 +31,7 @@ class TtsRequestMessage(UncheckedBaseModel):
     - `lightning_v3.1` (default) — standard Lightning v3.1.
     - `lightning_v3.1_pro` — Lightning v3.1 Pro pool with a
       curated voice catalog. See the
-      [Pro model card](/waves/model-cards/text-to-speech/lightning-v-3-1-pro).
+      [Pro model card](/models/model-cards/text-to-speech/lightning-v-3-1-pro).
     
     Same concurrency and latency profile across both. Other
     request fields behave identically.
@@ -69,12 +70,53 @@ class TtsRequestMessage(UncheckedBaseModel):
     the voice was trained on; passing other codes is accepted by the
     API but produces English-pronounced output.
     
-    **On `lightning_v3.1`**, the full 12-language catalog applies.
+    **`auto`:** routes internally based on the input text. Any
+    English or Hindi voice can be used across all supported
+    languages when `auto` is set; the platform handles
+    language-appropriate routing without needing a code per call.
     
-    **On `lightning_v3.1_pro`**:
+    **On `lightning_v3.1`** — 20 supported languages:
+    - 10 European: English, Spanish, French, German, Italian, Dutch, Swedish, Portuguese, Polish, Russian
+    - 10 Indic: Hindi, Marathi, Gujarati, Punjabi, Bengali, Odia, Tamil, Telugu, Kannada, Malayalam
+    
+    **On `lightning_v3.1_pro`** — 31 supported languages (adds 11 over base):
+    - 13 European: base 10 plus Greek, Finnish, Norwegian
+    - 8 Asian & Middle Eastern: Chinese, Japanese, Korean, Indonesian, Malay, Vietnamese, Turkish, Arabic
+    - 10 Indic: same as base
     - Pass `en` → UK + American accented English.
     - Pass `hi` → Indian accented English + Hindi (code-switching).
     - Omit `language` → defaults to `en + hi` (mixed Indian + Western English coverage).
+    """
+
+    number_pronunciation_language: typing.Optional[TtsRequestMessageNumberPronunciationLanguage] = pydantic.Field(
+        default=None
+    )
+    """
+    Optional. Sets the language used to read out numeric content
+    — numbers, currency amounts, times, and the numeric parts of
+    dates and years — independently of the synthesis voice.
+    Ordinary words are not translated.
+    
+    - If you **omit `language`**, this value also becomes the
+      synthesis language: model selection and voice routing
+      follow it.
+    - If you **set `language` explicitly**, `language` always wins
+      for synthesis and `number_pronunciation_language` only
+      changes how numeric content is normalized. It works both
+      ways — read numbers in Hindi under an English voice, or in
+      English under a Hindi voice (tuned for Indian, often
+      mixed-script, use cases).
+    - Omit this field to keep the existing behaviour —
+      normalization follows `language`.
+    
+    Note: only numeric tokens are re-spoken; the words around them
+    stay in the text language. On a cross-language request names
+    may also render in the target script (e.g. "Smith" →
+    "स्मिथ"), which is generally the desired reading for
+    native-language voices.
+    
+    Accepts the same language codes as `language` (including
+    `auto`, `nl`, `sv`).
     """
 
     sample_rate: typing.Optional[int] = pydantic.Field(default=None)

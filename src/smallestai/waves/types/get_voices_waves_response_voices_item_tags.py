@@ -9,7 +9,7 @@ from ...core.unchecked_base_model import UncheckedBaseModel
 
 class GetVoicesWavesResponseVoicesItemTags(UncheckedBaseModel):
     """
-    Tag metadata used to identify the voice's characteristics. Filter on these fields to find voices for a target language, accent, or use case.
+    Tag metadata used to identify the voice's characteristics. Filter on these fields to find voices for a target language, accent, or use case. Fields may be empty on some voices.
     """
 
     language: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
@@ -29,12 +29,12 @@ class GetVoicesWavesResponseVoicesItemTags(UncheckedBaseModel):
 
     age: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Age range of the voice (e.g., `young`, `middle-aged`, `senior`).
+    Age range of the voice (e.g., `young`, `middle aged`, `senior`).
     """
 
     emotions: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
     """
-    Emotional ranges the voice supports.
+    Emotional ranges the voice supports. May be empty.
     """
 
     usecases: typing.Optional[typing.List[str]] = pydantic.Field(default=None)

@@ -10,12 +10,12 @@ from ...core.unchecked_base_model import UncheckedBaseModel
 class InternalServerErrorBody(UncheckedBaseModel):
     error: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Error type.
+    Error type
     """
 
     message: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Error message.
+    Error message
     """
 
     if IS_PYDANTIC_V2:

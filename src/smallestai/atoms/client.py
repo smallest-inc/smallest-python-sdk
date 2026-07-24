@@ -9,20 +9,31 @@ from .raw_client import AsyncRawAtomsClient, RawAtomsClient
 
 if typing.TYPE_CHECKING:
     from .agent_templates.client import AgentTemplatesClient, AsyncAgentTemplatesClient
+    from .agent_versioning_branches.client import AgentVersioningBranchesClient, AsyncAgentVersioningBranchesClient
     from .agent_versioning_drafts.client import AgentVersioningDraftsClient, AsyncAgentVersioningDraftsClient
+    from .agent_versioning_revisions.client import AgentVersioningRevisionsClient, AsyncAgentVersioningRevisionsClient
     from .agent_versioning_versions.client import AgentVersioningVersionsClient, AsyncAgentVersioningVersionsClient
     from .agents.client import AgentsClient, AsyncAgentsClient
+    from .analytics.client import AnalyticsClient, AsyncAnalyticsClient
     from .audience.client import AsyncAudienceClient, AudienceClient
+    from .call_actions.client import AsyncCallActionsClient, CallActionsClient
     from .calls.client import AsyncCallsClient, CallsClient
     from .campaigns.client import AsyncCampaignsClient, CampaignsClient
     from .compliance.client import AsyncComplianceClient, ComplianceClient
+    from .concurrency.client import AsyncConcurrencyClient, ConcurrencyClient
     from .conversations.client import AsyncConversationsClient, ConversationsClient
+    from .disposition_metric_templates.client import (
+        AsyncDispositionMetricTemplatesClient,
+        DispositionMetricTemplatesClient,
+    )
     from .dnc.client import AsyncDncClient, DncClient
+    from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
     from .knowledge_base.client import AsyncKnowledgeBaseClient, KnowledgeBaseClient
     from .live_transcripts.client import AsyncLiveTranscriptsClient, LiveTranscriptsClient
     from .organization.client import AsyncOrganizationClient, OrganizationClient
     from .phone_numbers.client import AsyncPhoneNumbersClient, PhoneNumbersClient
     from .prompt_scoring.client import AsyncPromptScoringClient, PromptScoringClient
+    from .realtime.client import AsyncRealtimeClient, RealtimeClient
     from .user.client import AsyncUserClient, UserClient
     from .webhooks.client import AsyncWebhooksClient, WebhooksClient
 
@@ -35,6 +46,7 @@ class AtomsClient:
         self._organization: typing.Optional[OrganizationClient] = None
         self._agent_templates: typing.Optional[AgentTemplatesClient] = None
         self._agents: typing.Optional[AgentsClient] = None
+        self._realtime: typing.Optional[RealtimeClient] = None
         self._calls: typing.Optional[CallsClient] = None
         self._conversations: typing.Optional[ConversationsClient] = None
         self._live_transcripts: typing.Optional[LiveTranscriptsClient] = None
@@ -46,7 +58,14 @@ class AtomsClient:
         self._audience: typing.Optional[AudienceClient] = None
         self._agent_versioning_drafts: typing.Optional[AgentVersioningDraftsClient] = None
         self._agent_versioning_versions: typing.Optional[AgentVersioningVersionsClient] = None
+        self._agent_versioning_branches: typing.Optional[AgentVersioningBranchesClient] = None
+        self._agent_versioning_revisions: typing.Optional[AgentVersioningRevisionsClient] = None
         self._prompt_scoring: typing.Optional[PromptScoringClient] = None
+        self._analytics: typing.Optional[AnalyticsClient] = None
+        self._call_actions: typing.Optional[CallActionsClient] = None
+        self._integrations: typing.Optional[IntegrationsClient] = None
+        self._concurrency: typing.Optional[ConcurrencyClient] = None
+        self._disposition_metric_templates: typing.Optional[DispositionMetricTemplatesClient] = None
         self._dnc: typing.Optional[DncClient] = None
 
     @property
@@ -91,6 +110,14 @@ class AtomsClient:
 
             self._agents = AgentsClient(client_wrapper=self._client_wrapper)
         return self._agents
+
+    @property
+    def realtime(self):
+        if self._realtime is None:
+            from .realtime.client import RealtimeClient  # noqa: E402
+
+            self._realtime = RealtimeClient(client_wrapper=self._client_wrapper)
+        return self._realtime
 
     @property
     def calls(self):
@@ -181,12 +208,68 @@ class AtomsClient:
         return self._agent_versioning_versions
 
     @property
+    def agent_versioning_branches(self):
+        if self._agent_versioning_branches is None:
+            from .agent_versioning_branches.client import AgentVersioningBranchesClient  # noqa: E402
+
+            self._agent_versioning_branches = AgentVersioningBranchesClient(client_wrapper=self._client_wrapper)
+        return self._agent_versioning_branches
+
+    @property
+    def agent_versioning_revisions(self):
+        if self._agent_versioning_revisions is None:
+            from .agent_versioning_revisions.client import AgentVersioningRevisionsClient  # noqa: E402
+
+            self._agent_versioning_revisions = AgentVersioningRevisionsClient(client_wrapper=self._client_wrapper)
+        return self._agent_versioning_revisions
+
+    @property
     def prompt_scoring(self):
         if self._prompt_scoring is None:
             from .prompt_scoring.client import PromptScoringClient  # noqa: E402
 
             self._prompt_scoring = PromptScoringClient(client_wrapper=self._client_wrapper)
         return self._prompt_scoring
+
+    @property
+    def analytics(self):
+        if self._analytics is None:
+            from .analytics.client import AnalyticsClient  # noqa: E402
+
+            self._analytics = AnalyticsClient(client_wrapper=self._client_wrapper)
+        return self._analytics
+
+    @property
+    def call_actions(self):
+        if self._call_actions is None:
+            from .call_actions.client import CallActionsClient  # noqa: E402
+
+            self._call_actions = CallActionsClient(client_wrapper=self._client_wrapper)
+        return self._call_actions
+
+    @property
+    def integrations(self):
+        if self._integrations is None:
+            from .integrations.client import IntegrationsClient  # noqa: E402
+
+            self._integrations = IntegrationsClient(client_wrapper=self._client_wrapper)
+        return self._integrations
+
+    @property
+    def concurrency(self):
+        if self._concurrency is None:
+            from .concurrency.client import ConcurrencyClient  # noqa: E402
+
+            self._concurrency = ConcurrencyClient(client_wrapper=self._client_wrapper)
+        return self._concurrency
+
+    @property
+    def disposition_metric_templates(self):
+        if self._disposition_metric_templates is None:
+            from .disposition_metric_templates.client import DispositionMetricTemplatesClient  # noqa: E402
+
+            self._disposition_metric_templates = DispositionMetricTemplatesClient(client_wrapper=self._client_wrapper)
+        return self._disposition_metric_templates
 
     @property
     def dnc(self):
@@ -205,6 +288,7 @@ class AsyncAtomsClient:
         self._organization: typing.Optional[AsyncOrganizationClient] = None
         self._agent_templates: typing.Optional[AsyncAgentTemplatesClient] = None
         self._agents: typing.Optional[AsyncAgentsClient] = None
+        self._realtime: typing.Optional[AsyncRealtimeClient] = None
         self._calls: typing.Optional[AsyncCallsClient] = None
         self._conversations: typing.Optional[AsyncConversationsClient] = None
         self._live_transcripts: typing.Optional[AsyncLiveTranscriptsClient] = None
@@ -216,7 +300,14 @@ class AsyncAtomsClient:
         self._audience: typing.Optional[AsyncAudienceClient] = None
         self._agent_versioning_drafts: typing.Optional[AsyncAgentVersioningDraftsClient] = None
         self._agent_versioning_versions: typing.Optional[AsyncAgentVersioningVersionsClient] = None
+        self._agent_versioning_branches: typing.Optional[AsyncAgentVersioningBranchesClient] = None
+        self._agent_versioning_revisions: typing.Optional[AsyncAgentVersioningRevisionsClient] = None
         self._prompt_scoring: typing.Optional[AsyncPromptScoringClient] = None
+        self._analytics: typing.Optional[AsyncAnalyticsClient] = None
+        self._call_actions: typing.Optional[AsyncCallActionsClient] = None
+        self._integrations: typing.Optional[AsyncIntegrationsClient] = None
+        self._concurrency: typing.Optional[AsyncConcurrencyClient] = None
+        self._disposition_metric_templates: typing.Optional[AsyncDispositionMetricTemplatesClient] = None
         self._dnc: typing.Optional[AsyncDncClient] = None
 
     @property
@@ -261,6 +352,14 @@ class AsyncAtomsClient:
 
             self._agents = AsyncAgentsClient(client_wrapper=self._client_wrapper)
         return self._agents
+
+    @property
+    def realtime(self):
+        if self._realtime is None:
+            from .realtime.client import AsyncRealtimeClient  # noqa: E402
+
+            self._realtime = AsyncRealtimeClient(client_wrapper=self._client_wrapper)
+        return self._realtime
 
     @property
     def calls(self):
@@ -351,12 +450,70 @@ class AsyncAtomsClient:
         return self._agent_versioning_versions
 
     @property
+    def agent_versioning_branches(self):
+        if self._agent_versioning_branches is None:
+            from .agent_versioning_branches.client import AsyncAgentVersioningBranchesClient  # noqa: E402
+
+            self._agent_versioning_branches = AsyncAgentVersioningBranchesClient(client_wrapper=self._client_wrapper)
+        return self._agent_versioning_branches
+
+    @property
+    def agent_versioning_revisions(self):
+        if self._agent_versioning_revisions is None:
+            from .agent_versioning_revisions.client import AsyncAgentVersioningRevisionsClient  # noqa: E402
+
+            self._agent_versioning_revisions = AsyncAgentVersioningRevisionsClient(client_wrapper=self._client_wrapper)
+        return self._agent_versioning_revisions
+
+    @property
     def prompt_scoring(self):
         if self._prompt_scoring is None:
             from .prompt_scoring.client import AsyncPromptScoringClient  # noqa: E402
 
             self._prompt_scoring = AsyncPromptScoringClient(client_wrapper=self._client_wrapper)
         return self._prompt_scoring
+
+    @property
+    def analytics(self):
+        if self._analytics is None:
+            from .analytics.client import AsyncAnalyticsClient  # noqa: E402
+
+            self._analytics = AsyncAnalyticsClient(client_wrapper=self._client_wrapper)
+        return self._analytics
+
+    @property
+    def call_actions(self):
+        if self._call_actions is None:
+            from .call_actions.client import AsyncCallActionsClient  # noqa: E402
+
+            self._call_actions = AsyncCallActionsClient(client_wrapper=self._client_wrapper)
+        return self._call_actions
+
+    @property
+    def integrations(self):
+        if self._integrations is None:
+            from .integrations.client import AsyncIntegrationsClient  # noqa: E402
+
+            self._integrations = AsyncIntegrationsClient(client_wrapper=self._client_wrapper)
+        return self._integrations
+
+    @property
+    def concurrency(self):
+        if self._concurrency is None:
+            from .concurrency.client import AsyncConcurrencyClient  # noqa: E402
+
+            self._concurrency = AsyncConcurrencyClient(client_wrapper=self._client_wrapper)
+        return self._concurrency
+
+    @property
+    def disposition_metric_templates(self):
+        if self._disposition_metric_templates is None:
+            from .disposition_metric_templates.client import AsyncDispositionMetricTemplatesClient  # noqa: E402
+
+            self._disposition_metric_templates = AsyncDispositionMetricTemplatesClient(
+                client_wrapper=self._client_wrapper
+            )
+        return self._disposition_metric_templates
 
     @property
     def dnc(self):

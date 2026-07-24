@@ -10,6 +10,7 @@ if typing.TYPE_CHECKING:
     from ._default_clients import DefaultAioHttpClient, DefaultAsyncHttpxClient
     from .atoms.client import AsyncAtomsClient, AtomsClient
     from .client import AsyncSmallestAI, SmallestAI
+    from .environment import SmallestAIEnvironment
     from .version import __version__
     from .waves.client import AsyncWavesClient, WavesClient
 _dynamic_imports: typing.Dict[str, str] = {
@@ -20,6 +21,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "DefaultAioHttpClient": "._default_clients",
     "DefaultAsyncHttpxClient": "._default_clients",
     "SmallestAI": ".client",
+    "SmallestAIEnvironment": ".environment",
     "WavesClient": ".waves.client",
     "__version__": ".version",
     "atoms": ".atoms",
@@ -56,6 +58,7 @@ __all__ = [
     "DefaultAioHttpClient",
     "DefaultAsyncHttpxClient",
     "SmallestAI",
+    "SmallestAIEnvironment",
     "WavesClient",
     "__version__",
     "atoms",

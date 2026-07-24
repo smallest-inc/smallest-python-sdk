@@ -2,3 +2,194 @@
 
 # isort: skip_file
 
+import typing
+from importlib import import_module
+
+if typing.TYPE_CHECKING:
+    from .archive_agent_agents_response import ArchiveAgentAgentsResponse
+    from .archive_agent_agents_response_data import ArchiveAgentAgentsResponseData
+    from .archive_agent_agents_response_data_message import ArchiveAgentAgentsResponseDataMessage
+    from .create_agent_agents_response import CreateAgentAgentsResponse
+    from .create_agent_request_background_sound import CreateAgentRequestBackgroundSound
+    from .create_agent_request_denoising_config import CreateAgentRequestDenoisingConfig
+    from .create_agent_request_language import CreateAgentRequestLanguage
+    from .create_agent_request_language_default import CreateAgentRequestLanguageDefault
+    from .create_agent_request_language_supported_item import CreateAgentRequestLanguageSupportedItem
+    from .create_agent_request_language_switching import CreateAgentRequestLanguageSwitching
+    from .create_agent_request_llm_idle_timeout_config import CreateAgentRequestLlmIdleTimeoutConfig
+    from .create_agent_request_pre_call_api import CreateAgentRequestPreCallApi
+    from .create_agent_request_pre_call_api_method import CreateAgentRequestPreCallApiMethod
+    from .create_agent_request_pre_call_api_response_variables_item import (
+        CreateAgentRequestPreCallApiResponseVariablesItem,
+    )
+    from .create_agent_request_pronunciation_dicts_item import CreateAgentRequestPronunciationDictsItem
+    from .create_agent_request_redaction_config import CreateAgentRequestRedactionConfig
+    from .create_agent_request_session_timeout_config import CreateAgentRequestSessionTimeoutConfig
+    from .create_agent_request_slm_model import CreateAgentRequestSlmModel
+    from .create_agent_request_smart_turn_config import CreateAgentRequestSmartTurnConfig
+    from .create_agent_request_synthesizer import CreateAgentRequestSynthesizer
+    from .create_agent_request_synthesizer_voice_config import CreateAgentRequestSynthesizerVoiceConfig
+    from .create_agent_request_synthesizer_voice_config_gender import CreateAgentRequestSynthesizerVoiceConfigGender
+    from .create_agent_request_synthesizer_voice_config_model import CreateAgentRequestSynthesizerVoiceConfigModel
+    from .create_agent_request_timezone import CreateAgentRequestTimezone
+    from .create_agent_request_voice_detection_config import CreateAgentRequestVoiceDetectionConfig
+    from .create_agent_request_voice_mail_detection_config import CreateAgentRequestVoiceMailDetectionConfig
+    from .duplicate_agent_agents_response import DuplicateAgentAgentsResponse
+    from .duplicate_agent_agents_response_data import DuplicateAgentAgentsResponseData
+    from .get_agent_agents_response import GetAgentAgentsResponse
+    from .get_agent_avatar_presigned_url_response import GetAgentAvatarPresignedUrlResponse
+    from .get_agent_avatar_presigned_url_response_data import GetAgentAvatarPresignedUrlResponseData
+    from .get_agent_call_logs_response import GetAgentCallLogsResponse
+    from .get_agent_call_logs_response_data import GetAgentCallLogsResponseData
+    from .get_agent_call_logs_response_data_call_logs_item import GetAgentCallLogsResponseDataCallLogsItem
+    from .get_agent_widget_config_response import GetAgentWidgetConfigResponse
+    from .get_agent_widget_config_response_data import GetAgentWidgetConfigResponseData
+    from .get_agent_widget_config_response_data_mode import GetAgentWidgetConfigResponseDataMode
+    from .get_agent_widget_config_response_data_position import GetAgentWidgetConfigResponseDataPosition
+    from .get_agent_widget_config_response_data_size import GetAgentWidgetConfigResponseDataSize
+    from .get_agent_widget_config_response_data_theme import GetAgentWidgetConfigResponseDataTheme
+    from .list_agents_agents_request_sort_field import ListAgentsAgentsRequestSortField
+    from .list_agents_agents_request_sort_order import ListAgentsAgentsRequestSortOrder
+    from .list_agents_agents_request_type import ListAgentsAgentsRequestType
+    from .list_agents_agents_response import ListAgentsAgentsResponse
+    from .list_agents_agents_response_data import ListAgentsAgentsResponseData
+    from .update_agent_agents_response import UpdateAgentAgentsResponse
+    from .update_agent_widget_config_request_widget_config import UpdateAgentWidgetConfigRequestWidgetConfig
+    from .update_agent_widget_config_request_widget_config_mode import UpdateAgentWidgetConfigRequestWidgetConfigMode
+    from .update_agent_widget_config_request_widget_config_position import (
+        UpdateAgentWidgetConfigRequestWidgetConfigPosition,
+    )
+    from .update_agent_widget_config_request_widget_config_size import UpdateAgentWidgetConfigRequestWidgetConfigSize
+    from .update_agent_widget_config_request_widget_config_theme import UpdateAgentWidgetConfigRequestWidgetConfigTheme
+    from .update_agent_widget_config_response import UpdateAgentWidgetConfigResponse
+_dynamic_imports: typing.Dict[str, str] = {
+    "ArchiveAgentAgentsResponse": ".archive_agent_agents_response",
+    "ArchiveAgentAgentsResponseData": ".archive_agent_agents_response_data",
+    "ArchiveAgentAgentsResponseDataMessage": ".archive_agent_agents_response_data_message",
+    "CreateAgentAgentsResponse": ".create_agent_agents_response",
+    "CreateAgentRequestBackgroundSound": ".create_agent_request_background_sound",
+    "CreateAgentRequestDenoisingConfig": ".create_agent_request_denoising_config",
+    "CreateAgentRequestLanguage": ".create_agent_request_language",
+    "CreateAgentRequestLanguageDefault": ".create_agent_request_language_default",
+    "CreateAgentRequestLanguageSupportedItem": ".create_agent_request_language_supported_item",
+    "CreateAgentRequestLanguageSwitching": ".create_agent_request_language_switching",
+    "CreateAgentRequestLlmIdleTimeoutConfig": ".create_agent_request_llm_idle_timeout_config",
+    "CreateAgentRequestPreCallApi": ".create_agent_request_pre_call_api",
+    "CreateAgentRequestPreCallApiMethod": ".create_agent_request_pre_call_api_method",
+    "CreateAgentRequestPreCallApiResponseVariablesItem": ".create_agent_request_pre_call_api_response_variables_item",
+    "CreateAgentRequestPronunciationDictsItem": ".create_agent_request_pronunciation_dicts_item",
+    "CreateAgentRequestRedactionConfig": ".create_agent_request_redaction_config",
+    "CreateAgentRequestSessionTimeoutConfig": ".create_agent_request_session_timeout_config",
+    "CreateAgentRequestSlmModel": ".create_agent_request_slm_model",
+    "CreateAgentRequestSmartTurnConfig": ".create_agent_request_smart_turn_config",
+    "CreateAgentRequestSynthesizer": ".create_agent_request_synthesizer",
+    "CreateAgentRequestSynthesizerVoiceConfig": ".create_agent_request_synthesizer_voice_config",
+    "CreateAgentRequestSynthesizerVoiceConfigGender": ".create_agent_request_synthesizer_voice_config_gender",
+    "CreateAgentRequestSynthesizerVoiceConfigModel": ".create_agent_request_synthesizer_voice_config_model",
+    "CreateAgentRequestTimezone": ".create_agent_request_timezone",
+    "CreateAgentRequestVoiceDetectionConfig": ".create_agent_request_voice_detection_config",
+    "CreateAgentRequestVoiceMailDetectionConfig": ".create_agent_request_voice_mail_detection_config",
+    "DuplicateAgentAgentsResponse": ".duplicate_agent_agents_response",
+    "DuplicateAgentAgentsResponseData": ".duplicate_agent_agents_response_data",
+    "GetAgentAgentsResponse": ".get_agent_agents_response",
+    "GetAgentAvatarPresignedUrlResponse": ".get_agent_avatar_presigned_url_response",
+    "GetAgentAvatarPresignedUrlResponseData": ".get_agent_avatar_presigned_url_response_data",
+    "GetAgentCallLogsResponse": ".get_agent_call_logs_response",
+    "GetAgentCallLogsResponseData": ".get_agent_call_logs_response_data",
+    "GetAgentCallLogsResponseDataCallLogsItem": ".get_agent_call_logs_response_data_call_logs_item",
+    "GetAgentWidgetConfigResponse": ".get_agent_widget_config_response",
+    "GetAgentWidgetConfigResponseData": ".get_agent_widget_config_response_data",
+    "GetAgentWidgetConfigResponseDataMode": ".get_agent_widget_config_response_data_mode",
+    "GetAgentWidgetConfigResponseDataPosition": ".get_agent_widget_config_response_data_position",
+    "GetAgentWidgetConfigResponseDataSize": ".get_agent_widget_config_response_data_size",
+    "GetAgentWidgetConfigResponseDataTheme": ".get_agent_widget_config_response_data_theme",
+    "ListAgentsAgentsRequestSortField": ".list_agents_agents_request_sort_field",
+    "ListAgentsAgentsRequestSortOrder": ".list_agents_agents_request_sort_order",
+    "ListAgentsAgentsRequestType": ".list_agents_agents_request_type",
+    "ListAgentsAgentsResponse": ".list_agents_agents_response",
+    "ListAgentsAgentsResponseData": ".list_agents_agents_response_data",
+    "UpdateAgentAgentsResponse": ".update_agent_agents_response",
+    "UpdateAgentWidgetConfigRequestWidgetConfig": ".update_agent_widget_config_request_widget_config",
+    "UpdateAgentWidgetConfigRequestWidgetConfigMode": ".update_agent_widget_config_request_widget_config_mode",
+    "UpdateAgentWidgetConfigRequestWidgetConfigPosition": ".update_agent_widget_config_request_widget_config_position",
+    "UpdateAgentWidgetConfigRequestWidgetConfigSize": ".update_agent_widget_config_request_widget_config_size",
+    "UpdateAgentWidgetConfigRequestWidgetConfigTheme": ".update_agent_widget_config_request_widget_config_theme",
+    "UpdateAgentWidgetConfigResponse": ".update_agent_widget_config_response",
+}
+
+
+def __getattr__(attr_name: str) -> typing.Any:
+    module_name = _dynamic_imports.get(attr_name)
+    if module_name is None:
+        raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+    try:
+        module = import_module(module_name, __package__)
+        if module_name == f".{attr_name}":
+            return module
+        else:
+            return getattr(module, attr_name)
+    except ImportError as e:
+        raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+    except AttributeError as e:
+        raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+def __dir__():
+    lazy_attrs = list(_dynamic_imports.keys())
+    return sorted(lazy_attrs)
+
+
+__all__ = [
+    "ArchiveAgentAgentsResponse",
+    "ArchiveAgentAgentsResponseData",
+    "ArchiveAgentAgentsResponseDataMessage",
+    "CreateAgentAgentsResponse",
+    "CreateAgentRequestBackgroundSound",
+    "CreateAgentRequestDenoisingConfig",
+    "CreateAgentRequestLanguage",
+    "CreateAgentRequestLanguageDefault",
+    "CreateAgentRequestLanguageSupportedItem",
+    "CreateAgentRequestLanguageSwitching",
+    "CreateAgentRequestLlmIdleTimeoutConfig",
+    "CreateAgentRequestPreCallApi",
+    "CreateAgentRequestPreCallApiMethod",
+    "CreateAgentRequestPreCallApiResponseVariablesItem",
+    "CreateAgentRequestPronunciationDictsItem",
+    "CreateAgentRequestRedactionConfig",
+    "CreateAgentRequestSessionTimeoutConfig",
+    "CreateAgentRequestSlmModel",
+    "CreateAgentRequestSmartTurnConfig",
+    "CreateAgentRequestSynthesizer",
+    "CreateAgentRequestSynthesizerVoiceConfig",
+    "CreateAgentRequestSynthesizerVoiceConfigGender",
+    "CreateAgentRequestSynthesizerVoiceConfigModel",
+    "CreateAgentRequestTimezone",
+    "CreateAgentRequestVoiceDetectionConfig",
+    "CreateAgentRequestVoiceMailDetectionConfig",
+    "DuplicateAgentAgentsResponse",
+    "DuplicateAgentAgentsResponseData",
+    "GetAgentAgentsResponse",
+    "GetAgentAvatarPresignedUrlResponse",
+    "GetAgentAvatarPresignedUrlResponseData",
+    "GetAgentCallLogsResponse",
+    "GetAgentCallLogsResponseData",
+    "GetAgentCallLogsResponseDataCallLogsItem",
+    "GetAgentWidgetConfigResponse",
+    "GetAgentWidgetConfigResponseData",
+    "GetAgentWidgetConfigResponseDataMode",
+    "GetAgentWidgetConfigResponseDataPosition",
+    "GetAgentWidgetConfigResponseDataSize",
+    "GetAgentWidgetConfigResponseDataTheme",
+    "ListAgentsAgentsRequestSortField",
+    "ListAgentsAgentsRequestSortOrder",
+    "ListAgentsAgentsRequestType",
+    "ListAgentsAgentsResponse",
+    "ListAgentsAgentsResponseData",
+    "UpdateAgentAgentsResponse",
+    "UpdateAgentWidgetConfigRequestWidgetConfig",
+    "UpdateAgentWidgetConfigRequestWidgetConfigMode",
+    "UpdateAgentWidgetConfigRequestWidgetConfigPosition",
+    "UpdateAgentWidgetConfigRequestWidgetConfigSize",
+    "UpdateAgentWidgetConfigRequestWidgetConfigTheme",
+    "UpdateAgentWidgetConfigResponse",
+]
