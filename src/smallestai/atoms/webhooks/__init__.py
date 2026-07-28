@@ -17,6 +17,7 @@ if typing.TYPE_CHECKING:
         GetWebhookResponseData,
         PostAgentAgentIdWebhookSubscriptionsRequestEventTypesItem,
         PostAgentAgentIdWebhookSubscriptionsResponse,
+        UpdateWebhooksResponse,
     )
 _dynamic_imports: typing.Dict[str, str] = {
     "CreateWebhooksRequestEventsItem": ".types",
@@ -29,6 +30,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GetWebhookResponseData": ".types",
     "PostAgentAgentIdWebhookSubscriptionsRequestEventTypesItem": ".types",
     "PostAgentAgentIdWebhookSubscriptionsResponse": ".types",
+    "UpdateWebhooksResponse": ".types",
 }
 
 
@@ -64,4 +66,5 @@ __all__ = [
     "GetWebhookResponseData",
     "PostAgentAgentIdWebhookSubscriptionsRequestEventTypesItem",
     "PostAgentAgentIdWebhookSubscriptionsResponse",
+    "UpdateWebhooksResponse",
 ]

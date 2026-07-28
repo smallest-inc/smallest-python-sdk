@@ -5756,6 +5756,121 @@ client.atoms.webhooks.delete(
 </dl>
 </details>
 
+<details><summary><code>client.atoms.webhooks.<a href="src/smallestai/atoms/webhooks/client.py">update</a>(...) -> UpdateWebhooksResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update a webhook's endpoint URL, description, or custom headers. At
+least one of the three fields must be present in the request body.
+
+**Event subscriptions cannot be changed here.** To add or remove an
+agent's subscription to this webhook, use `POST /agent/{agentId}/webhook-subscriptions`
+and `DELETE /agent/{agentId}/webhook-subscriptions`.
+
+**Custom `headers` behavior**
+- Send a non-empty object to replace all custom headers on the webhook.
+- Send an empty object (`{}`) to clear all custom headers.
+- Omit the field to leave existing custom headers untouched.
+
+Custom header limits: at most 10 headers per webhook, values up to
+1024 characters, header names must match RFC 7230 token syntax. The
+following names are reserved and rejected: `x-signature`, `host`,
+`content-length`, `content-type`, `connection`, `transfer-encoding`.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.webhooks.update(
+    id="id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` — The ID of the webhook to update.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**endpoint:** `typing.Optional[str]` — New endpoint URL. Must be a valid URL.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `typing.Optional[str]` — New human-readable label.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**headers:** `typing.Optional[typing.Dict[str, str]]` 
+
+Map of custom header names to values. Non-empty object replaces
+all existing headers; empty object clears them.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.atoms.webhooks.<a href="src/smallestai/atoms/webhooks/client.py">get_webhook_subscriptions_for_an_agent</a>(...) -> GetAgentAgentIdWebhookSubscriptionsResponse</code></summary>
 <dl>
 <dd>
@@ -8970,7 +9085,7 @@ client.atoms.agent_versioning_branches.get_draft(
 <dl>
 <dd>
 
-Upsert the open draft on this branch. If no draft is open, one is created automatically. The request body is a free-form agent config partial and must contain at least one recognized field (`prompt`, `voice`, `model`, `tools`, `post_call_analytics`, etc.); the server merges it into the existing draft and returns the resulting draft as a revision-shaped snapshot.
+Upsert the open draft on this branch. If no draft is open, one is created automatically. The request body is an agent config partial in the same camelCase shape as `GET /agent/{id}` (`globalPrompt`, `firstMessage`, `synthesizer`, `language`, `voiceDetectionConfig`, `smartTurnConfig`, ...) and must contain at least one recognized field; the server merges it into the existing draft and returns the resulting draft as a revision-shaped snapshot.
 </dd>
 </dl>
 </dd>
@@ -13987,7 +14102,7 @@ client.waves.synthesize_sse_tts(
 </dl>
 </details>
 
-<details><summary><code>client.waves.<a href="src/smallestai/waves/client.py">transcribe_pulse</a>(...) -> TranscribePulseWavesResponse</code></summary>
+<details><summary><code>client.waves.<a href="src/smallestai/waves/client.py">list_voice_clones</a>() -> ListVoiceClonesWavesResponse</code></summary>
 <dl>
 <dd>
 
@@ -13999,81 +14114,7 @@ client.waves.synthesize_sse_tts(
 <dl>
 <dd>
 
-Transcribe an audio file to text using the Pulse model. The fastest way to get a transcript when you already have a recording — pass either the raw bytes or a URL.
-
-## When to use this
-
-Use this endpoint when you have a complete audio file (call recording, voicemail, podcast episode) and want the transcript back in one response. For live transcription as audio arrives, use the realtime WebSocket endpoint (`WSS /waves/v1/pulse/get_text`) instead.
-
-## Input methods
-
-Send the audio in one of two ways:
-
-1. **Raw bytes** — `Content-Type: application/octet-stream` with the audio in the body. All knobs (`language`, `word_timestamps`, etc.) are query parameters.
-2. **URL** — `Content-Type: application/json` with `{"url": "..."}` in the body. Useful when the audio already lives in object storage. Same query parameters apply.
-
-Pulse autodetects the language across 30+ supported locales. Pass `language` explicitly when you already know it — detection is fast but skipping it is faster.
-
-## Examples
-
-**cURL** (raw bytes)
-```bash
-curl -X POST "https://api.smallest.ai/waves/v1/pulse/get_text?language=en&word_timestamps=true" \
-  -H "Authorization: Bearer $SMALLEST_API_KEY" \
-  -H "Content-Type: application/octet-stream" \
-  --data-binary "@./call.wav"
-```
-
-**cURL** (URL)
-```bash
-curl -X POST "https://api.smallest.ai/waves/v1/pulse/get_text?language=en" \
-  -H "Authorization: Bearer $SMALLEST_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://your-bucket.s3.amazonaws.com/call.wav"}'
-```
-
-**Python** (`pip install smallestai>=4.4.0`)
-```python
-from smallestai import SmallestAI
-
-client = SmallestAI(api_key="YOUR_API_KEY")
-with open("./call.wav", "rb") as f:
-    result = client.waves.transcribe_pulse(
-        request=f.read(),
-        language="en",
-        word_timestamps=True,
-        diarize=True,
-    )
-print(result.status)         # "success"
-print(result.transcription)  # the transcript string
-```
-
-**JavaScript / TypeScript** (using `fetch`)
-```typescript
-import { readFileSync } from "node:fs";
-
-const audio = readFileSync("./call.wav");
-const params = new URLSearchParams({ language: "en", word_timestamps: "true", diarize: "true" });
-
-const res = await fetch(`https://api.smallest.ai/waves/v1/pulse/get_text?${params}`, {
-  method: "POST",
-  headers: {
-    Authorization: `Bearer ${process.env.SMALLEST_API_KEY}`,
-    "Content-Type": "application/octet-stream",
-  },
-  body: audio,
-});
-const result = await res.json();
-console.log(result.transcription);
-```
-
-## Common gotchas
-
-- **Max file size is 250 MB.** Larger files return HTTP `400` with `{errors: "Audio data too large", status: "error", message: "Error handling audio data"}`. Compress to mono 16 kHz PCM if you're close to the limit; quality is unaffected.
-- **Formatting flags (`format`, `punctuate`, `capitalize`)** are accepted at the wire level and exposed in the Python SDK as of `smallestai>=4.4.0`. Today they currently return the same transcript regardless of value — pass them in your integration so it works as the behavior changes.
-- **Webhook-driven flow**: pass `webhook_url` to receive the transcript asynchronously. The endpoint returns immediately; the transcript hits your webhook when ready. Useful for long files where you don't want to hold an HTTP connection open.
-- **Speaker diarization** (`diarize=true`) adds latency. Skip it if you only need the words.
-- **JavaScript / TypeScript**: the official `smallestai` npm package predates the Pulse model, so call this endpoint with `fetch` or `axios` as shown above.
+Retrieve all voice clones in your organization.
 </dd>
 </dl>
 </dd>
@@ -14088,7 +14129,16 @@ console.log(result.transcription);
 <dd>
 
 ```python
-client.waves.transcribe_pulse(...)
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.list_voice_clones()
+
 ```
 </dd>
 </dl>
@@ -14103,6 +14153,320 @@ client.waves.transcribe_pulse(...)
 <dl>
 <dd>
 
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.waves.<a href="src/smallestai/waves/client.py">create_voice_clone</a>(...) -> CreateVoiceCloneWavesResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create an instant voice clone in a single call. Defaults to `lightning-v3.1`.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.create_voice_clone(
+    file="example_file",
+    display_name="displayName",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**display_name:** `str` — Human-readable name for the voice clone.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `core.File` 
+
+Audio file to clone from. Supported MIME types:
+`audio/mpeg`, `audio/mpeg-3`, `audio/wav`, `audio/wave`,
+`audio/webm`, `video/webm`, `audio/mp4`, `video/mp4`.
+Maximum size: 5 MB.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `typing.Optional[str]` — Optional longer description for the voice clone.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**accent:** `typing.Optional[str]` — Optional accent tag (e.g. "general", "indian").
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**tags:** `typing.Optional[str]` 
+
+Optional comma-separated list of tags. Server splits on
+commas and trims whitespace (`"en, tone-test"` → `["en", "tone-test"]`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**language:** `typing.Optional[str]` 
+
+Primary language the clone will be used for. Optional, but
+**strongly recommended** — set it to the language of your
+reference audio. The TTS request's `language` should also
+match this code; setting it now avoids silent language
+mismatches at inference time.
+
+Must be one of the languages supported by `lightning-v3.1`
+(e.g. `en`, `hi`). The server validates and rejects
+unsupported codes with a 400.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**model:** `typing.Optional[CreateVoiceCloneWavesRequestModel]` 
+
+Voice cloning model. Defaults to `lightning-v3.1`.
+`lightning-v2` is accepted by the schema for historical
+reasons but is deprecated — the server returns 400 with
+`"Voice cloning for lightning-v2 is deprecated. Please use lightning-v3.1"`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Waves SpeechToText
+<details><summary><code>client.waves.speech_to_text.<a href="src/smallestai/waves/speech_to_text/client.py">transcribe</a>(...) -> TranscribeResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Transcribe an audio file. The model is chosen via `?model=`:
+
+- `?model=pulse-pro`: English-only, leaderboard-ranked accuracy. Raw bytes only; pass `webhook_url` to receive transcription asynchronously on long files.
+- `?model=pulse`: multilingual transcription (21 streaming + 26 pre-recorded languages), supports both raw bytes and audio-by-URL.
+
+## When to use this
+
+Use this endpoint when you have a complete audio file (call recording, voicemail, podcast episode) and want the transcript back in one response. For live transcription as audio arrives, use the realtime WebSocket endpoint (`WS /waves/v1/stt/live`) instead.
+
+Pulse Pro has no streaming worker today; calls to `WS /waves/v1/stt/live?model=pulse-pro` return `400` before the WebSocket upgrades.
+
+## Input methods
+
+- **Raw bytes**: `Content-Type: application/octet-stream` with the audio in the body. All knobs are query parameters.
+- **URL (`?model=pulse` only)**: `Content-Type: application/json` with `{"url": "..."}` in the body.
+
+## Examples
+
+**cURL**: Pulse Pro, sync
+```bash
+curl -X POST "https://api.smallest.ai/waves/v1/stt/?model=pulse-pro&language=en&word_timestamps=true" \
+  -H "Authorization: Bearer $SMALLEST_API_KEY" \
+  -H "Content-Type: application/octet-stream" \
+  --data-binary "@./call.wav"
+```
+
+**cURL**: Pulse Pro, async via webhook
+```bash
+curl -X POST "https://api.smallest.ai/waves/v1/stt/?model=pulse-pro&language=en&webhook_url=https://your.app/cb" \
+  -H "Authorization: Bearer $SMALLEST_API_KEY" \
+  -H "Content-Type: application/octet-stream" \
+  --data-binary "@./call.wav"
+```
+Returns `200 { "status": "processing", "request_id": "..." }` immediately. The webhook receives the full transcription when ready.
+
+**cURL**: Pulse, audio-by-URL
+```bash
+curl -X POST "https://api.smallest.ai/waves/v1/stt/?model=pulse&language=en" \
+  -H "Authorization: Bearer $SMALLEST_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://your-bucket.s3.amazonaws.com/call.wav"}'
+```
+
+**Python**
+```python
+import requests
+
+with open("./call.wav", "rb") as f:
+    audio = f.read()
+
+r = requests.post(
+    "https://api.smallest.ai/waves/v1/stt/",
+    params={"model": "pulse-pro", "language": "en", "word_timestamps": "true"},
+    headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/octet-stream"},
+    data=audio,
+)
+r.raise_for_status()
+print(r.json()["transcription"])
+```
+
+**JavaScript / TypeScript**
+```typescript
+import { readFileSync } from "node:fs";
+
+const audio = readFileSync("./call.wav");
+const params = new URLSearchParams({ model: "pulse-pro", language: "en", word_timestamps: "true" });
+
+const res = await fetch(`https://api.smallest.ai/waves/v1/stt/?${params}`, {
+  method: "POST",
+  headers: { Authorization: `Bearer ${process.env.SMALLEST_API_KEY}`, "Content-Type": "application/octet-stream" },
+  body: audio,
+});
+console.log((await res.json()).transcription);
+```
+
+## Common gotchas
+
+- **`model` is required.** Missing or invalid values return `400` with an enum-validation error.
+- **Pulse Pro is English only.** Pass `language=en`. Other language codes are accepted at the wire level but produce unpredictable output.
+- **Pulse Pro does not support audio-by-URL.** Send raw bytes or use `?model=pulse` for the URL flow.
+- **Async (webhook) mode is Pulse Pro only.** Pulse runs sync only on this endpoint.
+- **Max payload 250 MB.** Larger requests return `413`. Compress to mono 16 kHz PCM if you are close to the limit; quality is unaffected.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+client.waves.speech_to_text.transcribe(...)
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**model:** `TranscribeRequestModel` 
+
+Selects which ASR model handles the request. Required; missing or invalid values return `400`.
+
+- `pulse-pro`: English only, leaderboard-ranked accuracy, raw bytes only; supports async via `webhook_url`.
+- `pulse`: multilingual (39 languages), raw bytes OR URL.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**language:** `TranscribeRequestLanguage` 
+
+Language of the audio file. This endpoint is **Pre-Recorded (HTTP)** — for streaming, switch to `WSS /waves/v1/stt/live` (different supported language set).
+
+**26 single-language codes:** `en`, `hi`, `de`, `es`, `ru`, `it`, `fr`, `nl`, `pt`, `uk`, `pl`, `cs`, `sk`, `lv`, `et`, `ro`, `fi`, `sv`, `bg`, `hu`, `da`, `lt`, `mt`, `zh`, `ja`, `ko`.
+
+**Regional auto-detect aggregators** for unknown audio:
+- `multi-eu` — auto-detects across all 21 European codes plus `en`.
+- `multi-asian` — auto-detects across `zh`, `ko`, `ja`, `en`.
+- `multi-indic`: auto-detects across `en`, `hi`, `gu`, `mr`, `bn`, `or`. India region only.
+
+- **Pulse Pro**: pass `en`.
+- **Pulse**: pass any of the single-language codes above, or use the `multi-eu` / `multi-asian` / `multi-indic` aggregator for unknown audio. See the [Pulse model card](/models/model-cards/speech-to-text/pulse) for the full table with language names.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request:** `typing.Union[bytes, typing.Iterator[bytes], typing.AsyncIterator[bytes]]` 
     
 </dd>
@@ -14111,18 +14475,7 @@ client.waves.transcribe_pulse(...)
 <dl>
 <dd>
 
-**language:** `typing.Optional[TranscribePulseWavesRequestLanguage]` 
-
-Language of the audio file. Set explicitly to the known language for best accuracy.
-
-**26 single-language codes** on this endpoint: `en`, `hi`, `de`, `es`, `ru`, `it`, `fr`, `nl`, `pt`, `uk`, `pl`, `cs`, `sk`, `lv`, `et`, `ro`, `fi`, `sv`, `bg`, `hu`, `da`, `lt`, `mt`, `zh`, `ja`, `ko`.
-
-**Regional auto-detect aggregators** for unknown audio:
-- `multi-eu` (default) — auto-detects across all 21 European codes above plus `en`.
-- `multi-asian` — auto-detects across `zh`, `ko`, `ja`, `en`.
-- `multi-indic`: auto-detects across `en`, `hi`, `gu`, `mr`, `bn`, `or`. India region only.
-
-Omitting `language` routes to `multi-eu`. See the [Pulse model card](/models/model-cards/speech-to-text/pulse) for the full table.
+**word_timestamps:** `typing.Optional[bool]` — Include the per-word `words[]` array in the response — each entry carries the recognized `word`, its `start`/`end` timestamps, and a per-word `confidence` score (0.0–1.0). With `diarize=true`, entries also include `speaker`. On Pulse Pro this costs roughly one-third of throughput.
     
 </dd>
 </dl>
@@ -14130,18 +14483,7 @@ Omitting `language` routes to `multi-eu`. See the [Pulse model card](/models/mod
 <dl>
 <dd>
 
-**encoding:** `typing.Optional[TranscribePulseWavesRequestEncoding]` 
-
-Audio encoding of the bytes you upload. Mirrors the `encoding`
-parameter on the realtime WS endpoint.
-
-- `linear16`, `linear32` — raw PCM (16-bit and 32-bit)
-- `alaw`, `mulaw` — 8 kHz telephony codecs
-- `opus`, `ogg_opus` — Opus compressed audio (raw and Ogg container)
-
-When omitted, the server detects the format from the file's
-container header (works for `.wav`, `.mp3`, `.flac`, `.ogg`,
-`.m4a`, `.webm`).
+**diarize:** `typing.Optional[bool]` — Multi-speaker identification; adds per-word and per-utterance speaker labels.
     
 </dd>
 </dl>
@@ -14149,7 +14491,7 @@ container header (works for `.wav`, `.mp3`, `.flac`, `.ogg`,
 <dl>
 <dd>
 
-**webhook_url:** `typing.Optional[str]` 
+**webhook_url:** `typing.Optional[str]` — Pulse Pro only. If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
     
 </dd>
 </dl>
@@ -14157,7 +14499,7 @@ container header (works for `.wav`, `.mp3`, `.flac`, `.ogg`,
 <dl>
 <dd>
 
-**webhook_extra:** `typing.Optional[str]` 
+**webhook_method:** `typing.Optional[TranscribeRequestWebhookMethod]` — HTTP method to use when calling the webhook. Pulse Pro only.
     
 </dd>
 </dl>
@@ -14165,7 +14507,7 @@ container header (works for `.wav`, `.mp3`, `.flac`, `.ogg`,
 <dl>
 <dd>
 
-**word_timestamps:** `typing.Optional[bool]` — Whether to include word and utterance level timestamps in the response
+**webhook_extra:** `typing.Optional[str]` — Arbitrary metadata returned to the webhook in addition to the transcription payload. Pulse Pro only.
     
 </dd>
 </dl>
@@ -14173,7 +14515,17 @@ container header (works for `.wav`, `.mp3`, `.flac`, `.ogg`,
 <dl>
 <dd>
 
-**diarize:** `typing.Optional[bool]` — Whether to perform speaker diarization
+**redact_pii:** `typing.Optional[TranscribeRequestRedactPii]` 
+
+Redact personally identifiable information from the transcript.
+Names → `[FIRSTNAME_*]` / `[LASTNAME_*]`, phone numbers →
+`[PHONENUMBER_*]`, addresses → `[ADDRESS_*]`, etc. The redaction
+tokens use sequential indices so multiple occurrences of the same
+entity get distinct labels (`[FIRSTNAME_1]`, `[FIRSTNAME_2]`).
+
+**Language support:** currently effective only on `en` and `hi`.
+Setting `redact_pii=true` on other language codes is accepted
+but does not redact.
     
 </dd>
 </dl>
@@ -14181,7 +14533,16 @@ container header (works for `.wav`, `.mp3`, `.flac`, `.ogg`,
 <dl>
 <dd>
 
-**gender_detection:** `typing.Optional[TranscribePulseWavesRequestGenderDetection]` — Whether to predict the gender of the speaker
+**redact_pci:** `typing.Optional[TranscribeRequestRedactPci]` 
+
+Redact payment card information (credit-card numbers, CVV, account
+numbers, etc.). Replaces matches with `[ACCOUNTNUMBER_*]` tokens.
+Use alongside `redact_pii=true` for full PCI-compliant transcript
+handling.
+
+**Language support:** currently effective only on `en` and `hi`.
+Setting `redact_pci=true` on other language codes is accepted
+but does not redact.
     
 </dd>
 </dl>
@@ -14189,7 +14550,11 @@ container header (works for `.wav`, `.mp3`, `.flac`, `.ogg`,
 <dl>
 <dd>
 
-**emotion_detection:** `typing.Optional[TranscribePulseWavesRequestEmotionDetection]` — Whether to predict speaker emotions
+**emotion_detection:** `typing.Optional[TranscribeRequestEmotionDetection]` 
+
+When `true`, the response adds an `emotions` object mapping detected
+emotion labels to confidence scores. Useful for voice-of-customer
+analytics on call recordings.
     
 </dd>
 </dl>
@@ -14197,15 +14562,10 @@ container header (works for `.wav`, `.mp3`, `.flac`, `.ogg`,
 <dl>
 <dd>
 
-**format:** `typing.Optional[TranscribePulseWavesRequestFormat]` 
+**gender_detection:** `typing.Optional[TranscribeRequestGenderDetection]` 
 
-Master formatting switch for the transcript. When `false`, forces
-`punctuate=false`, `capitalize=false`, and also disables Inverse
-Text Normalization (ITN) so it cannot silently reintroduce
-punctuation or casing.
-
-When `true`, the `punctuate` and `capitalize` params take effect
-independently. Leave `format=true` and use those two to fine-tune.
+When `true`, the response adds a `gender` field with the detected
+speaker gender label. Pulse pre-recorded only.
     
 </dd>
 </dl>
@@ -14213,12 +14573,169 @@ independently. Leave `format=true` and use those two to fine-tune.
 <dl>
 <dd>
 
-**punctuate:** `typing.Optional[TranscribePulseWavesRequestPunctuate]` 
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
 
-When `false`, strips end-of-sentence punctuation (`.`, `,`, `?`, `!`)
-from the transcript, `words[].word`, and
-`utterances[].transcript`. Does not affect casing — use
-`capitalize` for that. Overridden to `false` when `format=false`.
+
+</dd>
+</dl>
+</details>
+
+## Waves Electron
+<details><summary><code>client.waves.electron.<a href="src/smallestai/waves/electron/client.py">complete</a>(...) -> ChatCompletion</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Generate a chat completion with Electron. OpenAI-compatible
+request/response shape — point any OpenAI SDK at
+`https://api.smallest.ai/waves/v1` and it just works.
+
+Set `stream: true` to receive tokens via Server-Sent Events. With
+`stream_options: { include_usage: true }`, the final SSE chunk
+carries the `usage` block so token accounting is exact even on
+client disconnects.
+
+Tool calling follows OpenAI's `tools` array convention. When you
+provide a voice-agent-style system prompt, Electron emits a short
+filler phrase in the assistant message `content` field alongside
+`tool_calls` — see the [Tool Calling guide](/models/documentation/llm-electron/tool-function-calling)
+for the voice-agent pattern.
+
+## Examples
+
+**cURL**
+```bash
+curl -X POST "https://api.smallest.ai/waves/v1/chat/completions" \
+  -H "Authorization: Bearer $SMALLEST_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "electron",
+    "messages": [
+      {"role": "user", "content": "Write one sentence about why the sky is blue."}
+    ]
+  }'
+```
+
+**Python** (`pip install openai`)
+```python
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.smallest.ai/waves/v1",
+    api_key=os.environ["SMALLEST_API_KEY"],
+)
+
+response = client.chat.completions.create(
+    model="electron",
+    messages=[
+        {"role": "user", "content": "Write one sentence about why the sky is blue."}
+    ],
+)
+
+print(response.choices[0].message.content)
+```
+
+**JavaScript / TypeScript** (`npm install openai`)
+```typescript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  baseURL: "https://api.smallest.ai/waves/v1",
+  apiKey: process.env.SMALLEST_API_KEY,
+});
+
+const response = await client.chat.completions.create({
+  model: "electron",
+  messages: [
+    { role: "user", content: "Write one sentence about why the sky is blue." },
+  ],
+});
+
+console.log(response.choices[0].message.content);
+```
+
+**Streaming with usage** (Python)
+```python
+stream = client.chat.completions.create(
+    model="electron",
+    messages=[{"role": "user", "content": "Tell me a one-sentence fun fact."}],
+    stream=True,
+    stream_options={"include_usage": True},
+)
+for chunk in stream:
+    if chunk.choices and chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end="", flush=True)
+    if chunk.usage:
+        print(f"\n\nTokens: {chunk.usage.total_tokens}")
+```
+
+## Common gotchas
+
+- **Base URL is `/waves/v1`**, not `/v1`. The OpenAI SDK appends `/chat/completions` for you.
+- **`stream_options.include_usage: true`** is required for exact token accounting on streaming calls — the final SSE chunk carries the `usage` block.
+- **`n > 1` and `prompt_logprobs` are rejected.** Use multiple requests if you need parallel completions.
+- **Auth header is `Authorization: Bearer $SMALLEST_API_KEY`** — get the key from the [Smallest AI Console](https://app.smallest.ai/dashboard/api-keys).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+from smallestai.waves import ElectronMessage
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.electron.complete(
+    model="electron",
+    messages=[
+        ElectronMessage(
+            role="user",
+            content="Hello!",
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**model:** `str` — Model ID. Currently only `"electron"`.
     
 </dd>
 </dl>
@@ -14226,12 +14743,149 @@ from the transcript, `words[].word`, and
 <dl>
 <dd>
 
-**capitalize:** `typing.Optional[TranscribePulseWavesRequestCapitalize]` 
+**messages:** `typing.List[ElectronMessage]` — Chat history. Standard OpenAI message array.
+    
+</dd>
+</dl>
 
-When `false`, lowercases the entire transcript output (transcript,
-`words[].word`, and `utterances[].transcript`). Does not affect
-punctuation — use `punctuate` for that. Overridden to `false`
-when `format=false`.
+<dl>
+<dd>
+
+**temperature:** `typing.Optional[float]` — Sampling temperature.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**top_p:** `typing.Optional[float]` — Nucleus sampling.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**max_tokens:** `typing.Optional[int]` 
+
+Maximum output tokens. Combined input + output context ceiling
+is 32,768.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**stream:** `typing.Optional[bool]` 
+
+When true, response is `text/event-stream`. See the
+[Streaming guide](/models/documentation/llm-electron/streaming).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**stream_options:** `typing.Optional[ChatCompletionRequestStreamOptions]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**tools:** `typing.Optional[typing.List[typing.Dict[str, typing.Any]]]` 
+
+Tool / function calling definitions. Forwarded verbatim to the
+OpenAI-compatible upstream, so the standard OpenAI shape
+(`{type: "function", function: {name, description, parameters}}`)
+is the recommended form and is what the examples below use.
+The wire schema is permissive (`array<object>`) — any tools payload
+the upstream accepts will work. See [Tool Calling](/models/documentation/llm-electron/tool-function-calling)
+for details.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**tool_choice:** `typing.Optional[ChatCompletionRequestToolChoice]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**response_format:** `typing.Optional[ChatCompletionRequestResponseFormat]` — Output shape. `{type: "text"}` (default) or `{type: "json_object"}`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**stop:** `typing.Optional[ChatCompletionRequestStop]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**seed:** `typing.Optional[int]` — Best-effort determinism.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**logit_bias:** `typing.Optional[typing.Dict[str, float]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**logprobs:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**top_logprobs:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**presence_penalty:** `typing.Optional[float]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**frequency_penalty:** `typing.Optional[float]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**user:** `typing.Optional[str]` — Opaque end-user identifier. Not interpreted by Electron.
     
 </dd>
 </dl>

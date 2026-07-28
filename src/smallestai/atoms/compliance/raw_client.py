@@ -17,7 +17,6 @@ from ..errors.conflict_error import ConflictError
 from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
-from ..types.bad_request_error_response import BadRequestErrorResponse
 from .types.get_compliance_requirements_request_number_type import GetComplianceRequirementsRequestNumberType
 from .types.get_compliance_requirements_request_user_type import GetComplianceRequirementsRequestUserType
 from .types.get_compliance_requirements_response import GetComplianceRequirementsResponse
@@ -129,9 +128,9 @@ class RawComplianceClient:
                 raise BadGatewayError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        BadRequestErrorResponse,
+                        typing.Any,
                         construct_type(
-                            type_=BadRequestErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -235,9 +234,9 @@ class RawComplianceClient:
                 raise BadGatewayError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        BadRequestErrorResponse,
+                        typing.Any,
                         construct_type(
-                            type_=BadRequestErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -390,9 +389,9 @@ class RawComplianceClient:
                 raise BadGatewayError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        BadRequestErrorResponse,
+                        typing.Any,
                         construct_type(
-                            type_=BadRequestErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -513,9 +512,9 @@ class RawComplianceClient:
                 raise BadGatewayError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        BadRequestErrorResponse,
+                        typing.Any,
                         construct_type(
-                            type_=BadRequestErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -603,9 +602,9 @@ class RawComplianceClient:
                 raise BadGatewayError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        BadRequestErrorResponse,
+                        typing.Any,
                         construct_type(
-                            type_=BadRequestErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -714,9 +713,9 @@ class AsyncRawComplianceClient:
                 raise BadGatewayError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        BadRequestErrorResponse,
+                        typing.Any,
                         construct_type(
-                            type_=BadRequestErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -820,9 +819,9 @@ class AsyncRawComplianceClient:
                 raise BadGatewayError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        BadRequestErrorResponse,
+                        typing.Any,
                         construct_type(
-                            type_=BadRequestErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -975,9 +974,9 @@ class AsyncRawComplianceClient:
                 raise BadGatewayError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        BadRequestErrorResponse,
+                        typing.Any,
                         construct_type(
-                            type_=BadRequestErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1098,9 +1097,9 @@ class AsyncRawComplianceClient:
                 raise BadGatewayError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        BadRequestErrorResponse,
+                        typing.Any,
                         construct_type(
-                            type_=BadRequestErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1188,9 +1187,9 @@ class AsyncRawComplianceClient:
                 raise BadGatewayError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        BadRequestErrorResponse,
+                        typing.Any,
                         construct_type(
-                            type_=BadRequestErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

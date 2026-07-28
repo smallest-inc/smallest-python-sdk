@@ -124,3 +124,22 @@ def test_waves_synthesize_sse_tts() -> None:
     ):
         pass
     verify_request_count(test_id, "POST", "/waves/v1/tts/live", None, 1)
+
+
+def test_waves_list_voice_clones() -> None:
+    """Test list_voice_clones endpoint with WireMock"""
+    test_id = "waves.list_voice_clones.0"
+    client = get_client(test_id)
+    client.waves.list_voice_clones()
+    verify_request_count(test_id, "GET", "/waves/v1/voice-cloning", None, 1)
+
+
+def test_waves_create_voice_clone() -> None:
+    """Test create_voice_clone endpoint with WireMock"""
+    test_id = "waves.create_voice_clone.0"
+    client = get_client(test_id)
+    client.waves.create_voice_clone(
+        file="example_file",
+        display_name="displayName",
+    )
+    verify_request_count(test_id, "POST", "/waves/v1/voice-cloning", None, 1)

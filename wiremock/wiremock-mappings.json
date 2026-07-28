@@ -2119,6 +2119,42 @@
       }
     },
     {
+      "id": "d7f75404-4732-4f98-8fc5-4a2101d5cd7f",
+      "name": "Update a webhook - default",
+      "request": {
+        "urlPathTemplate": "/webhook/{id}",
+        "method": "PATCH",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": \"60d0fe4f5311236168a109ca\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "d7f75404-4732-4f98-8fc5-4a2101d5cd7f",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
       "id": "d78e54f2-cac3-4637-ad04-9d0299e40ffa",
       "name": "Get webhook subscriptions for an agent - default",
       "request": {
@@ -5139,9 +5175,103 @@
           }
         }
       }
+    },
+    {
+      "id": "b60f8d75-1c7a-4103-862e-f053097e5c4d",
+      "name": "List Voice Clones - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/voice-cloning",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"data\": [\n    {\n      \"_id\": \"_id\",\n      \"voiceId\": \"voice_dLP5T67Qw7\",\n      \"displayName\": \"displayName\",\n      \"description\": \"description\",\n      \"accent\": \"accent\",\n      \"tags\": [\n        \"tags\"\n      ],\n      \"language\": \"language\",\n      \"status\": \"pending\",\n      \"cloningType\": \"instant\",\n      \"modelIds\": [\n        \"modelIds\"\n      ],\n      \"createdAt\": \"2024-01-15T09:30:00Z\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "b60f8d75-1c7a-4103-862e-f053097e5c4d",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "9a0e74fb-de4d-47c4-b383-ced90e767ea8",
+      "name": "Create a Voice Clone - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/voice-cloning",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"message\": \"Voice clone created successfully\",\n  \"data\": {\n    \"voiceId\": \"voice_dLP5T67Qw7\",\n    \"displayName\": \"displayName\",\n    \"model\": \"model\",\n    \"status\": \"pending\",\n    \"language\": \"language\",\n    \"audioFileNames\": [\n      \"audioFileNames\"\n    ],\n    \"createdAt\": \"2024-01-15T09:30:00Z\",\n    \"organizationId\": \"organizationId\",\n    \"samples\": [\n      {}\n    ]\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "9a0e74fb-de4d-47c4-b383-ced90e767ea8",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "0a17450a-d8b0-4413-904a-2917ba8f43ae",
+      "name": "Chat Completions (Electron) - Minimal request",
+      "request": {
+        "urlPathTemplate": "/waves/v1/chat/completions",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"id\": \"id\",\n  \"object\": \"chat.completion\",\n  \"created\": 1,\n  \"model\": \"model\",\n  \"choices\": [\n    {\n      \"index\": 1,\n      \"message\": {\n        \"role\": \"user\"\n      },\n      \"finish_reason\": \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 1,\n    \"completion_tokens\": 1,\n    \"total_tokens\": 1,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\": 1\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "0a17450a-d8b0-4413-904a-2917ba8f43ae",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
     }
   ],
   "meta": {
-    "total": 146
+    "total": 150
   }
 }

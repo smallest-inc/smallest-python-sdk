@@ -16,7 +16,6 @@ from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
 from ..errors.too_many_requests_error import TooManyRequestsError
 from ..errors.unauthorized_error import UnauthorizedError
-from ..types.too_many_requests_error_body import TooManyRequestsErrorBody
 from .types.post_prompt_scoring_score_request import PostPromptScoringScoreRequest
 from .types.post_prompt_scoring_score_response import PostPromptScoringScoreResponse
 from pydantic import ValidationError
@@ -144,9 +143,9 @@ class RawPromptScoringClient:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        TooManyRequestsErrorBody,
+                        typing.Any,
                         construct_type(
-                            type_=TooManyRequestsErrorBody,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -291,9 +290,9 @@ class AsyncRawPromptScoringClient:
                 raise TooManyRequestsError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        TooManyRequestsErrorBody,
+                        typing.Any,
                         construct_type(
-                            type_=TooManyRequestsErrorBody,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

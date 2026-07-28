@@ -53,7 +53,7 @@ class Webhook(UncheckedBaseModel):
         FieldMetadata(alias="decryptedSecretKey"),
         pydantic.Field(
             alias="decryptedSecretKey",
-            description="The decrypted signing secret for the webhook. This is only returned when fetching a single webhook by ID.",
+            description="The decrypted signing secret for the webhook. Returned by both `GET /webhook` (list) and `GET /webhook?webhookId=<id>` (single). Use as the HMAC-SHA256 key when verifying the `X-Signature` header on incoming webhook deliveries.",
         ),
     ] = None
     created_at: typing_extensions.Annotated[

@@ -2,7 +2,19 @@
 
 import typing
 
-from .pulse_stt_auth_missing_response import PulseSttAuthMissingResponse
-from .pulse_stt_error_response_legacy import PulseSttErrorResponseLegacy
+import pydantic
+from ...core.pydantic_utilities import IS_PYDANTIC_V2
+from ...core.unchecked_base_model import UncheckedBaseModel
 
-UnauthorizedErrorBody = typing.Union[PulseSttAuthMissingResponse, PulseSttErrorResponseLegacy]
+
+class UnauthorizedErrorBody(UncheckedBaseModel):
+    error: typing.Optional[str] = None
+
+    if IS_PYDANTIC_V2:
+        model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
+    else:
+
+        class Config:
+            frozen = True
+            smart_union = True
+            extra = pydantic.Extra.allow

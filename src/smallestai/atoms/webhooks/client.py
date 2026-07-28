@@ -15,6 +15,7 @@ from .types.post_agent_agent_id_webhook_subscriptions_request_event_types_item i
     PostAgentAgentIdWebhookSubscriptionsRequestEventTypesItem,
 )
 from .types.post_agent_agent_id_webhook_subscriptions_response import PostAgentAgentIdWebhookSubscriptionsResponse
+from .types.update_webhooks_response import UpdateWebhooksResponse
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -159,6 +160,72 @@ class WebhooksClient:
         )
         """
         _response = self._raw_client.delete(id, request_options=request_options)
+        return _response.data
+
+    def update(
+        self,
+        id: str,
+        *,
+        endpoint: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        headers: typing.Optional[typing.Dict[str, str]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> UpdateWebhooksResponse:
+        """
+        Update a webhook's endpoint URL, description, or custom headers. At
+        least one of the three fields must be present in the request body.
+
+        **Event subscriptions cannot be changed here.** To add or remove an
+        agent's subscription to this webhook, use `POST /agent/{agentId}/webhook-subscriptions`
+        and `DELETE /agent/{agentId}/webhook-subscriptions`.
+
+        **Custom `headers` behavior**
+        - Send a non-empty object to replace all custom headers on the webhook.
+        - Send an empty object (`{}`) to clear all custom headers.
+        - Omit the field to leave existing custom headers untouched.
+
+        Custom header limits: at most 10 headers per webhook, values up to
+        1024 characters, header names must match RFC 7230 token syntax. The
+        following names are reserved and rejected: `x-signature`, `host`,
+        `content-length`, `content-type`, `connection`, `transfer-encoding`.
+
+        Parameters
+        ----------
+        id : str
+            The ID of the webhook to update.
+
+        endpoint : typing.Optional[str]
+            New endpoint URL. Must be a valid URL.
+
+        description : typing.Optional[str]
+            New human-readable label.
+
+        headers : typing.Optional[typing.Dict[str, str]]
+            Map of custom header names to values. Non-empty object replaces
+            all existing headers; empty object clears them.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        UpdateWebhooksResponse
+            Webhook updated successfully.
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.webhooks.update(
+            id="id",
+        )
+        """
+        _response = self._raw_client.update(
+            id, endpoint=endpoint, description=description, headers=headers, request_options=request_options
+        )
         return _response.data
 
     def get_webhook_subscriptions_for_an_agent(
@@ -446,6 +513,80 @@ class AsyncWebhooksClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.delete(id, request_options=request_options)
+        return _response.data
+
+    async def update(
+        self,
+        id: str,
+        *,
+        endpoint: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        headers: typing.Optional[typing.Dict[str, str]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> UpdateWebhooksResponse:
+        """
+        Update a webhook's endpoint URL, description, or custom headers. At
+        least one of the three fields must be present in the request body.
+
+        **Event subscriptions cannot be changed here.** To add or remove an
+        agent's subscription to this webhook, use `POST /agent/{agentId}/webhook-subscriptions`
+        and `DELETE /agent/{agentId}/webhook-subscriptions`.
+
+        **Custom `headers` behavior**
+        - Send a non-empty object to replace all custom headers on the webhook.
+        - Send an empty object (`{}`) to clear all custom headers.
+        - Omit the field to leave existing custom headers untouched.
+
+        Custom header limits: at most 10 headers per webhook, values up to
+        1024 characters, header names must match RFC 7230 token syntax. The
+        following names are reserved and rejected: `x-signature`, `host`,
+        `content-length`, `content-type`, `connection`, `transfer-encoding`.
+
+        Parameters
+        ----------
+        id : str
+            The ID of the webhook to update.
+
+        endpoint : typing.Optional[str]
+            New endpoint URL. Must be a valid URL.
+
+        description : typing.Optional[str]
+            New human-readable label.
+
+        headers : typing.Optional[typing.Dict[str, str]]
+            Map of custom header names to values. Non-empty object replaces
+            all existing headers; empty object clears them.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        UpdateWebhooksResponse
+            Webhook updated successfully.
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.webhooks.update(
+                id="id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.update(
+            id, endpoint=endpoint, description=description, headers=headers, request_options=request_options
+        )
         return _response.data
 
     async def get_webhook_subscriptions_for_an_agent(

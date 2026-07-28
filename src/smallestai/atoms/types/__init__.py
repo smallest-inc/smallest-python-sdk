@@ -68,6 +68,7 @@ if typing.TYPE_CHECKING:
     from .compliance_application_status import ComplianceApplicationStatus
     from .compliance_application_user_type import ComplianceApplicationUserType
     from .compliance_requirement import ComplianceRequirement
+    from .conflict_error_body import ConflictErrorBody
     from .conflict_error_response import ConflictErrorResponse
     from .diff_change import DiffChange
     from .diff_result import DiffResult
@@ -240,6 +241,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ComplianceApplicationStatus": ".compliance_application_status",
     "ComplianceApplicationUserType": ".compliance_application_user_type",
     "ComplianceRequirement": ".compliance_requirement",
+    "ConflictErrorBody": ".conflict_error_body",
     "ConflictErrorResponse": ".conflict_error_response",
     "DiffChange": ".diff_change",
     "DiffResult": ".diff_result",
@@ -434,6 +436,7 @@ __all__ = [
     "ComplianceApplicationStatus",
     "ComplianceApplicationUserType",
     "ComplianceRequirement",
+    "ConflictErrorBody",
     "ConflictErrorResponse",
     "DiffChange",
     "DiffResult",

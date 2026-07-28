@@ -874,7 +874,7 @@ class RawAgentVersioningBranchesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[UpdateDraftAgentVersioningBranchesResponse]:
         """
-        Upsert the open draft on this branch. If no draft is open, one is created automatically. The request body is a free-form agent config partial and must contain at least one recognized field (`prompt`, `voice`, `model`, `tools`, `post_call_analytics`, etc.); the server merges it into the existing draft and returns the resulting draft as a revision-shaped snapshot.
+        Upsert the open draft on this branch. If no draft is open, one is created automatically. The request body is an agent config partial in the same camelCase shape as `GET /agent/{id}` (`globalPrompt`, `firstMessage`, `synthesizer`, `language`, `voiceDetectionConfig`, `smartTurnConfig`, ...) and must contain at least one recognized field; the server merges it into the existing draft and returns the resulting draft as a revision-shaped snapshot.
 
         Parameters
         ----------
@@ -1038,6 +1038,17 @@ class RawAgentVersioningBranchesClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Any,
@@ -2405,7 +2416,7 @@ class AsyncRawAgentVersioningBranchesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[UpdateDraftAgentVersioningBranchesResponse]:
         """
-        Upsert the open draft on this branch. If no draft is open, one is created automatically. The request body is a free-form agent config partial and must contain at least one recognized field (`prompt`, `voice`, `model`, `tools`, `post_call_analytics`, etc.); the server merges it into the existing draft and returns the resulting draft as a revision-shaped snapshot.
+        Upsert the open draft on this branch. If no draft is open, one is created automatically. The request body is an agent config partial in the same camelCase shape as `GET /agent/{id}` (`globalPrompt`, `firstMessage`, `synthesizer`, `language`, `voiceDetectionConfig`, `smartTurnConfig`, ...) and must contain at least one recognized field; the server merges it into the existing draft and returns the resulting draft as a revision-shaped snapshot.
 
         Parameters
         ----------
@@ -2569,6 +2580,17 @@ class AsyncRawAgentVersioningBranchesClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Any,

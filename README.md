@@ -128,7 +128,7 @@ from smallestai import SmallestAI
 client = SmallestAI(...)
 
 # Connect to the websocket (Sync)
-with client.tts.connect() as socket:
+with client.speech_to_text.stream() as socket:
     # Iterate over the messages as they arrive
     for message in socket:
         print(message)
@@ -142,7 +142,7 @@ from smallestai import AsyncSmallestAI
 client = AsyncSmallestAI(...)
 
 # Connect to the websocket (Async)
-async with client.tts.connect() as socket:
+async with client.speech_to_text.stream() as socket:
     async for message in socket:
         print(message)
 ```
