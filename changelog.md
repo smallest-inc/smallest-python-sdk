@@ -1,3 +1,17 @@
+## 5.3.1 - 2026-07-29
+
+Billing read endpoints, a call-log type fix, and clearer agent-crew deploy warnings. Additive; no breaking changes.
+
+* **Billing** (new `client.atoms.billing`): `get_balance`, `get_ledger`, `get_usage_breakdown`,
+  `list_invoices`, `get_invoice_pdf` (read-only credit and invoice endpoints under `/payment/v1`).
+* **Fix**: `calls.get` / `calls.list` transcript-turn `timestamp` is typed as a string (ISO-8601),
+  matching what the API returns. Previously typed as a number, which triggered a deserialization
+  warning.
+* **CLI DevX** (`smallestai agent-crew deploy`): a pre-deploy layout check warns on a `src/` layout,
+  a nested entry point, or a `pyproject.toml` with no `requirements.txt` (all fail the cloud build);
+  and the environment-variable warning now points to the working path (ship a `.env` at the project
+  root and call `load_dotenv()`; it deploys with your code) instead of just saying it is not propagated.
+
 ## 5.3.0 - 2026-07-28
 
 Unified speech-to-text namespace (breaking), voice cloning, Electron LLM, webhook update.

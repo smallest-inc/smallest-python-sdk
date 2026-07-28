@@ -4799,6 +4799,178 @@
       "postServeActions": []
     },
     {
+      "id": "7a585eda-d514-4d17-b714-44d3f13490ae",
+      "name": "Get credit balance - default",
+      "request": {
+        "urlPathTemplate": "/payment/v1/credits/balance",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"creditBalance\": 15,\n    \"planId\": \"plan_standard\",\n    \"isEnterprise\": false\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "7a585eda-d514-4d17-b714-44d3f13490ae",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "f17826c8-8354-4351-9daf-cf57d2fa4647",
+      "name": "List credit ledger - default",
+      "request": {
+        "urlPathTemplate": "/payment/v1/credits/ledger",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "queryParameters": {
+          "from": {
+            "equalTo": "2026-07-01T00:00:00Z"
+          },
+          "to": {
+            "equalTo": "2026-07-28T00:00:00Z"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"transactions\": [\n      {\n        \"id\": \"id\",\n        \"transactionType\": \"SIGNUP_BONUS\",\n        \"amount\": 1.1,\n        \"balanceAfter\": 1.1,\n        \"createdAt\": \"2024-01-15T09:30:00Z\"\n      }\n    ],\n    \"total\": 1,\n    \"hasMore\": true,\n    \"summary\": {\n      \"totalCreditsConsumed\": 1.1,\n      \"totalCreditsAdded\": 1.1\n    },\n    \"period\": {\n      \"from\": \"2024-01-15T09:30:00Z\",\n      \"to\": \"2024-01-15T09:30:00Z\"\n    }\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "f17826c8-8354-4351-9daf-cf57d2fa4647",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "9c57aa7a-6bbc-4696-9d72-74558360bc33",
+      "name": "Get usage breakdown - default",
+      "request": {
+        "urlPathTemplate": "/payment/v1/credits/usage/breakdown",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"platform\": 1.1,\n    \"voiceAi\": 1.1,\n    \"voiceModels\": 1.1\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "9c57aa7a-6bbc-4696-9d72-74558360bc33",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "658e481c-9633-4b82-877b-c6bb310a4218",
+      "name": "List invoices - default",
+      "request": {
+        "urlPathTemplate": "/payment/v1/invoices",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"key\": \"value\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "658e481c-9633-4b82-877b-c6bb310a4218",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "b67cb773-6ac8-4d0f-a178-05d1ed4984d6",
+      "name": "Get invoice PDF URL - default",
+      "request": {
+        "urlPathTemplate": "/payment/v1/invoices/{invoiceId}/pdf",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "invoiceId": {
+            "equalTo": "invoiceId"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"data\": {\n    \"pdfUrl\": \"pdfUrl\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "b67cb773-6ac8-4d0f-a178-05d1ed4984d6",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
       "id": "23284c9e-d15e-4f3a-84b7-de9613ccf399",
       "name": "Get pronunciation dictionaries - default",
       "request": {
@@ -5272,6 +5444,6 @@
     }
   ],
   "meta": {
-    "total": 150
+    "total": 155
   }
 }

@@ -13054,6 +13054,421 @@ the caller's org.
 </dl>
 </details>
 
+## Atoms Billing
+<details><summary><code>client.atoms.billing.<a href="src/smallestai/atoms/billing/client.py">get_balance</a>() -> BillingBalanceResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the organization's current credit balance in USD plus the
+current plan identifier. Organization is resolved from the API key,
+so no `X-Organization-Id` header is required.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.billing.get_balance()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.billing.<a href="src/smallestai/atoms/billing/client.py">get_ledger</a>(...) -> BillingLedgerResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Paginated credit-ledger transaction history. Ledger reads are served
+from ClickHouse; a rare storage-tier outage returns an empty
+`transactions` array rather than a 5xx.
+
+**Window rules**
+
+- `from` defaults to `to - 7 days`, `to` defaults to now.
+- The span between `from` and `to` cannot exceed **90 days**. A wider
+  span returns 400. Page through longer periods by making multiple
+  calls with shifted `from`/`to`.
+- `from` cannot be earlier than **2026-03-02T00:00:00Z**. Older
+  historical data is not available via API; contact support for bulk
+  exports.
+- `from > to` returns 400.
+
+**Filters**
+
+- `type` filters to a single transaction type. `PAYMENTS` is a
+  virtual filter that returns both `CREDIT_PURCHASE` and
+  `AUTO_RELOAD` rows.
+- `scope` filters `USAGE_DEDUCTION` rows by product category.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+import datetime
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.billing.get_ledger(
+    from_=datetime.datetime.fromisoformat("2026-07-01T00:00:00+00:00"),
+    to=datetime.datetime.fromisoformat("2026-07-28T00:00:00+00:00"),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Page size (1–100).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` — Offset for pagination.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**from:** `typing.Optional[datetime.datetime]` — Lower bound of the query window (ISO 8601, `Z`-suffixed UTC recommended). Defaults to seven days before `to`. Cannot be earlier than `2026-03-02T00:00:00Z`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**to:** `typing.Optional[datetime.datetime]` — Upper bound of the query window (ISO 8601, `Z`-suffixed UTC recommended). Defaults to now.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**type:** `typing.Optional[GetLedgerBillingRequestType]` — Filter to a single transaction type. `PAYMENTS` is a virtual filter that returns purchase-related rows (`CREDIT_PURCHASE` + `AUTO_RELOAD`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**scope:** `typing.Optional[GetLedgerBillingRequestScope]` — Filter by spend category. Applies only to `USAGE_DEDUCTION` rows.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.billing.<a href="src/smallestai/atoms/billing/client.py">get_usage_breakdown</a>() -> BillingUsageBreakdownResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Total credits spent so far, split across the three product scopes.
+The window is a cumulative snapshot from **2026-03-02T00:00:00Z**
+(the platform's usage-tracking start date) up to the current
+instant. Served from ClickHouse. No query parameters.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.billing.get_usage_breakdown()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.billing.<a href="src/smallestai/atoms/billing/client.py">list_invoices</a>() -> BillingInvoiceListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns up to 20 of the most recent Stripe invoices for the caller's
+organization. Each item is the raw Stripe `Invoice` object; use the
+canonical Stripe reference at
+[stripe.com/docs/api/invoices/object](https://stripe.com/docs/api/invoices/object)
+for field-level semantics.
+
+Organizations that have never been charged (free-tier only) return
+an empty array.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.billing.list_invoices()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.billing.<a href="src/smallestai/atoms/billing/client.py">get_invoice_pdf</a>(...) -> BillingInvoicePdfResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a Stripe-hosted PDF URL for the invoice. The URL is
+short-lived; fetch fresh when you need to hand it to a user.
+
+Requesting an invoice that does not belong to the caller's
+organization returns 404 (not 403), so a foreign invoice ID cannot
+be confirmed to exist.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.billing.get_invoice_pdf(
+    invoice_id="invoiceId",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**invoice_id:** `str` — Stripe invoice ID (e.g. `in_1THiCSRwh8g1U6dfOcUtTdq9`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Waves
 <details><summary><code>client.waves.<a href="src/smallestai/waves/client.py">get_pronunciation_dicts</a>() -> typing.List[PronunciationDict]</code></summary>
 <dl>

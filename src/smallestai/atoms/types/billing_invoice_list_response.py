@@ -5,12 +5,14 @@ import typing
 import pydantic
 from ...core.pydantic_utilities import IS_PYDANTIC_V2
 from ...core.unchecked_base_model import UncheckedBaseModel
-from .not_found_error_body_error import NotFoundErrorBodyError
 
 
-class NotFoundErrorBody(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
-    error: typing.Optional[NotFoundErrorBodyError] = None
+class BillingInvoiceListResponse(UncheckedBaseModel):
+    success: bool
+    data: typing.List[typing.Dict[str, typing.Any]] = pydantic.Field()
+    """
+    Up to 20 recent Stripe `Invoice` objects for the caller's organization. Fields follow the canonical Stripe shape. Keys most callers use: `id`, `status`, `amount_paid`, `amount_due`, `currency`, `created`, `hosted_invoice_url`, `invoice_pdf`, `number`.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

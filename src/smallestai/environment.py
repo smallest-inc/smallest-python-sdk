@@ -6,12 +6,16 @@ from __future__ import annotations
 class SmallestAIEnvironment:
     PRODUCTION: SmallestAIEnvironment
 
-    def __init__(self, *, atoms: str, waves: str, waves_ws: str):
+    def __init__(self, *, atoms: str, waves: str, waves_ws: str, payment: str):
         self.atoms = atoms
         self.waves = waves
         self.waves_ws = waves_ws
+        self.payment = payment
 
 
 SmallestAIEnvironment.PRODUCTION = SmallestAIEnvironment(
-    atoms="https://api.smallest.ai/atoms/v1", waves="https://api.smallest.ai", waves_ws="wss://api.smallest.ai"
+    atoms="https://api.smallest.ai/atoms/v1",
+    waves="https://api.smallest.ai",
+    waves_ws="wss://api.smallest.ai",
+    payment="https://api.smallest.ai",
 )

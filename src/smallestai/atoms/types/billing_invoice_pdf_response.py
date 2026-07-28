@@ -5,12 +5,12 @@ import typing
 import pydantic
 from ...core.pydantic_utilities import IS_PYDANTIC_V2
 from ...core.unchecked_base_model import UncheckedBaseModel
-from .not_found_error_body_error import NotFoundErrorBodyError
+from .billing_invoice_pdf_response_data import BillingInvoicePdfResponseData
 
 
-class NotFoundErrorBody(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
-    error: typing.Optional[NotFoundErrorBodyError] = None
+class BillingInvoicePdfResponse(UncheckedBaseModel):
+    success: bool
+    data: BillingInvoicePdfResponseData
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
