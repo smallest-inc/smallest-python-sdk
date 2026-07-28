@@ -1,3 +1,21 @@
+## 5.3.0 - 2026-07-28
+
+Unified speech-to-text namespace (breaking), voice cloning, Electron LLM, webhook update.
+
+* **Breaking — unified STT**: legacy `client.waves.transcribe_pulse(...)` and
+  `client.waves.pulse_stt_streaming(...)` are removed. Use `client.waves.speech_to_text.transcribe(...)`
+  (file/batch, typed `model` pulse|pulse-pro + `language`) and `client.waves.speech_to_text.stream(...)`
+  (live WebSocket). The `smallestai.waves.types.transcribe_pulse_*` types are gone. No deprecation alias.
+* **Fix — STT/Electron routing**: `speech_to_text.*` and `electron.complete` were generated against the
+  atoms base and 404'd; both now resolve to the waves base. Live-verified against `api.smallest.ai`.
+* **Typed streaming helper** (`from smallestai.waves.helpers import stream_speech_to_text`): typed
+  handshake params for the full STT param set incl. keyword boosting (`keywords`), redaction, VAD,
+  diarization; booleans and list params serialized for you; passthrough via `additional_query_parameters`.
+* **Additive**: `waves.create_voice_clone` / `list_voice_clones`, `waves.electron.complete`,
+  `atoms.webhooks.update`.
+* Verified live end-to-end against `api.smallest.ai` (batch transcribe, live stream with keyword
+  boosting, electron completion).
+
 ## 5.2.0 - 2026-07-24
 
 Agent Versioning v2 (branch/revision API) + new namespaces, plus an ergonomic versioning helper.
