@@ -39,6 +39,7 @@ def make_client() -> SmallestAI:
             atoms=f"{base}/atoms/v1",
             waves=base,
             waves_ws=base.replace("https", "wss").replace("http", "ws"),
+            payment=base,
         )
         return SmallestAI(api_key=api_key, environment=env)
     return SmallestAI(api_key=api_key)

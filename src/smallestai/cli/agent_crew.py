@@ -175,6 +175,36 @@ def initialise_agent_crew_app(
         console.print(f"[dim]Entry point: {entry_point}[/dim]")
         console.print(f"[dim]Agent ID: {agent_id}[/dim]\n")
 
+        # Pre-flight layout check. The cloud build runs `pip install .` from a
+        # pyproject before copying your source, so a src/ layout (or a nested
+        # entry point) fails there. The supported path is a flat directory with a
+        # requirements.txt (what the cookbook examples ship). Warn early instead
+        # of letting the build fail opaquely.
+        has_pyproject = (dir_path / "pyproject.toml").exists()
+        has_requirements = (dir_path / "requirements.txt").exists()
+        has_src_dir = (dir_path / "src").is_dir()
+        nested_entry = ("/" in entry_point) or ("\\" in entry_point)
+        if (has_pyproject and not has_requirements) or has_src_dir or nested_entry:
+            console.print("[yellow]⚠  Project layout may not build in the cloud:[/yellow]")
+            if has_src_dir or nested_entry:
+                console.print(
+                    "    [yellow]• src/ layout / nested entry point detected. The cloud "
+                    "build expects a flat directory with the entry file at the root "
+                    "(e.g. server.py), not under src/.[/yellow]"
+                )
+            if has_pyproject and not has_requirements:
+                console.print(
+                    "    [yellow]• pyproject.toml with no requirements.txt. The builder "
+                    "runs `pip install .` before your source is copied, which fails for "
+                    "src/ layouts. Add a requirements.txt (the builder prefers it and "
+                    "skips that step).[/yellow]"
+                )
+            console.print(
+                "[dim]Supported layout: a flat directory with server.py + a "
+                "requirements.txt at the root. See the cookbook getting_started "
+                "example.[/dim]\n"
+            )
+
         # Scan user code for env var references and warn — the deploy pipeline
         # does not yet propagate `.env` values into the pod, so any env var
         # the code reads must either be baked into the image or the call will
@@ -190,11 +220,12 @@ def initialise_agent_crew_app(
             for var in sorted(required_env_vars):
                 console.print(f"    [yellow]• {var}[/yellow]")
             console.print(
-                "[dim]The deploy pipeline does not propagate `.env` values into the "
-                "running pod yet. If these aren't set in the runtime image, your code "
-                "will fail at first use (e.g. `openai.OpenAIError: Missing credentials`). "
-                "Track: env-var propagation is the only outstanding blocker for many "
-                "examples in cookbook.[/dim]\n"
+                "[dim]Platform-level env injection isn't available yet, but there is a "
+                "working path: put these in a `.env` file at your project root and call "
+                "`load_dotenv()` at startup (the cookbook examples already do). The `.env` "
+                "ships with your deploy and is loaded in the pod, so your code reads them "
+                "via `os.getenv(...)`. Without it, calls fail at first use "
+                "(e.g. `openai.OpenAIError: Missing credentials`).[/dim]\n"
             )
 
         # Create zip file in memory

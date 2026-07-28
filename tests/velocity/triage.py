@@ -29,7 +29,7 @@ try:
     from smallestai import SmallestAI
     from smallestai.environment import SmallestAIEnvironment
     base = os.environ["SMALLEST_BASE_URL"].rstrip("/")
-    env = SmallestAIEnvironment(atoms=f"{base}/atoms/v1", waves=base, waves_ws=base.replace("https", "wss"))
+    env = SmallestAIEnvironment(atoms=f"{base}/atoms/v1", waves=base, waves_ws=base.replace("https", "wss"), payment=base)
     saved = {k: os.environ.pop(k, None) for k in ("SMALLEST_AI_TOKEN",)}
     os.environ["SMALLEST_API_KEY"] = os.environ["SMALLEST_API_KEY"]
     c2 = SmallestAI(environment=env)  # no api_key arg -> must read SMALLEST_API_KEY

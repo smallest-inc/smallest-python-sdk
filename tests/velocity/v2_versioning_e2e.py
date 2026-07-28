@@ -40,7 +40,7 @@ def make_client() -> SmallestAI:
     if BASE:
         host = BASE.split("/atoms")[0]
         ws = host.replace("https://", "wss://").replace("http://", "ws://")
-        env = SmallestAIEnvironment(atoms=BASE, waves=host, waves_ws=ws)
+        env = SmallestAIEnvironment(atoms=BASE, waves=host, waves_ws=ws, payment=host)
         return SmallestAI(environment=env, api_key=KEY)
     return SmallestAI(api_key=KEY)
 
