@@ -45,13 +45,13 @@ def get_client(test_id: str) -> SmallestAI:
 
     if _CLIENT_SUPPORTS_HEADERS:
         return SmallestAI(
-            environment=SmallestAIEnvironment(atoms=base_url, waves=base_url, waves_ws=base_url),
+            environment=SmallestAIEnvironment(atoms=base_url, waves=base_url, waves_ws=base_url, payment=base_url),
             headers=test_headers,
             api_key="test_token",
         )
 
     return SmallestAI(
-        environment=SmallestAIEnvironment(atoms=base_url, waves=base_url, waves_ws=base_url),
+        environment=SmallestAIEnvironment(atoms=base_url, waves=base_url, waves_ws=base_url, payment=base_url),
         httpx_client=httpx.Client(headers=test_headers),
         api_key="test_token",
     )

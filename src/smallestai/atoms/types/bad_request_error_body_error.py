@@ -5,12 +5,11 @@ import typing
 import pydantic
 from ...core.pydantic_utilities import IS_PYDANTIC_V2
 from ...core.unchecked_base_model import UncheckedBaseModel
-from .not_found_error_body_error import NotFoundErrorBodyError
 
 
-class NotFoundErrorBody(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
-    error: typing.Optional[NotFoundErrorBodyError] = None
+class BadRequestErrorBodyError(UncheckedBaseModel):
+    code: typing.Optional[str] = None
+    message: typing.Optional[str] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

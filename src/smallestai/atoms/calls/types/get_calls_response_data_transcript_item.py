@@ -19,9 +19,9 @@ class GetCallsResponseDataTranscriptItem(UncheckedBaseModel):
     The spoken text for this turn
     """
 
-    timestamp: typing.Optional[float] = pydantic.Field(default=None)
+    timestamp: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Timestamp offset in milliseconds from call start
+    ISO-8601 timestamp of the turn (e.g. 2026-07-28T15:46:12.472Z)
     """
 
     if IS_PYDANTIC_V2:

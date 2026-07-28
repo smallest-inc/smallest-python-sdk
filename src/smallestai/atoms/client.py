@@ -16,6 +16,7 @@ if typing.TYPE_CHECKING:
     from .agents.client import AgentsClient, AsyncAgentsClient
     from .analytics.client import AnalyticsClient, AsyncAnalyticsClient
     from .audience.client import AsyncAudienceClient, AudienceClient
+    from .billing.client import AsyncBillingClient, BillingClient
     from .call_actions.client import AsyncCallActionsClient, CallActionsClient
     from .calls.client import AsyncCallsClient, CallsClient
     from .campaigns.client import AsyncCampaignsClient, CampaignsClient
@@ -67,6 +68,7 @@ class AtomsClient:
         self._concurrency: typing.Optional[ConcurrencyClient] = None
         self._disposition_metric_templates: typing.Optional[DispositionMetricTemplatesClient] = None
         self._dnc: typing.Optional[DncClient] = None
+        self._billing: typing.Optional[BillingClient] = None
 
     @property
     def with_raw_response(self) -> RawAtomsClient:
@@ -279,6 +281,14 @@ class AtomsClient:
             self._dnc = DncClient(client_wrapper=self._client_wrapper)
         return self._dnc
 
+    @property
+    def billing(self):
+        if self._billing is None:
+            from .billing.client import BillingClient  # noqa: E402
+
+            self._billing = BillingClient(client_wrapper=self._client_wrapper)
+        return self._billing
+
 
 class AsyncAtomsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -309,6 +319,7 @@ class AsyncAtomsClient:
         self._concurrency: typing.Optional[AsyncConcurrencyClient] = None
         self._disposition_metric_templates: typing.Optional[AsyncDispositionMetricTemplatesClient] = None
         self._dnc: typing.Optional[AsyncDncClient] = None
+        self._billing: typing.Optional[AsyncBillingClient] = None
 
     @property
     def with_raw_response(self) -> AsyncRawAtomsClient:
@@ -522,3 +533,11 @@ class AsyncAtomsClient:
 
             self._dnc = AsyncDncClient(client_wrapper=self._client_wrapper)
         return self._dnc
+
+    @property
+    def billing(self):
+        if self._billing is None:
+            from .billing.client import AsyncBillingClient  # noqa: E402
+
+            self._billing = AsyncBillingClient(client_wrapper=self._client_wrapper)
+        return self._billing
