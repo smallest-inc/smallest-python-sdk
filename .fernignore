@@ -47,3 +47,4 @@ RELEASE.md
 # Pre-release verification harness (hand-written)
 scripts/**
 Makefile
+src/smallestai/waves/helpers/**

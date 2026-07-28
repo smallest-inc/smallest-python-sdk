@@ -38,6 +38,16 @@ def test_atoms_webhooks_delete() -> None:
     verify_request_count(test_id, "DELETE", "/webhook/id", None, 1)
 
 
+def test_atoms_webhooks_update() -> None:
+    """Test update endpoint with WireMock"""
+    test_id = "atoms.webhooks.update.0"
+    client = get_client(test_id)
+    client.atoms.webhooks.update(
+        id="id",
+    )
+    verify_request_count(test_id, "PATCH", "/webhook/id", None, 1)
+
+
 def test_atoms_webhooks_get_webhook_subscriptions_for_an_agent() -> None:
     """Test getWebhookSubscriptionsForAnAgent endpoint with WireMock"""
     test_id = "atoms.webhooks.get_webhook_subscriptions_for_an_agent.0"

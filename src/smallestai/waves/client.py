@@ -4,12 +4,16 @@ from __future__ import annotations
 
 import typing
 
+from .. import core
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
 from .raw_client import AsyncRawWavesClient, RawWavesClient
+from .types.create_voice_clone_waves_request_model import CreateVoiceCloneWavesRequestModel
+from .types.create_voice_clone_waves_response import CreateVoiceCloneWavesResponse
 from .types.delete_pronunciation_dict_response import DeletePronunciationDictResponse
 from .types.get_voices_waves_request_model import GetVoicesWavesRequestModel
 from .types.get_voices_waves_response import GetVoicesWavesResponse
+from .types.list_voice_clones_waves_response import ListVoiceClonesWavesResponse
 from .types.pronunciation_dict import PronunciationDict
 from .types.pronunciation_item import PronunciationItem
 from .types.synthesize_lightning_large_waves_request_output_format import (
@@ -23,14 +27,6 @@ from .types.synthesize_sse_lightning_large_waves_request_output_format import (
 from .types.synthesize_sse_lightning_v2waves_request_output_format import (
     SynthesizeSseLightningV2WavesRequestOutputFormat,
 )
-from .types.transcribe_pulse_waves_request_capitalize import TranscribePulseWavesRequestCapitalize
-from .types.transcribe_pulse_waves_request_emotion_detection import TranscribePulseWavesRequestEmotionDetection
-from .types.transcribe_pulse_waves_request_encoding import TranscribePulseWavesRequestEncoding
-from .types.transcribe_pulse_waves_request_format import TranscribePulseWavesRequestFormat
-from .types.transcribe_pulse_waves_request_gender_detection import TranscribePulseWavesRequestGenderDetection
-from .types.transcribe_pulse_waves_request_language import TranscribePulseWavesRequestLanguage
-from .types.transcribe_pulse_waves_request_punctuate import TranscribePulseWavesRequestPunctuate
-from .types.transcribe_pulse_waves_response import TranscribePulseWavesResponse
 from .types.tts_request_language import TtsRequestLanguage
 from .types.tts_request_model import TtsRequestModel
 from .types.tts_request_number_pronunciation_language import TtsRequestNumberPronunciationLanguage
@@ -38,8 +34,9 @@ from .types.tts_request_output_format import TtsRequestOutputFormat
 from .types.update_pronunciation_dict_response import UpdatePronunciationDictResponse
 
 if typing.TYPE_CHECKING:
-    from .pulse_stt_streaming.client import AsyncPulseSttStreamingClient, PulseSttStreamingClient
+    from .electron.client import AsyncElectronClient, ElectronClient
     from .speech_to_speech.client import AsyncSpeechToSpeechClient, SpeechToSpeechClient
+    from .speech_to_text.client import AsyncSpeechToTextClient, SpeechToTextClient
     from .streaming_tts.client import AsyncStreamingTtsClient, StreamingTtsClient
     from .tts.client import AsyncTtsClient, TtsClient
 # this is used as the default value for optional parameters
@@ -50,9 +47,10 @@ class WavesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._raw_client = RawWavesClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
+        self._speech_to_text: typing.Optional[SpeechToTextClient] = None
+        self._electron: typing.Optional[ElectronClient] = None
         self._tts: typing.Optional[TtsClient] = None
         self._streaming_tts: typing.Optional[StreamingTtsClient] = None
-        self._pulse_stt_streaming: typing.Optional[PulseSttStreamingClient] = None
         self._speech_to_speech: typing.Optional[SpeechToSpeechClient] = None
 
     @property
@@ -892,189 +890,130 @@ class WavesClient:
         ) as r:
             yield from r.data
 
-    def transcribe_pulse(
-        self,
-        *,
-        request: typing.Union[bytes, typing.Iterator[bytes], typing.AsyncIterator[bytes]],
-        language: typing.Optional[TranscribePulseWavesRequestLanguage] = None,
-        encoding: typing.Optional[TranscribePulseWavesRequestEncoding] = None,
-        webhook_url: typing.Optional[str] = None,
-        webhook_extra: typing.Optional[str] = None,
-        word_timestamps: typing.Optional[bool] = None,
-        diarize: typing.Optional[bool] = None,
-        gender_detection: typing.Optional[TranscribePulseWavesRequestGenderDetection] = None,
-        emotion_detection: typing.Optional[TranscribePulseWavesRequestEmotionDetection] = None,
-        format: typing.Optional[TranscribePulseWavesRequestFormat] = None,
-        punctuate: typing.Optional[TranscribePulseWavesRequestPunctuate] = None,
-        capitalize: typing.Optional[TranscribePulseWavesRequestCapitalize] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> TranscribePulseWavesResponse:
+    def list_voice_clones(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ListVoiceClonesWavesResponse:
         """
-        Transcribe an audio file to text using the Pulse model. The fastest way to get a transcript when you already have a recording — pass either the raw bytes or a URL.
-        
-        ## When to use this
-        
-        Use this endpoint when you have a complete audio file (call recording, voicemail, podcast episode) and want the transcript back in one response. For live transcription as audio arrives, use the realtime WebSocket endpoint (`WSS /waves/v1/pulse/get_text`) instead.
-        
-        ## Input methods
-        
-        Send the audio in one of two ways:
-        
-        1. **Raw bytes** — `Content-Type: application/octet-stream` with the audio in the body. All knobs (`language`, `word_timestamps`, etc.) are query parameters.
-        2. **URL** — `Content-Type: application/json` with `{"url": "..."}` in the body. Useful when the audio already lives in object storage. Same query parameters apply.
-        
-        Pulse autodetects the language across 30+ supported locales. Pass `language` explicitly when you already know it — detection is fast but skipping it is faster.
-        
-        ## Examples
-        
-        **cURL** (raw bytes)
-        ```bash
-        curl -X POST "https://api.smallest.ai/waves/v1/pulse/get_text?language=en&word_timestamps=true" \\
-          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
-          -H "Content-Type: application/octet-stream" \\
-          --data-binary "@./call.wav"
-        ```
-        
-        **cURL** (URL)
-        ```bash
-        curl -X POST "https://api.smallest.ai/waves/v1/pulse/get_text?language=en" \\
-          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
-          -H "Content-Type: application/json" \\
-          -d '{"url": "https://your-bucket.s3.amazonaws.com/call.wav"}'
-        ```
-        
-        **Python** (`pip install smallestai>=4.4.0`)
-        ```python
-        from smallestai import SmallestAI
-        
-        client = SmallestAI(api_key="YOUR_API_KEY")
-        with open("./call.wav", "rb") as f:
-            result = client.waves.transcribe_pulse(
-                request=f.read(),
-                language="en",
-                word_timestamps=True,
-                diarize=True,
-            )
-        print(result.status)         # "success"
-        print(result.transcription)  # the transcript string
-        ```
-        
-        **JavaScript / TypeScript** (using `fetch`)
-        ```typescript
-        import { readFileSync } from "node:fs";
-        
-        const audio = readFileSync("./call.wav");
-        const params = new URLSearchParams({ language: "en", word_timestamps: "true", diarize: "true" });
-        
-        const res = await fetch(`https://api.smallest.ai/waves/v1/pulse/get_text?${params}`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.SMALLEST_API_KEY}`,
-            "Content-Type": "application/octet-stream",
-          },
-          body: audio,
-        });
-        const result = await res.json();
-        console.log(result.transcription);
-        ```
-        
-        ## Common gotchas
-        
-        - **Max file size is 250 MB.** Larger files return HTTP `400` with `{errors: "Audio data too large", status: "error", message: "Error handling audio data"}`. Compress to mono 16 kHz PCM if you're close to the limit; quality is unaffected.
-        - **Formatting flags (`format`, `punctuate`, `capitalize`)** are accepted at the wire level and exposed in the Python SDK as of `smallestai>=4.4.0`. Today they currently return the same transcript regardless of value — pass them in your integration so it works as the behavior changes.
-        - **Webhook-driven flow**: pass `webhook_url` to receive the transcript asynchronously. The endpoint returns immediately; the transcript hits your webhook when ready. Useful for long files where you don't want to hold an HTTP connection open.
-        - **Speaker diarization** (`diarize=true`) adds latency. Skip it if you only need the words.
-        - **JavaScript / TypeScript**: the official `smallestai` npm package predates the Pulse model, so call this endpoint with `fetch` or `axios` as shown above.
-        
+        Retrieve all voice clones in your organization.
+
         Parameters
         ----------
-        request : typing.Union[bytes, typing.Iterator[bytes], typing.AsyncIterator[bytes]]
-        
-        language : typing.Optional[TranscribePulseWavesRequestLanguage]
-            Language of the audio file. Set explicitly to the known language for best accuracy.
-            
-            **26 single-language codes** on this endpoint: `en`, `hi`, `de`, `es`, `ru`, `it`, `fr`, `nl`, `pt`, `uk`, `pl`, `cs`, `sk`, `lv`, `et`, `ro`, `fi`, `sv`, `bg`, `hu`, `da`, `lt`, `mt`, `zh`, `ja`, `ko`.
-            
-            **Regional auto-detect aggregators** for unknown audio:
-            - `multi-eu` (default) — auto-detects across all 21 European codes above plus `en`.
-            - `multi-asian` — auto-detects across `zh`, `ko`, `ja`, `en`.
-            - `multi-indic`: auto-detects across `en`, `hi`, `gu`, `mr`, `bn`, `or`. India region only.
-            
-            Omitting `language` routes to `multi-eu`. See the [Pulse model card](/models/model-cards/speech-to-text/pulse) for the full table.
-        
-        encoding : typing.Optional[TranscribePulseWavesRequestEncoding]
-            Audio encoding of the bytes you upload. Mirrors the `encoding`
-            parameter on the realtime WS endpoint.
-            
-            - `linear16`, `linear32` — raw PCM (16-bit and 32-bit)
-            - `alaw`, `mulaw` — 8 kHz telephony codecs
-            - `opus`, `ogg_opus` — Opus compressed audio (raw and Ogg container)
-            
-            When omitted, the server detects the format from the file's
-            container header (works for `.wav`, `.mp3`, `.flac`, `.ogg`,
-            `.m4a`, `.webm`).
-        
-        webhook_url : typing.Optional[str]
-        
-        webhook_extra : typing.Optional[str]
-        
-        word_timestamps : typing.Optional[bool]
-            Whether to include word and utterance level timestamps in the response
-        
-        diarize : typing.Optional[bool]
-            Whether to perform speaker diarization
-        
-        gender_detection : typing.Optional[TranscribePulseWavesRequestGenderDetection]
-            Whether to predict the gender of the speaker
-        
-        emotion_detection : typing.Optional[TranscribePulseWavesRequestEmotionDetection]
-            Whether to predict speaker emotions
-        
-        format : typing.Optional[TranscribePulseWavesRequestFormat]
-            Master formatting switch for the transcript. When `false`, forces
-            `punctuate=false`, `capitalize=false`, and also disables Inverse
-            Text Normalization (ITN) so it cannot silently reintroduce
-            punctuation or casing.
-            
-            When `true`, the `punctuate` and `capitalize` params take effect
-            independently. Leave `format=true` and use those two to fine-tune.
-        
-        punctuate : typing.Optional[TranscribePulseWavesRequestPunctuate]
-            When `false`, strips end-of-sentence punctuation (`.`, `,`, `?`, `!`)
-            from the transcript, `words[].word`, and
-            `utterances[].transcript`. Does not affect casing — use
-            `capitalize` for that. Overridden to `false` when `format=false`.
-        
-        capitalize : typing.Optional[TranscribePulseWavesRequestCapitalize]
-            When `false`, lowercases the entire transcript output (transcript,
-            `words[].word`, and `utterances[].transcript`). Does not affect
-            punctuation — use `punctuate` for that. Overridden to `false`
-            when `format=false`.
-        
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
-        
+
         Returns
         -------
-        TranscribePulseWavesResponse
-            Speech transcribed successfully
+        ListVoiceClonesWavesResponse
+            List of voice clones.
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.waves.list_voice_clones()
         """
-        _response = self._raw_client.transcribe_pulse(
-            request=request,
+        _response = self._raw_client.list_voice_clones(request_options=request_options)
+        return _response.data
+
+    def create_voice_clone(
+        self,
+        *,
+        display_name: str,
+        file: core.File,
+        description: typing.Optional[str] = OMIT,
+        accent: typing.Optional[str] = OMIT,
+        tags: typing.Optional[str] = OMIT,
+        language: typing.Optional[str] = OMIT,
+        model: typing.Optional[CreateVoiceCloneWavesRequestModel] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CreateVoiceCloneWavesResponse:
+        """
+        Create an instant voice clone in a single call. Defaults to `lightning-v3.1`.
+
+        Parameters
+        ----------
+        display_name : str
+            Human-readable name for the voice clone.
+
+        file : core.File
+            See core.File for more documentation
+
+        description : typing.Optional[str]
+            Optional longer description for the voice clone.
+
+        accent : typing.Optional[str]
+            Optional accent tag (e.g. "general", "indian").
+
+        tags : typing.Optional[str]
+            Optional comma-separated list of tags. Server splits on
+            commas and trims whitespace (`"en, tone-test"` → `["en", "tone-test"]`).
+
+        language : typing.Optional[str]
+            Primary language the clone will be used for. Optional, but
+            **strongly recommended** — set it to the language of your
+            reference audio. The TTS request's `language` should also
+            match this code; setting it now avoids silent language
+            mismatches at inference time.
+
+            Must be one of the languages supported by `lightning-v3.1`
+            (e.g. `en`, `hi`). The server validates and rejects
+            unsupported codes with a 400.
+
+        model : typing.Optional[CreateVoiceCloneWavesRequestModel]
+            Voice cloning model. Defaults to `lightning-v3.1`.
+            `lightning-v2` is accepted by the schema for historical
+            reasons but is deprecated — the server returns 400 with
+            `"Voice cloning for lightning-v2 is deprecated. Please use lightning-v3.1"`.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CreateVoiceCloneWavesResponse
+            Voice clone created. Includes pre-generated sample clips of the new voice.
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.waves.create_voice_clone(
+            display_name="displayName",
+        )
+        """
+        _response = self._raw_client.create_voice_clone(
+            display_name=display_name,
+            file=file,
+            description=description,
+            accent=accent,
+            tags=tags,
             language=language,
-            encoding=encoding,
-            webhook_url=webhook_url,
-            webhook_extra=webhook_extra,
-            word_timestamps=word_timestamps,
-            diarize=diarize,
-            gender_detection=gender_detection,
-            emotion_detection=emotion_detection,
-            format=format,
-            punctuate=punctuate,
-            capitalize=capitalize,
+            model=model,
             request_options=request_options,
         )
         return _response.data
+
+    @property
+    def speech_to_text(self):
+        if self._speech_to_text is None:
+            from .speech_to_text.client import SpeechToTextClient  # noqa: E402
+
+            self._speech_to_text = SpeechToTextClient(client_wrapper=self._client_wrapper)
+        return self._speech_to_text
+
+    @property
+    def electron(self):
+        if self._electron is None:
+            from .electron.client import ElectronClient  # noqa: E402
+
+            self._electron = ElectronClient(client_wrapper=self._client_wrapper)
+        return self._electron
 
     @property
     def tts(self):
@@ -1093,14 +1032,6 @@ class WavesClient:
         return self._streaming_tts
 
     @property
-    def pulse_stt_streaming(self):
-        if self._pulse_stt_streaming is None:
-            from .pulse_stt_streaming.client import PulseSttStreamingClient  # noqa: E402
-
-            self._pulse_stt_streaming = PulseSttStreamingClient(client_wrapper=self._client_wrapper)
-        return self._pulse_stt_streaming
-
-    @property
     def speech_to_speech(self):
         if self._speech_to_speech is None:
             from .speech_to_speech.client import SpeechToSpeechClient  # noqa: E402
@@ -1113,9 +1044,10 @@ class AsyncWavesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._raw_client = AsyncRawWavesClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
+        self._speech_to_text: typing.Optional[AsyncSpeechToTextClient] = None
+        self._electron: typing.Optional[AsyncElectronClient] = None
         self._tts: typing.Optional[AsyncTtsClient] = None
         self._streaming_tts: typing.Optional[AsyncStreamingTtsClient] = None
-        self._pulse_stt_streaming: typing.Optional[AsyncPulseSttStreamingClient] = None
         self._speech_to_speech: typing.Optional[AsyncSpeechToSpeechClient] = None
 
     @property
@@ -2057,189 +1989,146 @@ class AsyncWavesClient:
             async for _chunk in r.data:
                 yield _chunk
 
-    async def transcribe_pulse(
-        self,
-        *,
-        request: typing.Union[bytes, typing.Iterator[bytes], typing.AsyncIterator[bytes]],
-        language: typing.Optional[TranscribePulseWavesRequestLanguage] = None,
-        encoding: typing.Optional[TranscribePulseWavesRequestEncoding] = None,
-        webhook_url: typing.Optional[str] = None,
-        webhook_extra: typing.Optional[str] = None,
-        word_timestamps: typing.Optional[bool] = None,
-        diarize: typing.Optional[bool] = None,
-        gender_detection: typing.Optional[TranscribePulseWavesRequestGenderDetection] = None,
-        emotion_detection: typing.Optional[TranscribePulseWavesRequestEmotionDetection] = None,
-        format: typing.Optional[TranscribePulseWavesRequestFormat] = None,
-        punctuate: typing.Optional[TranscribePulseWavesRequestPunctuate] = None,
-        capitalize: typing.Optional[TranscribePulseWavesRequestCapitalize] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> TranscribePulseWavesResponse:
+    async def list_voice_clones(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ListVoiceClonesWavesResponse:
         """
-        Transcribe an audio file to text using the Pulse model. The fastest way to get a transcript when you already have a recording — pass either the raw bytes or a URL.
-        
-        ## When to use this
-        
-        Use this endpoint when you have a complete audio file (call recording, voicemail, podcast episode) and want the transcript back in one response. For live transcription as audio arrives, use the realtime WebSocket endpoint (`WSS /waves/v1/pulse/get_text`) instead.
-        
-        ## Input methods
-        
-        Send the audio in one of two ways:
-        
-        1. **Raw bytes** — `Content-Type: application/octet-stream` with the audio in the body. All knobs (`language`, `word_timestamps`, etc.) are query parameters.
-        2. **URL** — `Content-Type: application/json` with `{"url": "..."}` in the body. Useful when the audio already lives in object storage. Same query parameters apply.
-        
-        Pulse autodetects the language across 30+ supported locales. Pass `language` explicitly when you already know it — detection is fast but skipping it is faster.
-        
-        ## Examples
-        
-        **cURL** (raw bytes)
-        ```bash
-        curl -X POST "https://api.smallest.ai/waves/v1/pulse/get_text?language=en&word_timestamps=true" \\
-          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
-          -H "Content-Type: application/octet-stream" \\
-          --data-binary "@./call.wav"
-        ```
-        
-        **cURL** (URL)
-        ```bash
-        curl -X POST "https://api.smallest.ai/waves/v1/pulse/get_text?language=en" \\
-          -H "Authorization: Bearer $SMALLEST_API_KEY" \\
-          -H "Content-Type: application/json" \\
-          -d '{"url": "https://your-bucket.s3.amazonaws.com/call.wav"}'
-        ```
-        
-        **Python** (`pip install smallestai>=4.4.0`)
-        ```python
-        from smallestai import SmallestAI
-        
-        client = SmallestAI(api_key="YOUR_API_KEY")
-        with open("./call.wav", "rb") as f:
-            result = client.waves.transcribe_pulse(
-                request=f.read(),
-                language="en",
-                word_timestamps=True,
-                diarize=True,
-            )
-        print(result.status)         # "success"
-        print(result.transcription)  # the transcript string
-        ```
-        
-        **JavaScript / TypeScript** (using `fetch`)
-        ```typescript
-        import { readFileSync } from "node:fs";
-        
-        const audio = readFileSync("./call.wav");
-        const params = new URLSearchParams({ language: "en", word_timestamps: "true", diarize: "true" });
-        
-        const res = await fetch(`https://api.smallest.ai/waves/v1/pulse/get_text?${params}`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.SMALLEST_API_KEY}`,
-            "Content-Type": "application/octet-stream",
-          },
-          body: audio,
-        });
-        const result = await res.json();
-        console.log(result.transcription);
-        ```
-        
-        ## Common gotchas
-        
-        - **Max file size is 250 MB.** Larger files return HTTP `400` with `{errors: "Audio data too large", status: "error", message: "Error handling audio data"}`. Compress to mono 16 kHz PCM if you're close to the limit; quality is unaffected.
-        - **Formatting flags (`format`, `punctuate`, `capitalize`)** are accepted at the wire level and exposed in the Python SDK as of `smallestai>=4.4.0`. Today they currently return the same transcript regardless of value — pass them in your integration so it works as the behavior changes.
-        - **Webhook-driven flow**: pass `webhook_url` to receive the transcript asynchronously. The endpoint returns immediately; the transcript hits your webhook when ready. Useful for long files where you don't want to hold an HTTP connection open.
-        - **Speaker diarization** (`diarize=true`) adds latency. Skip it if you only need the words.
-        - **JavaScript / TypeScript**: the official `smallestai` npm package predates the Pulse model, so call this endpoint with `fetch` or `axios` as shown above.
-        
+        Retrieve all voice clones in your organization.
+
         Parameters
         ----------
-        request : typing.Union[bytes, typing.Iterator[bytes], typing.AsyncIterator[bytes]]
-        
-        language : typing.Optional[TranscribePulseWavesRequestLanguage]
-            Language of the audio file. Set explicitly to the known language for best accuracy.
-            
-            **26 single-language codes** on this endpoint: `en`, `hi`, `de`, `es`, `ru`, `it`, `fr`, `nl`, `pt`, `uk`, `pl`, `cs`, `sk`, `lv`, `et`, `ro`, `fi`, `sv`, `bg`, `hu`, `da`, `lt`, `mt`, `zh`, `ja`, `ko`.
-            
-            **Regional auto-detect aggregators** for unknown audio:
-            - `multi-eu` (default) — auto-detects across all 21 European codes above plus `en`.
-            - `multi-asian` — auto-detects across `zh`, `ko`, `ja`, `en`.
-            - `multi-indic`: auto-detects across `en`, `hi`, `gu`, `mr`, `bn`, `or`. India region only.
-            
-            Omitting `language` routes to `multi-eu`. See the [Pulse model card](/models/model-cards/speech-to-text/pulse) for the full table.
-        
-        encoding : typing.Optional[TranscribePulseWavesRequestEncoding]
-            Audio encoding of the bytes you upload. Mirrors the `encoding`
-            parameter on the realtime WS endpoint.
-            
-            - `linear16`, `linear32` — raw PCM (16-bit and 32-bit)
-            - `alaw`, `mulaw` — 8 kHz telephony codecs
-            - `opus`, `ogg_opus` — Opus compressed audio (raw and Ogg container)
-            
-            When omitted, the server detects the format from the file's
-            container header (works for `.wav`, `.mp3`, `.flac`, `.ogg`,
-            `.m4a`, `.webm`).
-        
-        webhook_url : typing.Optional[str]
-        
-        webhook_extra : typing.Optional[str]
-        
-        word_timestamps : typing.Optional[bool]
-            Whether to include word and utterance level timestamps in the response
-        
-        diarize : typing.Optional[bool]
-            Whether to perform speaker diarization
-        
-        gender_detection : typing.Optional[TranscribePulseWavesRequestGenderDetection]
-            Whether to predict the gender of the speaker
-        
-        emotion_detection : typing.Optional[TranscribePulseWavesRequestEmotionDetection]
-            Whether to predict speaker emotions
-        
-        format : typing.Optional[TranscribePulseWavesRequestFormat]
-            Master formatting switch for the transcript. When `false`, forces
-            `punctuate=false`, `capitalize=false`, and also disables Inverse
-            Text Normalization (ITN) so it cannot silently reintroduce
-            punctuation or casing.
-            
-            When `true`, the `punctuate` and `capitalize` params take effect
-            independently. Leave `format=true` and use those two to fine-tune.
-        
-        punctuate : typing.Optional[TranscribePulseWavesRequestPunctuate]
-            When `false`, strips end-of-sentence punctuation (`.`, `,`, `?`, `!`)
-            from the transcript, `words[].word`, and
-            `utterances[].transcript`. Does not affect casing — use
-            `capitalize` for that. Overridden to `false` when `format=false`.
-        
-        capitalize : typing.Optional[TranscribePulseWavesRequestCapitalize]
-            When `false`, lowercases the entire transcript output (transcript,
-            `words[].word`, and `utterances[].transcript`). Does not affect
-            punctuation — use `punctuate` for that. Overridden to `false`
-            when `format=false`.
-        
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
-        
+
         Returns
         -------
-        TranscribePulseWavesResponse
-            Speech transcribed successfully
+        ListVoiceClonesWavesResponse
+            List of voice clones.
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.waves.list_voice_clones()
+
+
+        asyncio.run(main())
         """
-        _response = await self._raw_client.transcribe_pulse(
-            request=request,
+        _response = await self._raw_client.list_voice_clones(request_options=request_options)
+        return _response.data
+
+    async def create_voice_clone(
+        self,
+        *,
+        display_name: str,
+        file: core.File,
+        description: typing.Optional[str] = OMIT,
+        accent: typing.Optional[str] = OMIT,
+        tags: typing.Optional[str] = OMIT,
+        language: typing.Optional[str] = OMIT,
+        model: typing.Optional[CreateVoiceCloneWavesRequestModel] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CreateVoiceCloneWavesResponse:
+        """
+        Create an instant voice clone in a single call. Defaults to `lightning-v3.1`.
+
+        Parameters
+        ----------
+        display_name : str
+            Human-readable name for the voice clone.
+
+        file : core.File
+            See core.File for more documentation
+
+        description : typing.Optional[str]
+            Optional longer description for the voice clone.
+
+        accent : typing.Optional[str]
+            Optional accent tag (e.g. "general", "indian").
+
+        tags : typing.Optional[str]
+            Optional comma-separated list of tags. Server splits on
+            commas and trims whitespace (`"en, tone-test"` → `["en", "tone-test"]`).
+
+        language : typing.Optional[str]
+            Primary language the clone will be used for. Optional, but
+            **strongly recommended** — set it to the language of your
+            reference audio. The TTS request's `language` should also
+            match this code; setting it now avoids silent language
+            mismatches at inference time.
+
+            Must be one of the languages supported by `lightning-v3.1`
+            (e.g. `en`, `hi`). The server validates and rejects
+            unsupported codes with a 400.
+
+        model : typing.Optional[CreateVoiceCloneWavesRequestModel]
+            Voice cloning model. Defaults to `lightning-v3.1`.
+            `lightning-v2` is accepted by the schema for historical
+            reasons but is deprecated — the server returns 400 with
+            `"Voice cloning for lightning-v2 is deprecated. Please use lightning-v3.1"`.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CreateVoiceCloneWavesResponse
+            Voice clone created. Includes pre-generated sample clips of the new voice.
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.waves.create_voice_clone(
+                display_name="displayName",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.create_voice_clone(
+            display_name=display_name,
+            file=file,
+            description=description,
+            accent=accent,
+            tags=tags,
             language=language,
-            encoding=encoding,
-            webhook_url=webhook_url,
-            webhook_extra=webhook_extra,
-            word_timestamps=word_timestamps,
-            diarize=diarize,
-            gender_detection=gender_detection,
-            emotion_detection=emotion_detection,
-            format=format,
-            punctuate=punctuate,
-            capitalize=capitalize,
+            model=model,
             request_options=request_options,
         )
         return _response.data
+
+    @property
+    def speech_to_text(self):
+        if self._speech_to_text is None:
+            from .speech_to_text.client import AsyncSpeechToTextClient  # noqa: E402
+
+            self._speech_to_text = AsyncSpeechToTextClient(client_wrapper=self._client_wrapper)
+        return self._speech_to_text
+
+    @property
+    def electron(self):
+        if self._electron is None:
+            from .electron.client import AsyncElectronClient  # noqa: E402
+
+            self._electron = AsyncElectronClient(client_wrapper=self._client_wrapper)
+        return self._electron
 
     @property
     def tts(self):
@@ -2256,14 +2145,6 @@ class AsyncWavesClient:
 
             self._streaming_tts = AsyncStreamingTtsClient(client_wrapper=self._client_wrapper)
         return self._streaming_tts
-
-    @property
-    def pulse_stt_streaming(self):
-        if self._pulse_stt_streaming is None:
-            from .pulse_stt_streaming.client import AsyncPulseSttStreamingClient  # noqa: E402
-
-            self._pulse_stt_streaming = AsyncPulseSttStreamingClient(client_wrapper=self._client_wrapper)
-        return self._pulse_stt_streaming
 
     @property
     def speech_to_speech(self):

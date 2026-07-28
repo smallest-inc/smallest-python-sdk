@@ -5,17 +5,14 @@ import typing
 import pydantic
 from ...core.pydantic_utilities import IS_PYDANTIC_V2
 from ...core.unchecked_base_model import UncheckedBaseModel
+from .internal_server_error_body_error_code import InternalServerErrorBodyErrorCode
 
 
 class InternalServerErrorBody(UncheckedBaseModel):
-    error: typing.Optional[str] = pydantic.Field(default=None)
+    error: typing.Optional[str] = None
+    error_code: typing.Optional[InternalServerErrorBodyErrorCode] = pydantic.Field(default=None)
     """
-    Error type
-    """
-
-    message: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    Error message
+    Present when a known failure mode occurred.
     """
 
     if IS_PYDANTIC_V2:

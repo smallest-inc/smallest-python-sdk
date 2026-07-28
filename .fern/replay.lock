@@ -18,14 +18,20 @@ generations:
     cli_version: unknown
     generator_versions:
       fernapi/fern-python-sdk: 5.12.12
-current_generation: ae36558fb1b1fc953760c7d5064d4c7e523c6113
+  - commit_sha: 58539514affc27c6340e570ffd7f18d6c6806433
+    tree_hash: 58fcba582a25fe11d53122e234311bb95e43b19c
+    timestamp: 2026-07-28T08:57:13.556Z
+    cli_version: unknown
+    generator_versions:
+      fernapi/fern-python-sdk: 5.12.12
+current_generation: 58539514affc27c6340e570ffd7f18d6c6806433
 patches:
   - id: patch-0c9e9b4e
     content_hash: sha256:43cbb1c853a3de0a20a4d1e151169f4039eec0f4d998b32978cb5038f2a3b665
     original_commit: 0c9e9b4e2286bd64653a1bdeb91a2b871a56668e
     original_message: "refactor: rename agent-swarm -> agent-crew across SDK + CLI (4.4.2)"
     original_author: Maharshi Chattopadhyay <maharshichattopadhyay@Maharshis-MacBook-Pro-M4.local>
-    base_generation: ae36558fb1b1fc953760c7d5064d4c7e523c6113
+    base_generation: 58539514affc27c6340e570ffd7f18d6c6806433
     files:
       - src/smallestai/atoms/swarm/__init__.py
       - src/smallestai/atoms/swarm/clients/__init__.py

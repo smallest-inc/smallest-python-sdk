@@ -6,12 +6,22 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
+    from .bad_gateway_error import BadGatewayError
     from .bad_request_error import BadRequestError
+    from .content_too_large_error import ContentTooLargeError
+    from .forbidden_error import ForbiddenError
     from .internal_server_error import InternalServerError
+    from .service_unavailable_error import ServiceUnavailableError
+    from .too_many_requests_error import TooManyRequestsError
     from .unauthorized_error import UnauthorizedError
 _dynamic_imports: typing.Dict[str, str] = {
+    "BadGatewayError": ".bad_gateway_error",
     "BadRequestError": ".bad_request_error",
+    "ContentTooLargeError": ".content_too_large_error",
+    "ForbiddenError": ".forbidden_error",
     "InternalServerError": ".internal_server_error",
+    "ServiceUnavailableError": ".service_unavailable_error",
+    "TooManyRequestsError": ".too_many_requests_error",
     "UnauthorizedError": ".unauthorized_error",
 }
 
@@ -37,4 +47,13 @@ def __dir__():
     return sorted(lazy_attrs)
 
 
-__all__ = ["BadRequestError", "InternalServerError", "UnauthorizedError"]
+__all__ = [
+    "BadGatewayError",
+    "BadRequestError",
+    "ContentTooLargeError",
+    "ForbiddenError",
+    "InternalServerError",
+    "ServiceUnavailableError",
+    "TooManyRequestsError",
+    "UnauthorizedError",
+]

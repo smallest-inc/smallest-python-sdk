@@ -26,6 +26,7 @@ from .types.post_agent_agent_id_webhook_subscriptions_request_event_types_item i
     PostAgentAgentIdWebhookSubscriptionsRequestEventTypesItem,
 )
 from .types.post_agent_agent_id_webhook_subscriptions_response import PostAgentAgentIdWebhookSubscriptionsResponse
+from .types.update_webhooks_response import UpdateWebhooksResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -256,6 +257,134 @@ class RawWebhooksClient:
                     DeleteWebhooksResponse,
                     construct_type(
                         type_=DeleteWebhooksResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def update(
+        self,
+        id: str,
+        *,
+        endpoint: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        headers: typing.Optional[typing.Dict[str, str]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[UpdateWebhooksResponse]:
+        """
+        Update a webhook's endpoint URL, description, or custom headers. At
+        least one of the three fields must be present in the request body.
+
+        **Event subscriptions cannot be changed here.** To add or remove an
+        agent's subscription to this webhook, use `POST /agent/{agentId}/webhook-subscriptions`
+        and `DELETE /agent/{agentId}/webhook-subscriptions`.
+
+        **Custom `headers` behavior**
+        - Send a non-empty object to replace all custom headers on the webhook.
+        - Send an empty object (`{}`) to clear all custom headers.
+        - Omit the field to leave existing custom headers untouched.
+
+        Custom header limits: at most 10 headers per webhook, values up to
+        1024 characters, header names must match RFC 7230 token syntax. The
+        following names are reserved and rejected: `x-signature`, `host`,
+        `content-length`, `content-type`, `connection`, `transfer-encoding`.
+
+        Parameters
+        ----------
+        id : str
+            The ID of the webhook to update.
+
+        endpoint : typing.Optional[str]
+            New endpoint URL. Must be a valid URL.
+
+        description : typing.Optional[str]
+            New human-readable label.
+
+        headers : typing.Optional[typing.Dict[str, str]]
+            Map of custom header names to values. Non-empty object replaces
+            all existing headers; empty object clears them.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[UpdateWebhooksResponse]
+            Webhook updated successfully.
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"webhook/{encode_path_param(id)}",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="PATCH",
+            json={
+                "endpoint": endpoint,
+                "description": description,
+                "headers": headers,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    UpdateWebhooksResponse,
+                    construct_type(
+                        type_=UpdateWebhooksResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -857,6 +986,134 @@ class AsyncRawWebhooksClient:
                     DeleteWebhooksResponse,
                     construct_type(
                         type_=DeleteWebhooksResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def update(
+        self,
+        id: str,
+        *,
+        endpoint: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        headers: typing.Optional[typing.Dict[str, str]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[UpdateWebhooksResponse]:
+        """
+        Update a webhook's endpoint URL, description, or custom headers. At
+        least one of the three fields must be present in the request body.
+
+        **Event subscriptions cannot be changed here.** To add or remove an
+        agent's subscription to this webhook, use `POST /agent/{agentId}/webhook-subscriptions`
+        and `DELETE /agent/{agentId}/webhook-subscriptions`.
+
+        **Custom `headers` behavior**
+        - Send a non-empty object to replace all custom headers on the webhook.
+        - Send an empty object (`{}`) to clear all custom headers.
+        - Omit the field to leave existing custom headers untouched.
+
+        Custom header limits: at most 10 headers per webhook, values up to
+        1024 characters, header names must match RFC 7230 token syntax. The
+        following names are reserved and rejected: `x-signature`, `host`,
+        `content-length`, `content-type`, `connection`, `transfer-encoding`.
+
+        Parameters
+        ----------
+        id : str
+            The ID of the webhook to update.
+
+        endpoint : typing.Optional[str]
+            New endpoint URL. Must be a valid URL.
+
+        description : typing.Optional[str]
+            New human-readable label.
+
+        headers : typing.Optional[typing.Dict[str, str]]
+            Map of custom header names to values. Non-empty object replaces
+            all existing headers; empty object clears them.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[UpdateWebhooksResponse]
+            Webhook updated successfully.
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"webhook/{encode_path_param(id)}",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="PATCH",
+            json={
+                "endpoint": endpoint,
+                "description": description,
+                "headers": headers,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    UpdateWebhooksResponse,
+                    construct_type(
+                        type_=UpdateWebhooksResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

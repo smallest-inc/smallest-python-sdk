@@ -6,10 +6,15 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
+    from .async_accepted import AsyncAccepted
     from .audio_chunk import AudioChunk
     from .audio_chunk_data import AudioChunkData
     from .audio_chunk_status import AudioChunkStatus
     from .bad_request_error_body import BadRequestErrorBody
+    from .chat_completion import ChatCompletion
+    from .chat_completion_choices_item import ChatCompletionChoicesItem
+    from .chat_completion_choices_item_finish_reason import ChatCompletionChoicesItemFinishReason
+    from .chat_completion_object import ChatCompletionObject
     from .completion_status import CompletionStatus
     from .completion_status_status import CompletionStatusStatus
     from .conversation_item import ConversationItem
@@ -18,7 +23,19 @@ if typing.TYPE_CHECKING:
     from .conversation_item_role import ConversationItemRole
     from .conversation_item_status import ConversationItemStatus
     from .conversation_item_type import ConversationItemType
+    from .create_voice_clone_waves_request_model import CreateVoiceCloneWavesRequestModel
+    from .create_voice_clone_waves_response import CreateVoiceCloneWavesResponse
+    from .create_voice_clone_waves_response_data import CreateVoiceCloneWavesResponseData
+    from .create_voice_clone_waves_response_data_samples_item import CreateVoiceCloneWavesResponseDataSamplesItem
+    from .create_voice_clone_waves_response_data_status import CreateVoiceCloneWavesResponseDataStatus
     from .delete_pronunciation_dict_response import DeletePronunciationDictResponse
+    from .electron_message import ElectronMessage
+    from .electron_tool_call import ElectronToolCall
+    from .electron_tool_call_function import ElectronToolCallFunction
+    from .electron_tool_call_type import ElectronToolCallType
+    from .error import Error
+    from .error_error import ErrorError
+    from .error_error_details_item import ErrorErrorDetailsItem
     from .error_response import ErrorResponse
     from .error_response_error import ErrorResponseError
     from .error_response_status import ErrorResponseStatus
@@ -27,6 +44,7 @@ if typing.TYPE_CHECKING:
     from .get_voices_waves_response_voices_item import GetVoicesWavesResponseVoicesItem
     from .get_voices_waves_response_voices_item_tags import GetVoicesWavesResponseVoicesItemTags
     from .internal_server_error_body import InternalServerErrorBody
+    from .internal_server_error_body_error_code import InternalServerErrorBodyErrorCode
     from .lightning_large_request import LightningLargeRequest
     from .lightning_large_request_language import LightningLargeRequestLanguage
     from .lightning_large_request_output_format import LightningLargeRequestOutputFormat
@@ -36,15 +54,16 @@ if typing.TYPE_CHECKING:
     from .lightningv2request import Lightningv2Request
     from .lightningv2request_language import Lightningv2RequestLanguage
     from .lightningv2request_output_format import Lightningv2RequestOutputFormat
+    from .list_voice_clones_waves_response import ListVoiceClonesWavesResponse
+    from .list_voice_clones_waves_response_data_item import ListVoiceClonesWavesResponseDataItem
+    from .list_voice_clones_waves_response_data_item_cloning_type import ListVoiceClonesWavesResponseDataItemCloningType
+    from .list_voice_clones_waves_response_data_item_status import ListVoiceClonesWavesResponseDataItemStatus
     from .pronunciation_dict import PronunciationDict
     from .pronunciation_item import PronunciationItem
-    from .pulse_stt_auth_missing_response import PulseSttAuthMissingResponse
-    from .pulse_stt_error_response import PulseSttErrorResponse
-    from .pulse_stt_error_response_legacy import PulseSttErrorResponseLegacy
-    from .pulse_stt_error_response_status import PulseSttErrorResponseStatus
     from .session_config import SessionConfig
     from .session_config_voice import SessionConfigVoice
     from .streaming_tts_config import StreamingTtsConfig
+    from .stt_error_response import SttErrorResponse
     from .synthesize_lightning_large_waves_request_output_format import SynthesizeLightningLargeWavesRequestOutputFormat
     from .synthesize_lightning_v2waves_request_output_format import SynthesizeLightningV2WavesRequestOutputFormat
     from .synthesize_lightning_waves_request_output_format import SynthesizeLightningWavesRequestOutputFormat
@@ -54,20 +73,8 @@ if typing.TYPE_CHECKING:
     from .synthesize_sse_lightning_v2waves_request_output_format import SynthesizeSseLightningV2WavesRequestOutputFormat
     from .tool import Tool
     from .tool_type import ToolType
-    from .transcribe_pulse_waves_request_capitalize import TranscribePulseWavesRequestCapitalize
-    from .transcribe_pulse_waves_request_emotion_detection import TranscribePulseWavesRequestEmotionDetection
-    from .transcribe_pulse_waves_request_encoding import TranscribePulseWavesRequestEncoding
-    from .transcribe_pulse_waves_request_format import TranscribePulseWavesRequestFormat
-    from .transcribe_pulse_waves_request_gender_detection import TranscribePulseWavesRequestGenderDetection
-    from .transcribe_pulse_waves_request_language import TranscribePulseWavesRequestLanguage
-    from .transcribe_pulse_waves_request_punctuate import TranscribePulseWavesRequestPunctuate
-    from .transcribe_pulse_waves_response import TranscribePulseWavesResponse
-    from .transcribe_pulse_waves_response_emotions import TranscribePulseWavesResponseEmotions
-    from .transcribe_pulse_waves_response_gender import TranscribePulseWavesResponseGender
-    from .transcribe_pulse_waves_response_metadata import TranscribePulseWavesResponseMetadata
-    from .transcribe_pulse_waves_response_utterances_item import TranscribePulseWavesResponseUtterancesItem
-    from .transcribe_pulse_waves_response_words_item import TranscribePulseWavesResponseWordsItem
-    from .transcription_result import TranscriptionResult
+    from .transcription_response import TranscriptionResponse
+    from .transcription_response_metadata import TranscriptionResponseMetadata
     from .tts_error import TtsError
     from .tts_request import TtsRequest
     from .tts_request_language import TtsRequestLanguage
@@ -76,11 +83,20 @@ if typing.TYPE_CHECKING:
     from .tts_request_output_format import TtsRequestOutputFormat
     from .unauthorized_error_body import UnauthorizedErrorBody
     from .update_pronunciation_dict_response import UpdatePronunciationDictResponse
+    from .usage import Usage
+    from .usage_prompt_tokens_details import UsagePromptTokensDetails
+    from .utterance import Utterance
+    from .word import Word
 _dynamic_imports: typing.Dict[str, str] = {
+    "AsyncAccepted": ".async_accepted",
     "AudioChunk": ".audio_chunk",
     "AudioChunkData": ".audio_chunk_data",
     "AudioChunkStatus": ".audio_chunk_status",
     "BadRequestErrorBody": ".bad_request_error_body",
+    "ChatCompletion": ".chat_completion",
+    "ChatCompletionChoicesItem": ".chat_completion_choices_item",
+    "ChatCompletionChoicesItemFinishReason": ".chat_completion_choices_item_finish_reason",
+    "ChatCompletionObject": ".chat_completion_object",
     "CompletionStatus": ".completion_status",
     "CompletionStatusStatus": ".completion_status_status",
     "ConversationItem": ".conversation_item",
@@ -89,7 +105,19 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ConversationItemRole": ".conversation_item_role",
     "ConversationItemStatus": ".conversation_item_status",
     "ConversationItemType": ".conversation_item_type",
+    "CreateVoiceCloneWavesRequestModel": ".create_voice_clone_waves_request_model",
+    "CreateVoiceCloneWavesResponse": ".create_voice_clone_waves_response",
+    "CreateVoiceCloneWavesResponseData": ".create_voice_clone_waves_response_data",
+    "CreateVoiceCloneWavesResponseDataSamplesItem": ".create_voice_clone_waves_response_data_samples_item",
+    "CreateVoiceCloneWavesResponseDataStatus": ".create_voice_clone_waves_response_data_status",
     "DeletePronunciationDictResponse": ".delete_pronunciation_dict_response",
+    "ElectronMessage": ".electron_message",
+    "ElectronToolCall": ".electron_tool_call",
+    "ElectronToolCallFunction": ".electron_tool_call_function",
+    "ElectronToolCallType": ".electron_tool_call_type",
+    "Error": ".error",
+    "ErrorError": ".error_error",
+    "ErrorErrorDetailsItem": ".error_error_details_item",
     "ErrorResponse": ".error_response",
     "ErrorResponseError": ".error_response_error",
     "ErrorResponseStatus": ".error_response_status",
@@ -98,6 +126,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GetVoicesWavesResponseVoicesItem": ".get_voices_waves_response_voices_item",
     "GetVoicesWavesResponseVoicesItemTags": ".get_voices_waves_response_voices_item_tags",
     "InternalServerErrorBody": ".internal_server_error_body",
+    "InternalServerErrorBodyErrorCode": ".internal_server_error_body_error_code",
     "LightningLargeRequest": ".lightning_large_request",
     "LightningLargeRequestLanguage": ".lightning_large_request_language",
     "LightningLargeRequestOutputFormat": ".lightning_large_request_output_format",
@@ -107,15 +136,16 @@ _dynamic_imports: typing.Dict[str, str] = {
     "Lightningv2Request": ".lightningv2request",
     "Lightningv2RequestLanguage": ".lightningv2request_language",
     "Lightningv2RequestOutputFormat": ".lightningv2request_output_format",
+    "ListVoiceClonesWavesResponse": ".list_voice_clones_waves_response",
+    "ListVoiceClonesWavesResponseDataItem": ".list_voice_clones_waves_response_data_item",
+    "ListVoiceClonesWavesResponseDataItemCloningType": ".list_voice_clones_waves_response_data_item_cloning_type",
+    "ListVoiceClonesWavesResponseDataItemStatus": ".list_voice_clones_waves_response_data_item_status",
     "PronunciationDict": ".pronunciation_dict",
     "PronunciationItem": ".pronunciation_item",
-    "PulseSttAuthMissingResponse": ".pulse_stt_auth_missing_response",
-    "PulseSttErrorResponse": ".pulse_stt_error_response",
-    "PulseSttErrorResponseLegacy": ".pulse_stt_error_response_legacy",
-    "PulseSttErrorResponseStatus": ".pulse_stt_error_response_status",
     "SessionConfig": ".session_config",
     "SessionConfigVoice": ".session_config_voice",
     "StreamingTtsConfig": ".streaming_tts_config",
+    "SttErrorResponse": ".stt_error_response",
     "SynthesizeLightningLargeWavesRequestOutputFormat": ".synthesize_lightning_large_waves_request_output_format",
     "SynthesizeLightningV2WavesRequestOutputFormat": ".synthesize_lightning_v2waves_request_output_format",
     "SynthesizeLightningWavesRequestOutputFormat": ".synthesize_lightning_waves_request_output_format",
@@ -123,20 +153,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SynthesizeSseLightningV2WavesRequestOutputFormat": ".synthesize_sse_lightning_v2waves_request_output_format",
     "Tool": ".tool",
     "ToolType": ".tool_type",
-    "TranscribePulseWavesRequestCapitalize": ".transcribe_pulse_waves_request_capitalize",
-    "TranscribePulseWavesRequestEmotionDetection": ".transcribe_pulse_waves_request_emotion_detection",
-    "TranscribePulseWavesRequestEncoding": ".transcribe_pulse_waves_request_encoding",
-    "TranscribePulseWavesRequestFormat": ".transcribe_pulse_waves_request_format",
-    "TranscribePulseWavesRequestGenderDetection": ".transcribe_pulse_waves_request_gender_detection",
-    "TranscribePulseWavesRequestLanguage": ".transcribe_pulse_waves_request_language",
-    "TranscribePulseWavesRequestPunctuate": ".transcribe_pulse_waves_request_punctuate",
-    "TranscribePulseWavesResponse": ".transcribe_pulse_waves_response",
-    "TranscribePulseWavesResponseEmotions": ".transcribe_pulse_waves_response_emotions",
-    "TranscribePulseWavesResponseGender": ".transcribe_pulse_waves_response_gender",
-    "TranscribePulseWavesResponseMetadata": ".transcribe_pulse_waves_response_metadata",
-    "TranscribePulseWavesResponseUtterancesItem": ".transcribe_pulse_waves_response_utterances_item",
-    "TranscribePulseWavesResponseWordsItem": ".transcribe_pulse_waves_response_words_item",
-    "TranscriptionResult": ".transcription_result",
+    "TranscriptionResponse": ".transcription_response",
+    "TranscriptionResponseMetadata": ".transcription_response_metadata",
     "TtsError": ".tts_error",
     "TtsRequest": ".tts_request",
     "TtsRequestLanguage": ".tts_request_language",
@@ -145,6 +163,10 @@ _dynamic_imports: typing.Dict[str, str] = {
     "TtsRequestOutputFormat": ".tts_request_output_format",
     "UnauthorizedErrorBody": ".unauthorized_error_body",
     "UpdatePronunciationDictResponse": ".update_pronunciation_dict_response",
+    "Usage": ".usage",
+    "UsagePromptTokensDetails": ".usage_prompt_tokens_details",
+    "Utterance": ".utterance",
+    "Word": ".word",
 }
 
 
@@ -170,10 +192,15 @@ def __dir__():
 
 
 __all__ = [
+    "AsyncAccepted",
     "AudioChunk",
     "AudioChunkData",
     "AudioChunkStatus",
     "BadRequestErrorBody",
+    "ChatCompletion",
+    "ChatCompletionChoicesItem",
+    "ChatCompletionChoicesItemFinishReason",
+    "ChatCompletionObject",
     "CompletionStatus",
     "CompletionStatusStatus",
     "ConversationItem",
@@ -182,7 +209,19 @@ __all__ = [
     "ConversationItemRole",
     "ConversationItemStatus",
     "ConversationItemType",
+    "CreateVoiceCloneWavesRequestModel",
+    "CreateVoiceCloneWavesResponse",
+    "CreateVoiceCloneWavesResponseData",
+    "CreateVoiceCloneWavesResponseDataSamplesItem",
+    "CreateVoiceCloneWavesResponseDataStatus",
     "DeletePronunciationDictResponse",
+    "ElectronMessage",
+    "ElectronToolCall",
+    "ElectronToolCallFunction",
+    "ElectronToolCallType",
+    "Error",
+    "ErrorError",
+    "ErrorErrorDetailsItem",
     "ErrorResponse",
     "ErrorResponseError",
     "ErrorResponseStatus",
@@ -191,6 +230,7 @@ __all__ = [
     "GetVoicesWavesResponseVoicesItem",
     "GetVoicesWavesResponseVoicesItemTags",
     "InternalServerErrorBody",
+    "InternalServerErrorBodyErrorCode",
     "LightningLargeRequest",
     "LightningLargeRequestLanguage",
     "LightningLargeRequestOutputFormat",
@@ -200,15 +240,16 @@ __all__ = [
     "Lightningv2Request",
     "Lightningv2RequestLanguage",
     "Lightningv2RequestOutputFormat",
+    "ListVoiceClonesWavesResponse",
+    "ListVoiceClonesWavesResponseDataItem",
+    "ListVoiceClonesWavesResponseDataItemCloningType",
+    "ListVoiceClonesWavesResponseDataItemStatus",
     "PronunciationDict",
     "PronunciationItem",
-    "PulseSttAuthMissingResponse",
-    "PulseSttErrorResponse",
-    "PulseSttErrorResponseLegacy",
-    "PulseSttErrorResponseStatus",
     "SessionConfig",
     "SessionConfigVoice",
     "StreamingTtsConfig",
+    "SttErrorResponse",
     "SynthesizeLightningLargeWavesRequestOutputFormat",
     "SynthesizeLightningV2WavesRequestOutputFormat",
     "SynthesizeLightningWavesRequestOutputFormat",
@@ -216,20 +257,8 @@ __all__ = [
     "SynthesizeSseLightningV2WavesRequestOutputFormat",
     "Tool",
     "ToolType",
-    "TranscribePulseWavesRequestCapitalize",
-    "TranscribePulseWavesRequestEmotionDetection",
-    "TranscribePulseWavesRequestEncoding",
-    "TranscribePulseWavesRequestFormat",
-    "TranscribePulseWavesRequestGenderDetection",
-    "TranscribePulseWavesRequestLanguage",
-    "TranscribePulseWavesRequestPunctuate",
-    "TranscribePulseWavesResponse",
-    "TranscribePulseWavesResponseEmotions",
-    "TranscribePulseWavesResponseGender",
-    "TranscribePulseWavesResponseMetadata",
-    "TranscribePulseWavesResponseUtterancesItem",
-    "TranscribePulseWavesResponseWordsItem",
-    "TranscriptionResult",
+    "TranscriptionResponse",
+    "TranscriptionResponseMetadata",
     "TtsError",
     "TtsRequest",
     "TtsRequestLanguage",
@@ -238,4 +267,8 @@ __all__ = [
     "TtsRequestOutputFormat",
     "UnauthorizedErrorBody",
     "UpdatePronunciationDictResponse",
+    "Usage",
+    "UsagePromptTokensDetails",
+    "Utterance",
+    "Word",
 ]
