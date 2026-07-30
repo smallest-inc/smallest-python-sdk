@@ -1,238 +1,165 @@
-# SmallestAi Python Library
+# SmallestAI Python SDK
 
-[![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-Built%20with%20Fern-brightgreen)](https://buildwithfern.com?utm_source=github&utm_medium=github&utm_campaign=readme&utm_source=https%3A%2F%2Fgithub.com%2Fsmallest-inc%2Fsmallest-python-sdk)
 [![pypi](https://img.shields.io/pypi/v/smallestai)](https://pypi.python.org/pypi/smallestai)
 
-The SmallestAi Python library provides convenient access to the SmallestAi APIs from Python.
+`pip install smallestai` gives you one package with two surfaces, plus a CLI:
 
-## Table of Contents
-
-- [Installation](#installation)
-- [Reference](#reference)
-- [Usage](#usage)
-- [Environments](#environments)
-- [Async Client](#async-client)
-- [Exception Handling](#exception-handling)
-- [Streaming](#streaming)
-- [Websockets](#websockets)
-- [Advanced](#advanced)
-  - [Access Raw Response Data](#access-raw-response-data)
-  - [Retries](#retries)
-  - [Timeouts](#timeouts)
-  - [Custom Client](#custom-client)
-- [Contributing](#contributing)
-
-## Installation
+- **Atoms** — build, configure, deploy, and phone-call voice AI agents (`client.atoms`).
+- **Waves** — low-latency text-to-speech and speech-to-text, sync/async and streaming (`client.waves`).
+- **CLI** — `smallestai` for managing agents and deploying agent-crew code.
 
 ```sh
 pip install smallestai
 ```
 
-## Reference
+## Table of Contents
 
-A full reference for this library is available [here](https://github.com/smallest-inc/smallest-python-sdk/blob/HEAD/./reference.md).
+- [Quickstart](#quickstart-create-an-agent-and-call-it)
+- [Text-to-speech and speech-to-text](#text-to-speech-and-speech-to-text-waves)
+- [Agent crew: your own LLM](#agent-crew-your-own-llm-in-the-middle)
+- [CLI](#cli)
+- [Async client](#async-client)
+- [Environments](#environments)
+- [Exception handling](#exception-handling)
+- [Reference and docs](#reference-and-docs)
+- [Contributing](#contributing)
 
-## Usage
-
-Instantiate and use the client with the following:
+## Quickstart: create an agent and call it
 
 ```python
 from smallestai import SmallestAI
 
-client = SmallestAI(
-    api_key="<token>",
-)
+client = SmallestAI(api_key="<your-api-key>")
 
-client.atoms.agent_templates.create_agent_from_template(
-    agent_name="agentName",
-    template_id="templateId",
+# create an agent (the response .data is the new agent id)
+agent_id = client.atoms.agents.create_agent(name="my-first-agent").data
+
+# place an outbound call (from_product_id is a rented number's product id)
+client.atoms.calls.start_outbound_call(
+    agent_id=agent_id,
+    phone_number="+1XXXXXXXXXX",
+    from_product_id="<rented-number-product-id>",
 )
 ```
 
-## Environments
+## Text-to-speech and speech-to-text (Waves)
 
-This SDK allows you to configure different environments for API requests.
+`synthesize_tts` streams audio bytes. List available voices with `client.waves.get_voices()`.
+
+```python
+from smallestai import SmallestAI
+
+client = SmallestAI(api_key="<your-api-key>")
+
+with open("out.wav", "wb") as f:
+    for chunk in client.waves.synthesize_tts(text="Hello from Smallest.", voice_id="<voice-id>"):
+        f.write(chunk)
+```
+
+Streaming speech-to-text helper:
+
+```python
+from smallestai.waves.helpers import stream_speech_to_text
+
+for event in stream_speech_to_text(client, language="en"):
+    print(event)
+```
+
+## Agent crew: your own LLM in the middle
+
+An agent crew runs the LLM turn on a model **you** choose while Smallest handles
+STT and TTS. Point the crew node's `OpenAIClient` at any OpenAI-compatible
+endpoint (a hosted API, or a local model via Ollama):
+
+```python
+from smallestai.atoms.crew.nodes import OutputCrewNode
+from smallestai.atoms.crew.clients.openai import OpenAIClient
+
+class Assistant(OutputCrewNode):
+    def __init__(self):
+        super().__init__(name="assistant")
+        self.llm = OpenAIClient(
+            model="claude-haiku-4-5",
+            api_key="<your-llm-key>",
+            base_url="https://api.anthropic.com/v1/",   # or http://localhost:11434/v1 for Ollama
+        )
+
+    async def generate_response(self):
+        async for chunk in await self.llm.chat(self.context.messages, stream=True):
+            if chunk.content:
+                yield chunk.content
+```
+
+Conversation history is handled for you: every turn is appended to `self.context`,
+and you send `self.context.messages` to the model each turn.
+
+Deploy it with the CLI:
+
+```sh
+smallestai auth login
+smallestai agent-crew init --agent-id <agent-id>
+smallestai agent-crew deploy --entry-point server.py
+smallestai agent-crew builds        # pick the build -> Make Live
+```
+
+A flat directory (`server.py` + `requirements.txt` at the root) is the simplest
+layout; a `src/` layout with a `pyproject.toml` also works (declare all runtime
+deps in the pyproject).
+
+## CLI
+
+```sh
+smallestai auth login               # store your API key
+smallestai agents list              # list, get, call, and manage agents
+smallestai agent-crew deploy ...     # package and deploy crew code
+smallestai agent-crew chat           # talk to a running crew locally
+```
+
+## Async client
+
+The SDK exports an `async` client with the same surface:
+
+```python
+import asyncio
+from smallestai import AsyncSmallestAI
+
+async def main():
+    client = AsyncSmallestAI(api_key="<your-api-key>")
+    agents = await client.atoms.agents.list_agents()
+    print(agents.data)
+
+asyncio.run(main())
+```
+
+## Environments
 
 ```python
 from smallestai import SmallestAI
 from smallestai.environment import SmallestAIEnvironment
 
-client = SmallestAI(
-    environment=SmallestAIEnvironment.PRODUCTION,
-)
+client = SmallestAI(environment=SmallestAIEnvironment.PRODUCTION)
 ```
 
-## Async Client
-
-The SDK also exports an `async` client so that you can make non-blocking calls to our API. Note that if you are constructing an Async httpx client class to pass into this client, use `httpx.AsyncClient()` instead of `httpx.Client()` (e.g. for the `httpx_client` parameter of this client).
-
-```python
-import asyncio
-
-from smallestai import AsyncSmallestAI
-
-client = AsyncSmallestAI(
-    api_key="<token>",
-)
-
-
-async def main() -> None:
-    await client.atoms.agent_templates.create_agent_from_template(
-        agent_name="agentName",
-        template_id="templateId",
-    )
-
-
-asyncio.run(main())
-```
-
-## Exception Handling
-
-When the API returns a non-success status code (4xx or 5xx response), a subclass of the following error
-will be thrown.
+## Exception handling
 
 ```python
 from smallestai.core.api_error import ApiError
 
 try:
-    client.atoms.agent_templates.create_agent_from_template(...)
+    client.atoms.agents.get_agent(id="does-not-exist")
 except ApiError as e:
-    print(e.status_code)
-    print(e.body)
+    print(e.status_code, e.body)
 ```
 
-## Streaming
+## Reference and docs
 
-The SDK supports streaming responses, as well, the response will be a generator that you can loop over.
+- Full API reference: [reference.md](./reference.md)
+- Product docs: https://smallest.ai/docs
 
-```python
-from smallestai import SmallestAI
-
-client = SmallestAI(
-    api_key="<token>",
-)
-
-client.atoms.live_transcripts.subscribe_to_live_events(
-    call_id="CALL-1758124225863-80752e",
-)
-```
-
-## Websockets
-
-The SDK supports both sync and async websocket connections for real-time, low-latency communication. Sockets can be created using the `connect` method, which returns a context manager. 
-You can either iterate through the returned `SocketClient` to process messages as they arrive, or attach handlers to respond to specific events.
-
-```python
-from smallestai import SmallestAI
-
-client = SmallestAI(...)
-
-# Connect to the websocket (Sync)
-with client.speech_to_text.stream() as socket:
-    # Iterate over the messages as they arrive
-    for message in socket:
-        print(message)
-
-    # Or, attach handlers to specific events
-    socket.on(EventType.MESSAGE, lambda message: print("received message", message))
-
-import asyncio
-from smallestai import AsyncSmallestAI
-
-client = AsyncSmallestAI(...)
-
-# Connect to the websocket (Async)
-async with client.speech_to_text.stream() as socket:
-    async for message in socket:
-        print(message)
-```
-
-## Advanced
-
-### Access Raw Response Data
-
-The SDK provides access to raw response data, including headers, through the `.with_raw_response` property.
-The `.with_raw_response` property returns a "raw" client that can be used to access the `.headers` and `.data` attributes.
-
-```python
-from smallestai import SmallestAI
-
-client = SmallestAI(...)
-response = client.atoms.agent_templates.with_raw_response.create_agent_from_template(...)
-print(response.headers)  # access the response headers
-print(response.status_code)  # access the response status code
-print(response.data)  # access the underlying object
-```
-
-### Retries
-
-The SDK is instrumented with automatic retries with exponential backoff. A request will be retried as long
-as the request is deemed retryable and the number of retry attempts has not grown larger than the configured
-retry limit (default: 2).
-
-Which status codes are retried depends on the `retryStatusCodes` generator configuration:
-
-**`legacy`** (current default): retries on
-- [408](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/408) (Timeout)
-- [409](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409) (Conflict)
-- [429](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) (Too Many Requests)
-- [5XX](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#server_error_responses) (All server errors, including 500)
-
-**`recommended`**: retries on
-- [408](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/408) (Timeout)
-- [409](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409) (Conflict)
-- [429](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) (Too Many Requests)
-- [502](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502) (Bad Gateway)
-- [503](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503) (Service Unavailable)
-- [504](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504) (Gateway Timeout)
-
-Use the `max_retries` request option to configure this behavior.
-
-```python
-client.atoms.agent_templates.create_agent_from_template(..., request_options={
-    "max_retries": 1
-})
-```
-
-### Timeouts
-
-The SDK defaults to a 60 second timeout. You can configure this with a timeout option at the client or request level.
-
-```python
-from smallestai import SmallestAI
-
-client = SmallestAI(..., timeout=20.0)
-
-# Override timeout for a specific method
-client.atoms.agent_templates.create_agent_from_template(..., request_options={
-    "timeout_in_seconds": 1
-})
-```
-
-### Custom Client
-
-You can override the `httpx` client to customize it for your use-case. Some common use-cases include support for proxies
-and transports.
-
-```python
-import httpx
-from smallestai import SmallestAI
-
-client = SmallestAI(
-    ...,
-    httpx_client=httpx.Client(
-        proxy="http://my.test.proxy.example.com",
-        transport=httpx.HTTPTransport(local_address="0.0.0.0"),
-    ),
-)
-```
+The client also supports response streaming, automatic retries, per-request
+timeouts, and access to raw response data. See the reference for details.
 
 ## Contributing
 
-While we value open-source contributions to this SDK, this library is generated programmatically.
-Additions made directly to this library would have to be moved over to our generation code,
-otherwise they would be overwritten upon the next generated release. Feel free to open a PR as
-a proof of concept, but know that we will not be able to merge it as-is. We suggest opening
-an issue first to discuss with us!
-
-On the other hand, contributions to the README are always very welcome!
+Most of `src/` is generated from an API spec and gets overwritten on regeneration,
+so hand edits there will not stick. If you spot a bug or a gap, open an issue.

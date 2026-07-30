@@ -236,9 +236,52 @@ def initialise_agent_crew_app(
                 api_key=access_token,
             )
 
-            console.print("[bold green]✓ Deployment successful![/bold green]")
+            console.print("[bold green]✓ Deployment uploaded![/bold green]")
             console.print(f"[dim]Build ID: {result.build_id}[/dim]")
-            console.print(f"[dim]Status: {result.message}[/dim]")
+
+            # Poll the build to a terminal state instead of returning at "queued".
+            # The build has to reach SUCCEEDED before you can Make Live, and a
+            # freshly-live crew pod can need a moment to warm up before it serves
+            # the first call. Surfacing the real status here saves guessing.
+            console.print("[yellow]Building (this usually takes 1-2 min)...[/yellow]")
+            terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED", "FAILED"}
+            last = None
+            status = None
+            for _ in range(60):  # ~5 min cap at 5s intervals
+                try:
+                    build = await atoms_client.get_agent_build(
+                        agent_id=agent_id,
+                        build_id=result.build_id,
+                        api_key=access_token,
+                    )
+                    status = str(getattr(build.status, "value", build.status))
+                except Exception:
+                    status = None
+                if status and status != last:
+                    console.print(f"[dim]  {status}[/dim]")
+                    last = status
+                if status in terminal:
+                    break
+                await asyncio.sleep(5)
+
+            if status == "SUCCEEDED":
+                console.print("[bold green]✓ Build succeeded.[/bold green]")
+                console.print(
+                    "[dim]Next: `smallestai agent-crew builds` -> Make Live. "
+                    "The first call right after Make Live can take a few seconds "
+                    "while the pod warms up; if it's silent, give it a moment and "
+                    "try again.[/dim]"
+                )
+            elif status in terminal:
+                console.print(
+                    f"[red]Build ended with status: {status}. "
+                    "Check `smallestai agent-crew builds` for details.[/red]"
+                )
+            else:
+                console.print(
+                    "[yellow]Still building. Check `smallestai agent-crew builds` "
+                    "for the final status.[/yellow]"
+                )
 
         except Exception as e:
             console.print(f"[red]Error deploying agent {e}[/red]")
