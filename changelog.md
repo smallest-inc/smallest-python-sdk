@@ -1,3 +1,13 @@
+## 5.3.2 - 2026-07-30
+
+Corrects the agent-crew deploy layout warning. No API or behaviour changes.
+
+* **CLI** (`smallestai agent-crew deploy`): the pre-deploy check no longer claims a `src/`
+  layout or a `pyproject.toml` project fails the cloud build. Both build and run (verified end
+  to end). The check is now a short note: flat directory with `server.py` + `requirements.txt`
+  at the root is the simplest, best-tested path; if you use a `pyproject.toml` with no
+  `requirements.txt`, declare every runtime dependency in it.
+
 ## 5.3.1 - 2026-07-29
 
 Billing read endpoints, a call-log type fix, and clearer agent-crew deploy warnings. Additive; no breaking changes.

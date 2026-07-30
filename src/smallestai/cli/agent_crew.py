@@ -175,34 +175,24 @@ def initialise_agent_crew_app(
         console.print(f"[dim]Entry point: {entry_point}[/dim]")
         console.print(f"[dim]Agent ID: {agent_id}[/dim]\n")
 
-        # Pre-flight layout check. The cloud build runs `pip install .` from a
-        # pyproject before copying your source, so a src/ layout (or a nested
-        # entry point) fails there. The supported path is a flat directory with a
-        # requirements.txt (what the cookbook examples ship). Warn early instead
-        # of letting the build fail opaquely.
+        # Pre-flight layout note. Both a flat directory (server.py +
+        # requirements.txt at the root) and a src/ layout with a pyproject.toml
+        # build and run in the cloud. Flat + requirements.txt is what the cookbook
+        # examples ship and the best-tested path, so nudge toward it without
+        # blocking anything. One gotcha for pyproject projects: all runtime deps
+        # must be declared there (smallestai already pulls in the crew server's
+        # deps, so this is usually covered).
         has_pyproject = (dir_path / "pyproject.toml").exists()
         has_requirements = (dir_path / "requirements.txt").exists()
         has_src_dir = (dir_path / "src").is_dir()
         nested_entry = ("/" in entry_point) or ("\\" in entry_point)
-        if (has_pyproject and not has_requirements) or has_src_dir or nested_entry:
-            console.print("[yellow]⚠  Project layout may not build in the cloud:[/yellow]")
-            if has_src_dir or nested_entry:
-                console.print(
-                    "    [yellow]• src/ layout / nested entry point detected. The cloud "
-                    "build expects a flat directory with the entry file at the root "
-                    "(e.g. server.py), not under src/.[/yellow]"
-                )
-            if has_pyproject and not has_requirements:
-                console.print(
-                    "    [yellow]• pyproject.toml with no requirements.txt. The builder "
-                    "runs `pip install .` before your source is copied, which fails for "
-                    "src/ layouts. Add a requirements.txt (the builder prefers it and "
-                    "skips that step).[/yellow]"
-                )
+        if has_src_dir or nested_entry or (has_pyproject and not has_requirements):
             console.print(
-                "[dim]Supported layout: a flat directory with server.py + a "
-                "requirements.txt at the root. See the cookbook getting_started "
-                "example.[/dim]\n"
+                "[dim]Note: src/ + pyproject.toml layouts deploy fine. The simplest, "
+                "best-tested path is a flat directory with server.py + a "
+                "requirements.txt at the root (what the cookbook getting_started "
+                "example ships). If you use a pyproject with no requirements.txt, make "
+                "sure every runtime dependency is declared in it.[/dim]\n"
             )
 
         # Scan user code for env var references and warn — the deploy pipeline
