@@ -1,3 +1,12 @@
+## 5.3.4 - 2026-07-31
+
+Corrects the deploy message. No API changes.
+
+* **CLI** (`smallestai agent-crew deploy`): drop the "first call can be silent, try
+  again" line from the post-deploy message. The crew is engaged at call time on the
+  current platform, so that guidance was misleading. The message now just says to
+  wait for the build to show Live before the first call.
+
 ## 5.3.3 - 2026-07-30
 
 CLI deploy now reports real build status, and a hand-written README. No API changes.

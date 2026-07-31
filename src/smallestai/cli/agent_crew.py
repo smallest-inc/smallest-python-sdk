@@ -240,9 +240,8 @@ def initialise_agent_crew_app(
             console.print(f"[dim]Build ID: {result.build_id}[/dim]")
 
             # Poll the build to a terminal state instead of returning at "queued".
-            # The build has to reach SUCCEEDED before you can Make Live, and a
-            # freshly-live crew pod can need a moment to warm up before it serves
-            # the first call. Surfacing the real status here saves guessing.
+            # The build has to reach SUCCEEDED before you can Make Live, so
+            # surfacing the real status here saves guessing.
             console.print("[yellow]Building (this usually takes 1-2 min)...[/yellow]")
             terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED", "FAILED"}
             last = None
@@ -267,10 +266,8 @@ def initialise_agent_crew_app(
             if status == "SUCCEEDED":
                 console.print("[bold green]✓ Build succeeded.[/bold green]")
                 console.print(
-                    "[dim]Next: `smallestai agent-crew builds` -> Make Live. "
-                    "The first call right after Make Live can take a few seconds "
-                    "while the pod warms up; if it's silent, give it a moment and "
-                    "try again.[/dim]"
+                    "[dim]Next: `smallestai agent-crew builds` -> Make Live, then "
+                    "wait for it to show Live before placing your first call.[/dim]"
                 )
             elif status in terminal:
                 console.print(
