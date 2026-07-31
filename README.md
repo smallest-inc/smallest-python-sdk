@@ -21,6 +21,12 @@ pip install smallestai
 - [Async client](#async-client)
 - [Environments](#environments)
 - [Exception handling](#exception-handling)
+- [Streaming and websockets](#streaming-and-websockets)
+- [Advanced](#advanced)
+  - [Access raw response data](#access-raw-response-data)
+  - [Retries](#retries)
+  - [Timeouts](#timeouts)
+  - [Custom client](#custom-client)
 - [Reference and docs](#reference-and-docs)
 - [Contributing](#contributing)
 
@@ -151,13 +157,79 @@ except ApiError as e:
     print(e.status_code, e.body)
 ```
 
+## Streaming and websockets
+
+Waves supports real-time, low-latency streaming over websockets. `stream()` returns a context manager; iterate it to process messages as they arrive.
+
+```python
+from smallestai import SmallestAI
+
+client = SmallestAI(api_key="<your-api-key>")
+
+# real-time speech-to-text
+with client.waves.speech_to_text.stream() as socket:
+    for message in socket:
+        print(message)
+```
+
+The async client mirrors this with `async with` / `async for`. Text-to-speech streams too: `synthesize_tts(...)` yields audio bytes as they are generated (see above).
+
+## Advanced
+
+### Access raw response data
+
+Use `.with_raw_response` to get the response headers and status alongside the parsed data.
+
+```python
+response = client.atoms.agents.with_raw_response.get_agent(id="<agent-id>")
+print(response.headers)       # response headers
+print(response.status_code)   # status code
+print(response.data)          # parsed object
+```
+
+### Retries
+
+The SDK retries retryable requests with exponential backoff (default 2). Configure it at the client or per request.
+
+```python
+client = SmallestAI(api_key="<your-api-key>", max_retries=3)
+
+# or per request
+client.atoms.agents.get_agent(id="<agent-id>", request_options={"max_retries": 1})
+```
+
+### Timeouts
+
+Defaults to 60 seconds. Configure at the client or per request.
+
+```python
+client = SmallestAI(api_key="<your-api-key>", timeout=20.0)
+
+# or per request
+client.atoms.agents.get_agent(id="<agent-id>", request_options={"timeout_in_seconds": 5})
+```
+
+### Custom client
+
+Override the `httpx` client for proxies, custom transports, and similar.
+
+```python
+import httpx
+from smallestai import SmallestAI
+
+client = SmallestAI(
+    api_key="<your-api-key>",
+    httpx_client=httpx.Client(
+        proxy="http://my.test.proxy.example.com",
+        transport=httpx.HTTPTransport(local_address="0.0.0.0"),
+    ),
+)
+```
+
 ## Reference and docs
 
 - Full API reference: [reference.md](./reference.md)
 - Product docs: https://smallest.ai/docs
-
-The client also supports response streaming, automatic retries, per-request
-timeouts, and access to raw response data. See the reference for details.
 
 ## Contributing
 
