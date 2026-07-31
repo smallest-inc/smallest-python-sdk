@@ -1,3 +1,15 @@
+## 5.3.3 - 2026-07-30
+
+CLI deploy now reports real build status, and a hand-written README. No API changes.
+
+* **CLI** (`smallestai agent-crew deploy`): after upload, the command polls the build
+  to a terminal state (SUCCEEDED / failed) instead of returning at "queued", and on
+  success points to `agent-crew builds` -> Make Live with a note that the first call
+  after Make Live can need a few seconds while the pod warms up.
+* **README**: replaced the generated boilerplate with a hand-written front door
+  (agents, Waves TTS/STT, agent crew with a custom LLM, CLI). Added to `.fernignore`
+  so regeneration no longer overwrites it.
+
 ## 5.3.2 - 2026-07-30
 
 Corrects the agent-crew deploy layout warning. No API or behaviour changes.

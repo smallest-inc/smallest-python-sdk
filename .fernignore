@@ -48,3 +48,6 @@ RELEASE.md
 scripts/**
 Makefile
 src/smallestai/waves/helpers/**
+
+# Hand-written README (do not regenerate)
+README.md
