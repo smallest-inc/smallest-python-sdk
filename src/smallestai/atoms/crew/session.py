@@ -220,8 +220,15 @@ class CrewSession:
 
         self._running = True
 
-        await self._start_nodes(self._init_event, self.task_manager)
+        # Send Ready BEFORE starting nodes. A node's start() may emit a speak
+        # event (e.g. a greeting); if that reaches the platform before Ready, the
+        # platform's connect handshake sees a non-Ready first frame and never
+        # spawns its receive loop, silencing the whole call. Ready-first keeps any
+        # early speak legal. Incoming events still buffer on the websocket until
+        # our own receive loop starts below (after nodes are up), so nothing is
+        # lost by ordering Ready first.
         await self.send_to_websocket(SDKAgentReadyEvent())
+        await self._start_nodes(self._init_event, self.task_manager)
 
         self._receive_loop_task = self.task_manager.create_task(
             self._receive_loop(), name="receive_loop"
