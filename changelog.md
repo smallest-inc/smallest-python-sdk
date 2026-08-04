@@ -17,6 +17,9 @@ Configure agent tools (transfer_call, end_call, ...) from code.
   `None`) or event construction raised a `ValidationError`. Callers that want
   audio during the transfer bridge still pass `ringtone` / `relaxing_sound` /
   `uplifting_beats`.
+* **CLI** (`smallestai calls`): new `list`, `get`, `transcript`, and `recording`
+  subcommands to inspect call logs, details, transcripts, and recording URLs from
+  the terminal (read-only, dogfoods `client.atoms.calls`). Each supports `--json`.
 
 ## 5.3.4 - 2026-07-31
 
