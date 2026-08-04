@@ -31,7 +31,7 @@ from smallestai.atoms.crew.events import (
 # turns @function_tool methods into schemas; wire in whatever your crew uses.
 # (Guarded so this template file imports cleanly; replace with your real client.)
 try:
-    from your_llm import OpenAIClient, ToolRegistry, function_tool
+    from your_llm import OpenAIClient, ToolRegistry, function_tool  # type: ignore
 except ImportError:  # template placeholder
     OpenAIClient = ToolRegistry = None
 
