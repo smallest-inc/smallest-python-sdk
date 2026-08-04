@@ -1,3 +1,11 @@
+## 5.4.1 - 2026-08-04
+
+* **crew**: stop generating after a handoff. Once a node emits a transfer or
+  end-call event, `OutputCrewNode` latches and ignores further LLM requests. A
+  fire-and-forget tool that emits the event records no tool_result, so the LLM
+  would otherwise re-decide the same action on every subsequent request and
+  re-fire it in a loop (e.g. a hold-message repeating for the whole transfer dial).
+
 ## 5.4.0 - 2026-08-04
 
 Configure agent tools (transfer_call, end_call, ...) from code.

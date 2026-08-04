@@ -17,17 +17,23 @@ from loguru import logger
 from smallestai.atoms.crew.context import ContextManager
 from smallestai.atoms.crew.events import (
     OutputAgentSettings,
+    SDKAgentEndCallEvent,
     SDKAgentErrorEvent,
     SDKAgentLLMResponseChunkEvent,
     SDKAgentLLMResponseEndEvent,
     SDKAgentLLMResponseStartEvent,
     SDKAgentSpeakEvent,
     SDKAgentTranscriptUpdateEvent,
+    SDKAgentTransferConversationEvent,
     SDKEvent,
     SDKSystemInitEvent,
     SDKSystemLLMRequestEvent,
     SDKSystemUpdateOutputAgentSettingsEvent,
 )
+
+# Events that hand the call off / end it. Once one is emitted the conversation is
+# over for this node, so we stop responding to further LLM requests.
+_HANDOFF_EVENTS = (SDKAgentTransferConversationEvent, SDKAgentEndCallEvent)
 from smallestai.atoms.crew.nodes.base import CrewNode
 from smallestai.atoms.crew.task_manager import TaskManager
 
@@ -64,10 +70,23 @@ class OutputCrewNode(CrewNode):
         super().__init__(name, is_interruptible)
         self.settings = OutputAgentSettings()
         self.context = ContextManager()
+        # Latched once a handoff (transfer / end-call) event is emitted. After a
+        # handoff there is nothing to generate, and generating anyway causes a
+        # feedback loop: a tool that emits the event is fire-and-forget (no
+        # tool_result is recorded), so the LLM keeps re-deciding the same action
+        # on every subsequent request — repeatedly re-firing the event / speech.
+        self._handoff_started = False
 
     async def start(self, init_event: SDKSystemInitEvent, task_manager: TaskManager):
         """Start the node"""
         await super().start(init_event, task_manager)
+
+    async def send_event(self, event: SDKEvent):
+        """Emit an event, latching handoff state so we stop generating after a
+        transfer / end-call. Preserves base behavior otherwise."""
+        if isinstance(event, _HANDOFF_EVENTS):
+            self._handoff_started = True
+        await super().send_event(event)
 
     async def _update_settings(self, settings: Dict[str, Any]):
         """Update the settings for this node"""
@@ -80,6 +99,11 @@ class OutputCrewNode(CrewNode):
         `on_event` override, so a subclass can't accidentally silence the agent
         (e.g. by dropping the LLM-request -> generate_response path)."""
         if isinstance(event, SDKSystemLLMRequestEvent):
+            # After a handoff (transfer / end-call) there is nothing to generate;
+            # ignore further LLM requests so the node doesn't re-decide and
+            # re-fire the same terminal action in a loop.
+            if self._handoff_started:
+                return
             # The LLM-request event carries the platform's authoritative message
             # list. Sync the user/assistant conversation from it so
             # generate_response always sees the latest user turn, instead of
