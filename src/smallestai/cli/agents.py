@@ -5,44 +5,20 @@ and the SDK stay in lockstep automatically. Auth resolves from SMALLEST_API_KEY,
 key stored by `smallestai auth login` (~/.smallestai/credentials.json). SMALLEST_BASE_URL
 overrides the endpoint (dev rig).
 """
-import os
-
 import typer
 from rich.console import Console
 from rich.table import Table
 
 from smallestai.cli.lib.auth import AuthClient
+from smallestai.cli.lib.client import make_client as _client
+from smallestai.cli.lib.client import resolve_key as _resolve_key
 
 console = Console()
 
 DASHBOARD = "https://app.smallest.ai/dashboard/agents"
 RENT_NUMBERS = "https://app.smallest.ai/dashboard/phone-numbers/rent-numbers"
 
-
-def _resolve_key(auth_client: AuthClient) -> str:
-    key = os.environ.get("SMALLEST_API_KEY")
-    if not key:
-        creds = auth_client.get_credentials()
-        key = (creds or {}).get("access_token")
-    if not key:
-        console.print("[red]No API key. Set SMALLEST_API_KEY or run `smallestai auth login`.[/red]")
-        raise typer.Exit(1)
-    return key
-
-
-def _client(auth_client: AuthClient):
-    from smallestai import SmallestAI
-
-    key = _resolve_key(auth_client)
-    base = os.environ.get("SMALLEST_BASE_URL")
-    if base:
-        from smallestai.environment import SmallestAIEnvironment
-
-        base = base.rstrip("/")
-        ws = base.replace("https://", "wss://").replace("http://", "ws://")
-        env = SmallestAIEnvironment(atoms=f"{base}/atoms/v1", waves=base, waves_ws=ws)
-        return SmallestAI(api_key=key, environment=env)
-    return SmallestAI(api_key=key)
+__all__ = ["initialise_agents_app", "_client", "_resolve_key"]
 
 
 def initialise_agents_app(auth_client: AuthClient):
