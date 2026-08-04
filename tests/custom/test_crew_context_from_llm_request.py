@@ -80,5 +80,41 @@ class ContextFromLLMRequestTest(unittest.IsolatedAsyncioTestCase):
         assert agent.context.messages == fresh
 
 
+    async def test_empty_list_messages_keeps_accumulated_context(self):
+        """A request whose messages is [] must not wipe context to a system-only list."""
+        agent = _Agent()
+        agent.send_event = mock.AsyncMock()
+        agent.context.add_message({"role": "system", "content": "SYS"})
+        await agent.process_event(SDKAgentTranscriptUpdateEvent(role="user", content="hello"))
+        await agent.process_event(SDKSystemLLMRequestEvent(messages=[]))
+        assert agent.context.messages == [
+            {"role": "system", "content": "SYS"},
+            {"role": "user", "content": "hello"},
+        ]
+
+    async def test_system_only_event_does_not_clobber_conversation(self):
+        """If the event carries only a system message, keep the existing conversation."""
+        agent = _Agent()
+        agent.send_event = mock.AsyncMock()
+        agent.context.add_message({"role": "system", "content": "SYS"})
+        agent.context.add_message({"role": "user", "content": "earlier turn"})
+        await agent.process_event(SDKSystemLLMRequestEvent(messages=[{"role": "system", "content": "S2"}]))
+        assert {"role": "user", "content": "earlier turn"} in agent.context.messages
+
+    async def test_tool_call_sequence_order_preserved(self):
+        """assistant(tool_calls) + tool(result) survive the sync in order."""
+        agent = _Agent()
+        agent.send_event = mock.AsyncMock()
+        msgs = [
+            {"role": "system", "content": "SYS"},
+            {"role": "user", "content": "transfer me"},
+            {"role": "assistant", "content": "", "tool_calls": [{"id": "t1", "function": {"name": "transfer_call"}}]},
+            {"role": "tool", "tool_call_id": "t1", "content": "ok"},
+            {"role": "user", "content": "thanks"},
+        ]
+        await agent.process_event(SDKSystemLLMRequestEvent(messages=msgs))
+        assert agent.context.messages == msgs  # order + tool block intact
+
+
 if __name__ == "__main__":
     unittest.main()

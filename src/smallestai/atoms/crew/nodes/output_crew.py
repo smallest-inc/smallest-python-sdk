@@ -96,7 +96,12 @@ class OutputCrewNode(CrewNode):
                 if not system_msgs:
                     system_msgs = [m for m in event.messages if m.get("role") == "system"]
                 conversation = [m for m in event.messages if m.get("role") != "system"]
-                self.context.set_messages(system_msgs + conversation)
+                # Only sync when the request actually carries a conversation. If it
+                # carries only a system message (or is otherwise empty of turns),
+                # keep the accumulated context rather than shipping a system-only
+                # list, which would re-introduce the "no non-system message" 400.
+                if conversation:
+                    self.context.set_messages(system_msgs + conversation)
             await self._handle_llm_request()
         elif isinstance(event, SDKAgentTranscriptUpdateEvent):
             self.context.add_message({"role": event.role, "content": event.content})
