@@ -245,8 +245,14 @@ class SDKSystemUserStoppedSpeakingEvent(
 
 
 class SDKSystemLLMRequestEvent(SDKSystemEvent, type=EventType.SYSTEM_LLM_REQUEST.value):
-    """Request to LLM for completion."""
+    """Request to LLM for completion.
 
+    ``messages`` carries the platform's authoritative conversation (system + user
+    + assistant turns) for this request. It is the reliable source of the current
+    context — prefer it over separately-accumulated transcript state.
+    """
+
+    messages: Optional[List[Dict[str, Any]]] = None
     extra_params: Dict[str, Any] = Field(default_factory=dict)
 
 

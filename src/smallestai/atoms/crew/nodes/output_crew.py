@@ -80,6 +80,23 @@ class OutputCrewNode(CrewNode):
         `on_event` override, so a subclass can't accidentally silence the agent
         (e.g. by dropping the LLM-request -> generate_response path)."""
         if isinstance(event, SDKSystemLLMRequestEvent):
+            # The LLM-request event carries the platform's authoritative message
+            # list. Sync the user/assistant conversation from it so
+            # generate_response always sees the latest user turn, instead of
+            # relying only on separately-accumulated transcript events — those can
+            # race the request or be dropped, leaving the context empty (Claude
+            # then 400s on "no non-system message" and the agent goes silent).
+            #
+            # The node's own system prompt(s) are preserved: a crew sets its system
+            # message in code (self.context.add_message), and the platform's list
+            # may not carry it. Fall back to the accumulated context when a request
+            # carries no messages.
+            if event.messages:
+                system_msgs = [m for m in self.context.messages if m.get("role") == "system"]
+                if not system_msgs:
+                    system_msgs = [m for m in event.messages if m.get("role") == "system"]
+                conversation = [m for m in event.messages if m.get("role") != "system"]
+                self.context.set_messages(system_msgs + conversation)
             await self._handle_llm_request()
         elif isinstance(event, SDKAgentTranscriptUpdateEvent):
             self.context.add_message({"role": event.role, "content": event.content})
