@@ -75,16 +75,10 @@ class OutputCrewNode(CrewNode):
             logger.debug(f"[{self.name}] Updating setting {key} to {value}")
             setattr(self.settings, key, value)
 
-    async def process_event(self, event: SDKEvent):
-        """
-        Route events to appropriate handlers.
-
-        Handles:
-        - LLMRequestEvent -> Start generation
-        """
-
-        await super().process_event(event)
-
+    async def _route_framework_event(self, event: SDKEvent):
+        """Framework-owned event routing. Always runs, independent of any user
+        `on_event` override, so a subclass can't accidentally silence the agent
+        (e.g. by dropping the LLM-request -> generate_response path)."""
         if isinstance(event, SDKSystemLLMRequestEvent):
             await self._handle_llm_request()
         elif isinstance(event, SDKAgentTranscriptUpdateEvent):
@@ -92,6 +86,20 @@ class OutputCrewNode(CrewNode):
         elif isinstance(event, SDKSystemUpdateOutputAgentSettingsEvent):
             await self._update_settings(event.settings)
 
+    async def on_event(self, event: SDKEvent):
+        """Override this to react to events. This is the safe extension point:
+        the framework routing (interrupts, LLM requests, transcript/context and
+        settings updates) already ran before this is called, so you do NOT need
+        to call super(). Prefer this over overriding `process_event`, which
+        carries that framework routing — dropping it silences the agent."""
+        pass
+
+    async def process_event(self, event: SDKEvent):
+        """Framework dispatch: interrupt handling, output-node routing, the user
+        `on_event` hook, then forward. Prefer overriding `on_event` over this."""
+        await super().process_event(event)
+        await self._route_framework_event(event)
+        await self.on_event(event)
         await self.send_event(event)
 
     async def speak(self, text: str):
