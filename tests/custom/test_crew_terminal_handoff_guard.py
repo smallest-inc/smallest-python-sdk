@@ -10,6 +10,7 @@ import unittest
 from unittest import mock
 
 from smallestai.atoms.crew.nodes import OutputCrewNode
+from smallestai.atoms.crew.nodes.base import CrewNode
 from smallestai.atoms.crew.events import (
     SDKSystemLLMRequestEvent,
     SDKAgentTransferConversationEvent,
@@ -47,7 +48,7 @@ class TerminalHandoffGuardTest(unittest.IsolatedAsyncioTestCase):
         a = _Agent()
         a._handle_llm_request = mock.AsyncMock()
         # emit a transfer through the real send_event override (super().send_event is stubbed)
-        with mock.patch.object(OutputCrewNode.__mro__[1], "send_event", new=mock.AsyncMock()):
+        with mock.patch.object(CrewNode, "send_event", new=mock.AsyncMock()):
             await a.send_event(_transfer_event())
         self.assertTrue(a._handoff_started)
         await a.process_event(SDKSystemLLMRequestEvent(messages=[{"role": "user", "content": "still there?"}]))
@@ -56,7 +57,7 @@ class TerminalHandoffGuardTest(unittest.IsolatedAsyncioTestCase):
     async def test_end_call_also_latches(self):
         a = _Agent()
         a._handle_llm_request = mock.AsyncMock()
-        with mock.patch.object(OutputCrewNode.__mro__[1], "send_event", new=mock.AsyncMock()):
+        with mock.patch.object(CrewNode, "send_event", new=mock.AsyncMock()):
             await a.send_event(SDKAgentEndCallEvent())
         self.assertTrue(a._handoff_started)
         await a.process_event(SDKSystemLLMRequestEvent(messages=[{"role": "user", "content": "x"}]))
@@ -66,7 +67,7 @@ class TerminalHandoffGuardTest(unittest.IsolatedAsyncioTestCase):
         a = _Agent()
         a._handle_llm_request = mock.AsyncMock()
         from smallestai.atoms.crew.events import SDKAgentSpeakEvent
-        with mock.patch.object(OutputCrewNode.__mro__[1], "send_event", new=mock.AsyncMock()):
+        with mock.patch.object(CrewNode, "send_event", new=mock.AsyncMock()):
             await a.send_event(SDKAgentSpeakEvent(text="hello"))
         self.assertFalse(a._handoff_started)
         await a.process_event(SDKSystemLLMRequestEvent(messages=[{"role": "user", "content": "x"}]))
