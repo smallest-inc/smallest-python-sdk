@@ -1,4 +1,4 @@
-## 5.4.1 - unreleased
+## 5.4.1 - 2026-08-04
 
 * **crew**: stop generating after a handoff. Once a node emits a transfer or
   end-call event, `OutputCrewNode` latches and ignores further LLM requests. A
