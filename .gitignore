@@ -7,3 +7,4 @@ poetry.toml
 # Local secrets + venv (hand-added; .gitignore is .fernignore-preserved)
 .env
 .venv*/
+site/
