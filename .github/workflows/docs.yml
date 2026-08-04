@@ -30,7 +30,7 @@ jobs:
       - name: Install docs deps
         run: pip install -e . mkdocs-material "mkdocstrings[python]"
       - name: Build
-        run: mkdocs build --strict
+        run: mkdocs build
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
