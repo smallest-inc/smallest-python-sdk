@@ -12,7 +12,30 @@ import json
 
 import pytest
 
-from smallestai.atoms.helpers import AgentTools, AgentToolsError, Tool
+from smallestai.atoms.helpers import (
+    AgentTools,
+    AgentToolsError,
+    SinglePromptConfig,
+    Tool,
+    ToolTransferOption,
+)
+
+
+def test_exported_tool_models_construct_and_serialize():
+    """The models re-exported from atoms.helpers build and serialize by alias."""
+    option = ToolTransferOption(type="warm_transfer")
+    tool = Tool(
+        type="transfer_call",
+        name="transfer_call",
+        description="Transfer to a specialist.",
+        transfer_number="+15551234567",
+        transfer_option=option,
+    )
+    config = SinglePromptConfig(prompt="You are helpful.", tools=[tool])
+    wire = config.dict(by_alias=True, exclude_none=True)
+    assert wire["prompt"] == "You are helpful."
+    assert wire["tools"][0]["transferNumber"] == "+15551234567"
+    assert wire["tools"][0]["transferOption"]["type"] == "warm_transfer"
 
 
 class FakeResponse:
