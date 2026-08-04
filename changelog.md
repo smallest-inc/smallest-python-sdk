@@ -11,6 +11,12 @@ Configure agent tools (transfer_call, end_call, ...) from code.
   the payload (the API rejects nulls), and API error bodies are surfaced on failure.
 * Re-exported `Tool`, `SinglePromptConfig`, and `ToolTransferOption` from
   `smallestai.atoms.helpers` (they are not exported from `atoms.types`).
+* **crew**: `SDKAgentTransferConversationEvent.on_hold_music` is now optional
+  (defaults to `None`). It was declared `Optional[...]` but without a default, so
+  it was effectively required — every crew transfer had to pass it (even as
+  `None`) or event construction raised a `ValidationError`. Callers that want
+  audio during the transfer bridge still pass `ringtone` / `relaxing_sound` /
+  `uplifting_beats`.
 
 ## 5.3.4 - 2026-07-31
 
