@@ -209,9 +209,11 @@ class SDKAgentTransferConversationEvent(
 ):
     transfer_call_number: str
     transfer_options: TransferOption
+    # Optional: audio played to the caller while the transfer bridges. Omit (None)
+    # to leave it to the platform default. Set a value to avoid a silent hold.
     on_hold_music: Optional[
         Literal["ringtone", "relaxing_sound", "uplifting_beats", "none"]
-    ]
+    ] = None
 
 
 class SDKSystemInitEvent(SDKSystemEvent, type=EventType.SYSTEM_INIT.value):
