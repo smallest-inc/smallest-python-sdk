@@ -1,3 +1,17 @@
+## 5.4.0 - unreleased
+
+Configure agent tools (transfer_call, end_call, ...) from code.
+
+* **`atoms.helpers.AgentTools`**: new helper to read and write a single-prompt
+  agent's tools by agentId. It read-modify-writes, so the prompt and existing
+  tools are never wiped, and it targets the deployed write path (the versioned
+  drafts API is not reachable on the public host yet). `add_transfer_call(...)`
+  configures a transfer, including `on_hold_music` so the caller hears audio while
+  the transfer bridges instead of silence. Optional-None fields are stripped from
+  the payload (the API rejects nulls), and API error bodies are surfaced on failure.
+* Re-exported `Tool`, `SinglePromptConfig`, and `ToolTransferOption` from
+  `smallestai.atoms.helpers` (they are not exported from `atoms.types`).
+
 ## 5.3.4 - 2026-07-31
 
 Corrects the deploy message. No API changes.
