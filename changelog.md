@@ -1,4 +1,4 @@
-## 5.4.0 - unreleased
+## 5.4.0 - 2026-08-04
 
 Configure agent tools (transfer_call, end_call, ...) from code.
 
@@ -12,12 +12,22 @@ Configure agent tools (transfer_call, end_call, ...) from code.
   fields are stripped (the API rejects nulls), and API error bodies are surfaced.
 * Re-exported `Tool`, `SinglePromptConfig`, and `ToolTransferOption` from
   `smallestai.atoms.helpers` (they are not exported from `atoms.types`).
+* **crew (silent agent fix)**: `OutputCrewNode` now seeds its context from the
+  authoritative message list carried on the LLM-request event, instead of relying
+  only on separately-accumulated transcript events. Those could race the request or
+  be dropped, leaving the context empty — the custom LLM then errored on "no
+  non-system message" and the agent went silent for the whole call (greeting once,
+  never responding, never transferring). The node's own system prompt is preserved.
+* **crew (greeting lifecycle)**: send `AgentReady` before starting nodes so a
+  greeting emitted in `start()` works, and add an `on_event` hook so a subclass can
+  react to events without accidentally silencing the framework routing.
 * **crew**: `SDKAgentTransferConversationEvent.on_hold_music` is now optional
   (defaults to `None`). It was declared `Optional[...]` but without a default, so
   it was effectively required — every crew transfer had to pass it (even as
   `None`) or event construction raised a `ValidationError`. Callers that want
   audio during the transfer bridge still pass `ringtone` / `relaxing_sound` /
-  `uplifting_beats`.
+  `uplifting_beats`. Note: `on_hold_music` applies to warm transfers; cold transfer
+  is a direct connect with no hold-music window.
 * **CLI** (`smallestai calls`): new `list`, `get`, `transcript`, and `recording`
   subcommands to inspect call logs, details, transcripts, and recording URLs from
   the terminal (read-only, dogfoods `client.atoms.calls`). Each supports `--json`.
