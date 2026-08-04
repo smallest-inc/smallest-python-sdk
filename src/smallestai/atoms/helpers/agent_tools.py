@@ -1,29 +1,23 @@
 """
 Configure agent tools (transfer_call, end_call, api_call, ...) from code.
 
-Why this helper exists
-----------------------
-Setting tools on a single-prompt agent from code is possible today, but the raw
-surface has three footguns that make it feel impossible:
+How agent config works now
+--------------------------
+Atoms runs on the **branch/revision** versioning model. Serving reads the live
+branch's head revision, so tool/prompt edits must go through the branch flow:
 
-* The versioned drafts API (``POST /agent/{id}/drafts/...``) is not reachable on
-  the public API host (it returns 404). The deployed write path is the legacy
-  workflow document.
-* That write path is ``PATCH /workflow/{workflowId}`` — it takes the *workflowId*
-  (``agent.workflowId``), not the agentId, and it does not merge: a partial
-  payload silently wipes the prompt and any tools you did not resend.
-* The wire fields are camelCase aliases (``transferNumber``, ``onHoldMusic``, ...),
-  easy to get wrong by hand.
+    PUT   /agent/{id}/branches/{branchId}/draft            (open/patch a draft)
+    POST  /agent/{id}/branches/{branchId}/draft/publish    (commit; security scan)
+    POST  /agent/{id}/branches/{branchId}/live             (make committed revision live)
 
-``AgentTools`` wraps all of that. You address agents by *agentId*, it always
-read-modify-writes (so the prompt and existing tools are never wiped), and you
-pass typed :class:`~smallestai.atoms.types.tool.Tool` models.
+Writing the legacy workflow document (``PATCH /workflow/{id}``) does **not** take
+effect on live calls under this model - serving ignores it. The v1
+drafts/versions endpoints are deprecated and return 409.
 
-Caveat: this writes the legacy workflow document directly. On an agent that is
-actively using the versioning system, a later version activation can overwrite
-the legacy doc. On the public API today versioning is not reachable, so the
-legacy doc is authoritative — but if you adopt drafts/versioning later, move tool
-edits into that flow.
+``AgentTools`` wraps the whole branch flow. You address agents by *agentId*; it
+resolves the live branch, merges tools into a draft (config is section-based, so
+your prompt is never touched), publishes, waits for the security scan, and makes
+the revision live.
 
 Usage
 -----
@@ -31,7 +25,7 @@ Usage
 
     tools = AgentTools(api_key="sk_...")           # or SMALLEST_API_KEY env var
 
-    # add a transfer-to-human tool (merges, keeps prompt + other tools)
+    # add a transfer-to-human tool and make it live (merges, keeps prompt + other tools)
     tools.add_transfer_call(
         "AGENT_ID",
         number="+15551234567",
@@ -43,12 +37,16 @@ Usage
     for t in tools.get_tools("AGENT_ID"):
         print(t.type, t.name)
     tools.remove_tool("AGENT_ID", "transfer_call")
+
+    # stage without going live (leaves a published revision you activate later)
+    tools.add_transfer_call("AGENT_ID", number="+1555...", make_live=False)
 """
 
 from __future__ import annotations
 
 import logging
 import os
+import time
 from typing import Any, Dict, List, Optional, Union
 
 import requests
@@ -64,11 +62,12 @@ ToolInput = Union[Tool, Dict[str, Any]]
 
 
 class AgentToolsError(Exception):
-    """An agent could not be configured for tools (missing workflowId, wrong type, ...)."""
+    """An agent could not be configured for tools (no branch, publish failed, ...)."""
 
 
 class AgentTools:
-    """Read-modify-write tool configuration for single-prompt agents.
+    """Read-modify-write tool configuration for single-prompt agents, via the
+    branch/revision versioning flow.
 
     Can be used standalone::
 
@@ -85,69 +84,84 @@ class AgentTools:
         base_url: Optional[str] = None,
         *,
         request_timeout: float = 30.0,
+        publish_timeout: float = 120.0,
+        poll_interval: float = 3.0,
     ):
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY", "")
         self.base_url = (base_url or os.environ.get("SMALLEST_BASE_URL", DEFAULT_BASE_URL)).rstrip("/")
         self.request_timeout = request_timeout
+        self.publish_timeout = publish_timeout
+        self.poll_interval = poll_interval
 
     # ------------------------------------------------------------------ transport
     def _headers(self) -> Dict[str, str]:
         return {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
 
-    def _unwrap(self, body: Any) -> Any:
-        # Atoms wraps successful reads as {"status": true, "data": {...}}.
-        if isinstance(body, dict) and "data" in body:
-            return body["data"]
-        return body
-
     def _raise_for_status(self, resp: "requests.Response", method: str, path: str) -> None:
         if resp.status_code < 400:
             return
-        # Surface the API's error body — a bare HTTPError hides why the write failed.
         try:
             detail = resp.json()
         except ValueError:
             detail = (resp.text or "")[:300]
         raise AgentToolsError(f"{method} {path} -> HTTP {resp.status_code}: {detail}")
 
+    def _unwrap(self, body: Any) -> Any:
+        if isinstance(body, dict) and "data" in body:
+            return body["data"]
+        return body
+
     def _get(self, path: str) -> Any:
         resp = requests.get(f"{self.base_url}/{path}", headers=self._headers(), timeout=self.request_timeout)
         self._raise_for_status(resp, "GET", path)
         return self._unwrap(resp.json())
 
-    def _patch(self, path: str, json_body: Dict[str, Any]) -> Any:
-        resp = requests.patch(
+    def _put(self, path: str, json_body: Dict[str, Any]) -> Any:
+        resp = requests.put(
             f"{self.base_url}/{path}", headers=self._headers(), json=json_body, timeout=self.request_timeout
         )
-        self._raise_for_status(resp, "PATCH", path)
-        return resp.json()
+        self._raise_for_status(resp, "PUT", path)
+        return self._unwrap(resp.json())
 
-    # ------------------------------------------------------------- config resolution
-    def _agent_doc(self, agent_id: str) -> Dict[str, Any]:
-        doc = self._get(f"agent/{agent_id}")
-        if not isinstance(doc, dict):
-            raise AgentToolsError(f"unexpected agent document for {agent_id!r}: {type(doc).__name__}")
-        return doc
+    def _post(self, path: str, json_body: Dict[str, Any]) -> "requests.Response":
+        resp = requests.post(
+            f"{self.base_url}/{path}", headers=self._headers(), json=json_body, timeout=self.request_timeout
+        )
+        self._raise_for_status(resp, "POST", path)
+        return resp
 
-    def _workflow_id(self, agent_id: str) -> str:
-        doc = self._agent_doc(agent_id)
-        workflow_id = doc.get("workflowId") or doc.get("workflow_id")
-        if not workflow_id:
-            raise AgentToolsError(
-                f"agent {agent_id!r} has no workflowId; cannot configure tools on it"
-            )
-        workflow_type = doc.get("workflowType") or doc.get("workflow_type") or "single_prompt"
-        if workflow_type != "single_prompt":
-            raise AgentToolsError(
-                f"agent {agent_id!r} is workflow_type={workflow_type!r}; AgentTools only "
-                "configures single_prompt agents. For workflow_graph agents, tools live on "
-                "the graph's transfer_call / api_call nodes."
-            )
-        return workflow_id
+    # ------------------------------------------------------------- branch resolution
+    def _live_branch(self, agent_id: str) -> Dict[str, Any]:
+        data = self._get(f"agent/{agent_id}/branches")
+        entries = (data or {}).get("branches") or []
+        if not entries:
+            raise AgentToolsError(f"agent {agent_id!r} has no branches; cannot configure tools")
+        for entry in entries:
+            if entry.get("isLive"):
+                return entry["branch"]
+        for entry in entries:
+            if (entry.get("branch") or {}).get("isDefault"):
+                return entry["branch"]
+        return entries[0]["branch"]
 
-    def _workflow_config(self, agent_id: str) -> Dict[str, Any]:
-        cfg = self._get(f"agent/{agent_id}/workflow")
-        return cfg if isinstance(cfg, dict) else {}
+    def _branch_by_id(self, agent_id: str, branch_id: str) -> Dict[str, Any]:
+        data = self._get(f"agent/{agent_id}/branches")
+        for entry in (data or {}).get("branches") or []:
+            branch = entry.get("branch") or {}
+            if branch.get("_id") == branch_id:
+                return branch
+        raise AgentToolsError(f"branch {branch_id!r} not found on agent {agent_id!r}")
+
+    def _resolved_config(self, agent_id: str, branch: Dict[str, Any]) -> Dict[str, Any]:
+        head = branch.get("headRevisionId")
+        if not head:
+            return {}
+        rev = self._get(f"agent/{agent_id}/branches/{branch['_id']}/revisions/{head}")
+        return (rev or {}).get("resolvedConfig", {}) or {}
+
+    @staticmethod
+    def _tools_from_config(resolved_config: Dict[str, Any]) -> List[Dict[str, Any]]:
+        return list((resolved_config.get("workflow_tools") or {}).get("tools") or [])
 
     # ------------------------------------------------------------------ serialization
     @staticmethod
@@ -158,28 +172,53 @@ class AgentTools:
             wire = dict(tool)
         else:
             raise AgentToolsError(f"tool must be a Tool or dict, got {type(tool).__name__}")
-        # Fern's exclude_none does NOT drop fields that were explicitly set to None
-        # (e.g. Tool(transfer_only_if_human=None)), and the API rejects nulls on
-        # optional fields ("Expected boolean, received null"). Strip them here.
+        # Fern's exclude_none does NOT drop fields explicitly set to None, and the
+        # API rejects nulls on optional fields ("Expected boolean, received null").
         return {k: v for k, v in wire.items() if v is not None}
 
     @staticmethod
     def _tool_name(tool_dict: Dict[str, Any]) -> Optional[str]:
         return tool_dict.get("name")
 
+    # ------------------------------------------------------------------ publish flow
+    def _publish_and_wait(self, agent_id: str, branch_id: str, label: str) -> str:
+        """Publish the open draft and wait for the security scan to commit a new
+        revision. Returns the new head revision id."""
+        source_head = self._branch_by_id(agent_id, branch_id).get("headRevisionId")
+        resp = self._post(
+            f"agent/{agent_id}/branches/{branch_id}/draft/publish", {"label": label}
+        )
+        body = resp.json() if resp.content else {}
+        state = ((body or {}).get("data") or {}).get("state")
+        # 200 {state: "committed"} = synchronous; 202 {state: "scanning"} = async scan.
+        if resp.status_code == 200 and state == "committed":
+            return self._branch_by_id(agent_id, branch_id).get("headRevisionId")
+
+        deadline = time.time() + self.publish_timeout
+        while time.time() < deadline:
+            branch = self._branch_by_id(agent_id, branch_id)
+            head = branch.get("headRevisionId")
+            if head and head != source_head:
+                rev = self._get(f"agent/{agent_id}/branches/{branch_id}/revisions/{head}")
+                status = ((rev or {}).get("revision") or {}).get("status")
+                if status in ("committed", "published"):
+                    return head
+            time.sleep(self.poll_interval)
+        raise AgentToolsError(
+            f"publish for agent {agent_id!r} did not commit within {self.publish_timeout:.0f}s "
+            "(security scan may still be running or may have failed)"
+        )
+
     # ------------------------------------------------------------------ public API
     def get_tools(self, agent_id: str) -> List[Tool]:
-        """Return the agent's current tools as typed :class:`Tool` models.
-
-        Unknown/forward-compat tool shapes are returned as raw dicts rather than
-        dropped, so nothing is silently lost.
-        """
-        raw = self._workflow_config(agent_id).get("tools") or []
+        """Return the agent's current live tools as typed :class:`Tool` models."""
+        branch = self._live_branch(agent_id)
+        raw = self._tools_from_config(self._resolved_config(agent_id, branch))
         out: List[Tool] = []
         for entry in raw:
             try:
                 out.append(Tool(**entry))
-            except Exception:  # tolerate shapes the current models don't know about
+            except Exception:
                 out.append(entry)  # type: ignore[arg-type]
         return out
 
@@ -189,49 +228,57 @@ class AgentTools:
         tools: List[ToolInput],
         *,
         replace: bool = False,
+        make_live: bool = True,
+        label: str = "SDK tool update",
     ) -> List[Dict[str, Any]]:
-        """Write ``tools`` to the agent.
+        """Write ``tools`` through the branch flow (draft -> publish -> make-live).
 
-        Default is a merge keyed by tool ``name`` (incoming tools overwrite an
-        existing tool of the same name; other existing tools and the prompt are
-        preserved). ``replace=True`` overwrites the whole tool list.
+        Default merges by tool ``name`` (incoming overwrite same-named tools; other
+        tools and the prompt are preserved - config is section-based). ``replace=True``
+        overwrites the whole tool list. ``make_live=False`` publishes a revision but
+        does not activate it.
 
         Returns the tool list (wire dicts) that was written.
         """
-        workflow_id = self._workflow_id(agent_id)
-        cfg = self._workflow_config(agent_id)
-        prompt = cfg.get("prompt") or ""
+        branch = self._live_branch(agent_id)
+        branch_id = branch["_id"]
         incoming = [self._to_wire(t) for t in tools]
 
         if replace:
             merged = incoming
         else:
             by_name: Dict[Optional[str], Dict[str, Any]] = {}
-            for existing in cfg.get("tools") or []:
+            for existing in self._tools_from_config(self._resolved_config(agent_id, branch)):
                 by_name[self._tool_name(existing)] = existing
             for tool in incoming:
                 by_name[self._tool_name(tool)] = tool
             merged = list(by_name.values())
 
         logger.info(
-            "AgentTools.set_tools agent=%s workflow=%s tools=%s replace=%s",
-            agent_id,
-            workflow_id,
-            [self._tool_name(t) for t in merged],
-            replace,
+            "AgentTools.set_tools agent=%s branch=%s tools=%s replace=%s make_live=%s",
+            agent_id, branch_id, [self._tool_name(t) for t in merged], replace, make_live,
         )
-        self._patch(
-            f"workflow/{workflow_id}",
-            {"type": "single_prompt", "singlePromptConfig": {"prompt": prompt, "tools": merged}},
+        self._put(
+            f"agent/{agent_id}/branches/{branch_id}/draft",
+            {"singlePromptConfig": {"tools": merged}},
         )
-        logger.info("AgentTools.set_tools OK agent=%s wrote %d tool(s)", agent_id, len(merged))
+        self._publish_and_wait(agent_id, branch_id, label)
+        logger.info("AgentTools.set_tools published agent=%s", agent_id)
+        if make_live:
+            self._post(f"agent/{agent_id}/branches/{branch_id}/live", {})
+            logger.info("AgentTools.set_tools made live agent=%s (%d tool(s))", agent_id, len(merged))
         return merged
 
-    def remove_tool(self, agent_id: str, name: str) -> List[Dict[str, Any]]:
+    def remove_tool(self, agent_id: str, name: str, *, make_live: bool = True) -> List[Dict[str, Any]]:
         """Remove the tool with the given ``name`` (no-op if absent)."""
-        kept = [t for t in (self._workflow_config(agent_id).get("tools") or []) if self._tool_name(t) != name]
+        branch = self._live_branch(agent_id)
+        kept = [
+            t
+            for t in self._tools_from_config(self._resolved_config(agent_id, branch))
+            if self._tool_name(t) != name
+        ]
         logger.info("AgentTools.remove_tool agent=%s name=%s", agent_id, name)
-        return self.set_tools(agent_id, kept, replace=True)  # type: ignore[arg-type]
+        return self.set_tools(agent_id, kept, replace=True, make_live=make_live, label=f"remove {name}")  # type: ignore[arg-type]
 
     def add_transfer_call(
         self,
@@ -244,6 +291,7 @@ class AgentTools:
         on_hold_music: Optional[str] = None,
         transfer_only_if_human: Optional[bool] = None,
         enabled: bool = True,
+        make_live: bool = True,
         **extra: Any,
     ) -> Tool:
         """Add a ``transfer_call`` tool that forwards the call to ``number``.
@@ -253,20 +301,19 @@ class AgentTools:
         number : str
             E.164 destination, e.g. ``"+15551234567"``.
         transfer_type : str
-            ``"cold_transfer"`` (hang up on connect) or ``"warm_transfer"``.
+            ``"cold_transfer"`` (blind) or ``"warm_transfer"``.
         on_hold_music : str, optional
             Audio played to the caller while the transfer bridges, so the line is
             not silent. One of ``"ringtone"``, ``"relaxing_sound"``,
             ``"uplifting_beats"``, ``"none"``.
         transfer_only_if_human : bool, optional
             Only transfer if a human (not voicemail) answers the destination.
+        make_live : bool
+            Publish and activate immediately (default). ``False`` stages it.
 
         The tool is merged into the agent's existing tools; the prompt and other
         tools are preserved. Returns the :class:`Tool` that was written.
         """
-        # Only pass optionals that have a value — the API rejects explicit nulls,
-        # and tool descriptions are restricted to a limited charset (no '+', so the
-        # default cannot embed the E.164 number).
         kwargs: Dict[str, Any] = dict(
             type="transfer_call",
             name=name,
@@ -282,5 +329,5 @@ class AgentTools:
             kwargs["transfer_only_if_human"] = transfer_only_if_human
         kwargs.update(extra)
         tool = Tool(**kwargs)
-        self.set_tools(agent_id, [tool])
+        self.set_tools(agent_id, [tool], make_live=make_live, label="add transfer_call")
         return tool

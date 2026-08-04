@@ -3,12 +3,13 @@
 Configure agent tools (transfer_call, end_call, ...) from code.
 
 * **`atoms.helpers.AgentTools`**: new helper to read and write a single-prompt
-  agent's tools by agentId. It read-modify-writes, so the prompt and existing
-  tools are never wiped, and it targets the deployed write path (the versioned
-  drafts API is not reachable on the public host yet). `add_transfer_call(...)`
-  configures a transfer, including `on_hold_music` so the caller hears audio while
-  the transfer bridges instead of silence. Optional-None fields are stripped from
-  the payload (the API rejects nulls), and API error bodies are surfaced on failure.
+  agent's tools by agentId, through the branch/revision versioning flow
+  (draft -> publish -> make-live) so the change actually takes effect on live
+  calls. Config is section-based, so the prompt and other tools are preserved
+  (never wiped). `add_transfer_call(...)` configures a transfer, including
+  `on_hold_music` so the caller hears audio while the transfer bridges instead of
+  silence; `make_live=False` stages a revision without activating it. Optional-None
+  fields are stripped (the API rejects nulls), and API error bodies are surfaced.
 * Re-exported `Tool`, `SinglePromptConfig`, and `ToolTransferOption` from
   `smallestai.atoms.helpers` (they are not exported from `atoms.types`).
 * **crew**: `SDKAgentTransferConversationEvent.on_hold_music` is now optional
