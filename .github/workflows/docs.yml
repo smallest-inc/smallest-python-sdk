@@ -29,6 +29,12 @@ jobs:
           python-version: "3.11"
       - name: Install docs deps
         run: pip install -e . mkdocs-material "mkdocstrings[python]"
+      # Enable + configure Pages from the workflow itself so the deploy step
+      # doesn't 404 with "Ensure GitHub Pages has been enabled" if the repo's
+      # Pages state gets reset. Idempotent.
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: Build
         run: mkdocs build
       - uses: actions/upload-pages-artifact@v3
