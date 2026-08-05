@@ -1,3 +1,12 @@
+## 5.4.2 - 2026-08-05
+
+* **observability**: every request now sends `X-Source: smallest-python-sdk` so
+  SDK-originated traffic is attributable in the backend, alongside other clients.
+* **observability**: `X-Fern-SDK-Version` now reports the installed package
+  version instead of a hardcoded `0.0.0`, making version adoption trackable.
+* **fix**: `import smallestai; smallestai.__version__` no longer raises. The
+  version lookup used the wrong distribution name (`smallest-ai` vs `smallestai`).
+
 ## 5.4.1 - 2026-08-04
 
 * **crew**: stop generating after a handoff. Once a node emits a transfer or
