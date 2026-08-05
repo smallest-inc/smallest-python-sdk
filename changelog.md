@@ -6,6 +6,14 @@
   version instead of a hardcoded `0.0.0`, making version adoption trackable.
 * **fix**: `import smallestai; smallestai.__version__` no longer raises. The
   version lookup used the wrong distribution name (`smallest-ai` vs `smallestai`).
+* **cli**: new `waves` commands — `tts`, `stt`, `voices`, `clones`.
+* **cli**: new `campaigns` commands — `list`, `get`, `create`, `pause`,
+  `resume`, `delete` — and `phone-numbers` commands — `list`, `search`, `rent`,
+  `release`, `import-sip`. Billable/destructive actions prompt unless `--yes`.
+* **fix**: `SMALLEST_BASE_URL` no longer crashes the CLI. The custom-endpoint
+  path omitted the now-required `payment` url when building the environment.
+* **docs**: corrected the text-to-speech method names in the reference
+  (`synthesize_tts` / `tts.connect`, not the non-existent `text_to_speech`).
 
 ## 5.4.1 - 2026-08-04
 
