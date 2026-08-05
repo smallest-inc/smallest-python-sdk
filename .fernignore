@@ -8,6 +8,11 @@ src/smallestai/atoms/crew/**
 src/smallestai/atoms/helpers/**
 src/smallestai/cli/**
 
+# Observability customizations (source attribution + real SDK version header;
+# correct dist-name lookup for __version__). See header comments in each file.
+src/smallestai/core/client_wrapper.py
+src/smallestai/version.py
+
 # Customer-added files (generator never produces these)
 src/smallestai/waves/stream_tts.py
 src/smallestai/waves/types/sample_rate.py
