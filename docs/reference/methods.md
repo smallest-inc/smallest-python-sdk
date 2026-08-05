@@ -53,7 +53,9 @@ Branch/revision model (v2). The v1 `agent_versioning_drafts` /
 
 | Do this | Call |
 |---|---|
-| Text to speech | `waves.text_to_speech.*` |
+| Text to speech (file) | `waves.synthesize_tts(...)` / `waves.synthesize_lightning(...)` |
+| Text to speech (SSE) | `waves.synthesize_sse_tts(...)` |
+| Text to speech (stream) | `waves.tts.connect(...)` |
 | Speech to text (file) | `waves.speech_to_text.transcribe(...)` |
 | Speech to text (stream) | `waves.speech_to_text.stream(...)` |
 | Voice cloning | `waves.create_voice_clone(...)` / `list_voice_clones()` |
