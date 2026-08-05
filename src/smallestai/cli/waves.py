@@ -23,18 +23,27 @@ def _data(resp):
     return getattr(resp, "data", resp)
 
 
+def _items(data, key):
+    """Pull a list off a response payload: either `data.<key>` or `data` itself
+    when the payload is already a list."""
+    return getattr(data, key, None) or (data if isinstance(data, list) else [])
+
+
 def initialise_waves_app(auth_client: AuthClient):
     waves_app = typer.Typer(name="waves", help="Text-to-speech, speech-to-text, and voices.")
 
     @waves_app.command("voices")
     def voices(
-        model: str = typer.Option("lightning-v3.1", "--model", help="Voice model"),
+        # NB: the get-voices endpoint uses the hyphen form (lightning-v3.1); the
+        # tts endpoint uses the underscore form (lightning_v3.1). They are
+        # distinct API enums, not a typo — each command defaults to its own.
+        model: str = typer.Option("lightning-v3.1", "--model", help="Voice model (get-voices form, e.g. lightning-v3.1)"),
         as_json: bool = typer.Option(False, "--json", help="Emit raw JSON"),
     ):
         """List available voices for a model."""
         resp = make_client(auth_client).waves.get_voices(model=model)
         data = _data(resp)
-        items = getattr(data, "voices", None) or (data if isinstance(data, list) else [])
+        items = _items(data, "voices")
         if as_json:
             console.print_json(resp.json() if hasattr(resp, "json") else _json.dumps(items, default=str))
             return
@@ -59,7 +68,7 @@ def initialise_waves_app(auth_client: AuthClient):
         """List your cloned voices."""
         resp = make_client(auth_client).waves.list_voice_clones()
         data = _data(resp)
-        items = getattr(data, "voices", None) or (data if isinstance(data, list) else [])
+        items = _items(data, "voices")
         if as_json:
             console.print_json(resp.json() if hasattr(resp, "json") else _json.dumps(items, default=str))
             return
@@ -77,7 +86,7 @@ def initialise_waves_app(auth_client: AuthClient):
         text: str = typer.Argument(..., help="Text to synthesize"),
         voice_id: str = typer.Option(..., "--voice-id", help="Voice id (see `waves voices`)"),
         out: str = typer.Option("out.wav", "--out", "-o", help="Output audio file"),
-        model: str = typer.Option("lightning_v3.1", "--model", help="TTS model"),
+        model: str = typer.Option("lightning_v3.1", "--model", help="TTS model (tts form, e.g. lightning_v3.1 / lightning_v3.1_pro)"),
         output_format: str = typer.Option(
             "wav", "--format", help="Audio format: wav | mp3 | pcm | ulaw | alaw"
         ),
