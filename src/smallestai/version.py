@@ -7,5 +7,8 @@ from importlib import metadata
 
 try:
     __version__ = metadata.version("smallestai")
-except metadata.PackageNotFoundError:  # not installed (running from a source checkout)
-    __version__ = "0.0.0"
+except metadata.PackageNotFoundError:
+    # Running from a source checkout (not pip-installed). Use a distinct sentinel
+    # rather than "0.0.0" so the backend can tell checkout traffic apart from a
+    # real install in the X-Fern-SDK-Version dimension.
+    __version__ = "0.0.0-dev"
