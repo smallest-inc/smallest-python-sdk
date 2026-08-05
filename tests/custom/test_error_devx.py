@@ -33,6 +33,19 @@ class ErrorDevxTest(unittest.TestCase):
     def test_plan_limit_400_also_specializes(self):
         self.assertIsInstance(BadRequestError(body=_LIMIT_BODY), PlanNotEntitledError)
 
+    def test_product_specific_wordings_specialize(self):
+        # Variants from constants/error-messages.ts with different phrasing.
+        for msg in (
+            "Phone numbers are not available in your current plan. Please upgrade.",
+            "Maximum phone numbers reached. Please upgrade your plan for more numbers.",
+            "Workflow editor is not available in your current plan. Please upgrade your account to access this feature.",
+        ):
+            self.assertIsInstance(
+                BadRequestError(body={"status": False, "errors": [msg]}),
+                PlanNotEntitledError,
+                msg,
+            )
+
     def test_generic_400_stays_bad_request(self):
         err = BadRequestError(body={"status": False, "errors": ["voiceId is required"]})
         self.assertIsInstance(err, BadRequestError)

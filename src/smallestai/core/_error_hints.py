@@ -11,14 +11,6 @@ HTTP 400 body `{ "status": false, "errors": ["… please upgrade to a higher pla
 import typing
 
 # Substrings that identify a plan/entitlement-gated 400 (feature not on plan, or
-# a plan limit hit). Both platform message families contain "upgrade to a higher
-# plan"; the two lead-ins add resilience to small wording changes.
-_PLAN_GATE_MARKERS = (
-    "upgrade to a higher plan",
-    "no access to",
-    "reached the maximum",
-)
-
 # Identifies an org allow-list gate (HTTP 403) — not plan-upgradeable by the user
 # (e.g. GPT 5.2, conversational-flow agents).
 _ORG_GATE_MARKER = "not available for your organization"
@@ -45,9 +37,17 @@ def _body_text(body: typing.Any) -> str:
 
 
 def looks_plan_gated(body: typing.Any) -> bool:
-    """Best-effort: does this 400 body look like a plan/entitlement gate?"""
+    """Does this 400 body look like a plan/entitlement gate?
+
+    Every plan-gating message the platform returns pairs "upgrade" with "plan"
+    — the feature-access family ("Your plan has no access to X, please upgrade to
+    a higher plan"), the limit family ("… reached the maximum … for your plan,
+    please upgrade …"), and the product-specific ones ("… not available in your
+    current plan. Please upgrade."). A generic 400 (validation, bad input) won't
+    contain both words, so this stays specific. Verified against atoms
+    main-backend (access.middleware.ts + constants/error-messages.ts)."""
     text = _body_text(body).lower()
-    return bool(text) and any(m in text for m in _PLAN_GATE_MARKERS)
+    return "upgrade" in text and "plan" in text
 
 
 def _looks_org_gated(body: typing.Any) -> bool:
