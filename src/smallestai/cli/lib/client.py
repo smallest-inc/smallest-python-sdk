@@ -36,6 +36,8 @@ def make_client(auth_client: AuthClient):
 
         base = base.rstrip("/")
         ws = base.replace("https://", "wss://").replace("http://", "ws://")
-        env = SmallestAIEnvironment(atoms=f"{base}/atoms/v1", waves=base, waves_ws=ws)
+        env = SmallestAIEnvironment(
+            atoms=f"{base}/atoms/v1", waves=base, waves_ws=ws, payment=base
+        )
         return SmallestAI(api_key=key, environment=env)
     return SmallestAI(api_key=key)
