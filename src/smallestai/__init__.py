@@ -6,9 +6,10 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from . import atoms, waves
+    from . import atoms, errors, waves
     from ._default_clients import DefaultAioHttpClient, DefaultAsyncHttpxClient
     from .atoms.client import AsyncAtomsClient, AtomsClient
+    from .atoms.errors.forbidden_error import PlanNotEntitledError
     from .client import AsyncSmallestAI, SmallestAI
     from .environment import SmallestAIEnvironment
     from .version import __version__
@@ -20,11 +21,13 @@ _dynamic_imports: typing.Dict[str, str] = {
     "AtomsClient": ".atoms.client",
     "DefaultAioHttpClient": "._default_clients",
     "DefaultAsyncHttpxClient": "._default_clients",
+    "PlanNotEntitledError": ".atoms.errors.forbidden_error",
     "SmallestAI": ".client",
     "SmallestAIEnvironment": ".environment",
     "WavesClient": ".waves.client",
     "__version__": ".version",
     "atoms": ".atoms",
+    "errors": ".errors",
     "waves": ".waves",
 }
 
@@ -57,10 +60,12 @@ __all__ = [
     "AtomsClient",
     "DefaultAioHttpClient",
     "DefaultAsyncHttpxClient",
+    "PlanNotEntitledError",
     "SmallestAI",
     "SmallestAIEnvironment",
     "WavesClient",
     "__version__",
     "atoms",
+    "errors",
     "waves",
 ]
