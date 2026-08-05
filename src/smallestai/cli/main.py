@@ -7,6 +7,8 @@ from smallestai.cli.agent_crew import initialise_agent_crew_app
 from smallestai.cli.agents import initialise_agents_app
 from smallestai.cli.auth import initialise_auth_app
 from smallestai.cli.calls import initialise_calls_app
+from smallestai.cli.campaigns import initialise_campaigns_app
+from smallestai.cli.phone_numbers import initialise_phone_numbers_app
 from smallestai.cli.lib.atoms import AtomsAPIClient
 from smallestai.cli.lib.auth import AuthClient
 from smallestai.cli.lib.project_config import ProjectConfig
@@ -30,6 +32,12 @@ app.add_typer(agents_app, name="agents")
 
 calls_app = initialise_calls_app(auth_client)
 app.add_typer(calls_app, name="calls")
+
+campaigns_app = initialise_campaigns_app(auth_client)
+app.add_typer(campaigns_app, name="campaigns")
+
+phone_numbers_app = initialise_phone_numbers_app(auth_client)
+app.add_typer(phone_numbers_app, name="phone-numbers")
 
 
 def main():
