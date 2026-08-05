@@ -1,3 +1,20 @@
+## 5.5.0 - 2026-08-05
+
+DevX pass (backward-compatible).
+
+* **errors**: a plan/entitlement-gated request (HTTP 400, "…please upgrade to a
+  higher plan…") is now raised as `PlanNotEntitledError` — a subclass of
+  `BadRequestError`, so `except BadRequestError` still catches it. Import it from
+  `smallestai` or the new `smallestai.errors` module.
+* **errors**: error messages now carry an actionable hint — 401 points to
+  `SMALLEST_API_KEY`, a plan-gated 400 points to upgrading, an org-gated 403
+  points to your account team.
+* **waves**: new TTS convenience helpers — `synthesize_to_file`,
+  `synthesize_bytes` (and `synthesize_with_expiry`) over `client.waves`.
+* **waves**: Enterprise content-expiry opt-in — pass `expire_content=True` to the
+  TTS helpers to send `x-expire-content`, or use `synthesize_with_expiry` to also
+  read the `x-content-expiry` outcome.
+
 ## 5.4.2 - 2026-08-05
 
 * **observability**: every request now sends `X-Source: smallest-python-sdk` so
