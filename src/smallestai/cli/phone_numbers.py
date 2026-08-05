@@ -21,6 +21,21 @@ def _data(resp):
     return getattr(resp, "data", resp)
 
 
+def _items(data, key):
+    """Pull a list off a response payload: either `data.<key>` or `data` itself
+    when the payload is already a list."""
+    return getattr(data, key, None) or (data if isinstance(data, list) else [])
+
+
+def _attr_get(obj, key):
+    """Read a field whether the SDK returned a model object or a plain dict."""
+    if obj is None:
+        return None
+    if isinstance(obj, dict):
+        return obj.get(key)
+    return getattr(obj, key, None)
+
+
 def initialise_phone_numbers_app(auth_client: AuthClient):
     app = typer.Typer(name="phone-numbers", help="List, search, rent, release, and import numbers.")
 
@@ -31,21 +46,19 @@ def initialise_phone_numbers_app(auth_client: AuthClient):
         """List your phone numbers."""
         resp = make_client(auth_client).atoms.phone_numbers.list()
         data = _data(resp)
-        items = getattr(data, "phone_numbers", None) or (data if isinstance(data, list) else [])
+        items = _items(data, "phone_numbers")
         if as_json:
             console.print_json(resp.json() if hasattr(resp, "json") else _json.dumps(items, default=str))
             return
         table = Table("ID", "Number", "Provider", "Active", "Agent", title=f"Phone numbers ({len(items)})")
         for x in items:
-            attrs = getattr(x, "attributes", None)
-            number = getattr(attrs, "phone_number", None) if attrs else None
-            provider = getattr(attrs, "provider", None) if attrs else None
+            attrs = _attr_get(x, "attributes")
             table.add_row(
-                str(getattr(x, "id", None) or getattr(x, "product_id", None) or "—"),
-                str(number or "—"),
-                str(provider or "—"),
-                "yes" if getattr(x, "is_active", None) else "no",
-                str(getattr(x, "agent_id", None) or "—"),
+                str(_attr_get(x, "id") or _attr_get(x, "product_id") or "—"),
+                str(_attr_get(attrs, "phone_number") or "—"),
+                str(_attr_get(attrs, "provider") or "—"),
+                "yes" if _attr_get(x, "is_active") else "no",
+                str(_attr_get(x, "agent_id") or "—"),
             )
         console.print(table)
 
@@ -62,7 +75,7 @@ def initialise_phone_numbers_app(auth_client: AuthClient):
             kw["area_code"] = area_code
         resp = make_client(auth_client).atoms.phone_numbers.search_rentable(**kw)
         data = _data(resp)
-        items = getattr(data, "phone_numbers", None) or (data if isinstance(data, list) else [])
+        items = _items(data, "phone_numbers")
         if as_json:
             console.print_json(resp.json() if hasattr(resp, "json") else _json.dumps(items, default=str))
             return

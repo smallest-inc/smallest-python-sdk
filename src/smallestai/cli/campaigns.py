@@ -91,7 +91,15 @@ def initialise_campaigns_app(auth_client: AuthClient):
         if phone_number_ids:
             kw["phone_number_ids"] = [s.strip() for s in phone_number_ids.split(",") if s.strip()]
         if scheduled_at:
-            kw["scheduled_at"] = datetime.fromisoformat(scheduled_at)
+            try:
+                kw["scheduled_at"] = datetime.fromisoformat(scheduled_at)
+            except ValueError:
+                typer.echo(
+                    f"Invalid --scheduled-at {scheduled_at!r}: expected ISO 8601, "
+                    "e.g. 2026-08-10T15:30:00",
+                    err=True,
+                )
+                raise typer.Exit(2)
         if max_retries is not None:
             kw["max_retries"] = max_retries
         if retry_delay is not None:
