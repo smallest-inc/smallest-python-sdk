@@ -13,6 +13,12 @@ src/smallestai/cli/**
 src/smallestai/core/client_wrapper.py
 src/smallestai/version.py
 
+# DevX: actionable error messages + PlanNotEntitledError specialization.
+src/smallestai/core/api_error.py
+src/smallestai/core/_error_hints.py
+src/smallestai/atoms/errors/bad_request_error.py
+src/smallestai/errors.py
+
 # Customer-added files (generator never produces these)
 src/smallestai/waves/stream_tts.py
 src/smallestai/waves/types/sample_rate.py
