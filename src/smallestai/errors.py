@@ -8,9 +8,9 @@ Every SDK error subclasses ``ApiError`` (exposes ``.status_code``, ``.body``,
 distinctly while ``except ForbiddenError`` still catches it.
 """
 
-from smallestai.atoms.errors.bad_request_error import BadRequestError
+from smallestai.atoms.errors.bad_request_error import BadRequestError, PlanNotEntitledError
 from smallestai.atoms.errors.conflict_error import ConflictError
-from smallestai.atoms.errors.forbidden_error import ForbiddenError, PlanNotEntitledError
+from smallestai.atoms.errors.forbidden_error import ForbiddenError
 from smallestai.atoms.errors.not_found_error import NotFoundError
 from smallestai.atoms.errors.too_many_requests_error import TooManyRequestsError
 from smallestai.atoms.errors.unauthorized_error import UnauthorizedError

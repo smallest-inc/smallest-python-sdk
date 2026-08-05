@@ -9,7 +9,7 @@ if typing.TYPE_CHECKING:
     from . import atoms, errors, waves
     from ._default_clients import DefaultAioHttpClient, DefaultAsyncHttpxClient
     from .atoms.client import AsyncAtomsClient, AtomsClient
-    from .atoms.errors.forbidden_error import PlanNotEntitledError
+    from .atoms.errors.bad_request_error import PlanNotEntitledError
     from .client import AsyncSmallestAI, SmallestAI
     from .environment import SmallestAIEnvironment
     from .version import __version__
@@ -21,7 +21,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "AtomsClient": ".atoms.client",
     "DefaultAioHttpClient": "._default_clients",
     "DefaultAsyncHttpxClient": "._default_clients",
-    "PlanNotEntitledError": ".atoms.errors.forbidden_error",
+    "PlanNotEntitledError": ".atoms.errors.bad_request_error",
     "SmallestAI": ".client",
     "SmallestAIEnvironment": ".environment",
     "WavesClient": ".waves.client",
