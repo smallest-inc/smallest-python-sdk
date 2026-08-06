@@ -1,3 +1,13 @@
+## 5.8.0 - 2026-08-07
+
+* **tools**: new `smallestai.tools` framework for prebuilt, pluggable crew tools. Each tool
+  wraps a third-party capability with a `@function_tool`-decorated `run`, so it drops
+  straight into a crew's `ToolRegistry` (`tool.register(self.tool_registry)`) and is also
+  callable directly. Third-party libraries are optional extras, lazy-imported with a clear
+  "install the extra" error. Discover with `list_tools()` / `get_tool(name)`.
+* **tools**: first integration `ExaSearchTool` (web search). Reads `EXA_API_KEY`; install
+  with `pip install "smallestai[exa]"`.
+
 ## 5.5.0 - 2026-08-05
 
 DevX pass (backward-compatible).
