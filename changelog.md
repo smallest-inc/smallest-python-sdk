@@ -1,3 +1,12 @@
+## 5.6.0 - 2026-08-06
+
+* **integrations**: optional framework adapters. `from smallestai.integrations.pipecat
+  import SmallestSTTService` and `from smallestai.integrations.livekit import TTS` now
+  re-export the framework-native Smallest AI plugins from the SDK namespace. The core
+  package does not depend on pipecat or livekit; install the extra you need
+  (`pip install "smallestai[pipecat]"` / `"smallestai[livekit]"`). Adapters lazy-import
+  their framework and raise a clear "install the extra" error otherwise.
+
 ## 5.5.0 - 2026-08-05
 
 DevX pass (backward-compatible).
