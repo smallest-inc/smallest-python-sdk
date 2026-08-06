@@ -1,13 +1,13 @@
 from .conftest import get_client, verify_request_count
 
-from smallestai.atoms.webhooks import CreateWebhooksRequestEventsItem
+from smallestai.agents.webhooks import CreateWebhooksRequestEventsItem
 
 
 def test_atoms_webhooks_get_webhooks() -> None:
     """Test getWebhooks endpoint with WireMock"""
     test_id = "atoms.webhooks.get_webhooks.0"
     client = get_client(test_id)
-    client.atoms.webhooks.get_webhooks()
+    client.agents.webhooks.get_webhooks()
     verify_request_count(test_id, "GET", "/webhook", None, 1)
 
 
@@ -15,7 +15,7 @@ def test_atoms_webhooks_create() -> None:
     """Test create endpoint with WireMock"""
     test_id = "atoms.webhooks.create.0"
     client = get_client(test_id)
-    client.atoms.webhooks.create(
+    client.agents.webhooks.create(
         endpoint="https://example.com/webhook",
         description="Webhook for conversation events",
         events=[
@@ -32,7 +32,7 @@ def test_atoms_webhooks_delete() -> None:
     """Test delete endpoint with WireMock"""
     test_id = "atoms.webhooks.delete.0"
     client = get_client(test_id)
-    client.atoms.webhooks.delete(
+    client.agents.webhooks.delete(
         id="id",
     )
     verify_request_count(test_id, "DELETE", "/webhook/id", None, 1)
@@ -42,7 +42,7 @@ def test_atoms_webhooks_update() -> None:
     """Test update endpoint with WireMock"""
     test_id = "atoms.webhooks.update.0"
     client = get_client(test_id)
-    client.atoms.webhooks.update(
+    client.agents.webhooks.update(
         id="id",
     )
     verify_request_count(test_id, "PATCH", "/webhook/id", None, 1)
@@ -52,7 +52,7 @@ def test_atoms_webhooks_get_webhook_subscriptions_for_an_agent() -> None:
     """Test getWebhookSubscriptionsForAnAgent endpoint with WireMock"""
     test_id = "atoms.webhooks.get_webhook_subscriptions_for_an_agent.0"
     client = get_client(test_id)
-    client.atoms.webhooks.get_webhook_subscriptions_for_an_agent(
+    client.agents.webhooks.get_webhook_subscriptions_for_an_agent(
         agent_id="agentId",
     )
     verify_request_count(test_id, "GET", "/agent/agentId/webhook-subscriptions", None, 1)
@@ -62,7 +62,7 @@ def test_atoms_webhooks_replace_webhook_subscriptions_for_an_agent() -> None:
     """Test replaceWebhookSubscriptionsForAnAgent endpoint with WireMock"""
     test_id = "atoms.webhooks.replace_webhook_subscriptions_for_an_agent.0"
     client = get_client(test_id)
-    client.atoms.webhooks.replace_webhook_subscriptions_for_an_agent(
+    client.agents.webhooks.replace_webhook_subscriptions_for_an_agent(
         agent_id="agentId",
         event_types=["pre-conversation"],
         webhook_id="60d0fe4f5311236168a109ca",
@@ -74,7 +74,7 @@ def test_atoms_webhooks_delete_webhook_subscriptions_for_an_agent() -> None:
     """Test deleteWebhookSubscriptionsForAnAgent endpoint with WireMock"""
     test_id = "atoms.webhooks.delete_webhook_subscriptions_for_an_agent.0"
     client = get_client(test_id)
-    client.atoms.webhooks.delete_webhook_subscriptions_for_an_agent(
+    client.agents.webhooks.delete_webhook_subscriptions_for_an_agent(
         agent_id="agentId",
     )
     verify_request_count(test_id, "DELETE", "/agent/agentId/webhook-subscriptions", None, 1)

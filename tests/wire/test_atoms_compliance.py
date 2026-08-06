@@ -5,7 +5,7 @@ def test_atoms_compliance_get_compliance_status() -> None:
     """Test getComplianceStatus endpoint with WireMock"""
     test_id = "atoms.compliance.get_compliance_status.0"
     client = get_client(test_id)
-    client.atoms.compliance.get_compliance_status(
+    client.agents.compliance.get_compliance_status(
         country_iso="IN",
         number_type="local",
         user_type="individual",
@@ -19,7 +19,7 @@ def test_atoms_compliance_get_compliance_requirements() -> None:
     """Test getComplianceRequirements endpoint with WireMock"""
     test_id = "atoms.compliance.get_compliance_requirements.0"
     client = get_client(test_id)
-    client.atoms.compliance.get_compliance_requirements(
+    client.agents.compliance.get_compliance_requirements(
         country_iso="IN",
         number_type="local",
         user_type="individual",
@@ -37,7 +37,7 @@ def test_atoms_compliance_submit() -> None:
     """Test submit endpoint with WireMock"""
     test_id = "atoms.compliance.submit.0"
     client = get_client(test_id)
-    client.atoms.compliance.submit(
+    client.agents.compliance.submit(
         files=["example_files"],
         country_iso="countryIso",
         number_type="local",
@@ -52,7 +52,7 @@ def test_atoms_compliance_resubmit() -> None:
     """Test resubmit endpoint with WireMock"""
     test_id = "atoms.compliance.resubmit.0"
     client = get_client(test_id)
-    client.atoms.compliance.resubmit(
+    client.agents.compliance.resubmit(
         id="id",
         files=["example_files"],
         documents="documents",
@@ -64,7 +64,7 @@ def test_atoms_compliance_refresh_compliance_application_status() -> None:
     """Test refreshComplianceApplicationStatus endpoint with WireMock"""
     test_id = "atoms.compliance.refresh_compliance_application_status.0"
     client = get_client(test_id)
-    client.atoms.compliance.refresh_compliance_application_status(
+    client.agents.compliance.refresh_compliance_application_status(
         id="id",
     )
     verify_request_count(test_id, "POST", "/compliance/applications/id/refresh", None, 1)

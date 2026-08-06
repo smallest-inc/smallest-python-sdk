@@ -31,7 +31,7 @@ H = {"Authorization": f"Bearer {KEY}", "Content-Type": "application/json"}
 
 _ok = 0
 _fail = 0
-_failed = []
+_failed: list = []
 
 
 def call(method, path, **kw):

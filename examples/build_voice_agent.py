@@ -21,8 +21,8 @@ import os
 import time
 
 from smallestai import SmallestAI
+from smallestai.agents.helpers import as_page
 from smallestai.environment import SmallestAIEnvironment
-from smallestai.atoms.helpers import as_page
 
 
 def _id_of(obj):
@@ -50,10 +50,10 @@ def main() -> None:
     created_ids = []
 
     print("1. whoami")
-    print("   ", c.atoms.user.get_user_details().data.user_email)
+    print("   ", c.agents.user.get_user_details().data.user_email)
 
     print("2. create agent")
-    agent_id = c.atoms.agents.create_agent(
+    agent_id = c.agents.agents.create_agent(
         name=f"mario-pizza-{int(time.time())}",
         first_message="Hi, thanks for calling Mario's Pizza! What can I get started for you?",
         global_prompt="You are a friendly assistant for Mario's Pizza. Take orders, "
@@ -63,14 +63,14 @@ def main() -> None:
     print("    agent id:", agent_id)
 
     print("3. read it back")
-    agent = c.atoms.agents.get_agent(id=agent_id).data
+    agent = c.agents.agents.get_agent(id=agent_id).data
     print("    name        :", agent.name)
     print("    firstMessage :", repr(agent.first_message))
 
     print("4. (optional) knowledge base for the menu")
     created_kb = None
     try:
-        kb = c.atoms.knowledge_base.create(
+        kb = c.agents.knowledge_base.create(
             name="mario-menu", description="Pizza menu + prices"
         )
         created_kb = getattr(kb, "data", None)
@@ -79,16 +79,16 @@ def main() -> None:
         print("    KB skipped:", type(e).__name__, str(e)[:80])
 
     print("5. draft a new version from the active one")
-    versions = as_page(c.atoms.agent_versioning_versions.list_published_versions(id=agent_id))
+    versions = as_page(c.agents.agent_versioning_versions.list_published_versions(id=agent_id))
     active = next((v for v in versions.items if getattr(v, "is_active", False)), None) or versions.items[0]
     src_version_id = _id_of(active)
     print("    source version:", src_version_id)
-    draft = c.atoms.agent_versioning_drafts.create_draft(id=agent_id, source_version_id=src_version_id)
+    draft = c.agents.agent_versioning_drafts.create_draft(id=agent_id, source_version_id=src_version_id)
     draft_id = getattr(draft.data, "draft_id", None) or _id_of(draft.data)
     print("    draft id:", draft_id)
 
     print("6. publish the draft with activate=True (go live)")
-    published = c.atoms.agent_versioning_drafts.publish_draft(
+    published = c.agents.agent_versioning_drafts.publish_draft(
         id=agent_id, draft_id=draft_id, label="v2-live", activate=True
     )
     new_version_id = _id_of(published.data)
@@ -98,7 +98,7 @@ def main() -> None:
     live = False
     for i in range(10):
         time.sleep(4)
-        vs = as_page(c.atoms.agent_versioning_versions.list_published_versions(id=agent_id))
+        vs = as_page(c.agents.agent_versioning_versions.list_published_versions(id=agent_id))
         v = next((x for x in vs.items if _id_of(x) == new_version_id), None)
         sc = getattr(v, "security_check", None)
         status = getattr(sc, "status", None) if sc else None
@@ -110,18 +110,18 @@ def main() -> None:
     print("    -> LIVE" if live else "    -> not active yet (security check may still be running)")
 
     print("8. list agents in the org")
-    print("    total:", len(as_page(c.atoms.agents.list_agents()).items))
+    print("    total:", len(as_page(c.agents.agents.list_agents()).items))
 
     print("9. cleanup (archive the demo agent + delete the demo KB)")
     if created_kb:
         try:
-            c.atoms.knowledge_base.delete(id=created_kb)
+            c.agents.knowledge_base.delete(id=created_kb)
             print("    deleted KB:", created_kb)
         except Exception as e:
             print("    KB delete skipped:", type(e).__name__, str(e)[:60])
     for aid in created_ids:
         try:
-            c.atoms.agents.archive_agent(id=aid)
+            c.agents.agents.archive_agent(id=aid)
             print("    archived:", aid)
         except Exception as e:
             print("    archive skipped:", type(e).__name__, str(e)[:60])

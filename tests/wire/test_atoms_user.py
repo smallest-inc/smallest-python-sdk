@@ -5,5 +5,5 @@ def test_atoms_user_get_user_details() -> None:
     """Test getUserDetails endpoint with WireMock"""
     test_id = "atoms.user.get_user_details.0"
     client = get_client(test_id)
-    client.atoms.user.get_user_details()
+    client.agents.user.get_user_details()
     verify_request_count(test_id, "GET", "/user", None, 1)

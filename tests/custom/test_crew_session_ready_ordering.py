@@ -4,8 +4,8 @@ reach the platform before Ready and poison the connect handshake."""
 import unittest
 from unittest import mock
 
-from smallestai.atoms.crew.session import CrewSession
-from smallestai.atoms.crew.nodes import OutputCrewNode
+from smallestai.agents.crew.nodes import OutputCrewNode
+from smallestai.agents.crew.session import CrewSession
 
 
 class _OrderNode(OutputCrewNode):

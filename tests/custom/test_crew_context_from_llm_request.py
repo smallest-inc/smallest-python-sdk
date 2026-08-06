@@ -9,8 +9,8 @@ authoritative message list, so we seed the context from it before generating.
 import unittest
 from unittest import mock
 
-from smallestai.atoms.crew.nodes import OutputCrewNode
-from smallestai.atoms.crew.events import SDKSystemLLMRequestEvent, SDKAgentTranscriptUpdateEvent
+from smallestai.agents.crew.events import SDKAgentTranscriptUpdateEvent, SDKSystemLLMRequestEvent
+from smallestai.agents.crew.nodes import OutputCrewNode
 
 
 class _Agent(OutputCrewNode):

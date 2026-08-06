@@ -12,7 +12,8 @@ report those keys. `__v` (mongo version) and a small noise set are ignored.
     SMALLEST_API_KEY=... [SMALLEST_BASE_URL=...] python tests/velocity/field_drop_audit.py
 """
 from _env import client
-from smallestai.atoms.helpers import as_page
+
+from smallestai.agents.helpers import as_page
 
 _NOISE = {"__v"}  # mongo internals, not real SDK gaps
 
@@ -37,16 +38,16 @@ def extras(model, path):
 
 
 def _first_agent():
-    return c.atoms.agents.get_agent(id=as_page(c.atoms.agents.list_agents()).items[0].id).data
+    return c.agents.agents.get_agent(id=as_page(c.agents.agents.list_agents()).items[0].id).data
 
 
 CHECKS = {
-    "user": lambda: c.atoms.user.get_user_details().data,
+    "user": lambda: c.agents.user.get_user_details().data,
     "agent": _first_agent,
-    "agent_template": lambda: as_page(c.atoms.agent_templates.list_agent_templates()).items[0],
-    "knowledge_base": lambda: as_page(c.atoms.knowledge_base.list()).items[0],
-    "phone_number": lambda: as_page(c.atoms.phone_numbers.list()).items[0],
-    "call": lambda: as_page(c.atoms.calls.list()).items[0],
+    "agent_template": lambda: as_page(c.agents.agent_templates.list_agent_templates()).items[0],
+    "knowledge_base": lambda: as_page(c.agents.knowledge_base.list()).items[0],
+    "phone_number": lambda: as_page(c.agents.phone_numbers.list()).items[0],
+    "call": lambda: as_page(c.agents.calls.list()).items[0],
 }
 
 

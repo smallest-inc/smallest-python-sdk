@@ -1,6 +1,6 @@
 """`smallestai campaigns …` — list, inspect, and control outbound campaigns.
 
-Thin CLI over `client.atoms.campaigns`, matching the style of `smallestai calls`.
+Thin CLI over `client.agents.campaigns`, matching the style of `smallestai calls`.
 """
 
 import json as _json
@@ -41,7 +41,7 @@ def initialise_campaigns_app(auth_client: AuthClient):
             kw["search"] = search
         if page is not None:
             kw["page"] = page
-        resp = make_client(auth_client).atoms.campaigns.list(**kw)
+        resp = make_client(auth_client).agents.campaigns.list(**kw)
         data = _data(resp)
         items = getattr(data, "campaigns", None) or (data if isinstance(data, list) else [])
         if as_json:
@@ -64,7 +64,7 @@ def initialise_campaigns_app(auth_client: AuthClient):
         as_json: bool = typer.Option(False, "--json", help="Emit raw JSON"),
     ):
         """Show one campaign's details."""
-        resp = make_client(auth_client).atoms.campaigns.get(id=campaign_id)
+        resp = make_client(auth_client).agents.campaigns.get(id=campaign_id)
         d = _data(resp)
         if as_json:
             console.print_json(resp.json() if hasattr(resp, "json") else _json.dumps(d, default=str))
@@ -104,19 +104,19 @@ def initialise_campaigns_app(auth_client: AuthClient):
             kw["max_retries"] = max_retries
         if retry_delay is not None:
             kw["retry_delay"] = retry_delay
-        d = _data(make_client(auth_client).atoms.campaigns.create(**kw))
+        d = _data(make_client(auth_client).agents.campaigns.create(**kw))
         console.print(f"[green]Created campaign[/green] {getattr(d, 'id', None) or getattr(d, '_id', d)}")
 
     @campaigns_app.command("pause")
     def pause_campaign(campaign_id: str):
         """Pause a running campaign."""
-        make_client(auth_client).atoms.campaigns.pause(id=campaign_id)
+        make_client(auth_client).agents.campaigns.pause(id=campaign_id)
         console.print(f"[yellow]Paused[/yellow] {campaign_id}")
 
     @campaigns_app.command("resume")
     def resume_campaign(campaign_id: str):
         """Start or resume a campaign."""
-        make_client(auth_client).atoms.campaigns.start_or_resume(id=campaign_id)
+        make_client(auth_client).agents.campaigns.start_or_resume(id=campaign_id)
         console.print(f"[green]Started/resumed[/green] {campaign_id}")
 
     @campaigns_app.command("delete")
@@ -127,7 +127,7 @@ def initialise_campaigns_app(auth_client: AuthClient):
         """Delete a campaign."""
         if not yes:
             typer.confirm(f"Delete campaign {campaign_id}?", abort=True)
-        make_client(auth_client).atoms.campaigns.delete(id=campaign_id)
+        make_client(auth_client).agents.campaigns.delete(id=campaign_id)
         console.print(f"[red]Deleted[/red] {campaign_id}")
 
     return campaigns_app

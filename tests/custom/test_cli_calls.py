@@ -35,7 +35,7 @@ class FakeCalls:
 
 class FakeClient:
     def __init__(self, calls):
-        self.atoms = _obj(calls=calls)
+        self.agents = _obj(calls=calls)
 
 
 @pytest.fixture

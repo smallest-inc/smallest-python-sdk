@@ -5,8 +5,8 @@ must NOT silence the LLM-request -> generate_response path, and existing
 import unittest
 from unittest import mock
 
-from smallestai.atoms.crew.nodes import OutputCrewNode
-from smallestai.atoms.crew.events import SDKSystemLLMRequestEvent
+from smallestai.agents.crew.events import SDKSystemLLMRequestEvent
+from smallestai.agents.crew.nodes import OutputCrewNode
 
 
 class _OnEventAgent(OutputCrewNode):

@@ -1,6 +1,6 @@
 """`smallestai phone-numbers …` — list, search, rent, release, and import numbers.
 
-Thin CLI over `client.atoms.phone_numbers`, matching the style of `smallestai calls`.
+Thin CLI over `client.agents.phone_numbers`, matching the style of `smallestai calls`.
 Rent/release/import are billable/stateful and prompt for confirmation.
 """
 
@@ -44,7 +44,7 @@ def initialise_phone_numbers_app(auth_client: AuthClient):
         as_json: bool = typer.Option(False, "--json", help="Emit raw JSON"),
     ):
         """List your phone numbers."""
-        resp = make_client(auth_client).atoms.phone_numbers.list()
+        resp = make_client(auth_client).agents.phone_numbers.list()
         data = _data(resp)
         items = _items(data, "phone_numbers")
         if as_json:
@@ -73,7 +73,7 @@ def initialise_phone_numbers_app(auth_client: AuthClient):
         kw: typing.Dict[str, typing.Any] = {"country_code": country_code, "provider": provider}
         if area_code:
             kw["area_code"] = area_code
-        resp = make_client(auth_client).atoms.phone_numbers.search_rentable(**kw)
+        resp = make_client(auth_client).agents.phone_numbers.search_rentable(**kw)
         data = _data(resp)
         items = _items(data, "phone_numbers")
         if as_json:
@@ -94,7 +94,7 @@ def initialise_phone_numbers_app(auth_client: AuthClient):
         """Rent a phone number (billable)."""
         if not yes:
             typer.confirm(f"Rent {phone_number} via {provider}? This is billable.", abort=True)
-        d = _data(make_client(auth_client).atoms.phone_numbers.rent(phone_number=phone_number, provider=provider))
+        d = _data(make_client(auth_client).agents.phone_numbers.rent(phone_number=phone_number, provider=provider))
         console.print(f"[green]Rented[/green] {phone_number} ({getattr(d, 'product_id', None) or d})")
 
     @app.command("release")
@@ -105,7 +105,7 @@ def initialise_phone_numbers_app(auth_client: AuthClient):
         """Release a rented number."""
         if not yes:
             typer.confirm(f"Release number {product_id}?", abort=True)
-        make_client(auth_client).atoms.phone_numbers.release(product_id=product_id)
+        make_client(auth_client).agents.phone_numbers.release(product_id=product_id)
         console.print(f"[red]Released[/red] {product_id}")
 
     @app.command("import-sip")
@@ -124,7 +124,7 @@ def initialise_phone_numbers_app(auth_client: AuthClient):
             kw["sip_username"] = sip_username
         if sip_password:
             kw["sip_password"] = sip_password
-        make_client(auth_client).atoms.phone_numbers.import_sip(**kw)
+        make_client(auth_client).agents.phone_numbers.import_sip(**kw)
         console.print(f"[green]Imported SIP number[/green] {phone_number}")
 
     return app

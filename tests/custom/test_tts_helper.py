@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-from smallestai.waves.helpers import (
+from smallestai.speech.helpers import (
     CONTENT_EXPIRY_HEADER,
     DEFAULT_TTS_MODEL,
     EXPIRE_CONTENT_HEADER,
@@ -17,7 +17,7 @@ from smallestai.waves.helpers import (
 
 def _client(chunks):
     c = mock.MagicMock()
-    c.waves.synthesize_tts.return_value = iter(chunks)
+    c.speech.synthesize_tts.return_value = iter(chunks)
     return c
 
 
@@ -37,7 +37,7 @@ class TtsHelperTest(unittest.TestCase):
     def test_defaults_and_kwargs_forwarded(self):
         c = _client([b"x"])
         synthesize_bytes(c, "hi", voice_id="v", speed=1.2)
-        _, kw = c.waves.synthesize_tts.call_args
+        _, kw = c.speech.synthesize_tts.call_args
         self.assertEqual(kw["voice_id"], "v")
         self.assertEqual(kw["model"], DEFAULT_TTS_MODEL)
         self.assertEqual(kw["output_format"], "wav")
@@ -52,7 +52,7 @@ class TtsHelperTest(unittest.TestCase):
             expire_content=True,
             request_options={"additional_headers": {"x-trace": "1"}},
         )
-        _, kw = c.waves.synthesize_tts.call_args
+        _, kw = c.speech.synthesize_tts.call_args
         headers = kw["request_options"]["additional_headers"]
         self.assertEqual(headers[EXPIRE_CONTENT_HEADER], "true")
         self.assertEqual(headers["x-trace"], "1")  # caller header preserved
@@ -60,7 +60,7 @@ class TtsHelperTest(unittest.TestCase):
     def test_no_header_when_expire_content_false(self):
         c = _client([b"x"])
         synthesize_bytes(c, "hi", voice_id="v")
-        _, kw = c.waves.synthesize_tts.call_args
+        _, kw = c.speech.synthesize_tts.call_args
         self.assertNotIn("request_options", kw)
 
     def test_synthesize_with_expiry_returns_outcome(self):
@@ -70,11 +70,11 @@ class TtsHelperTest(unittest.TestCase):
         raw.headers = {CONTENT_EXPIRY_HEADER: "not-entitled"}
         cm = mock.MagicMock()
         cm.__enter__.return_value = raw
-        c.waves.with_raw_response.synthesize_tts.return_value = cm
+        c.speech.with_raw_response.synthesize_tts.return_value = cm
         audio, outcome = synthesize_with_expiry(c, "hi", voice_id="v")
         self.assertEqual(audio, b"abcd")
         self.assertEqual(outcome, "not-entitled")
-        _, kw = c.waves.with_raw_response.synthesize_tts.call_args
+        _, kw = c.speech.with_raw_response.synthesize_tts.call_args
         self.assertEqual(kw["request_options"]["additional_headers"][EXPIRE_CONTENT_HEADER], "true")
 
 

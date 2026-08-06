@@ -8,8 +8,8 @@ while staying a BadRequestError (backward-compatible).
 import unittest
 
 from smallestai import PlanNotEntitledError as PlanNotEntitledFromRoot
-from smallestai.atoms.errors.bad_request_error import BadRequestError, PlanNotEntitledError
-from smallestai.atoms.errors.unauthorized_error import UnauthorizedError
+from smallestai.agents.errors.bad_request_error import BadRequestError, PlanNotEntitledError
+from smallestai.agents.errors.unauthorized_error import UnauthorizedError
 from smallestai.core.api_error import ApiError
 from smallestai.errors import PlanNotEntitledError as PlanNotEntitledFromErrors
 

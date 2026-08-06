@@ -16,12 +16,12 @@ rolled back. Under the branch model, runtime-config edits go through this flow;
 import os
 
 from smallestai import SmallestAI
-from smallestai.atoms.helpers.versioning import Versioning, DraftConflictError
+from smallestai.agents.helpers.versioning import DraftConflictError, Versioning
 
 client = SmallestAI(api_key=os.environ["SMALLEST_API_KEY"])
 
 # 1. CREATE — one call, fully configured, live immediately. No versioning needed.
-agent_id = client.atoms.agents.create_agent(
+agent_id = client.agents.agents.create_agent(
     name="receptionist",
     global_prompt="You are a friendly receptionist. Book appointments and answer questions.",
     first_message="Hi, how can I help?",
@@ -30,7 +30,7 @@ agent_id = client.atoms.agents.create_agent(
 print("agent (live):", agent_id)
 
 # You can place calls right now — the agent is serving the config above.
-# client.atoms.calls.start_an_outbound_call(agent_id=agent_id, to_phone="+15551234567")
+# client.agents.calls.start_an_outbound_call(agent_id=agent_id, to_phone="+15551234567")
 
 # ------------------------------------------------------------------------------
 # 2. EDIT the config later — this is where versioning comes in.

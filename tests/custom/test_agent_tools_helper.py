@@ -12,7 +12,7 @@ import json
 
 import pytest
 
-from smallestai.atoms.helpers import (
+from smallestai.agents.helpers import (
     AgentTools,
     AgentToolsError,
     SinglePromptConfig,
@@ -95,9 +95,9 @@ class FakeBranchTransport:
 def wired(monkeypatch):
     def _make(tools):
         t = FakeBranchTransport(tools)
-        monkeypatch.setattr("smallestai.atoms.helpers.agent_tools.requests.get", t.get)
-        monkeypatch.setattr("smallestai.atoms.helpers.agent_tools.requests.put", t.put)
-        monkeypatch.setattr("smallestai.atoms.helpers.agent_tools.requests.post", t.post)
+        monkeypatch.setattr("smallestai.agents.helpers.agent_tools.requests.get", t.get)
+        monkeypatch.setattr("smallestai.agents.helpers.agent_tools.requests.put", t.put)
+        monkeypatch.setattr("smallestai.agents.helpers.agent_tools.requests.post", t.post)
         return AgentTools(api_key="sk_test", base_url="https://api.example/atoms/v1"), t
 
     return _make
@@ -182,7 +182,7 @@ def test_no_branches_raises(monkeypatch):
     def empty_get(url, headers=None, timeout=None):
         return FakeResponse({"data": {"branches": []}})
 
-    monkeypatch.setattr("smallestai.atoms.helpers.agent_tools.requests.get", empty_get)
+    monkeypatch.setattr("smallestai.agents.helpers.agent_tools.requests.get", empty_get)
     helper = AgentTools(api_key="sk_test", base_url="https://api.example/atoms/v1")
     with pytest.raises(AgentToolsError, match="no branches"):
         helper.add_transfer_call("AG1", number="+1")
@@ -195,8 +195,8 @@ def test_api_error_body_is_surfaced(monkeypatch):
     def bad_put(url, headers=None, json=None, timeout=None):
         return FakeResponse({"status": False, "errors": ["invalid tool"]}, status_code=400)
 
-    monkeypatch.setattr("smallestai.atoms.helpers.agent_tools.requests.get", get)
-    monkeypatch.setattr("smallestai.atoms.helpers.agent_tools.requests.put", bad_put)
+    monkeypatch.setattr("smallestai.agents.helpers.agent_tools.requests.get", get)
+    monkeypatch.setattr("smallestai.agents.helpers.agent_tools.requests.put", bad_put)
     helper = AgentTools(api_key="sk_test", base_url="https://api.example/atoms/v1")
     with pytest.raises(AgentToolsError, match="HTTP 400.*invalid tool"):
         helper.add_transfer_call("AG1", number="+1")

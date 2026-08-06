@@ -4,8 +4,8 @@ poetry.lock
 pyproject.toml
 
 # Customer-owned directories (Track A's fix makes ** patterns work)
-src/smallestai/atoms/crew/**
-src/smallestai/atoms/helpers/**
+src/smallestai/agents/crew/**
+src/smallestai/agents/helpers/**
 src/smallestai/cli/**
 
 # Observability customizations (source attribution + real SDK version header;
@@ -16,19 +16,19 @@ src/smallestai/version.py
 # DevX: actionable error messages + PlanNotEntitledError specialization.
 src/smallestai/core/api_error.py
 src/smallestai/core/_error_hints.py
-src/smallestai/atoms/errors/bad_request_error.py
+src/smallestai/agents/errors/bad_request_error.py
 src/smallestai/errors.py
 
 # Customer-added files (generator never produces these)
-src/smallestai/waves/stream_tts.py
-src/smallestai/waves/types/sample_rate.py
+src/smallestai/speech/stream_tts.py
+src/smallestai/speech/types/sample_rate.py
 
 # Files with non-IR-expressible customizations
 # (shim block in waves/__init__.py lazy-loads the WavesStreamingTTS compat shim).
 # client.py/raw_client.py are now regen-owned: the unified `tts` client streams bytes
 # natively (verified 282KB audio on prod), so the old SampleRate/streaming override is
 # obsolete. Dropped from .fernignore in 5.2.0 so future regens keep them current.
-src/smallestai/waves/__init__.py
+src/smallestai/speech/__init__.py
 
 # (Sub-package __init__ stopgaps removed in 5.2.0: exclude_types_from_init_exports
 #  was flipped to false, so the generator now exports these types natively and the
@@ -58,7 +58,7 @@ RELEASE.md
 # Pre-release verification harness (hand-written)
 scripts/**
 Makefile
-src/smallestai/waves/helpers/**
+src/smallestai/speech/helpers/**
 
 # Hand-written README (do not regenerate)
 README.md

@@ -20,12 +20,11 @@ import os
 import sys
 
 from smallestai import SmallestAI
-from smallestai.environment import SmallestAIEnvironment
-from smallestai.atoms.helpers.versioning import (
-    Versioning,
+from smallestai.agents.helpers.versioning import (
     DraftConflictError,
-    MigrationRequiredError,
+    Versioning,
 )
+from smallestai.environment import SmallestAIEnvironment
 
 KEY = os.environ.get("SMALLEST_API_KEY")
 BASE = os.environ.get("SMALLEST_BASE_URL")
@@ -47,7 +46,7 @@ def make_client() -> SmallestAI:
 
 _ok = 0
 _fail = 0
-_failed = []
+_failed: list = []
 
 
 def check(cond: bool, label: str, detail: str = "") -> None:

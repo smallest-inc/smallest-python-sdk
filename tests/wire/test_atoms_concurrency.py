@@ -1,13 +1,13 @@
 from .conftest import get_client, verify_request_count
 
-from smallestai.atoms.concurrency import UpdateConcurrencyReservationsRequestReservationsItem
+from smallestai.agents.concurrency import UpdateConcurrencyReservationsRequestReservationsItem
 
 
 def test_atoms_concurrency_get_concurrency() -> None:
     """Test getConcurrency endpoint with WireMock"""
     test_id = "atoms.concurrency.get_concurrency.0"
     client = get_client(test_id)
-    client.atoms.concurrency.get_concurrency()
+    client.agents.concurrency.get_concurrency()
     verify_request_count(test_id, "GET", "/concurrency", None, 1)
 
 
@@ -15,7 +15,7 @@ def test_atoms_concurrency_update_concurrency_reservations() -> None:
     """Test updateConcurrencyReservations endpoint with WireMock"""
     test_id = "atoms.concurrency.update_concurrency_reservations.0"
     client = get_client(test_id)
-    client.atoms.concurrency.update_concurrency_reservations(
+    client.agents.concurrency.update_concurrency_reservations(
         reservations=[
             UpdateConcurrencyReservationsRequestReservationsItem(
                 agent_id="agentId",

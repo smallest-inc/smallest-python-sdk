@@ -7,7 +7,7 @@ or the event construction raised a ValidationError. It now defaults to None.
 
 import pytest
 
-from smallestai.atoms.crew.events import SDKAgentTransferConversationEvent, TransferOption
+from smallestai.agents.crew.events import SDKAgentTransferConversationEvent, TransferOption
 
 
 def _transfer_option():

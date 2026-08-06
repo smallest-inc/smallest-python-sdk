@@ -4,10 +4,10 @@ No network: we monkeypatch the `requests` module each helper imports and assert 
 builds the right URL with bearer auth. Guards the helpers the verify harness flagged
 as untested.
 """
-import smallestai.atoms.helpers.audience as audience_mod
-import smallestai.atoms.helpers.campaign as campaign_mod
-import smallestai.atoms.helpers.kb as kb_mod
-from smallestai.atoms.helpers import KB, Audience, Campaign, Page
+import smallestai.agents.helpers.audience as audience_mod
+import smallestai.agents.helpers.campaign as campaign_mod
+import smallestai.agents.helpers.kb as kb_mod
+from smallestai.agents.helpers import KB, Audience, Campaign, Page
 
 
 class _FakeResp:
