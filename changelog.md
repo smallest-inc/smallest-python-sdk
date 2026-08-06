@@ -1,3 +1,12 @@
+## 5.10.0 - 2026-08-07
+
+* **cli**: running bare `smallestai` now shows a banner + command list instead of a
+  "Missing command" error.
+* **cli**: new `smallestai mcp` command to set up or run the Smallest AI MCP server
+  (`@smallest-ai/mcp-server`) for Cursor / Claude and other MCP clients. `smallestai mcp`
+  prints the client config + `claude mcp add` command; `smallestai mcp run` launches it via
+  npx; `smallestai mcp config` prints the mcp.json snippet.
+
 ## 5.5.0 - 2026-08-05
 
 DevX pass (backward-compatible).
