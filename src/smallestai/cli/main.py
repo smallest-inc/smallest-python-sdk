@@ -45,6 +45,14 @@ app.add_typer(phone_numbers_app, name="phone-numbers")
 
 
 def main():
+    import sys
+
+    from smallestai import telemetry
+
+    telemetry.maybe_show_first_run_notice()
+    # Coarse command group only (e.g. "agent-crew", "auth"); never args or their values.
+    command = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else ""
+    telemetry.capture("cli_invoked", {"command": command})
     app()
 
 

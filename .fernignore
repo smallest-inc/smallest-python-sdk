@@ -62,3 +62,6 @@ src/smallestai/waves/helpers/**
 
 # Hand-written README (do not regenerate)
 README.md
+
+# Anonymous opt-out telemetry (hand-written)
+src/smallestai/telemetry.py

@@ -1,3 +1,12 @@
+## 5.9.0 - 2026-08-07
+
+* **telemetry**: anonymous, opt-out usage telemetry (PostHog). Sends lightweight product
+  events (CLI command groups, and deploy/lifecycle events as they are wired in) so we can
+  see what to improve. No personal data or secrets - only the event name, SDK/Python/OS
+  version, and a random anonymous install id; geography is derived server-side. Sent
+  fire-and-forget over httpx (no new dependency), never blocks or raises. Opt out with
+  `SMALLESTAI_TELEMETRY=0` (or `DO_NOT_TRACK=1`); one-time notice on first run. See README.
+
 ## 5.5.0 - 2026-08-05
 
 DevX pass (backward-compatible).
