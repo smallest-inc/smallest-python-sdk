@@ -1,3 +1,17 @@
+## 5.7.0 - 2026-08-07
+
+* **cli**: `smallestai agent-crew init` now prints the crew-vs-platform config ownership
+  boundary, so it's clear up front that a crew owns only the LLM turn and everything else
+  (voice, STT, PII redaction, first message, timeouts) is platform config.
+* **cli**: new `smallestai agent-crew doctor [--agent-id]` command. Inspects an agent for
+  common gotchas: no live crew build, wrong workflow type, PII redaction ON (rewrites the
+  transcript), and `transfer_call` enabled in the dashboard Tools panel (a no-op for crew
+  agents). Prints the ownership tables.
+* **crew**: `SDKSystemUpdateOutputAgentSettingsEvent` is deprecated (emits a
+  `DeprecationWarning`). The platform does not apply crew-sent output-agent settings; a
+  crew cannot override platform-owned config at runtime. It will be removed in a future
+  release.
+
 ## 5.5.0 - 2026-08-05
 
 DevX pass (backward-compatible).
