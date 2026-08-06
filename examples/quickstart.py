@@ -34,20 +34,20 @@ def make_client() -> SmallestAI:
 def main() -> None:
     client = make_client()
 
-    me = client.atoms.user.get_user_details()
+    me = client.agents.user.get_user_details()
     print("authenticated as:", me.data.user_email)
 
-    created = client.atoms.agents.create_agent(
+    created = client.agents.agents.create_agent(
         name="quickstart-demo",
         first_message="Hi! Thanks for calling — how can I help?",
     )
     agent_id = created.data
     print("created agent:", agent_id)
 
-    agent = client.atoms.agents.get_agent(id=agent_id)
+    agent = client.agents.agents.get_agent(id=agent_id)
     print("first_message persisted as:", repr(agent.data.first_message))
 
-    listing = client.atoms.agents.list_agents()
+    listing = client.agents.agents.list_agents()
     agents = getattr(listing.data, "agents", listing.data)
     print("agents in org:", len(agents))
 

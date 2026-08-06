@@ -5,15 +5,15 @@ ApiError bodies (dev's rich `data.conflict` shape, prod's lean `errors` shape, t
 migration flag, and the base-revision case). Live coverage is in
 tests/velocity/v2_versioning_e2e.py.
 """
-from smallestai.atoms.helpers import (
+from smallestai.agents.helpers import (
+    BaseRevisionUnavailableError,
+    DraftConflictError,
+    MigrationRequiredError,
+    SecurityCheckFailedError,
     Versioning,
     VersioningError,
-    MigrationRequiredError,
-    DraftConflictError,
-    BaseRevisionUnavailableError,
-    SecurityCheckFailedError,
 )
-from smallestai.atoms.helpers.versioning import _discriminate_conflict
+from smallestai.agents.helpers.versioning import _discriminate_conflict
 from smallestai.core.api_error import ApiError
 
 
@@ -67,7 +67,7 @@ def test_facade_wires_generated_clients():
         agent_versioning_revisions = revisions
 
     class _Client:
-        atoms = _Atoms()
+        agents = _Atoms()
 
     v = Versioning(_Client())
     assert v.branches is branches

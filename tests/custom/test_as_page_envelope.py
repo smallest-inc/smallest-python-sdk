@@ -4,7 +4,7 @@ Guards the per-resource container-key handling. A missing key makes as_page
 silently return the whole envelope as a single bogus item instead of the rows
 (found in pre-merge review: `retries`, and the dual telephony/custom arrays).
 """
-from smallestai.atoms.helpers import as_page
+from smallestai.agents.helpers import as_page
 
 
 class _Resp:

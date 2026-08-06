@@ -9,15 +9,15 @@ emitted, the node latches and ignores further LLM requests.
 import unittest
 from unittest import mock
 
-from smallestai.atoms.crew.nodes import OutputCrewNode
-from smallestai.atoms.crew.nodes.base import CrewNode
-from smallestai.atoms.crew.events import (
-    SDKSystemLLMRequestEvent,
-    SDKAgentTransferConversationEvent,
+from smallestai.agents.crew.events import (
     SDKAgentEndCallEvent,
+    SDKAgentTransferConversationEvent,
+    SDKSystemLLMRequestEvent,
     TransferOption,
     TransferOptionType,
 )
+from smallestai.agents.crew.nodes import OutputCrewNode
+from smallestai.agents.crew.nodes.base import CrewNode
 
 
 class _Agent(OutputCrewNode):
@@ -66,7 +66,7 @@ class TerminalHandoffGuardTest(unittest.IsolatedAsyncioTestCase):
     async def test_non_terminal_event_does_not_latch(self):
         a = _Agent()
         a._handle_llm_request = mock.AsyncMock()
-        from smallestai.atoms.crew.events import SDKAgentSpeakEvent
+        from smallestai.agents.crew.events import SDKAgentSpeakEvent
         with mock.patch.object(CrewNode, "send_event", new=mock.AsyncMock()):
             await a.send_event(SDKAgentSpeakEvent(text="hello"))
         self.assertFalse(a._handoff_started)

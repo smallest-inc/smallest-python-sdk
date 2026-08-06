@@ -27,9 +27,9 @@ def initialise_agents_app(auth_client: AuthClient):
     @agents_app.command("list")
     def list_agents():
         """List agents in your org."""
-        from smallestai.atoms.helpers import as_page
+        from smallestai.agents.helpers import as_page
 
-        pg = as_page(_client(auth_client).atoms.agents.list_agents())
+        pg = as_page(_client(auth_client).agents.agents.list_agents())
         table = Table("ID", "Name", title=f"Agents ({len(pg.items)})")
         for a in pg.items:
             table.add_row(getattr(a, "id", None) or getattr(a, "_id", "?"), getattr(a, "name", "—"))
@@ -38,7 +38,7 @@ def initialise_agents_app(auth_client: AuthClient):
     @agents_app.command("get")
     def get_agent(agent_id: str):
         """Show one agent's config."""
-        a = _client(auth_client).atoms.agents.get_agent(id=agent_id).data
+        a = _client(auth_client).agents.agents.get_agent(id=agent_id).data
         console.print(f"[bold]{getattr(a, 'name', '—')}[/bold]  [dim]{agent_id}[/dim]")
         console.print(f"  first message : {getattr(a, 'first_message', None)!r}")
         console.print(f"  language      : {getattr(a, 'language', None)}")
@@ -52,7 +52,7 @@ def initialise_agents_app(auth_client: AuthClient):
     @agents_app.command("phone-status")
     def phone_status(agent_id: str):
         """Show whether a phone number is configured for the agent."""
-        a = _client(auth_client).atoms.agents.get_agent(id=agent_id).data
+        a = _client(auth_client).agents.agents.get_agent(id=agent_id).data
         number = getattr(a, "phone_number", None)
         if number:
             console.print(f"[green]Phone configured:[/green] {number}")
@@ -78,7 +78,7 @@ def initialise_agents_app(auth_client: AuthClient):
             kw["description"] = description
         if allow_inbound:
             kw["allow_inbound_call"] = True
-        agent_id = _client(auth_client).atoms.agents.create_agent(**kw).data
+        agent_id = _client(auth_client).agents.agents.create_agent(**kw).data
         console.print(f"[green]Created agent[/green] {agent_id}")
         console.print(f"  dashboard: {DASHBOARD}/{agent_id}")
 
@@ -92,7 +92,7 @@ def initialise_agents_app(auth_client: AuthClient):
         kw = {"agent_id": agent_id, "phone_number": to}
         if from_product_id:
             kw["from_product_id"] = from_product_id
-        r = _client(auth_client).atoms.calls.start_outbound_call(**kw)
+        r = _client(auth_client).agents.calls.start_outbound_call(**kw)
         console.print(f"[green]Call started:[/green] {getattr(r, 'data', r)}")
 
     return agents_app

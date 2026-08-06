@@ -22,7 +22,7 @@ Run:
 import os
 
 from smallestai import SmallestAI
-from smallestai.atoms.helpers import AgentTools
+from smallestai.agents.helpers import AgentTools
 
 
 def main() -> None:
@@ -31,7 +31,7 @@ def main() -> None:
 
     # 1. A single-prompt agent. Its prompt should tell the LLM WHEN to transfer,
     #    otherwise the tool never fires.
-    agent_id = client.atoms.agents.create_agent(
+    agent_id = client.agents.agents.create_agent(
         name="Front desk (transfer demo)",
         workflow_type="single_prompt",
         first_message="Hi, thanks for calling. How can I help?",

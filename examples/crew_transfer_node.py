@@ -19,12 +19,12 @@ requirements.txt pinning smallestai>=5.4.0 plus your LLM client):
 """
 import os
 
-from smallestai.atoms.crew.nodes import OutputCrewNode
-from smallestai.atoms.crew.events import (
+from smallestai.agents.crew.events import (
     SDKAgentTransferConversationEvent,
     TransferOption,
     TransferOptionType,
 )
+from smallestai.agents.crew.nodes import OutputCrewNode
 
 # Bring your own OpenAI-compatible client + tool registry. This example assumes a
 # client exposing `.chat(messages=..., stream=True, tools=...)` and a registry that

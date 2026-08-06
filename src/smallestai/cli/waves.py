@@ -41,7 +41,7 @@ def initialise_waves_app(auth_client: AuthClient):
         as_json: bool = typer.Option(False, "--json", help="Emit raw JSON"),
     ):
         """List available voices for a model."""
-        resp = make_client(auth_client).waves.get_voices(model=model)
+        resp = make_client(auth_client).speech.get_voices(model=model)
         data = _data(resp)
         items = _items(data, "voices")
         if as_json:
@@ -66,7 +66,7 @@ def initialise_waves_app(auth_client: AuthClient):
         as_json: bool = typer.Option(False, "--json", help="Emit raw JSON"),
     ):
         """List your cloned voices."""
-        resp = make_client(auth_client).waves.list_voice_clones()
+        resp = make_client(auth_client).speech.list_voice_clones()
         data = _data(resp)
         items = _items(data, "voices")
         if as_json:
@@ -106,7 +106,7 @@ def initialise_waves_app(auth_client: AuthClient):
             kw["speed"] = speed
         written = 0
         with open(out, "wb") as fh:
-            for chunk in make_client(auth_client).waves.synthesize_tts(**kw):
+            for chunk in make_client(auth_client).speech.synthesize_tts(**kw):
                 fh.write(chunk)
                 written += len(chunk)
         console.print(f"[green]Wrote {written} bytes to {out}[/green]")
@@ -125,7 +125,7 @@ def initialise_waves_app(auth_client: AuthClient):
         kw: typing.Dict[str, typing.Any] = {"model": model, "language": language, "request": audio}
         if diarize:
             kw["diarize"] = True
-        resp = make_client(auth_client).waves.speech_to_text.transcribe(**kw)
+        resp = make_client(auth_client).speech.speech_to_text.transcribe(**kw)
         if as_json:
             console.print_json(resp.json() if hasattr(resp, "json") else _json.dumps(resp, default=str))
             return

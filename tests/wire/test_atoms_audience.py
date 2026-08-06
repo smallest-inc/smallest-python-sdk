@@ -5,7 +5,7 @@ def test_atoms_audience_list_() -> None:
     """Test list endpoint with WireMock"""
     test_id = "atoms.audience.list_.0"
     client = get_client(test_id)
-    client.atoms.audience.list()
+    client.agents.audience.list()
     verify_request_count(test_id, "GET", "/audience", None, 1)
 
 
@@ -13,7 +13,7 @@ def test_atoms_audience_create_audience_with_csv_upload() -> None:
     """Test createAudienceWithCsvUpload endpoint with WireMock"""
     test_id = "atoms.audience.create_audience_with_csv_upload.0"
     client = get_client(test_id)
-    client.atoms.audience.create_audience_with_csv_upload(
+    client.agents.audience.create_audience_with_csv_upload(
         file="example_file",
         name="name",
         phone_number_column_name="phoneNumberColumnName",
@@ -25,7 +25,7 @@ def test_atoms_audience_get() -> None:
     """Test get endpoint with WireMock"""
     test_id = "atoms.audience.get.0"
     client = get_client(test_id)
-    client.atoms.audience.get(
+    client.agents.audience.get(
         id="60d0fe4f5311236168a109ca",
     )
     verify_request_count(test_id, "GET", "/audience/60d0fe4f5311236168a109ca", None, 1)
@@ -35,7 +35,7 @@ def test_atoms_audience_delete_audience() -> None:
     """Test deleteAudience endpoint with WireMock"""
     test_id = "atoms.audience.delete_audience.0"
     client = get_client(test_id)
-    client.atoms.audience.delete_audience(
+    client.agents.audience.delete_audience(
         id="60d0fe4f5311236168a109ca",
     )
     verify_request_count(test_id, "DELETE", "/audience/60d0fe4f5311236168a109ca", None, 1)
@@ -45,7 +45,7 @@ def test_atoms_audience_get_audience_members() -> None:
     """Test getAudienceMembers endpoint with WireMock"""
     test_id = "atoms.audience.get_audience_members.0"
     client = get_client(test_id)
-    client.atoms.audience.get_audience_members(
+    client.agents.audience.get_audience_members(
         id="60d0fe4f5311236168a109ca",
         page=1,
         offset=10,
@@ -57,7 +57,7 @@ def test_atoms_audience_add_audience_members() -> None:
     """Test addAudienceMembers endpoint with WireMock"""
     test_id = "atoms.audience.add_audience_members.0"
     client = get_client(test_id)
-    client.atoms.audience.add_audience_members(
+    client.agents.audience.add_audience_members(
         id="60d0fe4f5311236168a109ca",
         members=[{"phoneNumber": "+1234567890", "name": "John Doe", "email": "john@example.com"}],
     )
@@ -68,7 +68,7 @@ def test_atoms_audience_delete_audience_members() -> None:
     """Test deleteAudienceMembers endpoint with WireMock"""
     test_id = "atoms.audience.delete_audience_members.0"
     client = get_client(test_id)
-    client.atoms.audience.delete_audience_members(
+    client.agents.audience.delete_audience_members(
         id="60d0fe4f5311236168a109ca",
         member_ids=["60d0fe4f5311236168a109cd"],
     )
@@ -79,7 +79,7 @@ def test_atoms_audience_search_audience_members() -> None:
     """Test searchAudienceMembers endpoint with WireMock"""
     test_id = "atoms.audience.search_audience_members.0"
     client = get_client(test_id)
-    client.atoms.audience.search_audience_members(
+    client.agents.audience.search_audience_members(
         id="60d0fe4f5311236168a109ca",
         query="john",
     )

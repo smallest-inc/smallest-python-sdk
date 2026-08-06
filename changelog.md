@@ -1,3 +1,21 @@
+## 6.0.0 - 2026-08-06
+
+Namespace rename to industry-standard names. The wire API is unchanged; this is
+an **SDK-surface** rename with soft backward-compat.
+
+* **BREAKING (soft): `atoms` → `agents`, `waves` → `speech`.** The client
+  surfaces are now `client.agents.*` and `client.speech.*`; the top-level
+  subpackages are `smallestai.agents` and `smallestai.speech`.
+* **back-compat**: the old names keep working as deprecated aliases and emit a
+  `DeprecationWarning`. This covers the client attributes (`client.atoms`,
+  `client.waves`), attribute access (`smallestai.atoms`), and deep imports
+  (`from smallestai.waves.helpers import synthesize_to_file`). Deprecated aliases
+  are removed in the next major. See `MIGRATION.md`.
+* **tooling**: `ruff` lint/format applied across the tree (imports sorted, unused
+  imports removed). A `uv` build-system migration is planned separately.
+* **unchanged**: observability headers (`X-Source`, `X-Fern-SDK-Version`), auth,
+  error types (`PlanNotEntitledError` etc.), and every method signature.
+
 ## 5.5.0 - 2026-08-05
 
 DevX pass (backward-compatible).

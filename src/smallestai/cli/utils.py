@@ -3,9 +3,8 @@ import fnmatch
 import io
 import zipfile
 from pathlib import Path
-from typing import List, Set
+from typing import Set
 
-from loguru import logger
 from rich.console import Console
 
 console = Console()

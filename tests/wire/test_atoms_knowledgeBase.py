@@ -5,7 +5,7 @@ def test_atoms_knowledgeBase_list_() -> None:
     """Test list endpoint with WireMock"""
     test_id = "atoms.knowledge_base.list_.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.list()
+    client.agents.knowledge_base.list()
     verify_request_count(test_id, "GET", "/knowledgebase", None, 1)
 
 
@@ -13,7 +13,7 @@ def test_atoms_knowledgeBase_create() -> None:
     """Test create endpoint with WireMock"""
     test_id = "atoms.knowledge_base.create.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.create(
+    client.agents.knowledge_base.create(
         name="name",
     )
     verify_request_count(test_id, "POST", "/knowledgebase", None, 1)
@@ -23,7 +23,7 @@ def test_atoms_knowledgeBase_get() -> None:
     """Test get endpoint with WireMock"""
     test_id = "atoms.knowledge_base.get.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.get(
+    client.agents.knowledge_base.get(
         id="id",
     )
     verify_request_count(test_id, "GET", "/knowledgebase/id", None, 1)
@@ -33,7 +33,7 @@ def test_atoms_knowledgeBase_update_a_knowledge_base_name_description() -> None:
     """Test updateAKnowledgeBaseNameDescription endpoint with WireMock"""
     test_id = "atoms.knowledge_base.update_a_knowledge_base_name_description.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.update_a_knowledge_base_name_description(
+    client.agents.knowledge_base.update_a_knowledge_base_name_description(
         id="id",
         name="Q4 Pricing Updates",
     )
@@ -44,7 +44,7 @@ def test_atoms_knowledgeBase_delete() -> None:
     """Test delete endpoint with WireMock"""
     test_id = "atoms.knowledge_base.delete.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.delete(
+    client.agents.knowledge_base.delete(
         id="id",
     )
     verify_request_count(test_id, "DELETE", "/knowledgebase/id", None, 1)
@@ -54,7 +54,7 @@ def test_atoms_knowledgeBase_get_all_knowledge_base_items() -> None:
     """Test getAllKnowledgeBaseItems endpoint with WireMock"""
     test_id = "atoms.knowledge_base.get_all_knowledge_base_items.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.get_all_knowledge_base_items(
+    client.agents.knowledge_base.get_all_knowledge_base_items(
         id="id",
     )
     verify_request_count(test_id, "GET", "/knowledgebase/id/items", None, 1)
@@ -64,7 +64,7 @@ def test_atoms_knowledgeBase_delete_a_knowledge_base_item() -> None:
     """Test deleteAKnowledgeBaseItem endpoint with WireMock"""
     test_id = "atoms.knowledge_base.delete_a_knowledge_base_item.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.delete_a_knowledge_base_item(
+    client.agents.knowledge_base.delete_a_knowledge_base_item(
         knowledge_base_id="knowledgeBaseId",
         knowledge_base_item_id="knowledgeBaseItemId",
     )
@@ -75,7 +75,7 @@ def test_atoms_knowledgeBase_upload_a_pdf_file_to_a_knowledge_base() -> None:
     """Test uploadAPdfFileToAKnowledgeBase endpoint with WireMock"""
     test_id = "atoms.knowledge_base.upload_a_pdf_file_to_a_knowledge_base.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.upload_a_pdf_file_to_a_knowledge_base(
+    client.agents.knowledge_base.upload_a_pdf_file_to_a_knowledge_base(
         id="id",
         media="example_media",
     )
@@ -86,7 +86,7 @@ def test_atoms_knowledgeBase_get_a_presigned_s3url_for_direct_file_upload() -> N
     """Test getAPresignedS3UrlForDirectFileUpload endpoint with WireMock"""
     test_id = "atoms.knowledge_base.get_a_presigned_s3url_for_direct_file_upload.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.get_a_presigned_s3url_for_direct_file_upload(
+    client.agents.knowledge_base.get_a_presigned_s3url_for_direct_file_upload(
         file_name="company-handbook.pdf",
         file_size=2457600,
         content_type="application/pdf",
@@ -99,7 +99,7 @@ def test_atoms_knowledgeBase_complete_a_presigned_url_upload_and_start_processin
     """Test completeAPresignedUrlUploadAndStartProcessing endpoint with WireMock"""
     test_id = "atoms.knowledge_base.complete_a_presigned_url_upload_and_start_processing.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.complete_a_presigned_url_upload_and_start_processing(
+    client.agents.knowledge_base.complete_a_presigned_url_upload_and_start_processing(
         file_name="company-handbook.pdf",
         content_type="application/pdf",
         knowledge_base_id="6867ca76d0f8f2e0f4201281",
@@ -113,7 +113,7 @@ def test_atoms_knowledgeBase_extract_sitemap_urls() -> None:
     """Test extract_sitemap_urls endpoint with WireMock"""
     test_id = "atoms.knowledge_base.extract_sitemap_urls.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.extract_sitemap_urls(
+    client.agents.knowledge_base.extract_sitemap_urls(
         site_url="https://example.com/sitemap.xml",
         knowledge_base_id="6867ca76d0f8f2e0f4201281",
     )
@@ -124,7 +124,7 @@ def test_atoms_knowledgeBase_scrape_urls() -> None:
     """Test scrape_urls endpoint with WireMock"""
     test_id = "atoms.knowledge_base.scrape_urls.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.scrape_urls(
+    client.agents.knowledge_base.scrape_urls(
         id="id",
         urls=["https://example.com/pricing", "https://example.com/faq"],
     )
@@ -135,7 +135,7 @@ def test_atoms_knowledgeBase_list_scraped_ur_ls_in_a_knowledge_base_their_status
     """Test listScrapedUrLsInAKnowledgeBaseTheirStatus endpoint with WireMock"""
     test_id = "atoms.knowledge_base.list_scraped_ur_ls_in_a_knowledge_base_their_status.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.list_scraped_ur_ls_in_a_knowledge_base_their_status(
+    client.agents.knowledge_base.list_scraped_ur_ls_in_a_knowledge_base_their_status(
         id="id",
     )
     verify_request_count(test_id, "GET", "/knowledgebase/id/scraped-urls", None, 1)
@@ -145,7 +145,7 @@ def test_atoms_knowledgeBase_delete_a_scraped_url_from_a_knowledge_base() -> Non
     """Test deleteAScrapedUrlFromAKnowledgeBase endpoint with WireMock"""
     test_id = "atoms.knowledge_base.delete_a_scraped_url_from_a_knowledge_base.0"
     client = get_client(test_id)
-    client.atoms.knowledge_base.delete_a_scraped_url_from_a_knowledge_base(
+    client.agents.knowledge_base.delete_a_scraped_url_from_a_knowledge_base(
         knowledge_base_id="knowledgeBaseId",
         knowledge_base_scraped_urls_id="knowledgeBaseScrapedUrlsId",
     )

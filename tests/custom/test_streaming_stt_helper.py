@@ -1,10 +1,10 @@
 """Unit tests for the typed streaming-STT helper (waves.helpers.stream_speech_to_text).
 
 Logic-only: a fake client captures the request_options passed to
-client.waves.speech_to_text.stream(...). No network, no real SDK STT surface needed.
+client.speech.speech_to_text.stream(...). No network, no real SDK STT surface needed.
 """
 
-from smallestai.waves.helpers.streaming_stt import (
+from smallestai.speech.helpers.streaming_stt import (
     build_stt_stream_query,
     stream_speech_to_text,
 )
@@ -22,7 +22,7 @@ class _FakeStreamNamespace:
 class _FakeClient:
     def __init__(self):
         stt = _FakeStreamNamespace()
-        self.waves = type("_W", (), {"speech_to_text": stt})()
+        self.speech = type("_W", (), {"speech_to_text": stt})()
         self._stt = stt
 
 

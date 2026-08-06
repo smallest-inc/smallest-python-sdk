@@ -5,7 +5,7 @@ def test_atoms_agentVersioningDrafts_list_active_drafts() -> None:
     """Test listActiveDrafts endpoint with WireMock"""
     test_id = "atoms.agent_versioning_drafts.list_active_drafts.0"
     client = get_client(test_id)
-    client.atoms.agent_versioning_drafts.list_active_drafts(
+    client.agents.agent_versioning_drafts.list_active_drafts(
         id="id",
     )
     verify_request_count(test_id, "GET", "/agent/id/drafts", None, 1)
@@ -15,7 +15,7 @@ def test_atoms_agentVersioningDrafts_create_draft() -> None:
     """Test create_draft endpoint with WireMock"""
     test_id = "atoms.agent_versioning_drafts.create_draft.0"
     client = get_client(test_id)
-    client.atoms.agent_versioning_drafts.create_draft(
+    client.agents.agent_versioning_drafts.create_draft(
         id="id",
     )
     verify_request_count(test_id, "POST", "/agent/id/drafts", None, 1)
@@ -25,7 +25,7 @@ def test_atoms_agentVersioningDrafts_get_draft_detail() -> None:
     """Test getDraftDetail endpoint with WireMock"""
     test_id = "atoms.agent_versioning_drafts.get_draft_detail.0"
     client = get_client(test_id)
-    client.atoms.agent_versioning_drafts.get_draft_detail(
+    client.agents.agent_versioning_drafts.get_draft_detail(
         id="id",
         draft_id="draftId",
     )
@@ -36,7 +36,7 @@ def test_atoms_agentVersioningDrafts_discard_draft() -> None:
     """Test discard_draft endpoint with WireMock"""
     test_id = "atoms.agent_versioning_drafts.discard_draft.0"
     client = get_client(test_id)
-    client.atoms.agent_versioning_drafts.discard_draft(
+    client.agents.agent_versioning_drafts.discard_draft(
         id="id",
         draft_id="draftId",
     )
@@ -47,7 +47,7 @@ def test_atoms_agentVersioningDrafts_rename_draft() -> None:
     """Test rename_draft endpoint with WireMock"""
     test_id = "atoms.agent_versioning_drafts.rename_draft.0"
     client = get_client(test_id)
-    client.atoms.agent_versioning_drafts.rename_draft(
+    client.agents.agent_versioning_drafts.rename_draft(
         id="id",
         draft_id="draftId",
         draft_name="draftName",
@@ -59,7 +59,7 @@ def test_atoms_agentVersioningDrafts_get_draft_diff() -> None:
     """Test getDraftDiff endpoint with WireMock"""
     test_id = "atoms.agent_versioning_drafts.get_draft_diff.0"
     client = get_client(test_id)
-    client.atoms.agent_versioning_drafts.get_draft_diff(
+    client.agents.agent_versioning_drafts.get_draft_diff(
         id="id",
         draft_id="draftId",
     )
@@ -70,7 +70,7 @@ def test_atoms_agentVersioningDrafts_publish_draft() -> None:
     """Test publish_draft endpoint with WireMock"""
     test_id = "atoms.agent_versioning_drafts.publish_draft.0"
     client = get_client(test_id)
-    client.atoms.agent_versioning_drafts.publish_draft(
+    client.agents.agent_versioning_drafts.publish_draft(
         id="id",
         draft_id="draftId",
     )
@@ -81,7 +81,7 @@ def test_atoms_agentVersioningDrafts_test_call_with_draft_config() -> None:
     """Test testCallWithDraftConfig endpoint with WireMock"""
     test_id = "atoms.agent_versioning_drafts.test_call_with_draft_config.0"
     client = get_client(test_id)
-    client.atoms.agent_versioning_drafts.test_call_with_draft_config(
+    client.agents.agent_versioning_drafts.test_call_with_draft_config(
         id="id",
         draft_id="draftId",
     )
@@ -92,7 +92,7 @@ def test_atoms_agentVersioningDrafts_update_draft_config() -> None:
     """Test update_draft_config endpoint with WireMock"""
     test_id = "atoms.agent_versioning_drafts.update_draft_config.0"
     client = get_client(test_id)
-    client.atoms.agent_versioning_drafts.update_draft_config(
+    client.agents.agent_versioning_drafts.update_draft_config(
         id="id",
         draft_id="draftId",
     )

@@ -5,7 +5,7 @@ dynamic = ["version"]
 
 [tool.poetry]
 name = "smallestai"
-version = "5.5.0"
+version = "6.0.0"
 description = ""
 readme = "README.md"
 authors = []
@@ -80,7 +80,7 @@ markers = [
 
 [tool.mypy]
 plugins = ["pydantic.mypy"]
-exclude = ["examples/crew_transfer_node.py", "src/smallestai/atoms/crew", "src/smallestai/atoms/helpers", "src/smallestai/cli", "src/smallestai/waves/text_to_speech/client.py", "src/smallestai/waves/text_to_speech/raw_client.py", "src/smallestai/waves/stream_tts.py"]
+exclude = ["examples/crew_transfer_node.py", "src/smallestai/agents/crew", "src/smallestai/agents/helpers", "src/smallestai/cli", "src/smallestai/speech/text_to_speech/client.py", "src/smallestai/speech/text_to_speech/raw_client.py", "src/smallestai/speech/stream_tts.py", "src/smallestai/core/pydantic_utilities.py", "src/smallestai/core/unchecked_base_model.py"]
 
 [tool.ruff]
 line-length = 120

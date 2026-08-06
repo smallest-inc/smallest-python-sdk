@@ -28,8 +28,8 @@ WIRE = ROOT / "tests" / "wire"
 CUSTOM = ROOT / "tests" / "custom"
 
 GREEN, RED, YEL, DIM, END = "\033[32m", "\033[31m", "\033[33m", "\033[2m", "\033[0m"
-failures = []
-warnings = []
+failures: list = []
+warnings: list = []
 
 
 def hdr(t):
@@ -150,7 +150,7 @@ def read_methods(client):
 # ---------------------------------------------------------------- layer 2
 def check_live_sweep(client):
     hdr("2. LIVE READ SWEEP — every no-arg read endpoint")
-    from smallestai.atoms.helpers import as_page
+    from smallestai.agents.helpers import as_page
     items_by_label = {}
     n = ok = 0
     for label, method in read_methods(client):

@@ -22,7 +22,7 @@ def main() -> None:
 
     if len(sys.argv) > 1:
         call_id = sys.argv[1]
-        call = client.atoms.calls.get(id=call_id).data
+        call = client.agents.calls.get(id=call_id).data
         print(f"call {call_id}")
         print("  status     :", getattr(call, "status", None))
         print("  type       :", getattr(call, "type", None))
@@ -35,7 +35,7 @@ def main() -> None:
         return
 
     # No id given -> list recent calls.
-    logs = client.atoms.calls.list(limit=10).data.logs or []
+    logs = client.agents.calls.list(limit=10).data.logs or []
     print(f"{len(logs)} recent call(s):")
     for item in logs:
         print(

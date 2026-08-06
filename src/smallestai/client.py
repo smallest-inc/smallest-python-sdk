@@ -12,8 +12,8 @@ from .core.logging import LogConfig, Logger
 from .environment import SmallestAIEnvironment
 
 if typing.TYPE_CHECKING:
-    from .atoms.client import AsyncAtomsClient, AtomsClient
-    from .waves.client import AsyncWavesClient, WavesClient
+    from .agents.client import AgentsClient, AsyncAgentsClient
+    from .speech.client import AsyncSpeechClient, SpeechClient
 
 
 class SmallestAI:
@@ -92,24 +92,24 @@ class SmallestAI:
             max_retries=_defaulted_max_retries,
             logging=logging,
         )
-        self._atoms: typing.Optional[AtomsClient] = None
-        self._waves: typing.Optional[WavesClient] = None
+        self._agents: typing.Optional[AgentsClient] = None
+        self._speech: typing.Optional[SpeechClient] = None
 
     @property
-    def atoms(self):
-        if self._atoms is None:
-            from .atoms.client import AtomsClient  # noqa: E402
+    def agents(self):
+        if self._agents is None:
+            from .agents.client import AgentsClient  # noqa: E402
 
-            self._atoms = AtomsClient(client_wrapper=self._client_wrapper)
-        return self._atoms
+            self._agents = AgentsClient(client_wrapper=self._client_wrapper)
+        return self._agents
 
     @property
-    def waves(self):
-        if self._waves is None:
-            from .waves.client import WavesClient  # noqa: E402
+    def speech(self):
+        if self._speech is None:
+            from .speech.client import SpeechClient  # noqa: E402
 
-            self._waves = WavesClient(client_wrapper=self._client_wrapper)
-        return self._waves
+            self._speech = SpeechClient(client_wrapper=self._client_wrapper)
+        return self._speech
 
 
 def _make_default_async_client(
@@ -209,21 +209,21 @@ class AsyncSmallestAI:
             max_retries=_defaulted_max_retries,
             logging=logging,
         )
-        self._atoms: typing.Optional[AsyncAtomsClient] = None
-        self._waves: typing.Optional[AsyncWavesClient] = None
+        self._agents: typing.Optional[AsyncAgentsClient] = None
+        self._speech: typing.Optional[AsyncSpeechClient] = None
 
     @property
-    def atoms(self):
-        if self._atoms is None:
-            from .atoms.client import AsyncAtomsClient  # noqa: E402
+    def agents(self):
+        if self._agents is None:
+            from .agents.client import AsyncAgentsClient  # noqa: E402
 
-            self._atoms = AsyncAtomsClient(client_wrapper=self._client_wrapper)
-        return self._atoms
+            self._agents = AsyncAgentsClient(client_wrapper=self._client_wrapper)
+        return self._agents
 
     @property
-    def waves(self):
-        if self._waves is None:
-            from .waves.client import AsyncWavesClient  # noqa: E402
+    def speech(self):
+        if self._speech is None:
+            from .speech.client import AsyncSpeechClient  # noqa: E402
 
-            self._waves = AsyncWavesClient(client_wrapper=self._client_wrapper)
-        return self._waves
+            self._speech = AsyncSpeechClient(client_wrapper=self._client_wrapper)
+        return self._speech

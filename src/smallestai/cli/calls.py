@@ -1,6 +1,6 @@
 """`smallestai calls …` — inspect call logs, details, transcripts, and recordings.
 
-Read-only, on top of the published SDK (`client.atoms.calls`). To place a call use
+Read-only, on top of the published SDK (`client.agents.calls`). To place a call use
 `smallestai agents call`.
 """
 
@@ -50,7 +50,7 @@ def initialise_calls_app(auth_client: AuthClient):
             kw["call_types"] = call_type
         if status:
             kw["status_filter"] = status
-        data = _data(make_client(auth_client).atoms.calls.list(**kw))
+        data = _data(make_client(auth_client).agents.calls.list(**kw))
         logs = getattr(data, "logs", None) or []
         if as_json:
             console.print_json(_json.dumps([_row_dict(x) for x in logs], default=str))
@@ -74,7 +74,7 @@ def initialise_calls_app(auth_client: AuthClient):
         as_json: bool = typer.Option(False, "--json", help="Emit raw JSON"),
     ):
         """Show one call's details (status, duration, cost, recording, turn count)."""
-        d = _data(make_client(auth_client).atoms.calls.get(id=call_id))
+        d = _data(make_client(auth_client).agents.calls.get(id=call_id))
         if as_json:
             console.print_json(d.json() if hasattr(d, "json") else _json.dumps(d, default=str))
             return
@@ -101,7 +101,7 @@ def initialise_calls_app(auth_client: AuthClient):
         as_json: bool = typer.Option(False, "--json", help="Emit raw JSON"),
     ):
         """Print a call's transcript, one turn per line."""
-        d = _data(make_client(auth_client).atoms.calls.get(id=call_id))
+        d = _data(make_client(auth_client).agents.calls.get(id=call_id))
         turns = getattr(d, "transcript", None) or []
         if as_json:
             console.print_json(
@@ -123,7 +123,7 @@ def initialise_calls_app(auth_client: AuthClient):
     @calls_app.command("recording")
     def recording(call_id: str):
         """Print a call's recording URL(s)."""
-        d = _data(make_client(auth_client).atoms.calls.get(id=call_id))
+        d = _data(make_client(auth_client).agents.calls.get(id=call_id))
         url = getattr(d, "recording_url", None)
         dual = getattr(d, "recording_dual_url", None)
         if not url and not dual:
