@@ -2,7 +2,7 @@
 
 * **cli**: running bare `smallestai` now shows a banner + command list instead of a
   "Missing command" error.
-* **dev**: pre-commit hooks (ruff lint + format, gitleaks) and CI quality/security gates - `ruff check`/`ruff format --check`, gitleaks secret scan, and `pip-audit` for dependency CVEs. All gate publishing.
+* **dev**: pre-commit hooks (ruff lint + format, gitleaks) and CI quality/security jobs - `ruff check` / `ruff format --check` and a gitleaks secret scan (both gate publishing), plus `pip-audit` dependency-CVE reporting (report-only for now, pending a dependency-bump pass).
 * **cli**: new `smallestai mcp` command to set up or run the Smallest AI MCP server
   (`@smallest-ai/mcp-server`) for Cursor / Claude and other MCP clients. `smallestai mcp`
   prints the client config + `claude mcp add` command; `smallestai mcp run` launches it via
