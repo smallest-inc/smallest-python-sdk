@@ -19,7 +19,7 @@ def test_bare_cli_shows_banner_and_commands_not_error():
 def test_mcp_prints_setup_config():
     result = runner.invoke(app, ["mcp"])
     assert result.exit_code == 0
-    assert "@smallest-ai/mcp-server" in result.output
+    assert "@developer-smallestai/smallest-mcp-server" in result.output
 
 
 def test_mcp_config_subcommand_emits_json():

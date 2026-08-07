@@ -1,8 +1,8 @@
 """`smallestai mcp` - set up or run the Smallest AI MCP server.
 
-The MCP server (github.com/smallest-inc/mcp-server, npm ``@smallest-ai/mcp-server``) gives
-Cursor, Claude, and other MCP clients native access to Waves + Atoms. It runs on Node via
-npx; this command prints the client config and can launch it for you.
+The MCP server (npm ``@developer-smallestai/smallest-mcp-server``) gives Cursor, Claude,
+and other MCP clients native access to the Smallest AI platform. It runs on Node via npx;
+this command prints the client config and can launch it for you.
 """
 
 from __future__ import annotations
@@ -18,17 +18,19 @@ from rich.syntax import Syntax
 
 console = Console()
 
-_NPM_PKG = "@smallest-ai/mcp-server"
+_NPM_PKG = "@developer-smallestai/smallest-mcp-server"
+_SERVER_KEY = "smallest"
+_ENV_VAR = "ATOMS_API_KEY"
 
 
 def _config_snippet() -> str:
     return json.dumps(
         {
             "mcpServers": {
-                "smallest-ai": {
+                _SERVER_KEY: {
                     "command": "npx",
                     "args": ["-y", _NPM_PKG],
-                    "env": {"SMALLEST_API_KEY": "your-api-key-here"},
+                    "env": {_ENV_VAR: "sk_your_api_key_here"},
                 }
             }
         },
@@ -49,11 +51,14 @@ def initialise_mcp_app() -> typer.Typer:
             return
         console.print(
             "[bold]Smallest AI MCP server[/bold] gives Cursor, Claude, and other MCP "
-            "clients native access to Waves + Atoms.\n"
+            "clients native access to the Smallest AI platform.\n"
         )
-        console.print("[dim]Requires Node.js 18+ and a SMALLEST_API_KEY.[/dim]\n")
+        console.print(f"[dim]Requires Node.js 18+ and an {_ENV_VAR}.[/dim]\n")
         console.print("Claude Code:")
-        console.print(f"  [cyan]claude mcp add smallest-ai -- npx -y {_NPM_PKG}[/cyan]\n")
+        console.print(
+            f"  [cyan]claude mcp add {_SERVER_KEY} -- npx -y {_NPM_PKG}[/cyan]\n"
+            f"  [cyan]claude mcp update {_SERVER_KEY} --env {_ENV_VAR}=sk_your_api_key_here[/cyan]\n"
+        )
         console.print("Cursor / Claude Desktop - add to your mcp.json:")
         console.print(Syntax(_config_snippet(), "json", theme="ansi_dark"))
         console.print("\n  [dim]Or run it directly: [bold]smallestai mcp run[/bold][/dim]")
@@ -64,11 +69,16 @@ def initialise_mcp_app() -> typer.Typer:
         if not shutil.which("npx"):
             console.print("[red]npx not found. Install Node.js 18+ from https://nodejs.org.[/red]")
             raise typer.Exit(1)
-        if not os.getenv("SMALLEST_API_KEY"):
-            console.print("[yellow]SMALLEST_API_KEY is not set; the MCP server needs it.[/yellow]")
+        # The MCP server reads ATOMS_API_KEY; bridge from the SDK's SMALLEST_API_KEY if set.
+        env = dict(os.environ)
+        api_key = env.get(_ENV_VAR) or env.get("SMALLEST_API_KEY")
+        if not api_key:
+            console.print(f"[yellow]{_ENV_VAR} is not set; the MCP server needs it.[/yellow]")
+        else:
+            env[_ENV_VAR] = api_key
         console.print(f"[dim]Launching {_NPM_PKG} via npx (Ctrl-C to stop)...[/dim]")
         try:
-            subprocess.run(["npx", "-y", _NPM_PKG], check=False)
+            subprocess.run(["npx", "-y", _NPM_PKG], check=False, env=env)
         except KeyboardInterrupt:
             pass
 
