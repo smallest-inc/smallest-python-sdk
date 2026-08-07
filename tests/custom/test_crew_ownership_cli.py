@@ -1,4 +1,5 @@
 """Crew config-ownership surfacing: ownership module, deprecation, doctor command."""
+
 import warnings
 
 from rich.console import Console

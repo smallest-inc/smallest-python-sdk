@@ -6,6 +6,7 @@
 
 Requires the exa extra:  pip install "smallestai[exa]"
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -50,9 +51,7 @@ class ExaSearchTool(Tool):
         """
         client = self._get_client()
         # exa-py is synchronous; run it off the event loop so we don't block the call.
-        response = await asyncio.to_thread(
-            client.search_and_contents, query, num_results=num_results, text=True
-        )
+        response = await asyncio.to_thread(client.search_and_contents, query, num_results=num_results, text=True)
         results = getattr(response, "results", None) or []
         if not results:
             return f"No results found for {query!r}."

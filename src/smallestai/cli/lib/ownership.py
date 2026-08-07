@@ -6,6 +6,7 @@ as data so `init` and `doctor` can surface it consistently.
 
 See AGENT_SDK_OWNERSHIP.md for the full matrix and rationale.
 """
+
 from __future__ import annotations
 
 from typing import List, Tuple

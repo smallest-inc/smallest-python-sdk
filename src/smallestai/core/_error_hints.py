@@ -68,9 +68,6 @@ def hint_for(status_code: typing.Optional[int], body: typing.Any) -> str:
         )
     if status_code == 403:
         if _looks_org_gated(body):
-            return (
-                "This feature is limited to specific organizations. "
-                "Contact your account team to enable it."
-            )
+            return "This feature is limited to specific organizations. Contact your account team to enable it."
         return "Your API key is valid but is not permitted to perform this action."
     return ""

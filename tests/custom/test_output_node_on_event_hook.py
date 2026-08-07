@@ -2,15 +2,17 @@
 user hook without super(). Overriding `on_event` (the documented extension point)
 must NOT silence the LLM-request -> generate_response path, and existing
 `process_event`-with-super() overrides must keep working (backward compat)."""
+
 import unittest
 from unittest import mock
 
-from smallestai.atoms.crew.nodes import OutputCrewNode
 from smallestai.atoms.crew.events import SDKSystemLLMRequestEvent
+from smallestai.atoms.crew.nodes import OutputCrewNode
 
 
 class _OnEventAgent(OutputCrewNode):
     """Recommended pattern: override on_event, no super()."""
+
     def __init__(self, order):
         super().__init__(name="a")
         self._order = order
@@ -25,6 +27,7 @@ class _OnEventAgent(OutputCrewNode):
 
 class _LegacyProcessEventAgent(OutputCrewNode):
     """Legacy pattern: override process_event and call super()."""
+
     def __init__(self, order):
         super().__init__(name="b")
         self._order = order

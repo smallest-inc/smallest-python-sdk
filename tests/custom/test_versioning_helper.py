@@ -5,13 +5,14 @@ ApiError bodies (dev's rich `data.conflict` shape, prod's lean `errors` shape, t
 migration flag, and the base-revision case). Live coverage is in
 tests/velocity/v2_versioning_e2e.py.
 """
+
 from smallestai.atoms.helpers import (
+    BaseRevisionUnavailableError,
+    DraftConflictError,
+    MigrationRequiredError,
+    SecurityCheckFailedError,
     Versioning,
     VersioningError,
-    MigrationRequiredError,
-    DraftConflictError,
-    BaseRevisionUnavailableError,
-    SecurityCheckFailedError,
 )
 from smallestai.atoms.helpers.versioning import _discriminate_conflict
 from smallestai.core.api_error import ApiError
@@ -28,8 +29,7 @@ def test_migration_required():
 
 def test_draft_conflict_rich_dev_shape():
     e = _conflict(
-        {"data": {"conflict": {"expectedRevision": 2, "latestRevision": 3,
-                               "diffs": [{"section": "workflow_prompt"}]}}}
+        {"data": {"conflict": {"expectedRevision": 2, "latestRevision": 3, "diffs": [{"section": "workflow_prompt"}]}}}
     )
     assert isinstance(e, DraftConflictError)
     assert e.expected_revision == 2

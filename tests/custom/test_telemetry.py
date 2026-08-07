@@ -1,4 +1,5 @@
 """Anonymous opt-out telemetry: opt-out, anonymous id, no-PII payload, non-blocking."""
+
 import smallestai.telemetry as telemetry
 
 

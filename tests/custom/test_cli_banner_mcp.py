@@ -1,4 +1,5 @@
 """Bare `smallestai` shows a banner (not an error), and `mcp` prints setup config."""
+
 from typer.testing import CliRunner
 
 from smallestai.cli.main import app

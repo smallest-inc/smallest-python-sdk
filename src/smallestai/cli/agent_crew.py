@@ -33,9 +33,7 @@ AGENT_BUILD_STATUS_COLORS = {
 console = Console()
 
 
-def initialise_agent_crew_app(
-    project_config: ProjectConfig, auth_client: AuthClient, atoms_client: AtomsAPIClient
-):
+def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthClient, atoms_client: AtomsAPIClient):
     app = typer.Typer(name="agent-crew")
 
     @app.command()
@@ -54,33 +52,25 @@ def initialise_agent_crew_app(
         agent_id = project_config.get_agent_id()
 
         if agent_id:
-            console.print(
-                f"[green]Agent already initialized with ID: [bold]{agent_id}[/bold][/green]"
-            )
+            console.print(f"[green]Agent already initialized with ID: [bold]{agent_id}[/bold][/green]")
             return
 
         # Non-interactive path: link the provided id directly, no picker.
         if agent_id_arg:
             project_config.set_agent_id(agent_id_arg)
-            console.print(
-                f"[green]Agent initialized successfully with ID: [bold]{agent_id_arg}[/bold][/green]"
-            )
+            console.print(f"[green]Agent initialized successfully with ID: [bold]{agent_id_arg}[/bold][/green]")
             _print_ownership_hint()
             return
 
         # Without an id, the picker needs a real TTY — fail clearly instead of crashing.
         if not sys.stdin.isatty():
-            console.print(
-                "[red]init requires an interactive terminal. Pass --agent-id <id> to skip the picker.[/red]"
-            )
+            console.print("[red]init requires an interactive terminal. Pass --agent-id <id> to skip the picker.[/red]")
             raise typer.Exit(1)
 
         # Check if user is logged in
         credentials = auth_client.get_credentials()
         if not credentials or not credentials.get("access_token"):
-            console.print(
-                "[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]"
-            )
+            console.print("[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]")
             raise typer.Exit(1)
 
         access_token = credentials["access_token"]
@@ -123,8 +113,7 @@ def initialise_agent_crew_app(
     def _print_ownership_hint():
         console.print(
             Panel(
-                OWNERSHIP_SUMMARY
-                + "\n\n[dim]Run [bold]smallestai agent-crew doctor[/bold] to check this "
+                OWNERSHIP_SUMMARY + "\n\n[dim]Run [bold]smallestai agent-crew doctor[/bold] to check this "
                 "agent's config for common gotchas.[/dim]",
                 title="What your crew controls vs the platform",
                 border_style="cyan",
@@ -152,17 +141,13 @@ def initialise_agent_crew_app(
         agent_id = project_config.get_agent_id()
 
         if not agent_id:
-            console.print(
-                "[red]Agent not initialized. Run 'smallestai agent init' first.[/red]"
-            )
+            console.print("[red]Agent not initialized. Run 'smallestai agent init' first.[/red]")
             return
 
         # Check if user is logged in
         credentials = auth_client.get_credentials()
         if not credentials or not credentials.get("access_token"):
-            console.print(
-                "[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]"
-            )
+            console.print("[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]")
             raise typer.Exit(1)
 
         access_token = credentials["access_token"]
@@ -179,14 +164,10 @@ def initialise_agent_crew_app(
         # Check if entry point file exists
         entry_point_path = dir_path / entry_point
         if not entry_point_path.exists():
-            console.print(
-                f"[red]Error: Entry point file '{entry_point}' not found in '{directory}'.[/red]"
-            )
+            console.print(f"[red]Error: Entry point file '{entry_point}' not found in '{directory}'.[/red]")
             return
 
-        console.print(
-            f"[bold cyan]Deploying agent from: {dir_path.absolute()}[/bold cyan]"
-        )
+        console.print(f"[bold cyan]Deploying agent from: {dir_path.absolute()}[/bold cyan]")
         console.print(f"[dim]Entry point: {entry_point}[/dim]")
         console.print(f"[dim]Agent ID: {agent_id}[/dim]\n")
 
@@ -219,9 +200,7 @@ def initialise_agent_crew_app(
         # SMALLEST_API_KEY is set by the platform; ignore from the warning list.
         required_env_vars.discard("SMALLEST_API_KEY")
         if required_env_vars:
-            console.print(
-                "[yellow]⚠  Your code references these environment variables:[/yellow]"
-            )
+            console.print("[yellow]⚠  Your code references these environment variables:[/yellow]")
             for var in sorted(required_env_vars):
                 console.print(f"    [yellow]• {var}[/yellow]")
             console.print(
@@ -286,13 +265,11 @@ def initialise_agent_crew_app(
                 )
             elif status in terminal:
                 console.print(
-                    f"[red]Build ended with status: {status}. "
-                    "Check `smallestai agent-crew builds` for details.[/red]"
+                    f"[red]Build ended with status: {status}. Check `smallestai agent-crew builds` for details.[/red]"
                 )
             else:
                 console.print(
-                    "[yellow]Still building. Check `smallestai agent-crew builds` "
-                    "for the final status.[/yellow]"
+                    "[yellow]Still building. Check `smallestai agent-crew builds` for the final status.[/yellow]"
                 )
 
         except Exception as e:
@@ -337,12 +314,8 @@ def initialise_agent_crew_app(
 
     @app.command("builds")
     def list_builds(
-        build_id: str = typer.Argument(
-            None, help="Optional build ID to manage directly"
-        ),
-        limit: int = typer.Option(
-            50, "--limit", "-l", help="Number of builds to fetch"
-        ),
+        build_id: str = typer.Argument(None, help="Optional build ID to manage directly"),
+        limit: int = typer.Option(50, "--limit", "-l", help="Number of builds to fetch"),
         offset: int = typer.Option(0, "--offset", "-o", help="Offset for pagination"),
     ):
         """
@@ -357,16 +330,12 @@ def initialise_agent_crew_app(
         agent_id = project_config.get_agent_id()
 
         if not agent_id:
-            console.print(
-                "[red]Agent not initialized. Run 'smallestai agent init' first.[/red]"
-            )
+            console.print("[red]Agent not initialized. Run 'smallestai agent init' first.[/red]")
             return
 
         credentials = auth_client.get_credentials()
         if not credentials or not credentials.get("access_token"):
-            console.print(
-                "[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]"
-            )
+            console.print("[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]")
             raise typer.Exit(1)
 
         access_token = credentials["access_token"]
@@ -403,9 +372,7 @@ def initialise_agent_crew_app(
 
             for build in result.builds:
                 status_color = AGENT_BUILD_STATUS_COLORS[build.status]
-                status_text = (
-                    f"[{status_color}]{build.status.value.upper()}[/{status_color}]"
-                )
+                status_text = f"[{status_color}]{build.status.value.upper()}[/{status_color}]"
 
                 live_indicator = "[green]✓ LIVE[/green]" if build.is_live else "-"
 
@@ -417,9 +384,7 @@ def initialise_agent_crew_app(
                 )
 
             console.print(table)
-            console.print(
-                f"[dim]Showing {len(result.builds)} of {result.pagination.total} builds[/dim]\n"
-            )
+            console.print(f"[dim]Showing {len(result.builds)} of {result.pagination.total} builds[/dim]\n")
 
             choices = [
                 questionary.Choice(
@@ -500,9 +465,7 @@ def initialise_agent_crew_app(
                     api_key=access_token,
                     is_live=True,
                 )
-                console.print(
-                    f"[bold green]✓ Build {build.id[:12]}... is now LIVE![/bold green]"
-                )
+                console.print(f"[bold green]✓ Build {build.id[:12]}... is now LIVE![/bold green]")
             elif selected_action == "take_down":
                 console.print("[yellow]Taking down build...[/yellow]")
                 await atoms_client.update_agent_build(
@@ -511,9 +474,7 @@ def initialise_agent_crew_app(
                     api_key=access_token,
                     is_live=False,
                 )
-                console.print(
-                    f"[bold green]✓ Build {build.id[:12]}... has been taken down.[/bold green]"
-                )
+                console.print(f"[bold green]✓ Build {build.id[:12]}... has been taken down.[/bold green]")
 
     # @app.command("logs")
     # def stream_build(
@@ -594,16 +555,12 @@ def initialise_agent_crew_app(
     async def async_doctor(agent_id_arg: Optional[str]):
         agent_id = agent_id_arg or project_config.get_agent_id()
         if not agent_id:
-            console.print(
-                "[red]No agent id. Pass --agent-id <id>, or run `init` first.[/red]"
-            )
+            console.print("[red]No agent id. Pass --agent-id <id>, or run `init` first.[/red]")
             raise typer.Exit(1)
 
         credentials = auth_client.get_credentials()
         if not credentials or not credentials.get("access_token"):
-            console.print(
-                "[red]You must be logged in. Run 'smallestai auth login'.[/red]"
-            )
+            console.print("[red]You must be logged in. Run 'smallestai auth login'.[/red]")
             raise typer.Exit(1)
         token = credentials["access_token"]
 
@@ -633,9 +590,7 @@ def initialise_agent_crew_app(
 
         wft = agent.get("workflowType")
         if wft and wft != "single_prompt":
-            warns.append(
-                f"workflowType is '{wft}'. A crew attaches to single_prompt agents."
-            )
+            warns.append(f"workflowType is '{wft}'. A crew attaches to single_prompt agents.")
 
         if (agent.get("redactionConfig") or {}).get("isEnabled"):
             warns.append(
@@ -646,9 +601,7 @@ def initialise_agent_crew_app(
         else:
             oks.append("PII redaction is off.")
 
-        sp = (agent.get("workflow") or {}).get("singlePromptConfig") or agent.get(
-            "singlePromptConfig"
-        ) or {}
+        sp = (agent.get("workflow") or {}).get("singlePromptConfig") or agent.get("singlePromptConfig") or {}
         tools = sp.get("tools") or []
         tool_repr = " ".join(str(t).lower() for t in tools)
         if "transfer" in tool_repr:

@@ -54,10 +54,20 @@ def test_fmt_dur():
 
 
 def test_list_renders_and_passes_filters(app_with):
-    calls = FakeCalls(logs=[
-        _obj(call_id="CALL-1", type="telephony_outbound", status="completed", duration=89,
-             from_="+111", to="+222", created_at="2026-08-04T09:06:07.000Z", recording_url="u"),
-    ])
+    calls = FakeCalls(
+        logs=[
+            _obj(
+                call_id="CALL-1",
+                type="telephony_outbound",
+                status="completed",
+                duration=89,
+                from_="+111",
+                to="+222",
+                created_at="2026-08-04T09:06:07.000Z",
+                recording_url="u",
+            ),
+        ]
+    )
     app = app_with(calls)
     res = runner.invoke(app, ["list", "--agent-id", "AG1", "--type", "telephony_outbound", "--limit", "5"])
     assert res.exit_code == 0, res.output
@@ -68,9 +78,17 @@ def test_list_renders_and_passes_filters(app_with):
 
 
 def test_get_shows_fields_and_recording(app_with):
-    call = _obj(status="completed", type="telephony_outbound", duration=89, from_="+1", to="+2",
-                transcript=[_obj(role="user", content="hi")], call_cost=0.17,
-                call_failure_reason=None, recording_url="https://rec/x.wav")
+    call = _obj(
+        status="completed",
+        type="telephony_outbound",
+        duration=89,
+        from_="+1",
+        to="+2",
+        transcript=[_obj(role="user", content="hi")],
+        call_cost=0.17,
+        call_failure_reason=None,
+        recording_url="https://rec/x.wav",
+    )
     app = app_with(FakeCalls(call=call))
     res = runner.invoke(app, ["get", "CALL-9"])
     assert res.exit_code == 0, res.output

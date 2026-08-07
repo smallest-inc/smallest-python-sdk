@@ -1,4 +1,5 @@
 """Base class for prebuilt crew tools."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -21,8 +22,8 @@ class Tool:
     def register(self, registry: "ToolRegistry") -> None:
         """Add this tool's ``run`` to a crew ``ToolRegistry`` so the agent's LLM can call it.
 
-            search = ExaSearchTool()
-            search.register(self.tool_registry)
+        search = ExaSearchTool()
+        search.register(self.tool_registry)
         """
         run = getattr(self, "run", None)
         if run is None or not hasattr(run, "__tool_info__"):

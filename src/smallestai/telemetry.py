@@ -14,6 +14,7 @@ Opt out any time:
 
     export SMALLESTAI_TELEMETRY=0      # or DO_NOT_TRACK=1
 """
+
 from __future__ import annotations
 
 import json

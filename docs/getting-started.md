@@ -25,10 +25,10 @@ The CLI (`smallestai`) reads `SMALLEST_API_KEY`, or the key stored by
 ```python
 agent_id = client.atoms.agents.create_agent(
     name="Front desk",
-    workflow_type="single_prompt",     # the default; the other type is workflow_graph
+    workflow_type="single_prompt",  # the default; the other type is workflow_graph
     first_message="Hi, thanks for calling. How can I help?",
 ).data
-print(agent_id)   # NOTE: .data here is the agent id string, not an object
+print(agent_id)  # NOTE: .data here is the agent id string, not an object
 ```
 
 Two things worth knowing up front:
@@ -43,7 +43,7 @@ Two things worth knowing up front:
 client.atoms.calls.start_outbound_call(
     agent_id=agent_id,
     phone_number="+15559990000",
-    from_product_id="<telephony_product_id>",   # a number you own; see client.atoms.phone_numbers.list()
+    from_product_id="<telephony_product_id>",  # a number you own; see client.atoms.phone_numbers.list()
 )
 ```
 

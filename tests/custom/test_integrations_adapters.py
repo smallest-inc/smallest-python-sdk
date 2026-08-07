@@ -4,6 +4,7 @@ Importing an adapter module must never require the framework. Accessing a name
 either forwards to the framework plugin (if installed) or raises a clear
 "install the extra" ImportError.
 """
+
 import importlib
 
 import pytest
@@ -34,7 +35,7 @@ def test_pipecat_adapter_forwards_or_raises_clear_error():
     else:
         with pytest.raises(ImportError) as ei:
             _ = pc.SmallestSTTService
-        assert 'smallestai[pipecat]' in str(ei.value)
+        assert "smallestai[pipecat]" in str(ei.value)
         assert dir(pc) == []
 
 
@@ -48,7 +49,7 @@ def test_livekit_adapter_forwards_or_raises_clear_error():
     else:
         with pytest.raises(ImportError) as ei:
             _ = lk.TTS
-        assert 'smallestai[livekit]' in str(ei.value)
+        assert "smallestai[livekit]" in str(ei.value)
 
 
 if __name__ == "__main__":

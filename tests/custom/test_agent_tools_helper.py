@@ -56,23 +56,40 @@ class FakeBranchTransport:
 
     def __init__(self, tools):
         self.resolved_tools = list(tools)  # current live tools
-        self.puts = []       # (url, body)
+        self.puts = []  # (url, body)
         self.published = 0
         self.made_live = 0
 
     # GET /agent/{id}/branches  and  /branches/{bid}/revisions/{head}
     def get(self, url, headers=None, timeout=None):
         if url.endswith("/branches"):
-            return FakeResponse({"data": {"branches": [{
-                "isLive": True,
-                "branch": {"_id": BRANCH_ID, "name": "main", "isDefault": True,
-                           "status": "active", "headRevisionId": HEAD},
-            }]}})
+            return FakeResponse(
+                {
+                    "data": {
+                        "branches": [
+                            {
+                                "isLive": True,
+                                "branch": {
+                                    "_id": BRANCH_ID,
+                                    "name": "main",
+                                    "isDefault": True,
+                                    "status": "active",
+                                    "headRevisionId": HEAD,
+                                },
+                            }
+                        ]
+                    }
+                }
+            )
         if "/revisions/" in url:
-            return FakeResponse({"data": {
-                "revision": {"status": "published"},
-                "resolvedConfig": {"workflow_tools": {"tools": self.resolved_tools}},
-            }})
+            return FakeResponse(
+                {
+                    "data": {
+                        "revision": {"status": "published"},
+                        "resolvedConfig": {"workflow_tools": {"tools": self.resolved_tools}},
+                    }
+                }
+            )
         return FakeResponse({"data": {}})
 
     def put(self, url, headers=None, json=None, timeout=None):
@@ -146,10 +163,12 @@ def test_replace_overwrites_all(wired):
 
 
 def test_remove_tool(wired):
-    helper, t = wired([
-        {"type": "transfer_call", "name": "transfer_call"},
-        {"type": "end_call", "name": "end_call"},
-    ])
+    helper, t = wired(
+        [
+            {"type": "transfer_call", "name": "transfer_call"},
+            {"type": "end_call", "name": "end_call"},
+        ]
+    )
     helper.remove_tool("AG1", "transfer_call")
     _, body = t.puts[0]
     assert [x["name"] for x in body["singlePromptConfig"]["tools"]] == ["end_call"]
@@ -190,7 +209,15 @@ def test_no_branches_raises(monkeypatch):
 
 def test_api_error_body_is_surfaced(monkeypatch):
     def get(url, headers=None, timeout=None):
-        return FakeResponse({"data": {"branches": [{"isLive": True, "branch": {"_id": BRANCH_ID, "headRevisionId": HEAD, "isDefault": True}}]}})
+        return FakeResponse(
+            {
+                "data": {
+                    "branches": [
+                        {"isLive": True, "branch": {"_id": BRANCH_ID, "headRevisionId": HEAD, "isDefault": True}}
+                    ]
+                }
+            }
+        )
 
     def bad_put(url, headers=None, json=None, timeout=None):
         return FakeResponse({"status": False, "errors": ["invalid tool"]}, status_code=400)

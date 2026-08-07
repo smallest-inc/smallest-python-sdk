@@ -18,6 +18,7 @@ Discover what's available:
     from smallestai.tools import list_tools, get_tool
     list_tools()                      # {"exa_search": ExaSearchTool, ...}
 """
+
 from __future__ import annotations
 
 import importlib

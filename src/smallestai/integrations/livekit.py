@@ -25,8 +25,7 @@ def _load() -> typing.Any:
         import livekit.plugins.smallestai as _mod  # type: ignore[import-not-found]
     except ImportError as exc:  # pragma: no cover - exercised via the missing-dep test
         raise ImportError(
-            "The livekit integration requires livekit-plugins-smallestai. Install it with:\n    "
-            + _INSTALL_HINT
+            "The livekit integration requires livekit-plugins-smallestai. Install it with:\n    " + _INSTALL_HINT
         ) from exc
     return _mod
 

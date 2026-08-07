@@ -100,9 +100,7 @@ def test_none_optionals_are_omitted():
 
 
 def test_numeric_optionals_pass_through():
-    q = build_stt_stream_query(
-        language="en", eou_timeout_ms=1000, vad_threshold=0.5, vad_min_speech_ms=120
-    )
+    q = build_stt_stream_query(language="en", eou_timeout_ms=1000, vad_threshold=0.5, vad_min_speech_ms=120)
     assert q["eou_timeout_ms"] == 1000
     assert q["vad_threshold"] == 0.5
     assert q["vad_min_speech_ms"] == 120
@@ -135,9 +133,7 @@ def test_caller_overrides_win_over_typed_values():
 
 def test_existing_request_options_preserved():
     client = _FakeClient()
-    stream_speech_to_text(
-        client, language="en", request_options={"max_retries": 3}
-    )
+    stream_speech_to_text(client, language="en", request_options={"max_retries": 3})
     ro = client._stt.captured_request_options
     assert ro["max_retries"] == 3
     assert ro["additional_query_parameters"]["language"] == "en"

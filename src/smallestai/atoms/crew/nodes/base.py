@@ -177,24 +177,21 @@ class CrewNode:
             except Exception as e:
                 severity = self._error_severity()
                 tb_str = _traceback.format_exc()
-                logger.error(
-                    f"[{self.name}] {severity.upper()} in process_event: "
-                    f"{type(e).__name__}: {e}\n{tb_str}"
-                )
+                logger.error(f"[{self.name}] {severity.upper()} in process_event: {type(e).__name__}: {e}\n{tb_str}")
                 try:
-                    await self.send_event(SDKAgentErrorEvent(
-                        message=f"{type(e).__name__} in {self.name}.process_event: {e}",
-                        severity=severity,
-                        payload={
-                            "node_name": self.name,
-                            "error_class": type(e).__name__,
-                            "traceback": tb_str,
-                        },
-                    ))
-                except Exception:
-                    logger.exception(
-                        f"[{self.name}] Failed to emit SDKAgentErrorEvent upstream"
+                    await self.send_event(
+                        SDKAgentErrorEvent(
+                            message=f"{type(e).__name__} in {self.name}.process_event: {e}",
+                            severity=severity,
+                            payload={
+                                "node_name": self.name,
+                                "error_class": type(e).__name__,
+                                "traceback": tb_str,
+                            },
+                        )
                     )
+                except Exception:
+                    logger.exception(f"[{self.name}] Failed to emit SDKAgentErrorEvent upstream")
 
     def _error_severity(self) -> str:
         """Return the default error severity for this node type.
@@ -205,6 +202,7 @@ class CrewNode:
         """
         # Local import avoids a circular dep at module-load time.
         from smallestai.atoms.crew.nodes.background_crew import BackgroundCrewNode
+
         return "warning" if isinstance(self, BackgroundCrewNode) else "fatal"
 
     async def __create_process_event_task(self):

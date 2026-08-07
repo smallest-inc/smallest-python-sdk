@@ -14,6 +14,7 @@ Only dependency: requests.
     export E2E_AGENT_ID=<agent id>          # optional; omit to auto-create a throwaway agent
     python tests/velocity/v2_versioning_api_probe.py
 """
+
 import json
 import os
 import sys
@@ -66,12 +67,16 @@ def main():
 
     # 0. Create a throwaway agent if none was given.
     if not agent_id:
-        sc, b, _ = call("POST", "/agent", json={
-            "name": "v2-api-probe",
-            "globalPrompt": "You are a probe agent.",
-            "firstMessage": "Hi, probe here.",
-            "language": {"switching": {"isEnabled": False}},
-        })
+        sc, b, _ = call(
+            "POST",
+            "/agent",
+            json={
+                "name": "v2-api-probe",
+                "globalPrompt": "You are a probe agent.",
+                "firstMessage": "Hi, probe here.",
+                "language": {"switching": {"isEnabled": False}},
+            },
+        )
         agent_id = b.get("data")
         created = True
         check(sc in (200, 201) and agent_id, "POST /agent (create throwaway)", f"http={sc} id={agent_id}")
@@ -86,15 +91,22 @@ def main():
     main_id = main["branch"]["_id"]
 
     # 2. Fork a throwaway branch off Main.
-    sc, b, _ = call("POST", f"/agent/{agent_id}/branches", json={"sourceBranchId": main_id, "name": f"probe-{os.getpid()}"})
+    sc, b, _ = call(
+        "POST", f"/agent/{agent_id}/branches", json={"sourceBranchId": main_id, "name": f"probe-{os.getpid()}"}
+    )
     fork = b.get("data", {})
     fork_id = fork.get("_id")
-    check(sc in (200, 201) and fork_id, "POST /branches (fork)", f"http={sc} fork={fork_id} status={fork.get('status')}")
+    check(
+        sc in (200, 201) and fork_id, "POST /branches (fork)", f"http={sc} fork={fork_id} status={fork.get('status')}"
+    )
 
     try:
         # 3. Edit the draft (camelCase config fields).
-        sc, b, _ = call("PUT", f"/agent/{agent_id}/branches/{fork_id}/draft",
-                        json={"globalPrompt": "Probe prompt v1.", "firstMessage": "Hello from probe."})
+        sc, b, _ = call(
+            "PUT",
+            f"/agent/{agent_id}/branches/{fork_id}/draft",
+            json={"globalPrompt": "Probe prompt v1.", "firstMessage": "Hello from probe."},
+        )
         check(sc == 200, "PUT /draft (globalPrompt + firstMessage)", f"http={sc}")
 
         # 4. Get the draft detail.
@@ -119,8 +131,11 @@ def main():
                 if rev.get("status") == "published":
                     break
             time.sleep(2)
-        check(rev.get("status") == "published", "publish -> revision published",
-              f"rev={rev_id} status={rev.get('status')} securityCheck={(rev.get('securityCheck') or {}).get('status')}")
+        check(
+            rev.get("status") == "published",
+            "publish -> revision published",
+            f"rev={rev_id} status={rev.get('status')} securityCheck={(rev.get('securityCheck') or {}).get('status')}",
+        )
         show("Revision", rev, ["_id", "revisionNumber", "status", "label", "publishedByName", "promptScoreStale"])
 
         # 6. Test call (webcall).
@@ -131,7 +146,7 @@ def main():
         # 7. Second edit + publish so we have two revisions (also gives restore an older target).
         call("PUT", f"/agent/{agent_id}/branches/{fork_id}/draft", json={"globalPrompt": "Probe prompt v2."})
         sc, b, _ = call("POST", f"/agent/{agent_id}/branches/{fork_id}/draft/publish", json={"label": "probe v2"})
-        check(sc in (200, 202), "POST /draft/publish (2nd)", f"http={sc} state={b.get('data',{}).get('state')}")
+        check(sc in (200, 202), "POST /draft/publish (2nd)", f"http={sc} state={b.get('data', {}).get('state')}")
         rev2_id = None
         deadline = time.monotonic() + 90
         while time.monotonic() < deadline:
@@ -148,32 +163,49 @@ def main():
         sc, b, _ = call("GET", f"/agent/{agent_id}/diff", params={"a": rev_id, "b": rev2_id})
         d = b.get("data", {})
         check(sc == 200, "GET /diff (rev1 vs rev2)", f"http={sc}")
-        show("diff", {"unchangedSections": d.get("unchangedSections"),
-                      "diffs": [x.get("section") for x in d.get("diffs", [])]})
+        show(
+            "diff",
+            {"unchangedSections": d.get("unchangedSections"), "diffs": [x.get("section") for x in d.get("diffs", [])]},
+        )
 
         # 9. Optimistic-concurrency conflict (stale expectedRevision).
         call("PUT", f"/agent/{agent_id}/branches/{fork_id}/draft", json={"globalPrompt": "edit A"})
         sc, gd, _ = call("GET", f"/agent/{agent_id}/branches/{fork_id}/draft")
         stale = gd.get("data", {}).get("latest", {}).get("draftRevision")
-        call("PUT", f"/agent/{agent_id}/branches/{fork_id}/draft", json={"expectedRevision": stale, "globalPrompt": "edit B"})
-        sc, b, _ = call("PUT", f"/agent/{agent_id}/branches/{fork_id}/draft", json={"expectedRevision": stale, "globalPrompt": "edit C"})
+        call(
+            "PUT",
+            f"/agent/{agent_id}/branches/{fork_id}/draft",
+            json={"expectedRevision": stale, "globalPrompt": "edit B"},
+        )
+        sc, b, _ = call(
+            "PUT",
+            f"/agent/{agent_id}/branches/{fork_id}/draft",
+            json={"expectedRevision": stale, "globalPrompt": "edit C"},
+        )
         check(sc == 409, "PUT /draft stale expectedRevision -> 409", f"http={sc}")
         show("conflict body", b)
 
         # 10. Restore the FIRST revision (older than head) -> new head revision.
         sc, b, _ = call("POST", f"/agent/{agent_id}/branches/{fork_id}/revisions/{rev_id}/restore")
-        check(sc == 200, "POST /revisions/{id}/restore (older revision)", f"http={sc} state={b.get('data',{}).get('state')}")
+        check(
+            sc == 200,
+            "POST /revisions/{id}/restore (older revision)",
+            f"http={sc} state={b.get('data', {}).get('state')}",
+        )
 
         # 11. Make the fork live, then revert Main.
         sc, b, _ = call("POST", f"/agent/{agent_id}/branches/{fork_id}/live")
-        check(sc == 200, "POST /branches/{fork}/live", f"http={sc} isLive={b.get('data',{}).get('isLive')}")
+        check(sc == 200, "POST /branches/{fork}/live", f"http={sc} isLive={b.get('data', {}).get('isLive')}")
         sc, _, _ = call("POST", f"/agent/{agent_id}/branches/{main_id}/live")
         check(sc == 200, "POST /branches/{main}/live (revert)", f"http={sc}")
 
         # 12. v1 endpoint is deprecated under the branch model -> 409 migration.
         sc, b, hdr = call("POST", f"/agent/{agent_id}/drafts", json={})
-        check(sc == 409 and b.get("error_type") == "versioning_v2_migration_required",
-              "v1 POST /drafts -> 409 migration", f"http={sc} error_type={b.get('error_type')} Deprecation={hdr.get('Deprecation')}")
+        check(
+            sc == 409 and b.get("error_type") == "versioning_v2_migration_required",
+            "v1 POST /drafts -> 409 migration",
+            f"http={sc} error_type={b.get('error_type')} Deprecation={hdr.get('Deprecation')}",
+        )
     finally:
         sc, b, _ = call("POST", f"/agent/{agent_id}/branches/{fork_id}/archive")
         print(f"\ncleanup: archived fork {fork_id} -> http={sc} {b.get('data', b)}")

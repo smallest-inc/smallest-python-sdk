@@ -69,9 +69,7 @@ class SessionHandler:
         """
         # Create session
         session_id = f"session-{uuid.uuid4()}"
-        session = CrewSession(
-            websocket=websocket, session_id=session_id, setup_handler=setup_handler
-        )
+        session = CrewSession(websocket=websocket, session_id=session_id, setup_handler=setup_handler)
         await session.initialize()
 
         self._sessions[session_id] = session
@@ -244,10 +242,7 @@ class AtomsCrewApp:
         except Exception as e:
             self._ready = False
             self._not_ready_reason = f"{type(e).__name__}: {e}"
-            logger.error(
-                f"Startup validation failed — pod will not accept sessions. "
-                f"{type(e).__name__}: {e}"
-            )
+            logger.error(f"Startup validation failed — pod will not accept sessions. {type(e).__name__}: {e}")
             logger.exception("Full traceback:")
             return
 

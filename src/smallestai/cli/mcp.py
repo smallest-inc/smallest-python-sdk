@@ -4,6 +4,7 @@ The MCP server (github.com/smallest-inc/mcp-server, npm ``@smallest-ai/mcp-serve
 Cursor, Claude, and other MCP clients native access to Waves + Atoms. It runs on Node via
 npx; this command prints the client config and can launch it for you.
 """
+
 from __future__ import annotations
 
 import json
@@ -61,14 +62,10 @@ def initialise_mcp_app() -> typer.Typer:
     def run() -> None:
         """Run the MCP server locally via npx (Node.js 18+ required)."""
         if not shutil.which("npx"):
-            console.print(
-                "[red]npx not found. Install Node.js 18+ from https://nodejs.org.[/red]"
-            )
+            console.print("[red]npx not found. Install Node.js 18+ from https://nodejs.org.[/red]")
             raise typer.Exit(1)
         if not os.getenv("SMALLEST_API_KEY"):
-            console.print(
-                "[yellow]SMALLEST_API_KEY is not set; the MCP server needs it.[/yellow]"
-            )
+            console.print("[yellow]SMALLEST_API_KEY is not set; the MCP server needs it.[/yellow]")
         console.print(f"[dim]Launching {_NPM_PKG} via npx (Ctrl-C to stop)...[/dim]")
         try:
             subprocess.run(["npx", "-y", _NPM_PKG], check=False)

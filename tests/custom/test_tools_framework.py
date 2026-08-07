@@ -1,4 +1,5 @@
 """smallestai.tools: registry + Exa tool (lazy third-party dep, crew-pluggable)."""
+
 import asyncio
 
 import pytest
@@ -53,7 +54,7 @@ def test_exa_run_without_exa_py_raises_clear_error():
 
     with pytest.raises(ImportError) as ei:
         asyncio.run(ExaSearchTool(api_key="x").run(query="hello"))
-    assert 'smallestai[exa]' in str(ei.value)
+    assert "smallestai[exa]" in str(ei.value)
 
 
 if __name__ == "__main__":

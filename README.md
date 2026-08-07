@@ -81,13 +81,14 @@ endpoint (a hosted API, or a local model via Ollama):
 from smallestai.atoms.crew.nodes import OutputCrewNode
 from smallestai.atoms.crew.clients.openai import OpenAIClient
 
+
 class Assistant(OutputCrewNode):
     def __init__(self):
         super().__init__(name="assistant")
         self.llm = OpenAIClient(
             model="claude-haiku-4-5",
             api_key="<your-llm-key>",
-            base_url="https://api.anthropic.com/v1/",   # or http://localhost:11434/v1 for Ollama
+            base_url="https://api.anthropic.com/v1/",  # or http://localhost:11434/v1 for Ollama
         )
 
     async def generate_response(self):
@@ -129,10 +130,12 @@ The SDK exports an `async` client with the same surface:
 import asyncio
 from smallestai import AsyncSmallestAI
 
+
 async def main():
     client = AsyncSmallestAI(api_key="<your-api-key>")
     agents = await client.atoms.agents.list_agents()
     print(agents.data)
+
 
 asyncio.run(main())
 ```
@@ -182,9 +185,9 @@ Use `.with_raw_response` to get the response headers and status alongside the pa
 
 ```python
 response = client.atoms.agents.with_raw_response.get_agent(id="<agent-id>")
-print(response.headers)       # response headers
-print(response.status_code)   # status code
-print(response.data)          # parsed object
+print(response.headers)  # response headers
+print(response.status_code)  # status code
+print(response.data)  # parsed object
 ```
 
 ### Retries

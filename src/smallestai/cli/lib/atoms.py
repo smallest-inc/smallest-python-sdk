@@ -192,14 +192,9 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            account_details_response = AccountDetailsAPIResponse.model_validate(
-                response.json()
-            )
+            account_details_response = AccountDetailsAPIResponse.model_validate(response.json())
 
-            if (
-                account_details_response.status is False
-                or account_details_response.data is None
-            ):
+            if account_details_response.status is False or account_details_response.data is None:
                 raise Exception(account_details_response.errors)
 
             return account_details_response.data
@@ -225,14 +220,9 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            create_agent_build_response = CreateAgentBuildAPIResponse.model_validate(
-                response.json()
-            )
+            create_agent_build_response = CreateAgentBuildAPIResponse.model_validate(response.json())
 
-            if (
-                create_agent_build_response.status is False
-                or create_agent_build_response.data is None
-            ):
+            if create_agent_build_response.status is False or create_agent_build_response.data is None:
                 raise Exception(create_agent_build_response.errors)
 
             return create_agent_build_response.data
@@ -258,14 +248,9 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            list_builds_response = ListAgentBuildsAPIResponse.model_validate(
-                response.json()
-            )
+            list_builds_response = ListAgentBuildsAPIResponse.model_validate(response.json())
 
-            if (
-                list_builds_response.status is False
-                or list_builds_response.data is None
-            ):
+            if list_builds_response.status is False or list_builds_response.data is None:
                 raise Exception(list_builds_response.errors)
 
             return list_builds_response.data
@@ -286,9 +271,7 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            get_build_response = GetAgentBuildAPIResponse.model_validate(
-                response.json()
-            )
+            get_build_response = GetAgentBuildAPIResponse.model_validate(response.json())
 
             if get_build_response.status is False or get_build_response.data is None:
                 raise Exception(get_build_response.errors)
@@ -315,14 +298,9 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            update_build_response = UpdateAgentBuildAPIResponse.model_validate(
-                response.json()
-            )
+            update_build_response = UpdateAgentBuildAPIResponse.model_validate(response.json())
 
-            if (
-                update_build_response.status is False
-                or update_build_response.data is None
-            ):
+            if update_build_response.status is False or update_build_response.data is None:
                 raise Exception(update_build_response.errors)
 
             return update_build_response.data
