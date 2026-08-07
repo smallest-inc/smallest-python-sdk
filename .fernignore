@@ -62,3 +62,12 @@ src/smallestai/waves/helpers/**
 
 # Hand-written README (do not regenerate)
 README.md
+
+# Optional framework adapters (hand-written)
+src/smallestai/integrations/**
+
+# Prebuilt tools framework (hand-written)
+src/smallestai/tools/**
+
+# Anonymous opt-out telemetry (hand-written)
+src/smallestai/telemetry.py

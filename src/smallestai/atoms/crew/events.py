@@ -225,7 +225,26 @@ class SDKSystemInitEvent(SDKSystemEvent, type=EventType.SYSTEM_INIT.value):
 class SDKSystemUpdateOutputAgentSettingsEvent(
     SDKSystemEvent, type=EventType.SYSTEM_UPDATE_OUTPUT_AGENT_SETTINGS.value
 ):
+    """Deprecated. The platform does not apply crew-sent output-agent settings.
+
+    A crew owns only the LLM turn; platform-owned settings (voice, STT, redaction,
+    interruption, ...) cannot be overridden at runtime from crew code. Emitting this
+    event has no effect and it will be removed in a future release.
+    """
+
     settings: Dict[str, Any]
+
+    def __init__(self, **data: Any) -> None:
+        import warnings
+
+        warnings.warn(
+            "SDKSystemUpdateOutputAgentSettingsEvent is deprecated and not applied by the "
+            "platform. A crew cannot override platform-owned settings (voice, STT, redaction, "
+            "interruption). This event will be removed in a future release.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(**data)
 
 
 class SDKSystemUserJoinedEvent(SDKSystemEvent, type=EventType.SYSTEM_USER_JOINED.value):

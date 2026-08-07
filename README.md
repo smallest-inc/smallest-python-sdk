@@ -231,6 +231,20 @@ client = SmallestAI(
 - Full API reference: [reference.md](./reference.md)
 - Product docs: https://smallest.ai/docs
 
+## Telemetry
+
+The SDK sends anonymous, aggregated usage telemetry (which CLI commands run, deploy
+outcomes) so we can see what to improve. It never includes personal data or secrets:
+no API keys, agent ids, prompts, transcripts, phone numbers, file paths, or error
+messages. Only the event name, SDK / Python / OS version, and a random anonymous
+install id. It is fire-and-forget and never blocks your program.
+
+Opt out any time:
+
+```bash
+export SMALLESTAI_TELEMETRY=0    # or DO_NOT_TRACK=1
+```
+
 ## Contributing
 
 Most of `src/` is generated from an API spec and gets overwritten on regeneration,

@@ -1,3 +1,54 @@
+## 5.10.0 - 2026-08-07
+
+* **cli**: running bare `smallestai` now shows a banner + command list instead of a
+  "Missing command" error.
+* **cli**: new `smallestai mcp` command to set up or run the Smallest AI MCP server
+  (`@smallest-ai/mcp-server`) for Cursor / Claude and other MCP clients. `smallestai mcp`
+  prints the client config + `claude mcp add` command; `smallestai mcp run` launches it via
+  npx; `smallestai mcp config` prints the mcp.json snippet.
+
+## 5.9.0 - 2026-08-07
+
+* **telemetry**: anonymous, opt-out usage telemetry (PostHog). Sends lightweight product
+  events (CLI command groups, and deploy/lifecycle events as they are wired in) so we can
+  see what to improve. No personal data or secrets - only the event name, SDK/Python/OS
+  version, and a random anonymous install id; geography is derived server-side. Sent
+  fire-and-forget over httpx (no new dependency), never blocks or raises. Opt out with
+  `SMALLESTAI_TELEMETRY=0` (or `DO_NOT_TRACK=1`); one-time notice on first run. See README.
+
+## 5.8.0 - 2026-08-07
+
+* **tools**: new `smallestai.tools` framework for prebuilt, pluggable crew tools. Each tool
+  wraps a third-party capability with a `@function_tool`-decorated `run`, so it drops
+  straight into a crew's `ToolRegistry` (`tool.register(self.tool_registry)`) and is also
+  callable directly. Third-party libraries are optional extras, lazy-imported with a clear
+  "install the extra" error. Discover with `list_tools()` / `get_tool(name)`.
+* **tools**: first integration `ExaSearchTool` (web search). Reads `EXA_API_KEY`; install
+  with `pip install "smallestai[exa]"`.
+
+## 5.7.0 - 2026-08-07
+
+* **cli**: `smallestai agent-crew init` now prints the crew-vs-platform config ownership
+  boundary, so it's clear up front that a crew owns only the LLM turn and everything else
+  (voice, STT, PII redaction, first message, timeouts) is platform config.
+* **cli**: new `smallestai agent-crew doctor [--agent-id]` command. Inspects an agent for
+  common gotchas: no live crew build, wrong workflow type, PII redaction ON (rewrites the
+  transcript), and `transfer_call` enabled in the dashboard Tools panel (a no-op for crew
+  agents). Prints the ownership tables.
+* **crew**: `SDKSystemUpdateOutputAgentSettingsEvent` is deprecated (emits a
+  `DeprecationWarning`). The platform does not apply crew-sent output-agent settings; a
+  crew cannot override platform-owned config at runtime. It will be removed in a future
+  release.
+
+## 5.6.0 - 2026-08-06
+
+* **integrations**: optional framework adapters. `from smallestai.integrations.pipecat
+  import SmallestSTTService` and `from smallestai.integrations.livekit import TTS` now
+  re-export the framework-native Smallest AI plugins from the SDK namespace. The core
+  package does not depend on pipecat or livekit; install the extra you need
+  (`pip install "smallestai[pipecat]"` / `"smallestai[livekit]"`). Adapters lazy-import
+  their framework and raise a clear "install the extra" error otherwise.
+
 ## 5.5.0 - 2026-08-05
 
 DevX pass (backward-compatible).

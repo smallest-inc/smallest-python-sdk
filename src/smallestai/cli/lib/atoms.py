@@ -161,6 +161,23 @@ class AtomsAPIClient:
 
             return agents_response.data
 
+    async def get_agent_raw(self, access_token: str, agent_id: str) -> dict:
+        """Fetch a single agent's full config as a raw dict (for `doctor` inspection)."""
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{self.base_url}/atoms/v1/agent/{agent_id}",
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
+            response.raise_for_status()
+            body = response.json()
+            if isinstance(body, dict) and body.get("status") is False:
+                raise Exception(body.get("errors"))
+            data = body.get("data", body) if isinstance(body, dict) else body
+            # some responses nest under data.agent
+            if isinstance(data, dict) and "agent" in data and isinstance(data["agent"], dict):
+                data = data["agent"]
+            return data if isinstance(data, dict) else {}
+
     async def get_account_details(
         self,
         access_token: str,
