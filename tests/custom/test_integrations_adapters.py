@@ -27,7 +27,7 @@ def test_pipecat_adapter_forwards_or_raises_clear_error():
     import smallestai.integrations.pipecat as pc
 
     if _framework_installed("pipecat.services.smallest"):
-        import pipecat.services.smallest as real
+        import pipecat.services.smallest as real  # type: ignore[import-not-found]
 
         assert pc.SmallestSTTService is real.SmallestSTTService
         assert "SmallestSTTService" in dir(pc)
@@ -42,7 +42,7 @@ def test_livekit_adapter_forwards_or_raises_clear_error():
     import smallestai.integrations.livekit as lk
 
     if _framework_installed("livekit.plugins.smallestai"):
-        import livekit.plugins.smallestai as real
+        import livekit.plugins.smallestai as real  # type: ignore[import-not-found]
 
         assert lk.TTS is real.TTS
     else:

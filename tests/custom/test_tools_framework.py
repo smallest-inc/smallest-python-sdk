@@ -42,7 +42,7 @@ def test_exa_run_without_exa_py_raises_clear_error():
     from smallestai.tools import ExaSearchTool
 
     try:
-        import exa_py  # noqa: F401
+        import exa_py  # type: ignore[import-not-found]  # noqa: F401
 
         installed = True
     except ImportError:
