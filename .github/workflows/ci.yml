@@ -44,6 +44,45 @@ jobs:
       - name: Test
         run: poetry run pytest -rP -n auto .
 
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install ruff
+        run: pip install ruff==0.16.1
+      - name: Ruff lint
+        run: ruff check .
+      - name: Ruff format check
+        run: ruff format --check .
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Secret scan (gitleaks)
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz | tar -xz gitleaks
+          ./gitleaks dir . --config .gitleaks.toml --redact --no-banner
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Bootstrap poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python - -y --version 1.5.1
+      - name: Install dependencies
+        run: poetry install
+      - name: Dependency audit (pip-audit)
+        run: |
+          poetry run pip install pip-audit
+          poetry run pip-audit
+
   # Auto-publish to PyPI when the version in pyproject.toml has been bumped
   # beyond the latest git tag. Only fires on pushes to main, only after
   # compile+test pass. No-ops on pushes that didn't change the version.
@@ -57,7 +96,7 @@ jobs:
   # Required repo secret: PYPI_API_TOKEN (a PyPI API token with upload scope
   # for the `smallestai` project).
   publish:
-    needs: [compile, test]
+    needs: [compile, test, lint, security]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:

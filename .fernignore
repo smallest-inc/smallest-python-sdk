@@ -71,3 +71,8 @@ src/smallestai/tools/**
 
 # Anonymous opt-out telemetry (hand-written)
 src/smallestai/telemetry.py
+
+# Dev quality/security tooling (hand-written)
+.pre-commit-config.yaml
+.gitleaks.toml
+.deepsource.toml

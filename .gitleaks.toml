@@ -1,0 +1,11 @@
+# gitleaks config (used by the pre-commit hook and the CI security job).
+# Extends the built-in ruleset and allowlists the PostHog project key, which is a
+# write-only client key that is meant to ship in client code.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "PostHog public write-only project key (safe to embed in a client)"
+regexes = [
+  '''phc_[A-Za-z0-9]{40,}''',
+]
