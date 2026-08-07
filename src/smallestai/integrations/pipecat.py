@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import typing
 
-_INSTALL_HINT = 'pip install "smallestai[pipecat]"  (or: pip install "pipecat-ai[smallest]")'
+_INSTALL_HINT = 'pip install "smallestai[pipecat]"  (or: pip install pipecat-ai)'
 
 
 def _load() -> typing.Any:

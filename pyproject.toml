@@ -57,8 +57,8 @@ questionary = ">=2.1.1"
 tomli = ">=2.3.0"
 tomli-w = ">=1.2.0"
 # Optional framework adapters (smallestai.integrations.*). Installed only via extras.
-pipecat-ai = { version = "*", optional = true, extras = ["smallest"] }
-livekit-plugins-smallestai = { version = "*", optional = true }
+pipecat-ai = { version = "*", optional = true, python = ">=3.11" }
+livekit-plugins-smallestai = { version = "*", optional = true, python = ">=3.10" }
 # Optional prebuilt tools (smallestai.tools.*). Installed only via extras.
 exa-py = { version = "*", optional = true }
 
