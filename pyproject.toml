@@ -56,15 +56,10 @@ rich = ">=14.2.0"
 questionary = ">=2.1.1"
 tomli = ">=2.3.0"
 tomli-w = ">=1.2.0"
-# Optional framework adapters (smallestai.integrations.*). Installed only via extras.
-pipecat-ai = { version = "*", optional = true, python = ">=3.11" }
-livekit-plugins-smallestai = { version = "*", optional = true, python = ">=3.10" }
 # Optional prebuilt tools (smallestai.tools.*). Installed only via extras.
 exa-py = { version = "*", optional = true }
 
 [tool.poetry.extras]
-pipecat = ["pipecat-ai"]
-livekit = ["livekit-plugins-smallestai"]
 exa = ["exa-py"]
 
 [tool.poetry.scripts]
