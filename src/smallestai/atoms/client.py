@@ -31,7 +31,6 @@ if typing.TYPE_CHECKING:
     from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
     from .knowledge_base.client import AsyncKnowledgeBaseClient, KnowledgeBaseClient
     from .live_transcripts.client import AsyncLiveTranscriptsClient, LiveTranscriptsClient
-    from .organization.client import AsyncOrganizationClient, OrganizationClient
     from .phone_numbers.client import AsyncPhoneNumbersClient, PhoneNumbersClient
     from .prompt_scoring.client import AsyncPromptScoringClient, PromptScoringClient
     from .realtime.client import AsyncRealtimeClient, RealtimeClient
@@ -44,7 +43,6 @@ class AtomsClient:
         self._raw_client = RawAtomsClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
         self._user: typing.Optional[UserClient] = None
-        self._organization: typing.Optional[OrganizationClient] = None
         self._agent_templates: typing.Optional[AgentTemplatesClient] = None
         self._agents: typing.Optional[AgentsClient] = None
         self._realtime: typing.Optional[RealtimeClient] = None
@@ -88,14 +86,6 @@ class AtomsClient:
 
             self._user = UserClient(client_wrapper=self._client_wrapper)
         return self._user
-
-    @property
-    def organization(self):
-        if self._organization is None:
-            from .organization.client import OrganizationClient  # noqa: E402
-
-            self._organization = OrganizationClient(client_wrapper=self._client_wrapper)
-        return self._organization
 
     @property
     def agent_templates(self):
@@ -295,7 +285,6 @@ class AsyncAtomsClient:
         self._raw_client = AsyncRawAtomsClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
         self._user: typing.Optional[AsyncUserClient] = None
-        self._organization: typing.Optional[AsyncOrganizationClient] = None
         self._agent_templates: typing.Optional[AsyncAgentTemplatesClient] = None
         self._agents: typing.Optional[AsyncAgentsClient] = None
         self._realtime: typing.Optional[AsyncRealtimeClient] = None
@@ -339,14 +328,6 @@ class AsyncAtomsClient:
 
             self._user = AsyncUserClient(client_wrapper=self._client_wrapper)
         return self._user
-
-    @property
-    def organization(self):
-        if self._organization is None:
-            from .organization.client import AsyncOrganizationClient  # noqa: E402
-
-            self._organization = AsyncOrganizationClient(client_wrapper=self._client_wrapper)
-        return self._organization
 
     @property
     def agent_templates(self):

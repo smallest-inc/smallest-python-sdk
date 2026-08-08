@@ -21,6 +21,12 @@
 * **dev**: pre-commit hooks (ruff lint + format, gitleaks) and CI quality/security jobs -
   `ruff check` / `ruff format --check` and a gitleaks secret scan gate publishing, plus
   `pip-audit` dependency-CVE reporting (report-only for now).
+* **api**: new `client.atoms.user.get_subscription()` - returns the organization's plan id,
+  credit balance, per-plan limits (agents, campaigns, numbers, daily/concurrent calls,
+  knowledge-base sizes), and feature flags.
+* **api (removed)**: `client.atoms.organization` is removed. Its endpoint (`GET /organization`)
+  returned 404 on the public API and was never functional; use
+  `client.atoms.user.get_user_details()` for account info.
 
 ## 5.5.0 - 2026-08-05
 

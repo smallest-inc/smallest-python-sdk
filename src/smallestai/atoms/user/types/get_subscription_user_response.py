@@ -5,12 +5,15 @@ import typing
 import pydantic
 from ....core.pydantic_utilities import IS_PYDANTIC_V2
 from ....core.unchecked_base_model import UncheckedBaseModel
-from .get_organization_response_data import GetOrganizationResponseData
+from .get_subscription_user_response_data import GetSubscriptionUserResponseData
 
 
-class GetOrganizationResponse(UncheckedBaseModel):
+class GetSubscriptionUserResponse(UncheckedBaseModel):
     status: typing.Optional[bool] = None
-    data: typing.Optional[GetOrganizationResponseData] = None
+    data: typing.Optional[GetSubscriptionUserResponseData] = pydantic.Field(default=None)
+    """
+    The subscription record. Extra fields may be present.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

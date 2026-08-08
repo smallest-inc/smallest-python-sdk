@@ -48,10 +48,28 @@ client.atoms.user.get_user_details()
 </dl>
 </details>
 
-## Atoms Organization
-<details><summary><code>client.atoms.organization.<a href="src/smallestai/atoms/organization/client.py">get_organization_details</a>() -> GetOrganizationResponse</code></summary>
+
+<details><summary><code>client.atoms.user.<a href="src/smallestai/atoms/user/client.py">get_subscription</a>() -> GetSubscriptionUserResponse</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the organization's current subscription: plan id, credit balance,
+renewal date, and the per-plan `limits` (agents, campaigns, numbers, daily and
+concurrent calls, knowledge-base sizes) plus the `features` map that gates
+capabilities like telephony, campaigns, and webhooks. Use it to check remaining
+credits or whether a feature is enabled before attempting an action.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -70,7 +88,8 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.organization.get_organization_details()
+client.atoms.user.get_subscription()
+
 ```
 </dd>
 </dl>
