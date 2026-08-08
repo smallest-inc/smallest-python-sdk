@@ -1,8 +1,8 @@
 """Lazy adapter for the Smallest AI LiveKit plugin.
 
-Re-exports ``livekit.plugins.smallestai`` under the SDK namespace:
+Re-exports ``livekit.plugins.smallestai`` (both STT and TTS) under the SDK namespace:
 
-    from smallestai.integrations.livekit import TTS
+    from smallestai.integrations.livekit import STT, TTS
 
 The core ``smallestai`` package does not depend on LiveKit. Install the extra to use
 this adapter::

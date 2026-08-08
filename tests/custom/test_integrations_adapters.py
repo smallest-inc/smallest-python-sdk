@@ -46,6 +46,7 @@ def test_livekit_adapter_forwards_or_raises_clear_error():
         import livekit.plugins.smallestai as real  # type: ignore[import-not-found]
 
         assert lk.TTS is real.TTS
+        assert lk.STT is real.STT  # the plugin provides both STT and TTS
     else:
         with pytest.raises(ImportError) as ei:
             _ = lk.TTS
