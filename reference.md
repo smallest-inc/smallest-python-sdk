@@ -89,7 +89,6 @@ client = SmallestAI(
 )
 
 client.atoms.user.get_subscription()
-
 ```
 </dd>
 </dl>
