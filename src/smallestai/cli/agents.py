@@ -5,6 +5,7 @@ and the SDK stay in lockstep automatically. Auth resolves from SMALLEST_API_KEY,
 key stored by `smallestai auth login` (~/.smallestai/credentials.json). SMALLEST_BASE_URL
 overrides the endpoint (dev rig).
 """
+
 import typer
 from rich.console import Console
 from rich.table import Table

@@ -226,7 +226,6 @@ if typing.TYPE_CHECKING:
         integrations,
         knowledge_base,
         live_transcripts,
-        organization,
         phone_numbers,
         prompt_scoring,
         realtime,
@@ -601,12 +600,6 @@ if typing.TYPE_CHECKING:
         SubscribeToLiveEventsLiveTranscriptsResponseEventType,
         SubscribeToLiveEventsLiveTranscriptsResponseMetricsItem,
     )
-    from .organization import (
-        GetOrganizationResponse,
-        GetOrganizationResponseData,
-        GetOrganizationResponseDataMembersItem,
-        GetOrganizationResponseDataSubscription,
-    )
     from .phone_numbers import (
         GetProductAllNumbersResponse,
         GetProductAllNumbersResponseData,
@@ -652,7 +645,13 @@ if typing.TYPE_CHECKING:
         RegisterCallRealtimeResponse,
         RegisterCallRealtimeResponseData,
     )
-    from .user import GetUserResponse, GetUserResponseData
+    from .user import (
+        GetSubscriptionUserResponse,
+        GetSubscriptionUserResponseData,
+        GetSubscriptionUserResponseDataLimits,
+        GetUserResponse,
+        GetUserResponseData,
+    )
     from .webhooks import (
         CreateWebhooksRequestEventsItem,
         CreateWebhooksRequestEventsItemEventType,
@@ -955,10 +954,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GetKnowledgebaseIdScrapedUrlsResponseDataItem": ".knowledge_base",
     "GetLedgerBillingRequestScope": ".billing",
     "GetLedgerBillingRequestType": ".billing",
-    "GetOrganizationResponse": ".organization",
-    "GetOrganizationResponseData": ".organization",
-    "GetOrganizationResponseDataMembersItem": ".organization",
-    "GetOrganizationResponseDataSubscription": ".organization",
     "GetPhoneNumberTrendsResponse": ".analytics",
     "GetPhoneNumberTrendsResponseData": ".analytics",
     "GetPhoneNumberTrendsResponseDataTrendsItem": ".analytics",
@@ -974,6 +969,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GetProductProrationAmountResponseData": ".phone_numbers",
     "GetProductUnpaidInvoicesResponse": ".phone_numbers",
     "GetProductUnpaidInvoicesResponseData": ".phone_numbers",
+    "GetSubscriptionUserResponse": ".user",
+    "GetSubscriptionUserResponseData": ".user",
+    "GetSubscriptionUserResponseDataLimits": ".user",
     "GetUsageTimeseriesResponse": ".analytics",
     "GetUsageTimeseriesResponseData": ".analytics",
     "GetUsageTimeseriesResponseDataDateRange": ".analytics",
@@ -1272,7 +1270,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "integrations": ".integrations",
     "knowledge_base": ".knowledge_base",
     "live_transcripts": ".live_transcripts",
-    "organization": ".organization",
     "phone_numbers": ".phone_numbers",
     "prompt_scoring": ".prompt_scoring",
     "realtime": ".realtime",
@@ -1591,10 +1588,6 @@ __all__ = [
     "GetKnowledgebaseIdScrapedUrlsResponseDataItem",
     "GetLedgerBillingRequestScope",
     "GetLedgerBillingRequestType",
-    "GetOrganizationResponse",
-    "GetOrganizationResponseData",
-    "GetOrganizationResponseDataMembersItem",
-    "GetOrganizationResponseDataSubscription",
     "GetPhoneNumberTrendsResponse",
     "GetPhoneNumberTrendsResponseData",
     "GetPhoneNumberTrendsResponseDataTrendsItem",
@@ -1610,6 +1603,9 @@ __all__ = [
     "GetProductProrationAmountResponseData",
     "GetProductUnpaidInvoicesResponse",
     "GetProductUnpaidInvoicesResponseData",
+    "GetSubscriptionUserResponse",
+    "GetSubscriptionUserResponseData",
+    "GetSubscriptionUserResponseDataLimits",
     "GetUsageTimeseriesResponse",
     "GetUsageTimeseriesResponseData",
     "GetUsageTimeseriesResponseDataDateRange",
@@ -1908,7 +1904,6 @@ __all__ = [
     "integrations",
     "knowledge_base",
     "live_transcripts",
-    "organization",
     "phone_numbers",
     "prompt_scoring",
     "realtime",

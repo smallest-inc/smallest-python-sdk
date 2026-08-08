@@ -161,6 +161,23 @@ class AtomsAPIClient:
 
             return agents_response.data
 
+    async def get_agent_raw(self, access_token: str, agent_id: str) -> dict:
+        """Fetch a single agent's full config as a raw dict (for `doctor` inspection)."""
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{self.base_url}/atoms/v1/agent/{agent_id}",
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
+            response.raise_for_status()
+            body = response.json()
+            if isinstance(body, dict) and body.get("status") is False:
+                raise Exception(body.get("errors"))
+            data = body.get("data", body) if isinstance(body, dict) else body
+            # some responses nest under data.agent
+            if isinstance(data, dict) and "agent" in data and isinstance(data["agent"], dict):
+                data = data["agent"]
+            return data if isinstance(data, dict) else {}
+
     async def get_account_details(
         self,
         access_token: str,
@@ -175,14 +192,9 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            account_details_response = AccountDetailsAPIResponse.model_validate(
-                response.json()
-            )
+            account_details_response = AccountDetailsAPIResponse.model_validate(response.json())
 
-            if (
-                account_details_response.status is False
-                or account_details_response.data is None
-            ):
+            if account_details_response.status is False or account_details_response.data is None:
                 raise Exception(account_details_response.errors)
 
             return account_details_response.data
@@ -208,14 +220,9 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            create_agent_build_response = CreateAgentBuildAPIResponse.model_validate(
-                response.json()
-            )
+            create_agent_build_response = CreateAgentBuildAPIResponse.model_validate(response.json())
 
-            if (
-                create_agent_build_response.status is False
-                or create_agent_build_response.data is None
-            ):
+            if create_agent_build_response.status is False or create_agent_build_response.data is None:
                 raise Exception(create_agent_build_response.errors)
 
             return create_agent_build_response.data
@@ -241,14 +248,9 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            list_builds_response = ListAgentBuildsAPIResponse.model_validate(
-                response.json()
-            )
+            list_builds_response = ListAgentBuildsAPIResponse.model_validate(response.json())
 
-            if (
-                list_builds_response.status is False
-                or list_builds_response.data is None
-            ):
+            if list_builds_response.status is False or list_builds_response.data is None:
                 raise Exception(list_builds_response.errors)
 
             return list_builds_response.data
@@ -269,9 +271,7 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            get_build_response = GetAgentBuildAPIResponse.model_validate(
-                response.json()
-            )
+            get_build_response = GetAgentBuildAPIResponse.model_validate(response.json())
 
             if get_build_response.status is False or get_build_response.data is None:
                 raise Exception(get_build_response.errors)
@@ -298,14 +298,9 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            update_build_response = UpdateAgentBuildAPIResponse.model_validate(
-                response.json()
-            )
+            update_build_response = UpdateAgentBuildAPIResponse.model_validate(response.json())
 
-            if (
-                update_build_response.status is False
-                or update_build_response.data is None
-            ):
+            if update_build_response.status is False or update_build_response.data is None:
                 raise Exception(update_build_response.errors)
 
             return update_build_response.data

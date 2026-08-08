@@ -172,15 +172,17 @@ class OutputCrewNode(CrewNode):
 
         except Exception as e:
             logger.exception(f"[{self.name}] Error during generation: {e}")
-            await self.send_event(SDKAgentErrorEvent(
-                message=f"{type(e).__name__} in {self.name}.generate_response: {e}",
-                severity="fatal",
-                payload={
-                    "node_name": self.name,
-                    "error_class": type(e).__name__,
-                    "traceback": _traceback.format_exc(),
-                },
-            ))
+            await self.send_event(
+                SDKAgentErrorEvent(
+                    message=f"{type(e).__name__} in {self.name}.generate_response: {e}",
+                    severity="fatal",
+                    payload={
+                        "node_name": self.name,
+                        "error_class": type(e).__name__,
+                        "traceback": _traceback.format_exc(),
+                    },
+                )
+            )
 
         finally:
             await self.send_event(SDKAgentLLMResponseEndEvent())

@@ -98,6 +98,7 @@ if typing.TYPE_CHECKING:
         UnauthorizedError,
     )
     from . import electron, speech_to_speech, speech_to_text, streaming_tts, tts
+
     # Backward-compat shim for the 4.3.1 surface (source in stream_tts.py, .fernignore'd).
     from .stream_tts import TTSConfig, WavesStreamingTTS
     from .electron import (

@@ -6,18 +6,19 @@ LLM re-decides the same action and re-fires the event / hold-message in a loop
 (observed ~40x "please hold" during a ~30s transfer dial). Once a handoff event is
 emitted, the node latches and ignores further LLM requests.
 """
+
 import unittest
 from unittest import mock
 
-from smallestai.atoms.crew.nodes import OutputCrewNode
-from smallestai.atoms.crew.nodes.base import CrewNode
 from smallestai.atoms.crew.events import (
-    SDKSystemLLMRequestEvent,
-    SDKAgentTransferConversationEvent,
     SDKAgentEndCallEvent,
+    SDKAgentTransferConversationEvent,
+    SDKSystemLLMRequestEvent,
     TransferOption,
     TransferOptionType,
 )
+from smallestai.atoms.crew.nodes import OutputCrewNode
+from smallestai.atoms.crew.nodes.base import CrewNode
 
 
 class _Agent(OutputCrewNode):
@@ -67,6 +68,7 @@ class TerminalHandoffGuardTest(unittest.IsolatedAsyncioTestCase):
         a = _Agent()
         a._handle_llm_request = mock.AsyncMock()
         from smallestai.atoms.crew.events import SDKAgentSpeakEvent
+
         with mock.patch.object(CrewNode, "send_event", new=mock.AsyncMock()):
             await a.send_event(SDKAgentSpeakEvent(text="hello"))
         self.assertFalse(a._handoff_started)

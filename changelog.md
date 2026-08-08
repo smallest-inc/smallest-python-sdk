@@ -1,3 +1,33 @@
+## 5.10.0 - 2026-08-07
+
+* **tools**: new `smallestai.tools` framework for prebuilt, pluggable crew tools. Each tool
+  plugs into a crew's `ToolRegistry` and is also callable directly; third-party libraries
+  install as optional extras, lazy-imported. First tool: `ExaSearchTool` (web search;
+  `pip install "smallestai[exa]"`, reads `EXA_API_KEY`).
+* **cli**: new `smallestai agent-crew doctor [--agent-id]` inspects a crew agent and flags
+  common gotchas (no live build, wrong workflow type, PII redaction on, `transfer_call`
+  toggled in the dashboard). `agent-crew init` now prints the crew-vs-platform config
+  ownership boundary.
+* **cli**: new `smallestai mcp` command to set up or run the Smallest AI MCP server
+  (`@developer-smallestai/smallest-mcp-server`) for Cursor / Claude. `mcp` prints the config
+  + `claude mcp add` line, `mcp run` launches it via npx, `mcp config` prints the mcp.json.
+* **cli**: running bare `smallestai` now shows a banner + command list instead of a
+  "Missing command" error.
+* **telemetry**: anonymous, opt-out usage telemetry (PostHog). No personal data or secrets:
+  only the event name, SDK/Python/OS version, and a random anonymous install id.
+  Fire-and-forget, never blocks. Opt out with `SMALLESTAI_TELEMETRY=0` (or `DO_NOT_TRACK=1`).
+* **crew**: `SDKSystemUpdateOutputAgentSettingsEvent` is deprecated - the platform does not
+  apply crew-sent output-agent settings. It will be removed in a future release.
+* **dev**: pre-commit hooks (ruff lint + format, gitleaks) and CI quality/security jobs -
+  `ruff check` / `ruff format --check` and a gitleaks secret scan gate publishing, plus
+  `pip-audit` dependency-CVE reporting (report-only for now).
+* **api**: new `client.atoms.user.get_subscription()` - returns the organization's plan id,
+  credit balance, per-plan limits (agents, campaigns, numbers, daily/concurrent calls,
+  knowledge-base sizes), and feature flags.
+* **api (removed)**: `client.atoms.organization` is removed. Its endpoint (`GET /organization`)
+  returned 404 on the public API and was never functional; use
+  `client.atoms.user.get_user_details()` for account info.
+
 ## 5.5.0 - 2026-08-05
 
 DevX pass (backward-compatible).

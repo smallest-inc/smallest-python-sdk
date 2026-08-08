@@ -22,13 +22,14 @@ For new code, prefer the namespaced Fern client:
 
 This shim exists to avoid breaking customers on the 4.3.1 pattern.
 """
-import json
+
 import base64
-import time
-import threading
+import json
 import queue
+import threading
+import time
+from dataclasses import dataclass
 from typing import Generator, Optional, Sequence
-from dataclasses import dataclass, field
 
 from websocket import WebSocketApp  # from `websocket-client` package
 
@@ -40,6 +41,7 @@ class TTSConfig:
     Mirrors the 4.3.1 shape; `consistency` was removed because Lightning
     v3.1 does not accept it (silently dropped if passed via dict).
     """
+
     voice_id: str
     api_key: str
     model: str = "lightning_v3.1"
@@ -274,4 +276,3 @@ class WavesStreamingTTS:
         self.is_complete = False
         self.is_connected = False
         self.request_id = None
-

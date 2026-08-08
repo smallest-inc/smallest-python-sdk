@@ -33,10 +33,10 @@
       "postServeActions": []
     },
     {
-      "id": "3142d983-0755-42b2-a57e-8e870c673b42",
-      "name": "Get organization details - default",
+      "id": "cf9588a0-f44b-4cdc-b7d1-7fb340f777d4",
+      "name": "Get subscription and plan limits - default",
       "request": {
-        "urlPathTemplate": "/organization",
+        "urlPathTemplate": "/user/subscription",
         "method": "GET",
         "headers": {
           "Authorization": {
@@ -46,12 +46,12 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"name\": \"name\",\n    \"members\": [\n      {}\n    ],\n    \"subscription\": {\n      \"planId\": \"planId\"\n    }\n  }\n}",
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"organization\": \"organization\",\n    \"planId\": \"planId\",\n    \"totalCredits\": 1.1,\n    \"currentCredits\": 1.1,\n    \"renewalDate\": \"2024-01-15T09:30:00Z\",\n    \"subscriptionActive\": true,\n    \"onPremEnabled\": true,\n    \"limits\": {\n      \"agents\": 1,\n      \"campaigns\": 1,\n      \"numbers\": 1,\n      \"dailyCalls\": 1,\n      \"concurrentCalls\": 1,\n      \"knowledgeBaseItemLimit\": 1,\n      \"knowledgeBaseLimits\": 1\n    },\n    \"features\": {\n      \"key\": true\n    }\n  }\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "3142d983-0755-42b2-a57e-8e870c673b42",
+      "uuid": "cf9588a0-f44b-4cdc-b7d1-7fb340f777d4",
       "persistent": true,
       "priority": 3,
       "metadata": {

@@ -45,13 +45,13 @@ the next call.
 ```python
 from smallestai.atoms.helpers import AgentTools
 
-tools = AgentTools(api_key="sk_...")           # or SMALLEST_API_KEY env var
+tools = AgentTools(api_key="sk_...")  # or SMALLEST_API_KEY env var
 
 tools.add_transfer_call(
     "AGENT_ID",
     number="+15551234567",
-    transfer_type="cold_transfer",     # or "warm_transfer"
-    on_hold_music="relaxing_sound",    # audio while bridging
+    transfer_type="cold_transfer",  # or "warm_transfer"
+    on_hold_music="relaxing_sound",  # audio while bridging
 )
 ```
 
@@ -97,13 +97,14 @@ from smallestai.atoms.crew.events import (
     TransferOptionType,
 )
 
+
 @function_tool(name="transfer_call")
 async def transfer_call(self) -> None:
     await self.send_event(
         SDKAgentTransferConversationEvent(
             transfer_call_number="+15551234567",
             transfer_options=TransferOption(type=TransferOptionType.COLD_TRANSFER),
-            on_hold_music="relaxing_sound",   # optional; omit for platform default
+            on_hold_music="relaxing_sound",  # optional; omit for platform default
         )
     )
 ```
