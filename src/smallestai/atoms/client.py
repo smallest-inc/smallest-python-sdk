@@ -8,6 +8,7 @@ from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .raw_client import AsyncRawAtomsClient, RawAtomsClient
 
 if typing.TYPE_CHECKING:
+    from .account.client import AccountClient, AsyncAccountClient
     from .agent_templates.client import AgentTemplatesClient, AsyncAgentTemplatesClient
     from .agent_versioning_branches.client import AgentVersioningBranchesClient, AsyncAgentVersioningBranchesClient
     from .agent_versioning_drafts.client import AgentVersioningDraftsClient, AsyncAgentVersioningDraftsClient
@@ -35,6 +36,7 @@ if typing.TYPE_CHECKING:
     from .prompt_scoring.client import AsyncPromptScoringClient, PromptScoringClient
     from .realtime.client import AsyncRealtimeClient, RealtimeClient
     from .user.client import AsyncUserClient, UserClient
+    from .web_call.client import AsyncWebCallClient, WebCallClient
     from .webhooks.client import AsyncWebhooksClient, WebhooksClient
 
 
@@ -67,6 +69,8 @@ class AtomsClient:
         self._disposition_metric_templates: typing.Optional[DispositionMetricTemplatesClient] = None
         self._dnc: typing.Optional[DncClient] = None
         self._billing: typing.Optional[BillingClient] = None
+        self._account: typing.Optional[AccountClient] = None
+        self._web_call: typing.Optional[WebCallClient] = None
 
     @property
     def with_raw_response(self) -> RawAtomsClient:
@@ -279,6 +283,22 @@ class AtomsClient:
             self._billing = BillingClient(client_wrapper=self._client_wrapper)
         return self._billing
 
+    @property
+    def account(self):
+        if self._account is None:
+            from .account.client import AccountClient  # noqa: E402
+
+            self._account = AccountClient(client_wrapper=self._client_wrapper)
+        return self._account
+
+    @property
+    def web_call(self):
+        if self._web_call is None:
+            from .web_call.client import WebCallClient  # noqa: E402
+
+            self._web_call = WebCallClient(client_wrapper=self._client_wrapper)
+        return self._web_call
+
 
 class AsyncAtomsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -309,6 +329,8 @@ class AsyncAtomsClient:
         self._disposition_metric_templates: typing.Optional[AsyncDispositionMetricTemplatesClient] = None
         self._dnc: typing.Optional[AsyncDncClient] = None
         self._billing: typing.Optional[AsyncBillingClient] = None
+        self._account: typing.Optional[AsyncAccountClient] = None
+        self._web_call: typing.Optional[AsyncWebCallClient] = None
 
     @property
     def with_raw_response(self) -> AsyncRawAtomsClient:
@@ -522,3 +544,19 @@ class AsyncAtomsClient:
 
             self._billing = AsyncBillingClient(client_wrapper=self._client_wrapper)
         return self._billing
+
+    @property
+    def account(self):
+        if self._account is None:
+            from .account.client import AsyncAccountClient  # noqa: E402
+
+            self._account = AsyncAccountClient(client_wrapper=self._client_wrapper)
+        return self._account
+
+    @property
+    def web_call(self):
+        if self._web_call is None:
+            from .web_call.client import AsyncWebCallClient  # noqa: E402
+
+            self._web_call = AsyncWebCallClient(client_wrapper=self._client_wrapper)
+        return self._web_call

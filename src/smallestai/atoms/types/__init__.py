@@ -156,6 +156,10 @@ if typing.TYPE_CHECKING:
     from .versioning_v2migration_required_response import VersioningV2MigrationRequiredResponse
     from .versioning_v2migration_required_response_error_type import VersioningV2MigrationRequiredResponseErrorType
     from .web_engage_integration_set import WebEngageIntegrationSet
+    from .web_session_error_response import WebSessionErrorResponse
+    from .web_session_request import WebSessionRequest
+    from .web_session_response import WebSessionResponse
+    from .web_session_response_data import WebSessionResponseData
     from .webhook import Webhook
     from .webhook_agent import WebhookAgent
     from .webhook_event import WebhookEvent
@@ -342,6 +346,10 @@ _dynamic_imports: typing.Dict[str, str] = {
     "VersioningV2MigrationRequiredResponse": ".versioning_v2migration_required_response",
     "VersioningV2MigrationRequiredResponseErrorType": ".versioning_v2migration_required_response_error_type",
     "WebEngageIntegrationSet": ".web_engage_integration_set",
+    "WebSessionErrorResponse": ".web_session_error_response",
+    "WebSessionRequest": ".web_session_request",
+    "WebSessionResponse": ".web_session_response",
+    "WebSessionResponseData": ".web_session_response_data",
     "Webhook": ".webhook",
     "WebhookAgent": ".webhook_agent",
     "WebhookEvent": ".webhook_event",
@@ -552,6 +560,10 @@ __all__ = [
     "VersioningV2MigrationRequiredResponse",
     "VersioningV2MigrationRequiredResponseErrorType",
     "WebEngageIntegrationSet",
+    "WebSessionErrorResponse",
+    "WebSessionRequest",
+    "WebSessionResponse",
+    "WebSessionResponseData",
     "Webhook",
     "WebhookAgent",
     "WebhookEvent",

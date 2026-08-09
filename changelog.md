@@ -21,12 +21,22 @@
 * **dev**: pre-commit hooks (ruff lint + format, gitleaks) and CI quality/security jobs -
   `ruff check` / `ruff format --check` and a gitleaks secret scan gate publishing, plus
   `pip-audit` dependency-CVE reporting (report-only for now).
-* **api**: new `client.atoms.user.get_subscription()` - returns the organization's plan id,
-  credit balance, per-plan limits (agents, campaigns, numbers, daily/concurrent calls,
-  knowledge-base sizes), and feature flags.
+* **api (Voice Agents)**: new endpoints on the client:
+  * `client.atoms.user.get_subscription()` - plan id, credit balance, per-plan limits, feature flags.
+  * `client.atoms.account.get_account_details()` - profile plus the orgs the user belongs to.
+  * `client.atoms.account.update_organization_name(...)` - rename the active org (owner role).
+  * `client.atoms.web_call.start_web_chat_conversation(...)` / `start_web_call_conversation(...)` - mint a LiveKit token + room for a browser text/voice session.
+  * `client.atoms.campaigns.export_campaign_logs(...)` - campaign call logs.
+  * `client.atoms.campaigns.export_campaign_results_by_audience_member(...)` - results grouped by contact (`format=json|csv`).
+* **api (Speech)**: new endpoints on the client:
+  * `client.waves.post_call_analysis.analyze(...)` - disposition metrics from a transcript.
+  * `client.waves.post_call_analysis.generate(...)` - single-prompt text generation.
+  * `client.waves.voices.get_all_voice_models()` - the full voice catalog.
+  * `client.waves.analytics.*` - ASR/TTS logs and usage/credits/concurrency timeseries, webhook logs.
+  * `client.waves.ops.get_waves_health()` - service health.
 * **api (removed)**: `client.atoms.organization` is removed. Its endpoint (`GET /organization`)
   returned 404 on the public API and was never functional; use
-  `client.atoms.user.get_user_details()` for account info.
+  `client.atoms.account.get_account_details()` / `client.atoms.user.get_user_details()` instead.
 
 ## 5.5.0 - 2026-08-05
 
