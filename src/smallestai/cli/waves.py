@@ -37,7 +37,9 @@ def initialise_waves_app(auth_client: AuthClient):
         # NB: the get-voices endpoint uses the hyphen form (lightning-v3.1); the
         # tts endpoint uses the underscore form (lightning_v3.1). They are
         # distinct API enums, not a typo — each command defaults to its own.
-        model: str = typer.Option("lightning-v3.1", "--model", help="Voice model (get-voices form, e.g. lightning-v3.1)"),
+        model: str = typer.Option(
+            "lightning-v3.1", "--model", help="Voice model (get-voices form, e.g. lightning-v3.1)"
+        ),
         as_json: bool = typer.Option(False, "--json", help="Emit raw JSON"),
     ):
         """List available voices for a model."""
@@ -86,10 +88,10 @@ def initialise_waves_app(auth_client: AuthClient):
         text: str = typer.Argument(..., help="Text to synthesize"),
         voice_id: str = typer.Option(..., "--voice-id", help="Voice id (see `waves voices`)"),
         out: str = typer.Option("out.wav", "--out", "-o", help="Output audio file"),
-        model: str = typer.Option("lightning_v3.1", "--model", help="TTS model (tts form, e.g. lightning_v3.1 / lightning_v3.1_pro)"),
-        output_format: str = typer.Option(
-            "wav", "--format", help="Audio format: wav | mp3 | pcm | ulaw | alaw"
+        model: str = typer.Option(
+            "lightning_v3.1", "--model", help="TTS model (tts form, e.g. lightning_v3.1 / lightning_v3.1_pro)"
         ),
+        output_format: str = typer.Option("wav", "--format", help="Audio format: wav | mp3 | pcm | ulaw | alaw"),
         sample_rate: int = typer.Option(None, "--sample-rate", help="Sample rate (Hz)"),
         speed: float = typer.Option(None, "--speed", help="Speech speed multiplier"),
     ):
@@ -129,11 +131,7 @@ def initialise_waves_app(auth_client: AuthClient):
         if as_json:
             console.print_json(resp.json() if hasattr(resp, "json") else _json.dumps(resp, default=str))
             return
-        text = (
-            getattr(resp, "transcription", None)
-            or getattr(resp, "text", None)
-            or getattr(resp, "transcript", None)
-        )
+        text = getattr(resp, "transcription", None) or getattr(resp, "text", None) or getattr(resp, "transcript", None)
         console.print(text if text is not None else resp)
 
     return waves_app

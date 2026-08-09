@@ -103,9 +103,7 @@ class OpenAIClient(BaseLLMClient):
             **kwargs,
         )
 
-    def _create_client(
-        self, api_key: Optional[str], base_url: Optional[str]
-    ) -> AsyncOpenAI:
+    def _create_client(self, api_key: Optional[str], base_url: Optional[str]) -> AsyncOpenAI:
         """Create the OpenAI async client."""
         # Get API key from parameter or environment
         api_key = api_key or os.getenv("OPENAI_API_KEY")
@@ -230,8 +228,7 @@ class OpenAIClient(BaseLLMClient):
         params = self._build_params(messages, stream, tools, overrides)
 
         logger.debug(
-            f"OpenAI chat request: model={params['model']}, "
-            f"messages={len(params['messages'])}, stream={stream}"
+            f"OpenAI chat request: model={params['model']}, messages={len(params['messages'])}, stream={stream}"
         )
 
         if stream:
@@ -239,9 +236,7 @@ class OpenAIClient(BaseLLMClient):
         else:
             return await self._complete(params)
 
-    async def _stream_completion(
-        self, params: Dict[str, Any]
-    ) -> AsyncIterator[ChatChunk]:
+    async def _stream_completion(self, params: Dict[str, Any]) -> AsyncIterator[ChatChunk]:
         """Stream chat completion chunks."""
         functions_list = []
         arguments_list = []
@@ -251,9 +246,7 @@ class OpenAIClient(BaseLLMClient):
         arguments = ""
         tool_call_id = ""
 
-        stream: AsyncStream[
-            ChatCompletionChunk
-        ] = await self._client.chat.completions.create(**params)
+        stream: AsyncStream[ChatCompletionChunk] = await self._client.chat.completions.create(**params)
 
         async for chunk in stream:
             if not chunk.choices:
@@ -280,9 +273,7 @@ class OpenAIClient(BaseLLMClient):
                 if tool_call.function and tool_call.function.arguments:
                     arguments += tool_call.function.arguments
 
-            yield ChatChunk(
-                content=content, tool_calls=None, finish_reason=finish_reason
-            )
+            yield ChatChunk(content=content, tool_calls=None, finish_reason=finish_reason)
 
         if function_name:
             functions_list.append(function_name)
@@ -296,13 +287,9 @@ class OpenAIClient(BaseLLMClient):
                     name=function_name,
                     arguments=arguments,
                 )
-                for tool_id, function_name, arguments in zip(
-                    tool_id_list, functions_list, arguments_list
-                )
+                for tool_id, function_name, arguments in zip(tool_id_list, functions_list, arguments_list)
             ]
-            yield ChatChunk(
-                content=None, tool_calls=tool_calls, finish_reason=finish_reason
-            )
+            yield ChatChunk(content=None, tool_calls=tool_calls, finish_reason=finish_reason)
 
     async def _complete(self, params: Dict[str, Any]) -> ChatResponse:
         """Non-streaming completion."""

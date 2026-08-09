@@ -16,16 +16,16 @@ Usage:
     SMALLEST_API_KEY=sk_... SMALLEST_BASE_URL=https://api.dev.smallest.ai/atoms/v1 \
         python tests/velocity/v2_versioning_e2e.py
 """
+
 import os
 import sys
 
 from smallestai import SmallestAI
-from smallestai.environment import SmallestAIEnvironment
 from smallestai.atoms.helpers.versioning import (
-    Versioning,
     DraftConflictError,
-    MigrationRequiredError,
+    Versioning,
 )
+from smallestai.environment import SmallestAIEnvironment
 
 KEY = os.environ.get("SMALLEST_API_KEY")
 BASE = os.environ.get("SMALLEST_BASE_URL")
@@ -81,7 +81,9 @@ def main() -> int:
 
         # typed update_draft via helper
         ud = v.update_draft(AGENT, fork_id, global_prompt="E2E typed prompt", first_message="Hi from e2e")
-        check(ud is not None, "update_draft (typed kwargs)", f"draftRevision={getattr(ud.data,'draft_revision',None)}")
+        check(
+            ud is not None, "update_draft (typed kwargs)", f"draftRevision={getattr(ud.data, 'draft_revision', None)}"
+        )
 
         # get_draft
         gd = v.branches.get_draft(id=AGENT, branch_id=fork_id)
@@ -90,8 +92,11 @@ def main() -> int:
 
         # publish + wait_for_commit (helper handles scanning->poll)
         revision = v.publish_and_wait(AGENT, fork_id, label="e2e", timeout=90, poll_interval=2)
-        check(getattr(revision, "status", None) == "published", "publish_and_wait -> published",
-              f"rev={getattr(revision,'id',None)} securityCheck={getattr(getattr(revision,'security_check',None),'status',None)}")
+        check(
+            getattr(revision, "status", None) == "published",
+            "publish_and_wait -> published",
+            f"rev={getattr(revision, 'id', None)} securityCheck={getattr(getattr(revision, 'security_check', None), 'status', None)}",
+        )
 
         # revisions list / get / history
         rl = v.revisions.list(id=AGENT, branch_id=fork_id)
@@ -118,19 +123,25 @@ def main() -> int:
             conflict_raised = True
             # dev returns the rich data.conflict (diffs); prod returns lean errors (fields).
             has_detail = bool(e.diffs) or bool(getattr(e, "fields", []))
-            check(has_detail, "DraftConflictError discriminated",
-                  f"expected={e.expected_revision} latest={e.latest_revision} diffs={len(e.diffs)} fields={getattr(e,'fields',[])}")
+            check(
+                has_detail,
+                "DraftConflictError discriminated",
+                f"expected={e.expected_revision} latest={e.latest_revision} diffs={len(e.diffs)} fields={getattr(e, 'fields', [])}",
+            )
         check(conflict_raised, "stale expected_revision raises DraftConflictError")
 
         # publish the pending draft edits as a 2nd revision, so restore has an
         # OLDER target than head (restoring the current head is a 409 no-op).
         rev2 = v.publish_and_wait(AGENT, fork_id, label="e2e-2", timeout=90, poll_interval=2)
-        check(getattr(rev2, "status", None) == "published", "second publish -> published",
-              f"rev={getattr(rev2,'id',None)}")
+        check(
+            getattr(rev2, "status", None) == "published",
+            "second publish -> published",
+            f"rev={getattr(rev2, 'id', None)}",
+        )
 
         # restore the FIRST revision (older than head) -> new head revision
         rr = v.revisions.restore(id=AGENT, branch_id=fork_id, revision_id=rid)
-        check(rr.data is not None, "revisions.restore (older revision)", f"state={getattr(rr.data,'state',None)}")
+        check(rr.data is not None, "revisions.restore (older revision)", f"state={getattr(rr.data, 'state', None)}")
         ml = v.branches.make_live(id=AGENT, branch_id=fork_id)
         check(ml.data is not None, "make_live (fork)", "")
         v.branches.make_live(id=AGENT, branch_id=main_id)  # revert

@@ -1,11 +1,12 @@
 """Regression test: CrewSession.start() must send SDKAgentReadyEvent BEFORE
 starting nodes, so a node's start() that emits a speak (e.g. a greeting) doesn't
 reach the platform before Ready and poison the connect handshake."""
+
 import unittest
 from unittest import mock
 
-from smallestai.atoms.crew.session import CrewSession
 from smallestai.atoms.crew.nodes import OutputCrewNode
+from smallestai.atoms.crew.session import CrewSession
 
 
 class _OrderNode(OutputCrewNode):
@@ -25,9 +26,7 @@ class _OrderNode(OutputCrewNode):
 class ReadyBeforeNodesTest(unittest.IsolatedAsyncioTestCase):
     async def test_ready_sent_before_nodes_start(self):
         order = []
-        session = CrewSession(
-            websocket=mock.AsyncMock(), session_id="t", setup_handler=None
-        )
+        session = CrewSession(websocket=mock.AsyncMock(), session_id="t", setup_handler=None)
         session._init_event = mock.MagicMock()
         session.task_manager = mock.MagicMock()
         session.task_manager.create_task = mock.MagicMock()  # don't run receive loop

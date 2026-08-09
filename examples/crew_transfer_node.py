@@ -17,14 +17,15 @@ Deploy (from a project dir with this file as the node, a server.py, and a
 requirements.txt pinning smallestai>=5.4.0 plus your LLM client):
     smallestai agent-crew deploy --entry-point server.py
 """
+
 import os
 
-from smallestai.atoms.crew.nodes import OutputCrewNode
 from smallestai.atoms.crew.events import (
     SDKAgentTransferConversationEvent,
     TransferOption,
     TransferOptionType,
 )
+from smallestai.atoms.crew.nodes import OutputCrewNode
 
 # Bring your own OpenAI-compatible client + tool registry. This example assumes a
 # client exposing `.chat(messages=..., stream=True, tools=...)` and a registry that
@@ -40,6 +41,7 @@ except ImportError:  # template placeholder
             return fn
 
         return _decorator
+
 
 TRANSFER_NUMBER = os.getenv("TRANSFER_CALL_NUMBER", "+15551234567")
 
@@ -82,9 +84,7 @@ class Assistant(OutputCrewNode):
     async def generate_response(self):
         # self.context.messages is seeded from the platform's authoritative
         # messages before this runs (5.4.0), so it always has the latest user turn.
-        response = await self.llm.chat(
-            messages=self.context.messages, stream=True, tools=self.tool_schemas
-        )
+        response = await self.llm.chat(messages=self.context.messages, stream=True, tools=self.tool_schemas)
         full = ""
         tool_calls = []
         async for chunk in response:

@@ -5,6 +5,7 @@ The platform returns plan/entitlement gating as an HTTP 400 with body
 main-backend access.middleware.ts). It should surface as PlanNotEntitledError
 while staying a BadRequestError (backward-compatible).
 """
+
 import unittest
 
 from smallestai import PlanNotEntitledError as PlanNotEntitledFromRoot
@@ -19,7 +20,9 @@ _PLAN_GATED_BODY = {
 }
 _LIMIT_BODY = {
     "status": False,
-    "errors": ["You have reached the maximum number of agents for your plan, please upgrade to a higher plan to create more agents"],
+    "errors": [
+        "You have reached the maximum number of agents for your plan, please upgrade to a higher plan to create more agents"
+    ],
 }
 
 

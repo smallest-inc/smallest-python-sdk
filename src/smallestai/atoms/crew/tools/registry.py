@@ -120,10 +120,7 @@ class ToolRegistry:
             schemas = registry.get_schemas()
             response = await llm.chat(messages=[...], tools=schemas)
         """
-        return [
-            {"type": "function", "function": tool.schema.to_dict()}
-            for tool in self._tools.values()
-        ]
+        return [{"type": "function", "function": tool.schema.to_dict()} for tool in self._tools.values()]
 
     async def execute(
         self,
@@ -155,9 +152,7 @@ class ToolRegistry:
         else:
             return await self._execute_sequential(tool_calls, context)
 
-    async def _execute_parallel(
-        self, tool_calls: List[ToolCall], context: Optional[Any]
-    ) -> List[ToolResult]:
+    async def _execute_parallel(self, tool_calls: List[ToolCall], context: Optional[Any]) -> List[ToolResult]:
         """Execute all tools in parallel."""
         tasks = [self._execute_single(call, context) for call in tool_calls]
         results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -181,9 +176,7 @@ class ToolRegistry:
 
         return final_results
 
-    async def _execute_sequential(
-        self, tool_calls: List[ToolCall], context: Optional[Any]
-    ) -> List[ToolResult]:
+    async def _execute_sequential(self, tool_calls: List[ToolCall], context: Optional[Any]) -> List[ToolResult]:
         """Execute tools one by one."""
         results = []
         for call in tool_calls:
@@ -191,9 +184,7 @@ class ToolRegistry:
             results.append(result)
         return results
 
-    async def _execute_single(
-        self, call: ToolCall, context: Optional[Any]
-    ) -> ToolResult:
+    async def _execute_single(self, call: ToolCall, context: Optional[Any]) -> ToolResult:
         """Execute a single tool call."""
         try:
             tool_info = self._tools.get(call.name)
@@ -205,9 +196,7 @@ class ToolRegistry:
             func = tool_info.function
             args, kwargs = self._prepare_arguments(func, arguments, context)
 
-            logger.debug(
-                f"Executing tool: {call.name} with args={args}, kwargs={kwargs}"
-            )
+            logger.debug(f"Executing tool: {call.name} with args={args}, kwargs={kwargs}")
 
             if asyncio.iscoroutinefunction(func):
                 result = await func(*args, **kwargs)

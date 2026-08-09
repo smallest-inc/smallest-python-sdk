@@ -36,9 +36,7 @@ def initialise_calls_app(auth_client: AuthClient):
     def list_calls(
         agent_id: str = typer.Option(None, "--agent-id", help="Filter by agent id"),
         limit: int = typer.Option(20, "--limit", help="Max rows"),
-        call_type: str = typer.Option(
-            None, "--type", help="telephony_inbound | telephony_outbound | webcall"
-        ),
+        call_type: str = typer.Option(None, "--type", help="telephony_inbound | telephony_outbound | webcall"),
         status: str = typer.Option(None, "--status", help="Filter by status"),
         as_json: bool = typer.Option(False, "--json", help="Emit raw JSON"),
     ):
@@ -106,8 +104,14 @@ def initialise_calls_app(auth_client: AuthClient):
         if as_json:
             console.print_json(
                 _json.dumps(
-                    [{"role": getattr(t, "role", None), "content": getattr(t, "content", None),
-                      "timestamp": getattr(t, "timestamp", None)} for t in turns],
+                    [
+                        {
+                            "role": getattr(t, "role", None),
+                            "content": getattr(t, "content", None),
+                            "timestamp": getattr(t, "timestamp", None),
+                        }
+                        for t in turns
+                    ],
                     default=str,
                 )
             )

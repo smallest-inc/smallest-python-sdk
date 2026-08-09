@@ -6,7 +6,9 @@ resources (named *-itest-*) and cleans up the agents it makes.
 
     SMALLEST_API_KEY=... [SMALLEST_BASE_URL=...] python tests/velocity/integration.py
 """
+
 from _env import client
+
 from smallestai.atoms.helpers import as_page, require_id
 
 c = client()

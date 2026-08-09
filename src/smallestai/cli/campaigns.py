@@ -26,9 +26,7 @@ def initialise_campaigns_app(auth_client: AuthClient):
 
     @campaigns_app.command("list")
     def list_campaigns(
-        status: str = typer.Option(
-            None, "--status", help="draft|scheduled|processing|running|paused|completed|failed"
-        ),
+        status: str = typer.Option(None, "--status", help="draft|scheduled|processing|running|paused|completed|failed"),
         search: str = typer.Option(None, "--search", help="Search by name"),
         page: int = typer.Option(None, "--page", help="Page number"),
         as_json: bool = typer.Option(False, "--json", help="Emit raw JSON"),
@@ -95,8 +93,7 @@ def initialise_campaigns_app(auth_client: AuthClient):
                 kw["scheduled_at"] = datetime.fromisoformat(scheduled_at)
             except ValueError:
                 typer.echo(
-                    f"Invalid --scheduled-at {scheduled_at!r}: expected ISO 8601, "
-                    "e.g. 2026-08-10T15:30:00",
+                    f"Invalid --scheduled-at {scheduled_at!r}: expected ISO 8601, e.g. 2026-08-10T15:30:00",
                     err=True,
                 )
                 raise typer.Exit(2)

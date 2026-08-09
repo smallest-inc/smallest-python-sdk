@@ -33,10 +33,10 @@
       "postServeActions": []
     },
     {
-      "id": "3142d983-0755-42b2-a57e-8e870c673b42",
-      "name": "Get organization details - default",
+      "id": "cf9588a0-f44b-4cdc-b7d1-7fb340f777d4",
+      "name": "Get subscription and plan limits - default",
       "request": {
-        "urlPathTemplate": "/organization",
+        "urlPathTemplate": "/user/subscription",
         "method": "GET",
         "headers": {
           "Authorization": {
@@ -46,12 +46,12 @@
       },
       "response": {
         "status": 200,
-        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"name\": \"name\",\n    \"members\": [\n      {}\n    ],\n    \"subscription\": {\n      \"planId\": \"planId\"\n    }\n  }\n}",
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"_id\": \"_id\",\n    \"organization\": \"organization\",\n    \"planId\": \"planId\",\n    \"totalCredits\": 1.1,\n    \"currentCredits\": 1.1,\n    \"renewalDate\": \"2024-01-15T09:30:00Z\",\n    \"subscriptionActive\": true,\n    \"onPremEnabled\": true,\n    \"limits\": {\n      \"agents\": 1,\n      \"campaigns\": 1,\n      \"numbers\": 1,\n      \"dailyCalls\": 1,\n      \"concurrentCalls\": 1,\n      \"knowledgeBaseItemLimit\": 1,\n      \"knowledgeBaseLimits\": 1\n    },\n    \"features\": {\n      \"key\": true\n    }\n  }\n}",
         "headers": {
           "Content-Type": "application/json"
         }
       },
-      "uuid": "3142d983-0755-42b2-a57e-8e870c673b42",
+      "uuid": "cf9588a0-f44b-4cdc-b7d1-7fb340f777d4",
       "persistent": true,
       "priority": 3,
       "metadata": {
@@ -5431,6 +5431,661 @@
         }
       },
       "uuid": "0a17450a-d8b0-4413-904a-2917ba8f43ae",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "ac0318ee-6eb7-47a9-bdfe-98c96979e8f9",
+      "name": "Export campaign call logs - default",
+      "request": {
+        "urlPathTemplate": "/campaign/{id}/logs/export",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "id"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"key\": \"value\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "ac0318ee-6eb7-47a9-bdfe-98c96979e8f9",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "25aa0a48-480b-41f2-b5db-f91d723cf49e",
+      "name": "Get account details - User in two orgs",
+      "request": {
+        "urlPathTemplate": "/account/get-account-details",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"userId\": \"69561896a37fd214b9a8d33a\",\n  \"email\": \"ada@example.com\",\n  \"firstName\": \"Ada\",\n  \"lastName\": \"Lovelace\",\n  \"picture\": \"https://lh3.googleusercontent.com/a/avatar.jpg\",\n  \"hasOnboarded\": true,\n  \"organizations\": [\n    {\n      \"orgId\": \"69561896a37fd214b9a8d33c\",\n      \"name\": \"Acme Inc.\",\n      \"ownerEmail\": \"ada@example.com\",\n      \"roleId\": 0,\n      \"onPremEnabled\": false\n    },\n    {\n      \"orgId\": \"698076af5c1b62205ff731b8\",\n      \"name\": \"Contoso\",\n      \"ownerEmail\": \"grace@example.com\",\n      \"roleId\": 1,\n      \"onPremEnabled\": false\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "25aa0a48-480b-41f2-b5db-f91d723cf49e",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "ff76103e-df42-452d-a686-ba4e93f2b8f0",
+      "name": "Update the organization name - Rename accepted",
+      "request": {
+        "urlPathTemplate": "/account/update-org-name",
+        "method": "PUT",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"success\": true,\n  \"name\": \"Acme Inc.\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "ff76103e-df42-452d-a686-ba4e93f2b8f0",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "d321915a-4bbe-4c80-929d-ecee246d2317",
+      "name": "Start a web chat session - LiveKit session ready for the browser client",
+      "request": {
+        "urlPathTemplate": "/conversation/chat",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJtZXRhZGF0YSI6IntcIm9yZ2FuaXphdGlvbklkXCI6XCI2OTU2MTg5NmEzN2ZkMjE0YjlhOGQzM2NcIn0iLCJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6ImRlZTkyMjNhLTQ3NTEtNDlhOS1iY2JjLWNiMzVjNWE4MzcxZCJ9LCJleHAiOjE3ODYxNTk1NjR9.Tn9KCxhnmnjAFQPRWP6XMkjKYnhBiISI6VqUOIqOsRQ\",\n    \"roomName\": \"dee9223a-4751-49a9-bcbc-cb35c5a8371d\",\n    \"host\": \"wss://atoms-prod-evcaw70g.livekit.cloud\",\n    \"conversationId\": \"IyF-GCRiprATI5rx4lIdvg\",\n    \"callId\": \"CALL-1786159503332-8387f2\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "d321915a-4bbe-4c80-929d-ecee246d2317",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "1b080d01-f762-472d-989c-f969b74cf155",
+      "name": "Start a web call session - LiveKit session ready for the browser client",
+      "request": {
+        "urlPathTemplate": "/conversation/webcall",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": true,\n  \"data\": {\n    \"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJtZXRhZGF0YSI6IntcIm9yZ2FuaXphdGlvbklkXCI6XCI2OTU2MTg5NmEzN2ZkMjE0YjlhOGQzM2NcIn0iLCJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IjIwOWNkOGM3LTdmZjQtNGFmYy1iNWQ1LWY3MDQ0OGI1Y2UwNyJ9LCJleHAiOjE3ODYxNTk1ODl9.jf5NM4fH79_d6iBb2xTvX5JIo_PmVpjeXWOugoDLQVc\",\n    \"roomName\": \"209cd8c7-7ff4-4afc-b5d5-f70448b5ce07\",\n    \"host\": \"wss://atoms-prod-evcaw70g.livekit.cloud\",\n    \"conversationId\": \"w3fmaal3fKnzNQJ_CHfosw\",\n    \"callId\": \"CALL-1786159527700-838803\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "1b080d01-f762-472d-989c-f969b74cf155",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "a170e63a-859e-4e90-b820-bee20d99fbde",
+      "name": "Post-call analysis - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/pca",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"summary\": \"The agent logged the customer's complaint and issued a full refund of $80 for the torn jacket.\",\n  \"dispositionMetrics\": [\n    {\n      \"identifier\": \"refund_issued\",\n      \"value\": \"true\",\n      \"confidence\": 1,\n      \"reasoning\": \"Agent: I have logged your complaint and issued a full refund of $80.\"\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "a170e63a-859e-4e90-b820-bee20d99fbde",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "851d07de-767a-4001-892b-b7811ad9c233",
+      "name": "Generate - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/pca/generate",
+        "method": "POST",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"output\": \"Hello there.\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "851d07de-767a-4001-892b-b7811ad9c233",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "19c6ee0f-0d6a-4f5a-a0de-8897b88c6e72",
+      "name": "Get all voices - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/voice/get-all-models",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"voices\": [\n    {\n      \"_id\": \"6a0b3c06e6e0b1a48dee8151\",\n      \"voiceId\": \"mishka\",\n      \"displayName\": \"Mishka\",\n      \"description\": \"A youthful Indian female voice with an inviting tone and smooth, expressive delivery.\",\n      \"audioPreview\": \"https://d4a5s42qh2351.cloudfront.net/waves-audio-previews/mishka.wav\",\n      \"tags\": {\n        \"age\": \"young\",\n        \"emotions\": [\n          \"emotions\"\n        ],\n        \"language\": [\n          \"english\",\n          \"hindi\",\n          \"marathi\",\n          \"gujarati\",\n          \"punjabi\",\n          \"bengali\",\n          \"odia\",\n          \"tamil\",\n          \"telugu\"\n        ]\n      }\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "19c6ee0f-0d6a-4f5a-a0de-8897b88c6e72",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "9194d4c9-f2e2-4733-b6f7-6aad6be88d10",
+      "name": "List STT (ASR) request logs - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/analytics/asr/logs",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": \"success\",\n  \"data\": [\n    {\n      \"request_id\": \"3eea9859-609b-45c5-8a25-0337c9763c96\",\n      \"timestamp\": \"2026-08-07 08:17:25\",\n      \"request_type\": \"ws\",\n      \"model\": \"pulse\",\n      \"language\": \"en\",\n      \"duration\": 44.03,\n      \"file_size\": \"0\",\n      \"transcription\": \"hello what are your plans today\",\n      \"word_timestamps\": false,\n      \"diarize\": false,\n      \"redact_pii\": false,\n      \"redact_pci\": false,\n      \"numerals\": \"auto\",\n      \"keywords\": \"\",\n      \"emotion_detection\": false,\n      \"gender_detection\": false,\n      \"emotions\": \"\",\n      \"gender\": \"\",\n      \"webhook_url\": \"\"\n    }\n  ],\n  \"page\": 1,\n  \"pageSize\": 50,\n  \"totalCount\": 128,\n  \"totalPages\": 3\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "9194d4c9-f2e2-4733-b6f7-6aad6be88d10",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "8bb0681f-645d-4bc3-b77d-fcd1684da9f5",
+      "name": "Delete an STT request from history - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/analytics/asr/history/{request_id}",
+        "method": "DELETE",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "request_id": {
+            "equalTo": "3eea9859-609b-45c5-8a25-0337c9763c96"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": \"success\"\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "8bb0681f-645d-4bc3-b77d-fcd1684da9f5",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      }
+    },
+    {
+      "id": "c69e9b5a-a9ec-446d-a729-238ead77719d",
+      "name": "STT usage timeseries - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/analytics/asr/usage/timeseries",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "queryParameters": {
+          "from": {
+            "equalTo": "2026-08-01T00:00:00Z"
+          },
+          "to": {
+            "equalTo": "2026-08-07T00:00:00Z"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"timestamps\": [\n    \"2026-08-05T00:00:00Z\",\n    \"2026-08-06T00:00:00Z\",\n    \"2026-08-07T00:00:00Z\"\n  ],\n  \"values\": [\n    412,\n    388,\n    501\n  ],\n  \"totalRequestCount\": 1301\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "c69e9b5a-a9ec-446d-a729-238ead77719d",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "3e8e986a-ced4-4c0e-8a07-953d484a6510",
+      "name": "List TTS request logs - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/analytics/tts/logs",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": \"success\",\n  \"data\": [\n    {\n      \"timestamp\": \"2026-08-07 08:17:20\",\n      \"request_type\": \"ws\",\n      \"model\": \"lightning-v3.1-pro\",\n      \"voice_id\": \"blake\",\n      \"language\": \"en\",\n      \"text\": \"eight, seven, three, six, four. Just to confirm, is that correct?\",\n      \"text_len\": 65,\n      \"credits\": 0,\n      \"speed\": 1,\n      \"sample_rate\": 8000,\n      \"output_format\": \"pcm\",\n      \"enhancement\": 1,\n      \"similarity\": 0\n    }\n  ],\n  \"page\": 1,\n  \"pageSize\": 50,\n  \"totalCount\": 4212,\n  \"totalPages\": 85\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "3e8e986a-ced4-4c0e-8a07-953d484a6510",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "0ee976c0-d6a9-4806-a77c-01fe0e6105ba",
+      "name": "TTS usage timeseries - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/analytics/tts/usage/timeseries",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "queryParameters": {
+          "from": {
+            "equalTo": "2026-08-01T00:00:00Z"
+          },
+          "to": {
+            "equalTo": "2026-08-07T00:00:00Z"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"timestamps\": [\n    \"2026-08-05T00:00:00Z\",\n    \"2026-08-06T00:00:00Z\",\n    \"2026-08-07T00:00:00Z\"\n  ],\n  \"values\": [\n    412,\n    388,\n    501\n  ],\n  \"totalRequestCount\": 1301\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "0ee976c0-d6a9-4806-a77c-01fe0e6105ba",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "91f75e6b-9f80-4a56-805f-2ef4b873a3d5",
+      "name": "TTS credit-consumption timeseries - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/analytics/tts/usage/credits/timeseries",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "queryParameters": {
+          "from": {
+            "equalTo": "2026-08-01T00:00:00Z"
+          },
+          "to": {
+            "equalTo": "2026-08-07T00:00:00Z"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"timestamps\": [\n    \"2026-08-05T00:00:00Z\",\n    \"2026-08-06T00:00:00Z\",\n    \"2026-08-07T00:00:00Z\"\n  ],\n  \"values\": [\n    124.5,\n    96.2,\n    141.8\n  ],\n  \"totalCredits\": 362.5\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "91f75e6b-9f80-4a56-805f-2ef4b873a3d5",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "fcf0227b-87cd-4cbf-a436-783a7043960d",
+      "name": "TTS concurrency timeseries - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/analytics/tts/concurrency/timeseries",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "queryParameters": {
+          "from": {
+            "equalTo": "2026-08-01T00:00:00Z"
+          },
+          "to": {
+            "equalTo": "2026-08-07T00:00:00Z"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"timestamps\": [\n    \"2026-08-07T08:00:00Z\",\n    \"2026-08-07T09:00:00Z\",\n    \"2026-08-07T10:00:00Z\"\n  ],\n  \"values\": [\n    3,\n    5,\n    4\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "fcf0227b-87cd-4cbf-a436-783a7043960d",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "bb908120-26d4-4fff-8e0d-54d6f26a0392",
+      "name": "TTS WebSocket-connection timeseries - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/analytics/tts/ws-connections/timeseries",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "queryParameters": {
+          "from": {
+            "equalTo": "2026-08-01T00:00:00Z"
+          },
+          "to": {
+            "equalTo": "2026-08-07T00:00:00Z"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"timestamps\": [\n    \"2026-08-07T08:00:00Z\",\n    \"2026-08-07T09:00:00Z\",\n    \"2026-08-07T10:00:00Z\"\n  ],\n  \"values\": [\n    3,\n    5,\n    4\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "bb908120-26d4-4fff-8e0d-54d6f26a0392",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "4e213469-a966-4e92-9617-0be173896ada",
+      "name": "List webhook delivery logs - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/analytics/webhooks/logs",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": \"success\",\n  \"data\": [\n    {\n      \"org_id\": \"69561896a37fd214b9a8d33c\",\n      \"request_id\": \"36e977cf-d027-4fe2-b9ae-733d4f26c239\",\n      \"webhook_url\": \"https://your-app.example.com/webhooks/asr\",\n      \"method\": \"POST\",\n      \"event_type\": \"asr.completed\",\n      \"status\": \"failed\",\n      \"attempt\": 10,\n      \"response_status_code\": 503,\n      \"error\": \"Request failed with status code 503\",\n      \"timestamp\": \"2026-08-06 10:37:27\",\n      \"duration_ms\": 819\n    }\n  ],\n  \"page\": 1,\n  \"pageSize\": 50,\n  \"totalCount\": 87,\n  \"totalPages\": 2\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "4e213469-a966-4e92-9617-0be173896ada",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "296104e1-411a-4cb2-8642-f60b2d7f539c",
+      "name": "Health check - default",
+      "request": {
+        "urlPathTemplate": "/waves/v1/health",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"status\": \"ok\",\n  \"mongo\": {\n    \"status\": \"connected\"\n  },\n  \"redis\": {\n    \"status\": \"connected\"\n  },\n  \"rabbitmq\": {\n    \"status\": \"connected\"\n  }\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "296104e1-411a-4cb2-8642-f60b2d7f539c",
+      "persistent": true,
+      "priority": 3,
+      "metadata": {
+        "mocklab": {
+          "created": {
+            "at": "2020-01-01T00:00:00.000Z",
+            "via": "SYSTEM"
+          }
+        }
+      },
+      "postServeActions": []
+    },
+    {
+      "id": "5e33fd43-e552-4381-a9d6-7be6f6cbc79a",
+      "name": "Export campaign results grouped by audience member - default",
+      "request": {
+        "urlPathTemplate": "/campaign/{id}/export/by-audience-member",
+        "method": "GET",
+        "headers": {
+          "Authorization": {
+            "matches": "Bearer .+"
+          }
+        },
+        "pathParameters": {
+          "id": {
+            "equalTo": "6a75935452c6e5eceaa16edf"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": "{\n  \"campaign\": \"campaign\",\n  \"exportedAt\": \"2024-01-15T09:30:00Z\",\n  \"totalAudienceMembers\": 1,\n  \"data\": [\n    {\n      \"audienceMemberId\": \"audienceMemberId\",\n      \"audienceMemberData\": {\n        \"key\": \"value\"\n      },\n      \"phoneNumber\": \"phoneNumber\",\n      \"originalCall\": {\n        \"key\": \"value\"\n      },\n      \"retryAttempts\": [\n        {\n          \"key\": \"value\"\n        }\n      ],\n      \"totalAttempts\": 1,\n      \"finalStatus\": \"finalStatus\",\n      \"totalCallDuration\": 1.1,\n      \"totalCallCost\": 1.1\n    }\n  ]\n}",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "uuid": "5e33fd43-e552-4381-a9d6-7be6f6cbc79a",
       "persistent": true,
       "priority": 3,
       "metadata": {

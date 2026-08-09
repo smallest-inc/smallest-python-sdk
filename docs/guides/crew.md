@@ -9,6 +9,7 @@ endpoint, e.g. Claude via Anthropic) and full control over the turn. You subclas
 ```python
 from smallestai.atoms.crew.nodes import OutputCrewNode
 
+
 class Assistant(OutputCrewNode):
     def __init__(self):
         super().__init__(name="assistant")

@@ -55,9 +55,7 @@ def _synthesize_stream(
 ) -> typing.Iterator[bytes]:
     if expire_content:
         kwargs = _kwargs_with_expiry(kwargs)
-    return client.waves.synthesize_tts(
-        text=text, voice_id=voice_id, model=model, output_format=output_format, **kwargs
-    )
+    return client.waves.synthesize_tts(text=text, voice_id=voice_id, model=model, output_format=output_format, **kwargs)
 
 
 def synthesize_bytes(

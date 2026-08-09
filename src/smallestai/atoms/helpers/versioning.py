@@ -17,6 +17,7 @@ adds the two things Fern cannot generate for any SDK:
 This is a thin wrapper over `client.atoms.agent_versioning_branches` /
 `.agent_versioning_revisions`, so it rides future regens without changes.
 """
+
 from __future__ import annotations
 
 import time
@@ -182,9 +183,7 @@ class Versioning:
                 if sec_status == "failed":
                     raise SecurityCheckFailedError(f"security check failed for revision {rev_id}")
             time.sleep(poll_interval)
-        raise TimeoutError(
-            f"revision did not reach 'published' within {timeout}s (last status={last_status})"
-        )
+        raise TimeoutError(f"revision did not reach 'published' within {timeout}s (last status={last_status})")
 
     def publish_and_wait(
         self,
@@ -204,9 +203,7 @@ class Versioning:
         data = res.data
         if _state(data) == "committed" and getattr(data, "revision", None) is not None:
             return data.revision
-        return self.wait_for_commit(
-            agent_id, branch_id, timeout=timeout, poll_interval=poll_interval
-        )
+        return self.wait_for_commit(agent_id, branch_id, timeout=timeout, poll_interval=poll_interval)
 
     def edit_and_publish(
         self,
@@ -229,6 +226,4 @@ class Versioning:
         if expected_revision is not None:
             kwargs["expected_revision"] = expected_revision
         self.update_draft(agent_id, branch_id, **kwargs)
-        return self.publish_and_wait(
-            agent_id, branch_id, label=label, timeout=timeout, poll_interval=poll_interval
-        )
+        return self.publish_and_wait(agent_id, branch_id, label=label, timeout=timeout, poll_interval=poll_interval)

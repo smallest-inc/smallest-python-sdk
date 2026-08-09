@@ -11,7 +11,9 @@ report those keys. `__v` (mongo version) and a small noise set are ignored.
 
     SMALLEST_API_KEY=... [SMALLEST_BASE_URL=...] python tests/velocity/field_drop_audit.py
 """
+
 from _env import client
+
 from smallestai.atoms.helpers import as_page
 
 _NOISE = {"__v"}  # mongo internals, not real SDK gaps
@@ -27,7 +29,7 @@ def extras(model, path):
     for k in me:
         if k not in _NOISE:
             found.append(f"{path}.{k}")
-    for fname in (type(model).model_fields if hasattr(type(model), "model_fields") else {}):
+    for fname in type(model).model_fields if hasattr(type(model), "model_fields") else {}:
         v = getattr(model, fname, None)
         if hasattr(v, "model_extra"):
             found += extras(v, f"{path}.{fname}")

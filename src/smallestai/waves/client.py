@@ -34,11 +34,15 @@ from .types.tts_request_output_format import TtsRequestOutputFormat
 from .types.update_pronunciation_dict_response import UpdatePronunciationDictResponse
 
 if typing.TYPE_CHECKING:
+    from .analytics.client import AnalyticsClient, AsyncAnalyticsClient
     from .electron.client import AsyncElectronClient, ElectronClient
+    from .ops.client import AsyncOpsClient, OpsClient
+    from .post_call_analysis.client import AsyncPostCallAnalysisClient, PostCallAnalysisClient
     from .speech_to_speech.client import AsyncSpeechToSpeechClient, SpeechToSpeechClient
     from .speech_to_text.client import AsyncSpeechToTextClient, SpeechToTextClient
     from .streaming_tts.client import AsyncStreamingTtsClient, StreamingTtsClient
     from .tts.client import AsyncTtsClient, TtsClient
+    from .voices.client import AsyncVoicesClient, VoicesClient
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
@@ -49,6 +53,10 @@ class WavesClient:
         self._client_wrapper = client_wrapper
         self._speech_to_text: typing.Optional[SpeechToTextClient] = None
         self._electron: typing.Optional[ElectronClient] = None
+        self._post_call_analysis: typing.Optional[PostCallAnalysisClient] = None
+        self._voices: typing.Optional[VoicesClient] = None
+        self._analytics: typing.Optional[AnalyticsClient] = None
+        self._ops: typing.Optional[OpsClient] = None
         self._tts: typing.Optional[TtsClient] = None
         self._streaming_tts: typing.Optional[StreamingTtsClient] = None
         self._speech_to_speech: typing.Optional[SpeechToSpeechClient] = None
@@ -1016,6 +1024,38 @@ class WavesClient:
         return self._electron
 
     @property
+    def post_call_analysis(self):
+        if self._post_call_analysis is None:
+            from .post_call_analysis.client import PostCallAnalysisClient  # noqa: E402
+
+            self._post_call_analysis = PostCallAnalysisClient(client_wrapper=self._client_wrapper)
+        return self._post_call_analysis
+
+    @property
+    def voices(self):
+        if self._voices is None:
+            from .voices.client import VoicesClient  # noqa: E402
+
+            self._voices = VoicesClient(client_wrapper=self._client_wrapper)
+        return self._voices
+
+    @property
+    def analytics(self):
+        if self._analytics is None:
+            from .analytics.client import AnalyticsClient  # noqa: E402
+
+            self._analytics = AnalyticsClient(client_wrapper=self._client_wrapper)
+        return self._analytics
+
+    @property
+    def ops(self):
+        if self._ops is None:
+            from .ops.client import OpsClient  # noqa: E402
+
+            self._ops = OpsClient(client_wrapper=self._client_wrapper)
+        return self._ops
+
+    @property
     def tts(self):
         if self._tts is None:
             from .tts.client import TtsClient  # noqa: E402
@@ -1046,6 +1086,10 @@ class AsyncWavesClient:
         self._client_wrapper = client_wrapper
         self._speech_to_text: typing.Optional[AsyncSpeechToTextClient] = None
         self._electron: typing.Optional[AsyncElectronClient] = None
+        self._post_call_analysis: typing.Optional[AsyncPostCallAnalysisClient] = None
+        self._voices: typing.Optional[AsyncVoicesClient] = None
+        self._analytics: typing.Optional[AsyncAnalyticsClient] = None
+        self._ops: typing.Optional[AsyncOpsClient] = None
         self._tts: typing.Optional[AsyncTtsClient] = None
         self._streaming_tts: typing.Optional[AsyncStreamingTtsClient] = None
         self._speech_to_speech: typing.Optional[AsyncSpeechToSpeechClient] = None
@@ -2129,6 +2173,38 @@ class AsyncWavesClient:
 
             self._electron = AsyncElectronClient(client_wrapper=self._client_wrapper)
         return self._electron
+
+    @property
+    def post_call_analysis(self):
+        if self._post_call_analysis is None:
+            from .post_call_analysis.client import AsyncPostCallAnalysisClient  # noqa: E402
+
+            self._post_call_analysis = AsyncPostCallAnalysisClient(client_wrapper=self._client_wrapper)
+        return self._post_call_analysis
+
+    @property
+    def voices(self):
+        if self._voices is None:
+            from .voices.client import AsyncVoicesClient  # noqa: E402
+
+            self._voices = AsyncVoicesClient(client_wrapper=self._client_wrapper)
+        return self._voices
+
+    @property
+    def analytics(self):
+        if self._analytics is None:
+            from .analytics.client import AsyncAnalyticsClient  # noqa: E402
+
+            self._analytics = AsyncAnalyticsClient(client_wrapper=self._client_wrapper)
+        return self._analytics
+
+    @property
+    def ops(self):
+        if self._ops is None:
+            from .ops.client import AsyncOpsClient  # noqa: E402
+
+            self._ops = AsyncOpsClient(client_wrapper=self._client_wrapper)
+        return self._ops
 
     @property
     def tts(self):

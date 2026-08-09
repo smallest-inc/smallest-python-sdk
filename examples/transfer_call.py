@@ -19,6 +19,7 @@ Run:
     export SMALLEST_API_KEY=sk_...
     python examples/transfer_call.py
 """
+
 import os
 
 from smallestai import SmallestAI

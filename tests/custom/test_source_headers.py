@@ -5,6 +5,7 @@ dimension, same convention pipecat uses with X-Source: pipecat). We also send
 the real installed version in X-Fern-SDK-Version instead of the generator's
 hardcoded 0.0.0 so version adoption is trackable. See client_wrapper.py.
 """
+
 import re
 
 from smallestai import __version__
@@ -13,9 +14,7 @@ from smallestai.environment import SmallestAIEnvironment
 
 
 def _headers():
-    return BaseClientWrapper(
-        api_key="test-key", environment=SmallestAIEnvironment.PRODUCTION
-    ).get_headers()
+    return BaseClientWrapper(api_key="test-key", environment=SmallestAIEnvironment.PRODUCTION).get_headers()
 
 
 def test_x_source_present():

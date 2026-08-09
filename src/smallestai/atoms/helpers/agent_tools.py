@@ -185,9 +185,7 @@ class AgentTools:
         """Publish the open draft and wait for the security scan to commit a new
         revision. Returns the new head revision id."""
         source_head = self._branch_by_id(agent_id, branch_id).get("headRevisionId")
-        resp = self._post(
-            f"agent/{agent_id}/branches/{branch_id}/draft/publish", {"label": label}
-        )
+        resp = self._post(f"agent/{agent_id}/branches/{branch_id}/draft/publish", {"label": label})
         body = resp.json() if resp.content else {}
         state = ((body or {}).get("data") or {}).get("state")
         # 200 {state: "committed"} = synchronous; 202 {state: "scanning"} = async scan.
@@ -256,7 +254,11 @@ class AgentTools:
 
         logger.info(
             "AgentTools.set_tools agent=%s branch=%s tools=%s replace=%s make_live=%s",
-            agent_id, branch_id, [self._tool_name(t) for t in merged], replace, make_live,
+            agent_id,
+            branch_id,
+            [self._tool_name(t) for t in merged],
+            replace,
+            make_live,
         )
         self._put(
             f"agent/{agent_id}/branches/{branch_id}/draft",
@@ -273,9 +275,7 @@ class AgentTools:
         """Remove the tool with the given ``name`` (no-op if absent)."""
         branch = self._live_branch(agent_id)
         kept = [
-            t
-            for t in self._tools_from_config(self._resolved_config(agent_id, branch))
-            if self._tool_name(t) != name
+            t for t in self._tools_from_config(self._resolved_config(agent_id, branch)) if self._tool_name(t) != name
         ]
         logger.info("AgentTools.remove_tool agent=%s name=%s", agent_id, name)
         return self.set_tools(agent_id, kept, replace=True, make_live=make_live, label=f"remove {name}")  # type: ignore[arg-type]
@@ -317,8 +317,7 @@ class AgentTools:
         kwargs: Dict[str, Any] = dict(
             type="transfer_call",
             name=name,
-            description=description
-            or "Transfer the call to a human agent or specialist when the caller asks.",
+            description=description or "Transfer the call to a human agent or specialist when the caller asks.",
             enabled=enabled,
             transfer_number=number,
             transfer_option=ToolTransferOption(type=transfer_type),

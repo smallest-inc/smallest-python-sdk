@@ -83,12 +83,18 @@ def as_page(response: Any) -> Page:
         if items is not None:
             return Page(
                 items=list(items),
-                total_count=(_get(data, "total_count") or _get(data, "total") or _get(data, "count")
-                             or _get(data, "total_campaign_count")
-                             or _get(pagination, "total") or _get(pagination, "total_count")),
+                total_count=(
+                    _get(data, "total_count")
+                    or _get(data, "total")
+                    or _get(data, "count")
+                    or _get(data, "total_campaign_count")
+                    or _get(pagination, "total")
+                    or _get(pagination, "total_count")
+                ),
                 total_pages=_get(data, "total_pages") or _get(pagination, "total_pages"),
-                has_more=(_get(data, "has_more") if _get(data, "has_more") is not None
-                          else _get(pagination, "has_more")),
+                has_more=(
+                    _get(data, "has_more") if _get(data, "has_more") is not None else _get(pagination, "has_more")
+                ),
             )
 
     # Unknown shape — return the payload as a single-item page rather than guessing.
