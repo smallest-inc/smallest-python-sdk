@@ -57,7 +57,7 @@ class RawPostCallAnalysisClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "waves/v1/pca",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="POST",
             json={
                 "transcript": transcript,
@@ -135,7 +135,7 @@ class RawPostCallAnalysisClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "waves/v1/pca/generate",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="POST",
             json={
                 "prompt": prompt,
@@ -224,7 +224,7 @@ class AsyncRawPostCallAnalysisClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "waves/v1/pca",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="POST",
             json={
                 "transcript": transcript,
@@ -302,7 +302,7 @@ class AsyncRawPostCallAnalysisClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "waves/v1/pca/generate",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="POST",
             json={
                 "prompt": prompt,
