@@ -39,7 +39,7 @@ class RawVoicesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "waves/v1/voice/get-all-models",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             request_options=request_options,
         )
@@ -99,7 +99,7 @@ class AsyncRawVoicesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "waves/v1/voice/get-all-models",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             request_options=request_options,
         )

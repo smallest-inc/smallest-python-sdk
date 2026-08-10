@@ -1,3 +1,8 @@
+## 5.10.1 - 2026-08-10
+
+* **fix**: the new waves endpoints (`post_call_analysis`, `voices`, `analytics`, `ops`)
+  called the atoms host and returned 404. They now target the waves host correctly.
+
 ## 5.10.0 - 2026-08-07
 
 * **tools**: new `smallestai.tools` framework for prebuilt, pluggable crew tools. Each tool

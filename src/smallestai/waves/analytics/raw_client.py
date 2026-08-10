@@ -75,7 +75,7 @@ class RawAnalyticsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/asr/logs",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "page": page,
@@ -147,7 +147,7 @@ class RawAnalyticsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"waves/v1/analytics/asr/history/{encode_path_param(request_id)}",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="DELETE",
             request_options=request_options,
         )
@@ -225,7 +225,7 @@ class RawAnalyticsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/asr/usage/timeseries",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
@@ -304,7 +304,7 @@ class RawAnalyticsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/tts/logs",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "page": page,
@@ -385,7 +385,7 @@ class RawAnalyticsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/tts/usage/timeseries",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
@@ -468,7 +468,7 @@ class RawAnalyticsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/tts/usage/credits/timeseries",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
@@ -551,7 +551,7 @@ class RawAnalyticsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/tts/concurrency/timeseries",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
@@ -633,7 +633,7 @@ class RawAnalyticsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/tts/ws-connections/timeseries",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
@@ -713,7 +713,7 @@ class RawAnalyticsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/webhooks/logs",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "page": page,
@@ -799,7 +799,7 @@ class AsyncRawAnalyticsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/asr/logs",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "page": page,
@@ -871,7 +871,7 @@ class AsyncRawAnalyticsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"waves/v1/analytics/asr/history/{encode_path_param(request_id)}",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="DELETE",
             request_options=request_options,
         )
@@ -949,7 +949,7 @@ class AsyncRawAnalyticsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/asr/usage/timeseries",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
@@ -1028,7 +1028,7 @@ class AsyncRawAnalyticsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/tts/logs",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "page": page,
@@ -1109,7 +1109,7 @@ class AsyncRawAnalyticsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/tts/usage/timeseries",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
@@ -1192,7 +1192,7 @@ class AsyncRawAnalyticsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/tts/usage/credits/timeseries",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
@@ -1275,7 +1275,7 @@ class AsyncRawAnalyticsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/tts/concurrency/timeseries",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
@@ -1357,7 +1357,7 @@ class AsyncRawAnalyticsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/tts/ws-connections/timeseries",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
@@ -1437,7 +1437,7 @@ class AsyncRawAnalyticsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "waves/v1/analytics/webhooks/logs",
-            base_url=self._client_wrapper.get_environment().atoms,
+            base_url=self._client_wrapper.get_environment().waves,
             method="GET",
             params={
                 "page": page,
