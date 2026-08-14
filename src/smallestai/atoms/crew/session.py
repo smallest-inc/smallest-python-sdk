@@ -27,6 +27,19 @@ from smallestai.atoms.crew.nodes import CrewNode
 from smallestai.atoms.crew.task_manager import TaskManager, TaskManagerParams
 
 
+class _StartupProbeComplete(Exception):
+    """Internal signal raised by ``CrewSession.start()`` during the startup
+    dry-run once the graph has been built.
+
+    The server's startup validation runs the user's ``setup_handler`` without a
+    live init handshake, purely to surface node ``__init__`` / import / env /
+    graph errors before traffic arrives. The canonical handler ends with
+    ``await session.start()``; in the dry-run that call builds the graph and then
+    raises this to halt cleanly (no init required, no nodes started, no external
+    connections). It is caught by the validator and never surfaces to users.
+    """
+
+
 @dataclass
 class EventHandler:
     name: str
@@ -131,6 +144,9 @@ class CrewSession:
 
         self._init_event: Optional[SDKSystemInitEvent] = None
 
+        # Set only by the server's startup dry-run (never on a real session).
+        self._dry_run = False
+
         self.task_manager = TaskManager()
 
         self.loop = loop or asyncio.get_event_loop()
@@ -205,6 +221,17 @@ class CrewSession:
     async def start(self) -> None:
         """Start the session"""
         logger.info(f"[{self.name}] Starting session")
+
+        if self._dry_run:
+            # Startup validation: build the graph to surface node/edge/cycle
+            # errors, then halt. No init handshake is required and no nodes are
+            # started, so nothing connects to external services. Raising here
+            # keeps the canonical `await session.start()` handler from blocking
+            # on the (never-arriving) init event during validation.
+            logger.info(f"[{self.name}] Startup dry-run: building graph with {len(self.nodes)} nodes")
+            self._build_graph()
+            raise _StartupProbeComplete()
+
         if not self._init_event:
             logger.error(
                 "This should not happen because this method should always be called after the init event is received which will set the init event"
