@@ -11,8 +11,8 @@ def test_bare_cli_shows_banner_and_commands_not_error():
     result = runner.invoke(app, [])
     assert result.exit_code == 0
     assert "Missing command" not in result.output
-    # command list is present
-    for name in ("agent-crew", "agents", "calls", "waves", "mcp"):
+    # command list is present (speech/voices group is now "models")
+    for name in ("agent-crew", "agents", "calls", "models", "mcp"):
         assert name in result.output
 
 

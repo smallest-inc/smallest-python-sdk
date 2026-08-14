@@ -7,6 +7,7 @@ from rich.table import Table
 from smallestai.cli.agent_crew import initialise_agent_crew_app
 from smallestai.cli.agents import initialise_agents_app
 from smallestai.cli.auth import initialise_auth_app
+from smallestai.cli.banner import print_banner
 from smallestai.cli.calls import initialise_calls_app
 from smallestai.cli.campaigns import initialise_campaigns_app
 from smallestai.cli.lib.atoms import AtomsAPIClient
@@ -20,29 +21,21 @@ console = Console()
 
 app = typer.Typer(help="SmallestAI CLI", no_args_is_help=False, rich_markup_mode="rich")
 
-_BANNER = r"""[bold magenta]
-  ███████╗███╗   ███╗ █████╗ ██╗     ██╗     ███████╗███████╗████████╗
-  ██╔════╝████╗ ████║██╔══██╗██║     ██║     ██╔════╝██╔════╝╚══██╔══╝
-  ███████╗██╔████╔██║███████║██║     ██║     █████╗  ███████╗   ██║
-  ╚════██║██║╚██╔╝██║██╔══██║██║     ██║     ██╔══╝  ╚════██║   ██║
-  ███████║██║ ╚═╝ ██║██║  ██║███████╗███████╗███████╗███████║   ██║
-  ╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚══════╝   ╚═╝[/bold magenta]"""
-
 _COMMANDS = [
     ("agent-crew", "Init, deploy, and manage crew (custom-LLM) voice agents"),
     ("agents", "Create, inspect, and call voice agents"),
     ("calls", "Inspect call logs, transcripts, and recordings"),
     ("campaigns", "Manage outbound calling campaigns"),
     ("phone-numbers", "Search, rent, and manage phone numbers"),
-    ("waves", "Text-to-speech, speech-to-text, and voices"),
+    ("models", "Text-to-speech, speech-to-text, and voices"),
     ("mcp", "Set up the Smallest AI MCP server for Cursor / Claude"),
     ("auth", "Log in and manage credentials"),
 ]
 
 
 def _print_welcome() -> None:
-    console.print(_BANNER)
-    console.print("  [dim]Build, deploy, and run voice agents and speech models.[/dim]\n")
+    print_banner()
+    console.print("\n  [dim]Build, deploy, and run voice agents and speech models.[/dim]\n")
     table = Table(show_header=False, box=None, padding=(0, 2, 0, 2))
     table.add_column(style="bold cyan", no_wrap=True)
     table.add_column(style="white")
@@ -79,8 +72,10 @@ app.add_typer(agents_app, name="agents")
 calls_app = initialise_calls_app(auth_client)
 app.add_typer(calls_app, name="calls")
 
-waves_app = initialise_waves_app(auth_client)
-app.add_typer(waves_app, name="waves")
+models_app = initialise_waves_app(auth_client)
+app.add_typer(models_app, name="models")
+# Back-compat: keep the old `waves` name working, hidden from help.
+app.add_typer(models_app, name="waves", hidden=True)
 
 campaigns_app = initialise_campaigns_app(auth_client)
 app.add_typer(campaigns_app, name="campaigns")
