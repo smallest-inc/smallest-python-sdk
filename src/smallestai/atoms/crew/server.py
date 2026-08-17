@@ -6,7 +6,7 @@ import uvicorn
 from fastapi import FastAPI, WebSocket
 from loguru import logger
 
-from smallestai.atoms.crew.session import CrewSession
+from smallestai.atoms.crew.session import CrewSession, _StartupProbeComplete
 
 
 async def _dry_run_setup_handler(
@@ -19,8 +19,12 @@ async def _dry_run_setup_handler(
     an env var that isn't set, or imports something that isn't
     installed) *before* the pod accepts a real WebSocket connection.
 
-    Doesn't connect to any external services — node `start()` is never
-    called. Only constructor / `add_node()` / `add_edge()` logic runs.
+    Runs the session in dry-run mode: node `start()` is never reached in a
+    live sense, no external services are contacted. The canonical handler's
+    closing `await session.start()` builds the graph and then raises
+    `_StartupProbeComplete` (caught below), so validation no longer reports a
+    spurious "Session not initialized" for healthy code. Only constructor /
+    `add_node()` / `add_edge()` / graph-build logic runs.
     """
 
     class _NullWebSocket:
@@ -42,10 +46,16 @@ async def _dry_run_setup_handler(
         session_id="startup-validation",
         setup_handler=setup_handler,
     )
+    session._dry_run = True
     # Don't `await session.initialize()` — that would actually wait on
     # the init handshake and start the receive loop. We only want to
     # exercise the user's setup_handler enough to surface __init__ errors.
-    await setup_handler(session)
+    # A canonical handler ends with `await session.start()`, which in dry-run
+    # builds the graph then raises `_StartupProbeComplete` to halt cleanly.
+    try:
+        await setup_handler(session)
+    except _StartupProbeComplete:
+        pass
 
 
 class SessionHandler:
