@@ -476,70 +476,63 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
                 )
                 console.print(f"[bold green]✓ Build {build.id[:12]}... has been taken down.[/bold green]")
 
-    # @app.command("logs")
-    # def stream_build(
-    #     build_id: str = typer.Argument(..., help="The build ID to stream logs for"),
-    # ):
-    #     """
-    #     Stream build logs in real-time using Server-Sent Events.
-    #     """
-    #     asyncio.run(async_stream_build(build_id))
+    @app.command("logs")
+    def build_logs(
+        build_id: str = typer.Argument(None, help="Build ID to stream logs for (defaults to the latest build)"),
+    ):
+        """Stream a build's logs (compile + deploy) in real time.
 
-    # async def async_stream_build(build_id: str):
-    #     """Async implementation of stream build command."""
-    #     agent_id = project_config.get_agent_id()
+        With no build ID, streams the most recent build for the current agent.
+        Use this to debug a deploy that failed or to watch one in progress.
+        """
+        asyncio.run(async_build_logs(build_id))
 
-    #     if not agent_id:
-    #         console.print(
-    #             "[red]Agent not initialized. Run 'smallestai agent init' first.[/red]"
-    #         )
-    #         return
+    async def async_build_logs(build_id: str | None):
+        agent_id = project_config.get_agent_id()
+        if not agent_id:
+            console.print("[red]Agent not initialized. Run 'smallestai agent-crew init' first.[/red]")
+            raise typer.Exit(1)
 
-    #     credentials = auth_client.get_credentials()
-    #     if not credentials or not credentials.get("access_token"):
-    #         console.print(
-    #             "[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]"
-    #         )
-    #         raise typer.Exit(1)
+        credentials = auth_client.get_credentials()
+        if not credentials or not credentials.get("access_token"):
+            console.print("[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]")
+            raise typer.Exit(1)
+        access_token = credentials["access_token"]
 
-    #     access_token = credentials["access_token"]
+        if not build_id:
+            result = await atoms_client.list_agent_builds(agent_id=agent_id, api_key=access_token, limit=1, offset=0)
+            if not result.builds:
+                console.print("[yellow]No builds found. Run 'smallestai agent-crew deploy' first.[/yellow]")
+                raise typer.Exit(1)
+            build_id = result.builds[0].id
+            console.print(f"[dim]Latest build: {build_id}[/dim]")
 
-    #     console.print(f"[bold cyan]Streaming logs for build: {build_id}[/bold cyan]")
-    #     console.print("[dim]Press Ctrl+C to stop streaming[/dim]\n")
+        console.print(
+            f"[bold cyan]Streaming logs for build {build_id[:12]}...[/bold cyan]  [dim](Ctrl+C to stop)[/dim]\n"
+        )
 
-    #     try:
-    #         async for event in atoms_client.stream_agent_build(
-    #             agent_id=agent_id,
-    #             build_id=build_id,
-    #             api_key=access_token,
-    #         ):
-    #             event_type = event.get("type")
-
-    #             if event_type == "log":
-    #                 console.print(f"[dim]LOG:[/dim] {event.get('message', '')}")
-    #             elif event_type == "status":
-    #                 status = event.get("status", "")
-    #                 status_style = {
-    #                     "SUCCEEDED": "[green]SUCCEEDED[/green]",
-    #                     "BUILD_FAILED": "[red]BUILD_FAILED[/red]",
-    #                     "DEPLOY_FAILED": "[red]DEPLOY_FAILED[/red]",
-    #                     "PENDING": "[yellow]PENDING[/yellow]",
-    #                     "BUILDING": "[yellow]BUILDING[/yellow]",
-    #                     "DEPLOYING": "[yellow]DEPLOYING[/yellow]",
-    #                 }.get(status, status)
-    #                 console.print(f"[bold]STATUS:[/bold] {status_style}")
-
-    #                 if status in ["SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED"]:
-    #                     console.print("\n[bold]Build stream ended.[/bold]")
-    #                     break
-    #             elif event_type == "error":
-    #                 console.print(f"[red]ERROR:[/red] {event.get('message', '')}")
-    #                 break
-
-    #     except KeyboardInterrupt:
-    #         console.print("\n[yellow]Streaming stopped by user.[/yellow]")
-    #     except Exception as e:
-    #         console.print(f"[red]Error streaming build logs: {e}[/red]")
+        terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED"}
+        try:
+            async for event in atoms_client.stream_agent_build(
+                agent_id=agent_id, build_id=build_id, access_token=access_token
+            ):
+                etype = event.get("type")
+                if etype == "log":
+                    console.print(event.get("message", ""), highlight=False)
+                elif etype == "status":
+                    status = str(event.get("status", ""))
+                    color = {"SUCCEEDED": "green", "BUILD_FAILED": "red", "DEPLOY_FAILED": "red"}.get(status, "yellow")
+                    console.print(f"[bold {color}]● {status}[/bold {color}]")
+                    if status in terminal:
+                        break
+                elif etype == "error":
+                    console.print(f"[red]error:[/red] {event.get('message', '')}")
+                    break
+        except KeyboardInterrupt:
+            console.print("\n[yellow]Stopped.[/yellow]")
+        except Exception as e:
+            console.print(f"[red]Error streaming build logs: {e}[/red]")
+            raise typer.Exit(1)
 
     @app.command()
     def doctor(
