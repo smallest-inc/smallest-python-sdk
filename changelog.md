@@ -5,6 +5,9 @@
   in CI, or under `NO_COLOR` / `SMALLESTAI_NO_ANIM`; compact on narrow terminals).
 * **cli**: renamed the speech command group from `waves` to `models` (text-to-speech,
   speech-to-text, voices). `waves` still works as a hidden, back-compatible alias.
+* **cli**: new `smallestai calls events <call-id>` streams a live call's events (transcript,
+  per-turn latency, node transitions, tool calls, errors); `calls transcript --follow` streams
+  just the conversation; `agent-crew logs [build-id]` streams a build's compile + deploy logs.
 * **fix (crew)**: startup validation no longer logs a spurious `Startup validation failed -
   pod will not accept sessions. ValueError: Session not initialized` on every healthy boot.
   The dry-run now builds the graph and halts cleanly; genuinely broken handlers (bad node
