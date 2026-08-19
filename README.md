@@ -116,11 +116,19 @@ deps in the pyproject).
 ## CLI
 
 ```sh
-smallestai auth login               # store your API key
-smallestai agents list              # list, get, call, and manage agents
-smallestai agent-crew deploy ...     # package and deploy crew code
-smallestai agent-crew chat           # talk to a running crew locally
+smallestai auth login                        # store your API key
+smallestai agents list                       # list, get, call, and manage agents
+smallestai calls list                        # inspect call logs, transcripts, recordings
+smallestai calls events <call-id>            # stream a live call's events (transcript, latency, tools)
+smallestai calls transcript <call-id> -f     # stream the transcript live
+smallestai models                            # text-to-speech, speech-to-text, voices
+smallestai agent-crew deploy ...             # package and deploy crew code
+smallestai agent-crew logs [build-id]        # stream a build's compile + deploy logs
+smallestai agent-crew chat                   # talk to a running crew locally
 ```
+
+> The speech command group is now `models` (text-to-speech, speech-to-text,
+> voices); `waves` still works as a hidden, back-compatible alias.
 
 ## Async client
 
