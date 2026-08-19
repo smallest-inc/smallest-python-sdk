@@ -33,6 +33,19 @@ smallestai calls transcript CALL-...
 smallestai calls recording CALL-...
 ```
 
+## Live events (while a call is in progress)
+
+Stream a call's events as they happen — transcript turns, per-turn latency, node
+transitions, tool calls, and errors:
+
+```bash
+smallestai calls events CALL-...               # full live event stream
+smallestai calls transcript CALL-... --follow  # just the conversation, live
+```
+
+The call must be in progress; for a finished call use `calls transcript` (no
+`--follow`) or `calls get`. Add `--json` to emit one raw event per line.
+
 ## Reading a transfer from the logs
 
 A transfer produces a second **transfer leg**. If that leg shows

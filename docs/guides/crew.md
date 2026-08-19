@@ -44,6 +44,7 @@ crew, and a `requirements.txt`. Deploy with:
 ```bash
 smallestai agent-crew deploy --entry-point server.py
 smallestai agent-crew builds        # watch build status; Make Live when SUCCEEDED
+smallestai agent-crew logs [build-id]   # stream a build's compile + deploy logs (latest by default)
 ```
 
 Pin the SDK in `requirements.txt`:
