@@ -5,8 +5,8 @@
 `pip install smallestai` gives you one package with two surfaces, plus a CLI:
 
 - **Atoms** — build, configure, deploy, and phone-call voice AI agents (`client.atoms`).
-- **Waves** — low-latency text-to-speech and speech-to-text, sync/async and streaming (`client.waves`).
-- **CLI** — `smallestai` for managing agents and deploying agent-crew code.
+- **Models** — low-latency text-to-speech and speech-to-text, sync/async and streaming (`client.waves`; `smallestai models` in the CLI).
+- **CLI** — `smallestai` for managing agents, deploying agent-crew code, and running speech models.
 
 ```sh
 pip install smallestai
@@ -15,7 +15,7 @@ pip install smallestai
 ## Table of Contents
 
 - [Quickstart](#quickstart-create-an-agent-and-call-it)
-- [Text-to-speech and speech-to-text](#text-to-speech-and-speech-to-text-waves)
+- [Text-to-speech and speech-to-text](#text-to-speech-and-speech-to-text-models)
 - [Agent crew: your own LLM](#agent-crew-your-own-llm-in-the-middle)
 - [CLI](#cli)
 - [Async client](#async-client)
@@ -48,7 +48,7 @@ client.atoms.calls.start_outbound_call(
 )
 ```
 
-## Text-to-speech and speech-to-text (Waves)
+## Text-to-speech and speech-to-text (Models)
 
 `synthesize_tts` streams audio bytes. List available voices with `client.waves.get_voices()`.
 
@@ -170,7 +170,7 @@ except ApiError as e:
 
 ## Streaming and websockets
 
-Waves supports real-time, low-latency streaming over websockets. `stream()` returns a context manager; iterate it to process messages as they arrive.
+The speech models support real-time, low-latency streaming over websockets. `stream()` returns a context manager; iterate it to process messages as they arrive.
 
 ```python
 from smallestai import SmallestAI
