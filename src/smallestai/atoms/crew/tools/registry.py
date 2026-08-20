@@ -42,6 +42,11 @@ class ToolRegistry:
     def __init__(self):
         """Initialize empty registry."""
         self._tools: Dict[str, FunctionToolInfo] = {}
+        # Set by discover() to the owning crew node. When present, tool
+        # executions emit tool_call_start/end/error events over the node's
+        # websocket so the platform surfaces them on the call's Events tab
+        # (the same tool-call events single-prompt agents already show).
+        self._owner: Any = None
 
     def register(self, func_or_info: Union[Callable, FunctionToolInfo]):
         """
@@ -105,6 +110,7 @@ class ToolRegistry:
             agent = MyAgent()
             registry.discover(agent)  # Registers both tools
         """
+        self._owner = obj
         tools = find_function_tools(obj)
         for tool in tools:
             self.register(tool)
@@ -184,14 +190,69 @@ class ToolRegistry:
             results.append(result)
         return results
 
+    async def _emit_tool_event(
+        self,
+        name: str,
+        call: ToolCall,
+        arguments: Any,
+        *,
+        response: Any = None,
+        error: Optional[str] = None,
+        latency_ms: int = 0,
+        success: bool = True,
+    ) -> None:
+        """Emit a tool_call_start/end/error event over the owning node's websocket.
+
+        No-op when the registry isn't owned by a crew node (standalone use) or
+        the node can't send events. Observability must never break tool
+        execution, so all failures here are swallowed.
+        """
+        send = getattr(self._owner, "send_event", None)
+        if send is None or not asyncio.iscoroutinefunction(send):
+            return
+
+        context: Dict[str, Any] = {"arguments": arguments}
+        if response is not None:
+            try:
+                json.dumps(response)
+                context["response"] = response
+            except (TypeError, ValueError):
+                context["response"] = str(response)
+
+        payload: Dict[str, Any] = {
+            "turn_id": "",
+            "tool_call_id": call.id,
+            "function_name": call.name,
+            "context": context,
+        }
+        if name == "tool_call_end":
+            payload["latency"] = latency_ms
+            payload["success"] = success
+        elif name == "tool_call_error":
+            payload["error"] = error
+            payload["success"] = False
+
+        try:
+            from smallestai.atoms.crew.events import SDKAgentLogEvent
+
+            await send(SDKAgentLogEvent(name=name, payload=payload))
+        except Exception as exc:  # never let telemetry break a tool
+            logger.debug(f"tool-call event emit skipped ({name}): {exc}")
+
     async def _execute_single(self, call: ToolCall, context: Optional[Any]) -> ToolResult:
         """Execute a single tool call."""
+        import time
+
+        started = time.monotonic()
+        arguments: Any = {}
         try:
             tool_info = self._tools.get(call.name)
             if not tool_info:
                 raise ValueError(f"Unknown tool: {call.name}")
 
             arguments = json.loads(call.arguments)
+
+            await self._emit_tool_event("tool_call_start", call, arguments)
 
             func = tool_info.function
             args, kwargs = self._prepare_arguments(func, arguments, context)
@@ -210,6 +271,15 @@ class ToolRegistry:
 
             logger.debug(f"Tool {call.name} completed successfully")
 
+            await self._emit_tool_event(
+                "tool_call_end",
+                call,
+                arguments,
+                response=result,
+                latency_ms=int((time.monotonic() - started) * 1000),
+                success=True,
+            )
+
             return ToolResult(
                 tool_call_id=call.id,
                 name=call.name,
@@ -219,6 +289,14 @@ class ToolRegistry:
 
         except Exception as e:
             logger.exception(f"Error executing tool {call.name}: {e}")
+            await self._emit_tool_event(
+                "tool_call_error",
+                call,
+                arguments,
+                error=str(e),
+                latency_ms=int((time.monotonic() - started) * 1000),
+                success=False,
+            )
             return ToolResult(
                 tool_call_id=call.id,
                 name=call.name,
