@@ -1,3 +1,12 @@
+## 5.11.1 - 2026-08-20
+
+* **fix (crew)**: crew tool calls now show on the platform's Events tab. The crew
+  `ToolRegistry` emits `tool_call_start`/`tool_call_end`/`tool_call_error` events over
+  the node websocket around each `@function_tool` (including `transfer_call`), in the same
+  format single-prompt agents already produce. Previously crew tools ran silently, so a
+  crew `transfer_call` was invisible on the platform even though it fired. No change to
+  user crew code; takes effect on redeploy.
+
 ## 5.11.0 - 2026-08-19
 
 * **cli**: refreshed the bare `smallestai` banner - a "SMALLEST AI" wordmark in the brand
