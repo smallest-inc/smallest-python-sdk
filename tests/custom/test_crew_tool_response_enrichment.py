@@ -71,10 +71,23 @@ def _end_event(node, fn):
     return None
 
 
+def _run(tool_name, call_id="c"):
+    """Build the node and run one tool, all inside a running loop.
+
+    The node must be constructed inside asyncio.run: CrewNode init grabs the
+    event loop, which raises on Python 3.9 when there's no current loop.
+    """
+
+    async def _body():
+        node = _Node()
+        await node.registry.execute([ToolCall(id=call_id, name=tool_name, arguments="{}")], parallel=False)
+        return node
+
+    return asyncio.run(_body())
+
+
 def test_transfer_tool_gets_handoff_response():
-    node = _Node()
-    asyncio.run(node.registry.execute([ToolCall(id="c1", name="transfer_call", arguments="{}")], parallel=False))
-    resp = _end_event(node, "transfer_call").payload["context"]["response"]
+    resp = _end_event(_run("transfer_call"), "transfer_call").payload["context"]["response"]
     assert resp["status"] == "success"
     assert resp["action"] == "transfer_call"
     assert resp["transfer_number"] == "+917900135795"
@@ -85,25 +98,19 @@ def test_transfer_tool_gets_handoff_response():
 
 
 def test_cold_transfer_has_no_handoff():
-    node = _Node()
-    asyncio.run(node.registry.execute([ToolCall(id="c4", name="cold_transfer", arguments="{}")], parallel=False))
-    resp = _end_event(node, "cold_transfer").payload["context"]["response"]
+    resp = _end_event(_run("cold_transfer"), "cold_transfer").payload["context"]["response"]
     assert resp["transfer_type"] == TransferOptionType.COLD_TRANSFER.value
     assert "private_handoff" not in resp and "public_handoff" not in resp
 
 
 def test_end_call_tool_gets_handoff_response():
-    node = _Node()
-    asyncio.run(node.registry.execute([ToolCall(id="c2", name="hang_up", arguments="{}")], parallel=False))
-    resp = _end_event(node, "hang_up").payload["context"]["response"]
+    resp = _end_event(_run("hang_up"), "hang_up").payload["context"]["response"]
     assert resp == {"status": "success", "action": "end_call"}
 
 
 def test_plain_none_tool_has_no_response():
     # A tool that returns None and triggers no handoff stays as before (no response key).
-    node = _Node()
-    asyncio.run(node.registry.execute([ToolCall(id="c3", name="noop", arguments="{}")], parallel=False))
-    ctx = _end_event(node, "noop").payload["context"]
+    ctx = _end_event(_run("noop"), "noop").payload["context"]
     assert "response" not in ctx
 
 
