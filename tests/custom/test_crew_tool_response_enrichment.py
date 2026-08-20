@@ -12,6 +12,8 @@ from smallestai.atoms.crew.events import (
     SDKAgentTransferConversationEvent,
     TransferOption,
     TransferOptionType,
+    WarmTransferHandoffOptionType,
+    WarmTransferPrivateHandoffOption,
 )
 from smallestai.atoms.crew.nodes import OutputCrewNode
 from smallestai.atoms.crew.tools import ToolRegistry, function_tool
@@ -33,8 +35,23 @@ class _Node(OutputCrewNode):
         await self.send_event(
             SDKAgentTransferConversationEvent(
                 transfer_call_number="+917900135795",
-                transfer_options=TransferOption(type=TransferOptionType.WARM_TRANSFER),
+                transfer_options=TransferOption(
+                    type=TransferOptionType.WARM_TRANSFER,
+                    private_handoff_option=WarmTransferPrivateHandoffOption(
+                        type=WarmTransferHandoffOptionType.PROMPT,
+                        prompt="Brief the specialist on the caller's issue.",
+                    ),
+                ),
                 on_hold_music="relaxing_sound",
+            )
+        )
+
+    @function_tool(name="cold_transfer")
+    async def cold_transfer(self) -> None:
+        await self.send_event(
+            SDKAgentTransferConversationEvent(
+                transfer_call_number="+911234567890",
+                transfer_options=TransferOption(type=TransferOptionType.COLD_TRANSFER),
             )
         )
 
@@ -62,7 +79,17 @@ def test_transfer_tool_gets_handoff_response():
     assert resp["action"] == "transfer_call"
     assert resp["transfer_number"] == "+917900135795"
     assert resp["transfer_type"] == TransferOptionType.WARM_TRANSFER.value
-    assert resp["on_hold_music"] == "relaxing_sound"
+    # warm transfer includes the whisper briefing
+    assert resp["private_handoff"]["type"] == WarmTransferHandoffOptionType.PROMPT.value
+    assert "specialist" in resp["private_handoff"]["prompt"]
+
+
+def test_cold_transfer_has_no_handoff():
+    node = _Node()
+    asyncio.run(node.registry.execute([ToolCall(id="c4", name="cold_transfer", arguments="{}")], parallel=False))
+    resp = _end_event(node, "cold_transfer").payload["context"]["response"]
+    assert resp["transfer_type"] == TransferOptionType.COLD_TRANSFER.value
+    assert "private_handoff" not in resp and "public_handoff" not in resp
 
 
 def test_end_call_tool_gets_handoff_response():

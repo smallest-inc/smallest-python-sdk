@@ -45,13 +45,27 @@ def _handoff_summary(event: SDKEvent) -> Dict[str, Any]:
     if isinstance(event, SDKAgentTransferConversationEvent):
         opts = getattr(event, "transfer_options", None)
         ttype = getattr(opts, "type", None)
-        return {
+        summary: Dict[str, Any] = {
             "status": "success",
             "action": "transfer_call",
             "transfer_number": getattr(event, "transfer_call_number", None),
             "transfer_type": getattr(ttype, "value", ttype),
             "on_hold_music": getattr(event, "on_hold_music", None),
         }
+        # Warm transfers carry a handoff briefing (the whisper spoken to the
+        # specialist / caller before bridging); cold transfers don't. Include it
+        # so the event reflects which kind of transfer actually happened.
+        for key, opt in (
+            ("private_handoff", getattr(opts, "private_handoff_option", None)),
+            ("public_handoff", getattr(opts, "public_handoff_option", None)),
+        ):
+            if opt is not None:
+                otype = getattr(opt, "type", None)
+                summary[key] = {
+                    "type": getattr(otype, "value", otype),
+                    "prompt": getattr(opt, "prompt", None),
+                }
+        return summary
     if isinstance(event, SDKAgentEndCallEvent):
         return {"status": "success", "action": "end_call"}
     return {"status": "success"}
