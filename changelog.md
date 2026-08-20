@@ -1,3 +1,13 @@
+## 5.11.2 - 2026-08-20
+
+* **fix (crew)**: crew `transfer_call` / end-call tool_call events now carry a `response`
+  (status + destination + transfer type; warm transfers also include the whisper handoff),
+  auto-filled by the SDK from the emitted handoff event. Previously these tools returned
+  nothing, so the event showed only `arguments` — now it matches single-prompt agents with
+  no user code change.
+* **docs**: the PyPI README brands the speech surface as **Models** (the CLI group name),
+  not Waves. The SDK attribute stays `client.waves` in 5.x.
+
 ## 5.11.1 - 2026-08-20
 
 * **fix (crew)**: crew tool calls now show on the platform's Events tab. The crew
