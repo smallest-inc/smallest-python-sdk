@@ -34,6 +34,29 @@ from smallestai.atoms.crew.events import (
 # Events that hand the call off / end it. Once one is emitted the conversation is
 # over for this node, so we stop responding to further LLM requests.
 _HANDOFF_EVENTS = (SDKAgentTransferConversationEvent, SDKAgentEndCallEvent)
+
+
+def _handoff_summary(event: SDKEvent) -> Dict[str, Any]:
+    """Structured summary of a handoff, used to enrich the tool_call event's
+    `response` when a `@function_tool` triggers a transfer / end-call but returns
+    nothing itself. Mirrors what single-prompt agents surface (status +
+    destination), so crew tool-call events carry the same detail with no user code.
+    """
+    if isinstance(event, SDKAgentTransferConversationEvent):
+        opts = getattr(event, "transfer_options", None)
+        ttype = getattr(opts, "type", None)
+        return {
+            "status": "success",
+            "action": "transfer_call",
+            "transfer_number": getattr(event, "transfer_call_number", None),
+            "transfer_type": getattr(ttype, "value", ttype),
+            "on_hold_music": getattr(event, "on_hold_music", None),
+        }
+    if isinstance(event, SDKAgentEndCallEvent):
+        return {"status": "success", "action": "end_call"}
+    return {"status": "success"}
+
+
 from smallestai.atoms.crew.nodes.base import CrewNode
 from smallestai.atoms.crew.task_manager import TaskManager
 
@@ -76,6 +99,11 @@ class OutputCrewNode(CrewNode):
         # tool_result is recorded), so the LLM keeps re-deciding the same action
         # on every subsequent request — repeatedly re-firing the event / speech.
         self._handoff_started = False
+        # Set when a handoff event is emitted during a tool call; the
+        # ToolRegistry reads it to enrich that tool's tool_call_end `response`
+        # even when the tool itself returns nothing. Reset per tool by the
+        # registry before each execution.
+        self._pending_tool_response: Any = None
 
     async def start(self, init_event: SDKSystemInitEvent, task_manager: TaskManager):
         """Start the node"""
@@ -86,6 +114,7 @@ class OutputCrewNode(CrewNode):
         transfer / end-call. Preserves base behavior otherwise."""
         if isinstance(event, _HANDOFF_EVENTS):
             self._handoff_started = True
+            self._pending_tool_response = _handoff_summary(event)
         await super().send_event(event)
 
     async def _update_settings(self, settings: Dict[str, Any]):

@@ -254,6 +254,10 @@ class ToolRegistry:
 
             await self._emit_tool_event("tool_call_start", call, arguments)
 
+            # Clear any handoff summary so it reflects only this tool's effects.
+            if hasattr(self._owner, "_pending_tool_response"):
+                self._owner._pending_tool_response = None
+
             func = tool_info.function
             args, kwargs = self._prepare_arguments(func, arguments, context)
 
@@ -271,11 +275,22 @@ class ToolRegistry:
 
             logger.debug(f"Tool {call.name} completed successfully")
 
+            # If the tool returned nothing but triggered a handoff (transfer /
+            # end-call) via the node, surface the handoff summary as the event's
+            # response — so the platform shows the same detail single-prompt does,
+            # without the user having to return it. Only enriches the event; the
+            # tool's own return value (and the LLM-facing result) is unchanged.
+            event_response = result
+            if result is None:
+                side_effect = getattr(self._owner, "_pending_tool_response", None)
+                if side_effect:
+                    event_response = side_effect
+
             await self._emit_tool_event(
                 "tool_call_end",
                 call,
                 arguments,
-                response=result,
+                response=event_response,
                 latency_ms=int((time.monotonic() - started) * 1000),
                 success=True,
             )
