@@ -1,11 +1,22 @@
 """CLI UX additions: version, grouped help, docs/open URL fallback."""
 
+import re
+
 from typer.testing import CliRunner
 
 from smallestai import __version__
 from smallestai.cli.main import app
 
 runner = CliRunner()
+
+_ANSI = re.compile(r"\x1b\[[0-9;]*m")
+# Render help wide so Rich doesn't wrap/truncate option names at 80 cols (CI).
+_WIDE = {"COLUMNS": "200", "TERM": "dumb"}
+
+
+def _plain_help(args):
+    res = runner.invoke(app, args, env=_WIDE)
+    return res, _ANSI.sub("", res.output)
 
 
 def test_version_command_and_flag():
@@ -40,11 +51,11 @@ def test_agent_crew_commands_have_agent_id_and_json():
         ["agent-crew", "deploy", "--help"],
         ["agent-crew", "logs", "--help"],
     ):
-        res = runner.invoke(app, args)
+        res, plain = _plain_help(args)
         assert res.exit_code == 0
-        assert "--agent-id" in res.output
-    res = runner.invoke(app, ["agent-crew", "builds", "--help"])
-    assert "--json" in res.output
+        assert "--agent-id" in plain
+    _, plain = _plain_help(["agent-crew", "builds", "--help"])
+    assert "--json" in plain
 
 
 if __name__ == "__main__":
