@@ -1,3 +1,21 @@
+## 5.12.0 - 2026-08-24
+
+* **cli**: added `smallestai version` and a `--version/-V` flag.
+* **cli**: grouped the top-level help into named sections (BUILD & DEPLOY / VOICE
+  AGENTS / TELEPHONY / SPEECH / SETUP) instead of a flat command table.
+* **cli**: `--agent-id` now works on `agent-crew deploy`, `builds`, and `logs`, so crew
+  commands run from CI or outside a linked project directory (falls back to the linked
+  project agent). Shared resolver keeps precedence consistent.
+* **cli**: `--json` on `agents list/get/phone-status` and `agent-crew builds`; the
+  interactive `builds` picker is skipped in non-TTY / `--json` mode so it no longer hangs
+  in CI.
+* **cli**: new convenience commands - `whoami`, `status`, `open`, `docs`, and a top-level
+  `doctor` for environment/auth/connectivity checks.
+* **cli**: confirmation prompt before "Take Down" (making a live crew build not-live),
+  since it stops the agent serving calls.
+* **fix (cli)**: crew commands pointed users at the nonexistent `smallestai agent init`;
+  corrected to `smallestai agent-crew init` and to mention `--agent-id`.
+
 ## 5.11.2 - 2026-08-20
 
 * **fix (crew)**: crew `transfer_call` / end-call tool_call events now carry a `response`
