@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import json as _json
 import sys
 from io import BytesIO
 from pathlib import Path
@@ -35,6 +36,17 @@ console = Console()
 
 def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthClient, atoms_client: AtomsAPIClient):
     app = typer.Typer(name="agent-crew")
+
+    def _resolve_agent_id(arg: Optional[str]) -> str:
+        """Explicit --agent-id wins; otherwise fall back to the linked project agent."""
+        agent_id = arg or project_config.get_agent_id()
+        if not agent_id:
+            console.print(
+                "[red]No agent linked. Run [bold]smallestai agent-crew init[/bold] in this "
+                "directory, or pass [bold]--agent-id <id>[/bold].[/red]"
+            )
+            raise typer.Exit(1)
+        return agent_id
 
     @app.command()
     def init(
@@ -128,21 +140,20 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
             "-e",
             help="Entry point file name (e.g., server.py)",
         ),
+        agent_id: Optional[str] = typer.Option(
+            None, "--agent-id", help="Agent id to deploy to (defaults to the linked project agent)."
+        ),
     ):
         """
         Deploy an agent crew to the Atoms platform.
 
         Packages the agent-crew code directory into a zip file and deploys it to the backend.
         """
-        asyncio.run(async_deploy(".", entry_point))
+        asyncio.run(async_deploy(".", entry_point, agent_id))
 
-    async def async_deploy(directory: str, entry_point: str):
+    async def async_deploy(directory: str, entry_point: str, agent_id_arg: Optional[str] = None):
         """Deploy an agent crew asynchronously."""
-        agent_id = project_config.get_agent_id()
-
-        if not agent_id:
-            console.print("[red]Agent not initialized. Run 'smallestai agent init' first.[/red]")
-            return
+        agent_id = _resolve_agent_id(agent_id_arg)
 
         # Check if user is logged in
         credentials = auth_client.get_credentials()
@@ -315,23 +326,26 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
     @app.command("builds")
     def list_builds(
         build_id: str = typer.Argument(None, help="Optional build ID to manage directly"),
+        agent_id: Optional[str] = typer.Option(
+            None, "--agent-id", help="Agent id (defaults to the linked project agent)."
+        ),
         limit: int = typer.Option(50, "--limit", "-l", help="Number of builds to fetch"),
-        offset: int = typer.Option(0, "--offset", "-o", help="Offset for pagination"),
+        offset: int = typer.Option(0, "--offset", help="Offset for pagination"),
+        as_json: bool = typer.Option(False, "--json", help="Emit raw JSON (non-interactive)"),
     ):
         """
         List all builds for the current agent crew and manage them interactively.
 
-        If a build_id is provided, directly manage that specific build.
+        If a build_id is provided, directly manage that specific build. With --json
+        or in a non-interactive terminal, list and exit without the picker.
         """
-        asyncio.run(async_list_builds(build_id, limit, offset))
+        asyncio.run(async_list_builds(build_id, agent_id, limit, offset, as_json))
 
-    async def async_list_builds(build_id: str | None, limit: int, offset: int):
+    async def async_list_builds(
+        build_id: str | None, agent_id_arg: Optional[str], limit: int, offset: int, as_json: bool
+    ):
         """Async implementation of list builds command."""
-        agent_id = project_config.get_agent_id()
-
-        if not agent_id:
-            console.print("[red]Agent not initialized. Run 'smallestai agent init' first.[/red]")
-            return
+        agent_id = _resolve_agent_id(agent_id_arg)
 
         credentials = auth_client.get_credentials()
         if not credentials or not credentials.get("access_token"):
@@ -342,16 +356,26 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
 
         try:
             if build_id:
-                console.print(f"[dim]Fetching build: {build_id}[/dim]")
                 build = await atoms_client.get_agent_build(
                     agent_id=agent_id,
                     build_id=build_id,
                     api_key=access_token,
                 )
+                if as_json:
+                    console.print_json(
+                        _json.dumps(
+                            {
+                                "id": build.id,
+                                "status": build.status.value,
+                                "is_live": build.is_live,
+                                "created_at": build.created_at,
+                            },
+                            default=str,
+                        )
+                    )
+                    return
                 await _manage_build(agent_id, build, access_token)
                 return
-
-            console.print(f"[dim]Fetching builds for agent: {agent_id}[/dim]")
 
             result = await atoms_client.list_agent_builds(
                 agent_id=agent_id,
@@ -359,6 +383,18 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
                 limit=limit,
                 offset=offset,
             )
+
+            if as_json:
+                console.print_json(
+                    _json.dumps(
+                        [
+                            {"id": b.id, "status": b.status.value, "is_live": b.is_live, "created_at": b.created_at}
+                            for b in result.builds
+                        ],
+                        default=str,
+                    )
+                )
+                return
 
             if not result.builds:
                 console.print("[yellow]No builds found for this agent.[/yellow]")
@@ -385,6 +421,14 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
 
             console.print(table)
             console.print(f"[dim]Showing {len(result.builds)} of {result.pagination.total} builds[/dim]\n")
+
+            # No interactive picker outside a real terminal (would hang in CI).
+            if not sys.stdin.isatty():
+                console.print(
+                    "[dim]Manage a build directly: [bold]smallestai agent-crew builds <build-id>[/bold] "
+                    "(add [bold]--agent-id[/bold] outside a project dir).[/dim]"
+                )
+                return
 
             choices = [
                 questionary.Choice(
@@ -467,6 +511,12 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
                 )
                 console.print(f"[bold green]✓ Build {build.id[:12]}... is now LIVE![/bold green]")
             elif selected_action == "take_down":
+                confirmed = await questionary.confirm(
+                    f"Take build {build.id[:12]}... offline? This stops the agent serving calls."
+                ).ask_async()
+                if not confirmed:
+                    console.print("[dim]Left the build live.[/dim]")
+                    return
                 console.print("[yellow]Taking down build...[/yellow]")
                 await atoms_client.update_agent_build(
                     agent_id=agent_id,
@@ -479,19 +529,19 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
     @app.command("logs")
     def build_logs(
         build_id: str = typer.Argument(None, help="Build ID to stream logs for (defaults to the latest build)"),
+        agent_id: Optional[str] = typer.Option(
+            None, "--agent-id", help="Agent id (defaults to the linked project agent)."
+        ),
     ):
         """Stream a build's logs (compile + deploy) in real time.
 
         With no build ID, streams the most recent build for the current agent.
         Use this to debug a deploy that failed or to watch one in progress.
         """
-        asyncio.run(async_build_logs(build_id))
+        asyncio.run(async_build_logs(build_id, agent_id))
 
-    async def async_build_logs(build_id: str | None):
-        agent_id = project_config.get_agent_id()
-        if not agent_id:
-            console.print("[red]Agent not initialized. Run 'smallestai agent-crew init' first.[/red]")
-            raise typer.Exit(1)
+    async def async_build_logs(build_id: str | None, agent_id_arg: Optional[str] = None):
+        agent_id = _resolve_agent_id(agent_id_arg)
 
         credentials = auth_client.get_credentials()
         if not credentials or not credentials.get("access_token"):
