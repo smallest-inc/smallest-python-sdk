@@ -584,6 +584,42 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
             console.print(f"[red]Error streaming build logs: {e}[/red]")
             raise typer.Exit(1)
 
+    @app.command("cancel")
+    def cancel_build(
+        build_id: str = typer.Argument(..., help="Build ID to cancel."),
+        agent_id: Optional[str] = typer.Option(
+            None, "--agent-id", help="Agent id (defaults to the linked project agent)."
+        ),
+        yes: bool = typer.Option(False, "--yes", "-y", help="Skip the confirmation prompt."),
+    ):
+        """Cancel a build that is stuck in QUEUED or BUILDING.
+
+        Frees the agent's build queue when a build hangs. A build that has already
+        finished, failed, or is deploying can't be cancelled.
+        """
+        if not yes and sys.stdin.isatty():
+            typer.confirm(f"Cancel build {build_id}?", abort=True)
+        asyncio.run(async_cancel_build(build_id, agent_id))
+
+    async def async_cancel_build(build_id: str, agent_id_arg: Optional[str] = None):
+        agent_id = _resolve_agent_id(agent_id_arg)
+
+        credentials = auth_client.get_credentials()
+        if not credentials or not credentials.get("access_token"):
+            console.print("[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]")
+            raise typer.Exit(1)
+        access_token = credentials["access_token"]
+
+        try:
+            message = await atoms_client.cancel_agent_build(
+                agent_id=agent_id, build_id=build_id, api_key=access_token
+            )
+        except Exception as e:
+            console.print(f"[red]Could not cancel build {build_id[:12]}...: {e}[/red]")
+            raise typer.Exit(1)
+
+        console.print(f"[bold green]✓ {message}[/bold green] [dim]({build_id[:12]}...)[/dim]")
+
     @app.command()
     def doctor(
         agent_id: Optional[str] = typer.Option(

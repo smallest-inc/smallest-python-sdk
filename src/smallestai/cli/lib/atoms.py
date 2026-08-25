@@ -306,6 +306,41 @@ class AtomsAPIClient:
 
             return update_build_response.data
 
+    async def cancel_agent_build(
+        self,
+        agent_id: str,
+        build_id: str,
+        api_key: str,
+    ) -> str:
+        """Cancel a build stuck in QUEUED/BUILDING. Returns the server's message.
+
+        Raises with the API's reason when the build can't be cancelled (e.g. it
+        is already terminal or deploying, which the backend returns as HTTP 409).
+        """
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{self.base_url}/atoms/v1/sdk/agents/{agent_id}/builds/{build_id}/cancel",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                },
+            )
+
+            body = None
+            try:
+                body = response.json()
+            except Exception:
+                pass
+
+            if response.status_code >= 400:
+                errors = body.get("errors") if isinstance(body, dict) else None
+                if isinstance(errors, list):
+                    errors = "; ".join(str(e) for e in errors)
+                raise Exception(errors or f"cancel failed (HTTP {response.status_code}).")
+
+            data = body.get("data") if isinstance(body, dict) else None
+            message = data.get("message") if isinstance(data, dict) else None
+            return message or "Build cancelled"
+
     async def _stream_sse(self, url: str, access_token: str):
         """Open an SSE stream and yield each `data:` frame as a parsed dict.
 
