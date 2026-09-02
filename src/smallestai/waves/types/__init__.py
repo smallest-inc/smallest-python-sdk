@@ -6,6 +6,25 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
+    from .catalog_voice import CatalogVoice
+    from .catalog_voice_tags import CatalogVoiceTags
+    from .count_timeseries_response import CountTimeseriesResponse
+    from .credits_timeseries_response import CreditsTimeseriesResponse
+    from .disposition_metric import DispositionMetric
+    from .disposition_metric_disposition_metric_type import DispositionMetricDispositionMetricType
+    from .health_response import HealthResponse
+    from .pca_response import PcaResponse
+    from .pca_response_disposition_metrics_item import PcaResponseDispositionMetricsItem
+    from .service_status import ServiceStatus
+    from .streaming_speech_to_text_log_entry import StreamingSpeechToTextLogEntry
+    from .streaming_speech_to_text_log_entry_request_type import StreamingSpeechToTextLogEntryRequestType
+    from .streaming_speech_to_text_logs_response import StreamingSpeechToTextLogsResponse
+    from .text_to_speech_log_entry import TextToSpeechLogEntry
+    from .text_to_speech_log_entry_request_type import TextToSpeechLogEntryRequestType
+    from .text_to_speech_logs_response import TextToSpeechLogsResponse
+    from .values_timeseries_response import ValuesTimeseriesResponse
+    from .webhook_log_entry import WebhookLogEntry
+    from .webhook_logs_response import WebhookLogsResponse
     from .async_accepted import AsyncAccepted
     from .audio_chunk import AudioChunk
     from .audio_chunk_data import AudioChunkData
@@ -108,6 +127,25 @@ if typing.TYPE_CHECKING:
     from .webhook_logs_response import WebhookLogsResponse
     from .word import Word
 _dynamic_imports: typing.Dict[str, str] = {
+    "CatalogVoice": ".catalog_voice",
+    "CatalogVoiceTags": ".catalog_voice_tags",
+    "CountTimeseriesResponse": ".count_timeseries_response",
+    "CreditsTimeseriesResponse": ".credits_timeseries_response",
+    "DispositionMetric": ".disposition_metric",
+    "DispositionMetricDispositionMetricType": ".disposition_metric_disposition_metric_type",
+    "HealthResponse": ".health_response",
+    "PcaResponse": ".pca_response",
+    "PcaResponseDispositionMetricsItem": ".pca_response_disposition_metrics_item",
+    "ServiceStatus": ".service_status",
+    "StreamingSpeechToTextLogEntry": ".streaming_speech_to_text_log_entry",
+    "StreamingSpeechToTextLogEntryRequestType": ".streaming_speech_to_text_log_entry_request_type",
+    "StreamingSpeechToTextLogsResponse": ".streaming_speech_to_text_logs_response",
+    "TextToSpeechLogEntry": ".text_to_speech_log_entry",
+    "TextToSpeechLogEntryRequestType": ".text_to_speech_log_entry_request_type",
+    "TextToSpeechLogsResponse": ".text_to_speech_logs_response",
+    "ValuesTimeseriesResponse": ".values_timeseries_response",
+    "WebhookLogEntry": ".webhook_log_entry",
+    "WebhookLogsResponse": ".webhook_logs_response",
     "AsyncAccepted": ".async_accepted",
     "AudioChunk": ".audio_chunk",
     "AudioChunkData": ".audio_chunk_data",
@@ -232,6 +270,25 @@ def __dir__():
 
 
 __all__ = [
+    "CatalogVoice",
+    "CatalogVoiceTags",
+    "CountTimeseriesResponse",
+    "CreditsTimeseriesResponse",
+    "DispositionMetric",
+    "DispositionMetricDispositionMetricType",
+    "HealthResponse",
+    "PcaResponse",
+    "PcaResponseDispositionMetricsItem",
+    "ServiceStatus",
+    "StreamingSpeechToTextLogEntry",
+    "StreamingSpeechToTextLogEntryRequestType",
+    "StreamingSpeechToTextLogsResponse",
+    "TextToSpeechLogEntry",
+    "TextToSpeechLogEntryRequestType",
+    "TextToSpeechLogsResponse",
+    "ValuesTimeseriesResponse",
+    "WebhookLogEntry",
+    "WebhookLogsResponse",
     "AsyncAccepted",
     "AudioChunk",
     "AudioChunkData",
