@@ -3,9 +3,8 @@ import fnmatch
 import io
 import zipfile
 from pathlib import Path
-from typing import List, Set
+from typing import Set
 
-from loguru import logger
 from rich.console import Console
 
 console = Console()
@@ -223,9 +222,7 @@ def create_zip_from_directory(directory: Path):
                     return True
 
         for pattern in excluded_patterns:
-            if fnmatch.fnmatch(path_str, pattern) or fnmatch.fnmatch(
-                path_str, f"*/{pattern}"
-            ):
+            if fnmatch.fnmatch(path_str, pattern) or fnmatch.fnmatch(path_str, f"*/{pattern}"):
                 return True
 
             if fnmatch.fnmatch(path.name, pattern):

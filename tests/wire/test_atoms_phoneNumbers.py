@@ -23,10 +23,10 @@ def test_atoms_phoneNumbers_search_rentable() -> None:
     client = get_client(test_id)
     client.atoms.phone_numbers.search_rentable(
         country_code="US",
-        provider="plivo",
+        provider="twilio",
     )
     verify_request_count(
-        test_id, "GET", "/product/get-available-numbers", {"countryCode": "US", "provider": "plivo"}, 1
+        test_id, "GET", "/product/get-available-numbers", {"countryCode": "US", "provider": "twilio"}, 1
     )
 
 
@@ -44,7 +44,7 @@ def test_atoms_phoneNumbers_rent() -> None:
     client = get_client(test_id)
     client.atoms.phone_numbers.rent(
         phone_number="13183747513",
-        provider="plivo",
+        provider="twilio",
     )
     verify_request_count(test_id, "POST", "/product/rent-number", None, 1)
 

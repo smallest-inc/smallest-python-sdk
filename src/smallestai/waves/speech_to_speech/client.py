@@ -51,10 +51,22 @@ class SpeechToSpeechClient:
         - **Use the Pulse → Electron → Lightning v3.1 stack** when you need explicit text in the middle (analytics, custom RAG, regulated content moderation, BYOM).
         - **Use just Lightning v3.1** when you already have text and only need TTS.
 
+        ## Model versions
+
+        Three Hydra tags are served on this endpoint; select one with `?model=`. Everything else in this reference — event catalog, `session.configure` shape, tool calling, interruption handling — is identical across them, so switching versions is a one-parameter change on the query string.
+
+        | Version | Query string | Status |
+        |---|---|---|
+        | **`hydra-v1.1`** (current release, default) | `?model=hydra-v1.1` | Latest speech-to-speech model. Recommended for all new integrations. |
+        | `hydra-v1.0` | `?model=hydra-v1.0` | Served, not deprecated. The server's deprecation message for `?model=hydra` names this tag as the migration target. |
+        | `hydra` (original release) | `?model=hydra` | **Deprecated** 2026-08-20. Sessions still open, but the server emits a `warning` frame with `code: "model_deprecated"` immediately before `session.created`. |
+
+        See the [Deprecation Notices](/models/deprecations/notices) page and the [Hydra model card](/models/model-cards/speech-to-speech/hydra) for the per-version reference.
+
         ## How it works
 
-        1. Connect: `wss://api.smallest.ai/waves/v1/s2s?model=hydra&api_key=<SMALLEST_API_KEY>`.
-        2. Receive `session.created` → send `session.configure` with persona, voice, optional tools.
+        1. Connect: `wss://api.smallest.ai/waves/v1/s2s?model=hydra-v1.1&api_key=<SMALLEST_API_KEY>`.
+        2. Receive `session.created` → send `session.configure` with persona, voice, optional tools. On the deprecated `?model=hydra`, a `warning` frame with `code: "model_deprecated"` arrives immediately before `session.created`.
         3. Stream `input_audio_buffer.append` continuously while the mic is open — even while the model is speaking. Hydra detects turn boundaries on its own.
         4. Receive `response.output_audio.delta` chunks (base64 PCM16) and queue them for playback at 48000 Hz.
         5. Handle barge-in: if `response.created` arrives before the previous response's `response.output_audio.done`, drop any still-scheduled audio buffers from the previous response.
@@ -66,7 +78,13 @@ class SpeechToSpeechClient:
 
         ## Voices
 
-        Currently supported: `wren`, `sloane`, `marlowe`, `reed`, `knox`, `tate`.
+        Set on `session.configure.session.voice` and frozen at handshake. Rosters are **per version and do not overlap** — when you switch versions, also pick a voice from the new roster.
+
+        - **`hydra-v1.1`** (current release), ten voices: `zoe`, `maya`, `elena`, `ivy`, `grace`, `alex`, `aria`, `leo`, `sam`, `kai`.
+        - **`hydra-v1.0`**, fourteen voices: `vaughn`, `brooks`, `cole`, `hayes`, `pierce`, `sterling`, `ellis`, `lane`, `quinn`, `arden`, `rowan`, `blair`, `emery`, `sawyer`.
+        - **`hydra`** (original release, deprecated): migrate to one of the tags above and pick a voice from its roster.
+
+        Omit `voice` and the server applies `sterling`. An unrecognised voice is rejected with an `error` frame (`code: "invalid_request_error"`, `param: "session.configure.session.voice"`) rather than silently defaulted — validate client-side. The [Hydra model card](/models/model-cards/speech-to-speech/hydra) carries the per-version table.
 
         ## Idle timeout
 
@@ -156,10 +174,22 @@ class AsyncSpeechToSpeechClient:
         - **Use the Pulse → Electron → Lightning v3.1 stack** when you need explicit text in the middle (analytics, custom RAG, regulated content moderation, BYOM).
         - **Use just Lightning v3.1** when you already have text and only need TTS.
 
+        ## Model versions
+
+        Three Hydra tags are served on this endpoint; select one with `?model=`. Everything else in this reference — event catalog, `session.configure` shape, tool calling, interruption handling — is identical across them, so switching versions is a one-parameter change on the query string.
+
+        | Version | Query string | Status |
+        |---|---|---|
+        | **`hydra-v1.1`** (current release, default) | `?model=hydra-v1.1` | Latest speech-to-speech model. Recommended for all new integrations. |
+        | `hydra-v1.0` | `?model=hydra-v1.0` | Served, not deprecated. The server's deprecation message for `?model=hydra` names this tag as the migration target. |
+        | `hydra` (original release) | `?model=hydra` | **Deprecated** 2026-08-20. Sessions still open, but the server emits a `warning` frame with `code: "model_deprecated"` immediately before `session.created`. |
+
+        See the [Deprecation Notices](/models/deprecations/notices) page and the [Hydra model card](/models/model-cards/speech-to-speech/hydra) for the per-version reference.
+
         ## How it works
 
-        1. Connect: `wss://api.smallest.ai/waves/v1/s2s?model=hydra&api_key=<SMALLEST_API_KEY>`.
-        2. Receive `session.created` → send `session.configure` with persona, voice, optional tools.
+        1. Connect: `wss://api.smallest.ai/waves/v1/s2s?model=hydra-v1.1&api_key=<SMALLEST_API_KEY>`.
+        2. Receive `session.created` → send `session.configure` with persona, voice, optional tools. On the deprecated `?model=hydra`, a `warning` frame with `code: "model_deprecated"` arrives immediately before `session.created`.
         3. Stream `input_audio_buffer.append` continuously while the mic is open — even while the model is speaking. Hydra detects turn boundaries on its own.
         4. Receive `response.output_audio.delta` chunks (base64 PCM16) and queue them for playback at 48000 Hz.
         5. Handle barge-in: if `response.created` arrives before the previous response's `response.output_audio.done`, drop any still-scheduled audio buffers from the previous response.
@@ -171,7 +201,13 @@ class AsyncSpeechToSpeechClient:
 
         ## Voices
 
-        Currently supported: `wren`, `sloane`, `marlowe`, `reed`, `knox`, `tate`.
+        Set on `session.configure.session.voice` and frozen at handshake. Rosters are **per version and do not overlap** — when you switch versions, also pick a voice from the new roster.
+
+        - **`hydra-v1.1`** (current release), ten voices: `zoe`, `maya`, `elena`, `ivy`, `grace`, `alex`, `aria`, `leo`, `sam`, `kai`.
+        - **`hydra-v1.0`**, fourteen voices: `vaughn`, `brooks`, `cole`, `hayes`, `pierce`, `sterling`, `ellis`, `lane`, `quinn`, `arden`, `rowan`, `blair`, `emery`, `sawyer`.
+        - **`hydra`** (original release, deprecated): migrate to one of the tags above and pick a voice from its roster.
+
+        Omit `voice` and the server applies `sterling`. An unrecognised voice is rejected with an `error` frame (`code: "invalid_request_error"`, `param: "session.configure.session.voice"`) rather than silently defaulted — validate client-side. The [Hydra model card](/models/model-cards/speech-to-speech/hydra) carries the per-version table.
 
         ## Idle timeout
 

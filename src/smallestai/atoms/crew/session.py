@@ -27,6 +27,19 @@ from smallestai.atoms.crew.nodes import CrewNode
 from smallestai.atoms.crew.task_manager import TaskManager, TaskManagerParams
 
 
+class _StartupProbeComplete(Exception):
+    """Internal signal raised by ``CrewSession.start()`` during the startup
+    dry-run once the graph has been built.
+
+    The server's startup validation runs the user's ``setup_handler`` without a
+    live init handshake, purely to surface node ``__init__`` / import / env /
+    graph errors before traffic arrives. The canonical handler ends with
+    ``await session.start()``; in the dry-run that call builds the graph and then
+    raises this to halt cleanly (no init required, no nodes started, no external
+    connections). It is caught by the validator and never surfaces to users.
+    """
+
+
 @dataclass
 class EventHandler:
     name: str
@@ -131,6 +144,9 @@ class CrewSession:
 
         self._init_event: Optional[SDKSystemInitEvent] = None
 
+        # Set only by the server's startup dry-run (never on a real session).
+        self._dry_run = False
+
         self.task_manager = TaskManager()
 
         self.loop = loop or asyncio.get_event_loop()
@@ -165,9 +181,7 @@ class CrewSession:
             bool: True if handshake successful, False otherwise
         """
         try:
-            message = await asyncio.wait_for(
-                self.websocket.receive_json(mode="binary"), timeout=10.0
-            )
+            message = await asyncio.wait_for(self.websocket.receive_json(mode="binary"), timeout=10.0)
             logger.info(f"Received message: {message}")
 
             init_event = self.codec.decode(message)
@@ -175,9 +189,7 @@ class CrewSession:
 
             if not isinstance(init_event, SDKSystemInitEvent):
                 logger.error(f"Expected HandshakeEvent, got {type(init_event)}")
-                error_event = SDKAgentErrorEvent(
-                    message=f"Expected InitEvent, got {type(init_event)}"
-                )
+                error_event = SDKAgentErrorEvent(message=f"Expected InitEvent, got {type(init_event)}")
                 await self.send_to_websocket(error_event)
                 # TODO: End the pipeline means disconnect the websocket because we have to not called the run handler
 
@@ -209,6 +221,17 @@ class CrewSession:
     async def start(self) -> None:
         """Start the session"""
         logger.info(f"[{self.name}] Starting session")
+
+        if self._dry_run:
+            # Startup validation: build the graph to surface node/edge/cycle
+            # errors, then halt. No init handshake is required and no nodes are
+            # started, so nothing connects to external services. Raising here
+            # keeps the canonical `await session.start()` handler from blocking
+            # on the (never-arriving) init event during validation.
+            logger.info(f"[{self.name}] Startup dry-run: building graph with {len(self.nodes)} nodes")
+            self._build_graph()
+            raise _StartupProbeComplete()
+
         if not self._init_event:
             logger.error(
                 "This should not happen because this method should always be called after the init event is received which will set the init event"
@@ -220,12 +243,17 @@ class CrewSession:
 
         self._running = True
 
-        await self._start_nodes(self._init_event, self.task_manager)
+        # Send Ready BEFORE starting nodes. A node's start() may emit a speak
+        # event (e.g. a greeting); if that reaches the platform before Ready, the
+        # platform's connect handshake sees a non-Ready first frame and never
+        # spawns its receive loop, silencing the whole call. Ready-first keeps any
+        # early speak legal. Incoming events still buffer on the websocket until
+        # our own receive loop starts below (after nodes are up), so nothing is
+        # lost by ordering Ready first.
         await self.send_to_websocket(SDKAgentReadyEvent())
+        await self._start_nodes(self._init_event, self.task_manager)
 
-        self._receive_loop_task = self.task_manager.create_task(
-            self._receive_loop(), name="receive_loop"
-        )
+        self._receive_loop_task = self.task_manager.create_task(self._receive_loop(), name="receive_loop")
 
     def _build_graph(self):
         """Build and validate the graph"""
@@ -273,9 +301,7 @@ class CrewSession:
 
         return False
 
-    async def _start_nodes(
-        self, init_event: SDKSystemInitEvent, task_manager: TaskManager
-    ):
+    async def _start_nodes(self, init_event: SDKSystemInitEvent, task_manager: TaskManager):
         """Start all nodes including sink"""
         for node in self.nodes:
             await node.start(init_event, task_manager)
@@ -344,9 +370,7 @@ class CrewSession:
         if current_tasks:
             task_names = ", ".join(list(self.task_manager._tasks.keys()))
             logger.info(f"[{self.name}] Tasks: {task_names}")
-            logger.info(
-                f"[{self.name}] Waiting for {len(current_tasks)} tasks to complete"
-            )
+            logger.info(f"[{self.name}] Waiting for {len(current_tasks)} tasks to complete")
             await asyncio.gather(*current_tasks, return_exceptions=True)
 
         self._cleanup_complete.set()
@@ -390,9 +414,7 @@ class CrewSession:
             sync: Whether this event handler will be executed in a task.
         """
         if event_name not in self._event_handlers:
-            self._event_handlers[event_name] = EventHandler(
-                name=event_name, handlers=[]
-            )
+            self._event_handlers[event_name] = EventHandler(name=event_name, handlers=[])
         else:
             logger.warning(f"Event handler {event_name} already registered")
 

@@ -122,9 +122,7 @@ class SDKAgentEvent(SDKEvent, type=EventType.AGENT_BASE.value):
     pass
 
 
-class SDKAgentTranscriptUpdateEvent(
-    SDKAgentEvent, type=EventType.AGENT_TRANSCRIPT_UPDATE.value
-):
+class SDKAgentTranscriptUpdateEvent(SDKAgentEvent, type=EventType.AGENT_TRANSCRIPT_UPDATE.value):
     role: Literal["user", "assistant"]
     content: str
 
@@ -166,19 +164,13 @@ class TransferOption(BaseModel):
     private_handoff_option: Optional[WarmTransferPrivateHandoffOption] = Field(
         default=None, alias="privateHandoffOption"
     )
-    public_handoff_option: Optional[WarmTransferPublicHandoffOption] = Field(
-        default=None, alias="publicHandoffOption"
-    )
+    public_handoff_option: Optional[WarmTransferPublicHandoffOption] = Field(default=None, alias="publicHandoffOption")
 
 
-class SDKAgentTransferConversationEvent(
-    SDKAgentEvent, type=EventType.AGENT_TRANSFER_CONVERSATION.value
-):
+class SDKAgentTransferConversationEvent(SDKAgentEvent, type=EventType.AGENT_TRANSFER_CONVERSATION.value):
     transfer_call_number: str
     transfer_options: TransferOption
-    on_hold_music: Optional[
-        Literal["ringtone", "relaxing_sound", "uplifting_beats", "none"]
-    ]
+    on_hold_music: Optional[Literal["ringtone", "relaxing_sound", "uplifting_beats", "none"]]
 
 
 class SDKSystemInitEvent(SDKSystemEvent, type=EventType.SYSTEM_INIT.value):
@@ -187,21 +179,15 @@ class SDKSystemInitEvent(SDKSystemEvent, type=EventType.SYSTEM_INIT.value):
     output_agent_settings: Optional[OutputAgentSettings] = None
 
 
-class SDKSystemUpdateOutputAgentSettingsEvent(
-    SDKSystemEvent, type=EventType.SYSTEM_UPDATE_OUTPUT_AGENT_SETTINGS.value
-):
+class SDKSystemUpdateOutputAgentSettingsEvent(SDKSystemEvent, type=EventType.SYSTEM_UPDATE_OUTPUT_AGENT_SETTINGS.value):
     settings: Dict[str, Any]
 
 
-class SDKSystemUserStartedSpeakingEvent(
-    SDKSystemEvent, type=EventType.SYSTEM_USER_STARTED_SPEAKING.value
-):
+class SDKSystemUserStartedSpeakingEvent(SDKSystemEvent, type=EventType.SYSTEM_USER_STARTED_SPEAKING.value):
     pass
 
 
-class SDKSystemUserStoppedSpeakingEvent(
-    SDKSystemEvent, type=EventType.SYSTEM_USER_STOPPED_SPEAKING.value
-):
+class SDKSystemUserStoppedSpeakingEvent(SDKSystemEvent, type=EventType.SYSTEM_USER_STOPPED_SPEAKING.value):
     pass
 
 
@@ -211,9 +197,7 @@ class SDKSystemLLMRequestEvent(SDKSystemEvent, type=EventType.SYSTEM_LLM_REQUEST
     extra_params: Dict[str, Any] = Field(default_factory=dict)
 
 
-class SDKSystemControlInterruptEvent(
-    SDKSystemEvent, type=EventType.SYSTEM_CONTROL_INTERRUPT.value
-):
+class SDKSystemControlInterruptEvent(SDKSystemEvent, type=EventType.SYSTEM_CONTROL_INTERRUPT.value):
     pass
 
 
@@ -229,41 +213,29 @@ class SDKAgentErrorEvent(SDKAgentEvent, type=EventType.AGENT_ERROR.value):
     message: str
 
 
-class SDKAgentLLMResponseStartEvent(
-    SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_START.value
-):
+class SDKAgentLLMResponseStartEvent(SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_START.value):
     """Streaming response started."""
 
     request_id: Optional[str] = None
 
 
-class SDKAgentLLMResponseChunkEvent(
-    SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_CHUNK.value
-):
+class SDKAgentLLMResponseChunkEvent(SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_CHUNK.value):
     text: str
 
 
-class SDKAgentLLMResponseEndEvent(
-    SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_END.value
-):
+class SDKAgentLLMResponseEndEvent(SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_END.value):
     pass
 
 
-class SDKAgentControlInterruptEvent(
-    SDKAgentEvent, type=EventType.AGENT_CONTROL_INTERRUPT.value
-):
+class SDKAgentControlInterruptEvent(SDKAgentEvent, type=EventType.AGENT_CONTROL_INTERRUPT.value):
     pass
 
 
-class SDKAgentControlMuteUserEvent(
-    SDKAgentEvent, type=EventType.AGENT_CONTROL_MUTE_USER.value
-):
+class SDKAgentControlMuteUserEvent(SDKAgentEvent, type=EventType.AGENT_CONTROL_MUTE_USER.value):
     pass
 
 
-class SDKAgentControlUnmuteUserEvent(
-    SDKAgentEvent, type=EventType.AGENT_CONTROL_UNMUTE_USER.value
-):
+class SDKAgentControlUnmuteUserEvent(SDKAgentEvent, type=EventType.AGENT_CONTROL_UNMUTE_USER.value):
     pass
 
 
@@ -344,9 +316,7 @@ class ChatClient:
                 )
             )
 
-            received_event = await asyncio.wait_for(
-                self._websocket.recv(), timeout=10.0
-            )
+            received_event = await asyncio.wait_for(self._websocket.recv(), timeout=10.0)
             if isinstance(received_event, str):
                 received_event = received_event.encode()
             received_event = self.codec.decode(received_event)
@@ -356,9 +326,7 @@ class ChatClient:
                     console.print(f"[red]Error: {received_event.message}[/red]")
                     return False
                 else:
-                    console.print(
-                        f"[yellow]Unexpected event: {received_event.type}[/yellow]"
-                    )
+                    console.print(f"[yellow]Unexpected event: {received_event.type}[/yellow]")
                     return False
 
             self._connected = True
@@ -399,9 +367,7 @@ class ChatClient:
 
         try:
             await self._websocket.send(
-                self.codec.encode(
-                    SDKAgentTranscriptUpdateEvent(role="user", content=user_message)
-                )
+                self.codec.encode(SDKAgentTranscriptUpdateEvent(role="user", content=user_message))
             )
 
             await self._websocket.send(self.codec.encode(SDKSystemLLMRequestEvent()))
@@ -421,9 +387,7 @@ class ChatClient:
             ) as live:
                 while True:
                     try:
-                        message = await asyncio.wait_for(
-                            self._websocket.recv(), timeout=60.0
-                        )
+                        message = await asyncio.wait_for(self._websocket.recv(), timeout=60.0)
                         if isinstance(message, str):
                             message = message.encode()
                         event = self.codec.decode(message)
@@ -476,11 +440,7 @@ class ChatClient:
                 )
 
                 await self._websocket.send(
-                    self.codec.encode(
-                        SDKAgentTranscriptUpdateEvent(
-                            role="assistant", content=full_response
-                        )
-                    )
+                    self.codec.encode(SDKAgentTranscriptUpdateEvent(role="assistant", content=full_response))
                 )
 
             return full_response
@@ -522,9 +482,7 @@ class ChatClient:
                     ) as live:
                         while True:
                             try:
-                                msg = await asyncio.wait_for(
-                                    self._websocket.recv(), timeout=30.0
-                                )
+                                msg = await asyncio.wait_for(self._websocket.recv(), timeout=30.0)
                                 if isinstance(msg, str):
                                     msg = msg.encode()
                                 evt = self.codec.decode(msg)
@@ -558,11 +516,7 @@ class ChatClient:
                 )
 
                 await self._websocket.send(
-                    self.codec.encode(
-                        SDKAgentTranscriptUpdateEvent(
-                            role="assistant", content=full_response
-                        )
-                    )
+                    self.codec.encode(SDKAgentTranscriptUpdateEvent(role="assistant", content=full_response))
                 )
 
             return full_response if full_response else None
@@ -576,9 +530,7 @@ async def chat_loop(client: ChatClient):
     await client.send_event(SDKSystemUserJoinedEvent())
     await client.receive_initial_message()
 
-    console.print(
-        "[dim]Type your message and press Enter. Type 'exit' or 'quit' to leave.[/dim]\n"
-    )
+    console.print("[dim]Type your message and press Enter. Type 'exit' or 'quit' to leave.[/dim]\n")
 
     while True:
         try:

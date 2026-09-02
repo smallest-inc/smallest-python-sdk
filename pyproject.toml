@@ -5,7 +5,7 @@ dynamic = ["version"]
 
 [tool.poetry]
 name = "smallestai"
-version = "5.3.1"
+version = "5.12.0"
 description = ""
 readme = "README.md"
 authors = []
@@ -56,6 +56,11 @@ rich = ">=14.2.0"
 questionary = ">=2.1.1"
 tomli = ">=2.3.0"
 tomli-w = ">=1.2.0"
+# Optional prebuilt tools (smallestai.tools.*). Installed only via extras.
+exa-py = { version = "*", optional = true }
+
+[tool.poetry.extras]
+exa = ["exa-py"]
 
 [tool.poetry.scripts]
 smallestai = "smallestai.cli.main:main"
@@ -80,7 +85,7 @@ markers = [
 
 [tool.mypy]
 plugins = ["pydantic.mypy"]
-exclude = ["src/smallestai/atoms/crew", "src/smallestai/atoms/helpers", "src/smallestai/cli", "src/smallestai/waves/text_to_speech/client.py", "src/smallestai/waves/text_to_speech/raw_client.py", "src/smallestai/waves/stream_tts.py"]
+exclude = ["examples/crew_transfer_node.py", "src/smallestai/atoms/crew", "src/smallestai/atoms/helpers", "src/smallestai/cli", "src/smallestai/waves/text_to_speech/client.py", "src/smallestai/waves/text_to_speech/raw_client.py", "src/smallestai/waves/stream_tts.py"]
 
 [tool.ruff]
 line-length = 120

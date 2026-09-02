@@ -47,17 +47,57 @@ class TtsRequestMessage(UncheckedBaseModel):
         FieldMetadata(alias="continue"),
         pydantic.Field(
             alias="continue",
-            description="This setting controls whether the system should buffer and wait for more input after receiving the current one. If not set, it assumes no more input is coming.",
+            description='Buffering control. Meaning depends on whether `context_id`\nis also set:\n\n- **Without `context_id`** (legacy buffer): `true` holds\n  this text and waits for a later request with\n  `flush: true` before generating any audio.\n- **With `context_id`** (continuations): `true` means\n  "more text for this context is coming" — the fragment\n  is buffered only until it reaches a natural sentence\n  boundary or `max_buffer_delay_ms` elapses, whichever is\n  first. Send `continue: false` to close out the context\n  and speak whatever is left buffered — this frame may\n  omit `text`. See\n  [Continuations](/models/documentation/text-to-speech-lightning/continuations).\n\nIf not set, assumes no more input is coming.',
         ),
     ] = None
     flush: typing.Optional[bool] = pydantic.Field(default=None)
     """
-    This setting controls whether the system should flush the current buffer.
+    This setting controls whether the system should flush the
+    current buffer. Legacy buffering only — cannot be combined
+    with `context_id` (end a context with `continue: false` or
+    `context_close: true` instead).
     """
 
     complete_backoff_ms: typing.Optional[float] = pydantic.Field(default=None)
     """
     The time in ms to wait after the last chunk is sent before sending the complete response. Default is 4000ms. Maximum is 10000ms.
+    """
+
+    context_id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Groups a sequence of text fragments into one continuous
+    synthesis ("continuations"). Send the same `context_id` on
+    every fragment belonging to one utterance — fragments are
+    buffered and joined at natural sentence boundaries, and
+    each new generation in the context is primed with the
+    audio from the previous one so prosody carries across
+    fragments instead of resetting per-chunk.
+    
+    Fragments sharing a `context_id` on the same connection
+    count as a single concurrency slot, not one per fragment.
+    
+    Cannot be combined with `flush` or `max_buffer_flush_ms` —
+    those are the legacy buffering contract. End a context
+    with `continue: false` or `context_close: true` instead.
+    See [Continuations](/models/documentation/text-to-speech-lightning/continuations).
+    """
+
+    max_buffer_delay_ms: typing.Optional[int] = pydantic.Field(default=None)
+    """
+    Only meaningful together with `context_id`. Upper bound
+    (ms) on how long a fragment may wait for a clean sentence
+    boundary before it's spoken anyway. The deadline starts on
+    the first still-buffered fragment and does not reset as
+    more fragments arrive, so a chatty client can't hold
+    playback in silence indefinitely.
+    """
+
+    context_close: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Ends a `context_id` immediately: releases any buffered
+    text and drops that context's carried audio state right
+    away instead of waiting out its idle timeout. May be sent
+    without `text` / `voice_id`.
     """
 
     language: typing.Optional[TtsRequestMessageLanguage] = pydantic.Field(default=None)
@@ -117,6 +157,45 @@ class TtsRequestMessage(UncheckedBaseModel):
     
     Accepts the same language codes as `language` (including
     `auto`, `nl`, `sv`).
+    """
+
+    math_notation: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Opt-in flag that reads digit-flanked math operators
+    (`5 x 3`, `2 ^ 10`, `6 ÷ 2`) as words instead of leaving
+    them for the default number reader. Off by default
+    because in real traffic digit-flanked `NxN` is more
+    often a product dimension, the `24x7` idiom, or a
+    vehicle-registration code than an actual multiplication.
+    
+    When `true`, the normalizer replaces the operator with
+    the spoken word matched to
+    `number_pronunciation_language`:
+    
+    | Glyphs | en (default / fallback) | hi | mr |
+    |---|---|---|---|
+    | `×` `x` `X` `*` | times | गुणा | गुणिले |
+    | `÷` and spaced `/` | divided by | बटा | भागिले |
+    | `+` | plus | प्लस | अधिक |
+    | spaced `-` `–` `−` | minus | माइनस | वजा |
+    | `=` | equals | बराबर | बरोबर |
+    | `^` `**` | to the power of | की घात | ची घात |
+    
+    Localized only for `hi` and `mr`; every other language
+    falls back to the English words. The operator word
+    follows `number_pronunciation_language`, not the
+    synthesis `language`, so
+    `language=en, number_pronunciation_language=hi` reads
+    `6 x 7` as "छः गुणा सात".
+    
+    Matching rules: unambiguous glyphs (`× ÷ * ^ ** = +` and
+    the wrong-glyph `x`/`X`) fire glued or spaced (`5x3`,
+    `5 x 3`). The ambiguous `-` `–` `−` and `/` fire only
+    when space-padded, so `5-3` stays a range and `1/2`
+    stays a fraction. See [Math notation](/models/documentation/text-to-speech-lightning/math-notation)
+    for the full lexicon, known limitations (product
+    dimensions, `24x7` idiom, vehicle-reg codes), and
+    EU-language localizations.
     """
 
     sample_rate: typing.Optional[int] = pydantic.Field(default=None)

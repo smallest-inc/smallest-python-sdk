@@ -21,7 +21,13 @@ class SessionConfig(UncheckedBaseModel):
 
     voice: typing.Optional[SessionConfigVoice] = pydantic.Field(default=None)
     """
-    Voice identifier.
+    Voice identifier. The roster is per model version and the rosters do not overlap:
+    
+    - `?model=hydra-v1.1` (current release), ten voices: `zoe`, `maya`, `elena`, `ivy`, `grace`, `alex`, `aria`, `leo`, `sam`, `kai`.
+    - `?model=hydra-v1.0`, fourteen voices: `vaughn`, `brooks`, `cole`, `hayes`, `pierce`, `sterling`, `ellis`, `lane`, `quinn`, `arden`, `rowan`, `blair`, `emery`, `sawyer`.
+    - `?model=hydra` (original release, deprecated): migrate to one of the tags above and pick a voice from its roster.
+    
+    Omit the field and the server applies `sterling`. An unrecognised voice is **rejected, not defaulted** — the server replies with an `error` frame carrying `code: "invalid_request_error"` and `param: "session.configure.session.voice"` — so validate client-side. The enum above is the union of the two supported rosters; AsyncAPI cannot express a constraint conditioned on a server query parameter. See the [Hydra model card](/models/model-cards/speech-to-speech/hydra) for the per-version table.
     """
 
     tools: typing.Optional[typing.List[Tool]] = pydantic.Field(default=None)

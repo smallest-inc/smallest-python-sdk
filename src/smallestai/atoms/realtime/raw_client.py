@@ -14,7 +14,9 @@ from ..errors.bad_request_error import BadRequestError
 from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
+from .types.register_call_realtime_request_input_audio_format import RegisterCallRealtimeRequestInputAudioFormat
 from .types.register_call_realtime_request_mode import RegisterCallRealtimeRequestMode
+from .types.register_call_realtime_request_output_audio_format import RegisterCallRealtimeRequestOutputAudioFormat
 from .types.register_call_realtime_request_variables_value import RegisterCallRealtimeRequestVariablesValue
 from .types.register_call_realtime_response import RegisterCallRealtimeResponse
 from pydantic import ValidationError
@@ -32,6 +34,9 @@ class RawRealtimeClient:
         *,
         agent_id: str,
         mode: typing.Optional[RegisterCallRealtimeRequestMode] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
+        input_audio_format: typing.Optional[RegisterCallRealtimeRequestInputAudioFormat] = OMIT,
+        output_audio_format: typing.Optional[RegisterCallRealtimeRequestOutputAudioFormat] = OMIT,
         variables: typing.Optional[typing.Dict[str, RegisterCallRealtimeRequestVariablesValue]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[RegisterCallRealtimeResponse]:
@@ -64,6 +69,41 @@ class RawRealtimeClient:
             Session mode. `webcall` = full voice pipeline (audio in +
             audio out). `chat` = text-only pipeline. Defaults to `webcall`.
 
+        sample_rate : typing.Optional[int]
+            **Deprecated. Use `output_audio_format` instead.** Still
+            accepted, and will keep being accepted - existing
+            integrations do not need to change.
+
+            A bare rate meaning PCM at that rate, so `sample_rate: 24000`
+            and `output_audio_format: "pcm_24000"` are the same request.
+            It predates the one-token-per-direction contract and is the
+            reason two fields exist for one thing. `44100` is only rendered by the
+            `lightning-v3.1` and `lightning-v3.1-pro` voices; asking for a
+            rate the agent's voice cannot render is refused here rather
+            than failing mid-call. This does **not** set the rate of the
+            audio you send - use `input_audio_format`.
+
+        input_audio_format : typing.Optional[RegisterCallRealtimeRequestInputAudioFormat]
+            The format you will **send**, as one `<encoding>_<rate>` token
+            naming both the encoding and the rate. Defaults to PCM at the
+            output rate, so a client sending only `sample_rate` needs
+            nothing else.
+
+            The recogniser is configured at this rate and your audio is
+            not resampled, so the token must match the bytes you send: a
+            mismatch produces wrong transcripts and no error. G.711 exists
+            only at 8000. Opus is raw packets, one per WebSocket message;
+            Ogg-framed Opus is a different format and is refused.
+
+            A browser client can also declare this later, on the connect
+            URL, once its `AudioContext` reports the rate it actually got.
+
+        output_audio_format : typing.Optional[RegisterCallRealtimeRequestOutputAudioFormat]
+            The format the agent sends back. Same token shape as
+            `input_audio_format`. Sending this together with `sample_rate`
+            is allowed only if they agree; disagreeing values are refused
+            rather than resolved by a precedence rule.
+
         variables : typing.Optional[typing.Dict[str, RegisterCallRealtimeRequestVariablesValue]]
             Per-call prompt variables that override the agent's
             `defaultVariables` for this session only. Values must be
@@ -89,6 +129,9 @@ class RawRealtimeClient:
             json={
                 "agent_id": agent_id,
                 "mode": mode,
+                "sample_rate": sample_rate,
+                "input_audio_format": input_audio_format,
+                "output_audio_format": output_audio_format,
                 "variables": convert_and_respect_annotation_metadata(
                     object_=variables,
                     annotation=typing.Dict[str, RegisterCallRealtimeRequestVariablesValue],
@@ -174,6 +217,9 @@ class AsyncRawRealtimeClient:
         *,
         agent_id: str,
         mode: typing.Optional[RegisterCallRealtimeRequestMode] = OMIT,
+        sample_rate: typing.Optional[int] = OMIT,
+        input_audio_format: typing.Optional[RegisterCallRealtimeRequestInputAudioFormat] = OMIT,
+        output_audio_format: typing.Optional[RegisterCallRealtimeRequestOutputAudioFormat] = OMIT,
         variables: typing.Optional[typing.Dict[str, RegisterCallRealtimeRequestVariablesValue]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[RegisterCallRealtimeResponse]:
@@ -206,6 +252,41 @@ class AsyncRawRealtimeClient:
             Session mode. `webcall` = full voice pipeline (audio in +
             audio out). `chat` = text-only pipeline. Defaults to `webcall`.
 
+        sample_rate : typing.Optional[int]
+            **Deprecated. Use `output_audio_format` instead.** Still
+            accepted, and will keep being accepted - existing
+            integrations do not need to change.
+
+            A bare rate meaning PCM at that rate, so `sample_rate: 24000`
+            and `output_audio_format: "pcm_24000"` are the same request.
+            It predates the one-token-per-direction contract and is the
+            reason two fields exist for one thing. `44100` is only rendered by the
+            `lightning-v3.1` and `lightning-v3.1-pro` voices; asking for a
+            rate the agent's voice cannot render is refused here rather
+            than failing mid-call. This does **not** set the rate of the
+            audio you send - use `input_audio_format`.
+
+        input_audio_format : typing.Optional[RegisterCallRealtimeRequestInputAudioFormat]
+            The format you will **send**, as one `<encoding>_<rate>` token
+            naming both the encoding and the rate. Defaults to PCM at the
+            output rate, so a client sending only `sample_rate` needs
+            nothing else.
+
+            The recogniser is configured at this rate and your audio is
+            not resampled, so the token must match the bytes you send: a
+            mismatch produces wrong transcripts and no error. G.711 exists
+            only at 8000. Opus is raw packets, one per WebSocket message;
+            Ogg-framed Opus is a different format and is refused.
+
+            A browser client can also declare this later, on the connect
+            URL, once its `AudioContext` reports the rate it actually got.
+
+        output_audio_format : typing.Optional[RegisterCallRealtimeRequestOutputAudioFormat]
+            The format the agent sends back. Same token shape as
+            `input_audio_format`. Sending this together with `sample_rate`
+            is allowed only if they agree; disagreeing values are refused
+            rather than resolved by a precedence rule.
+
         variables : typing.Optional[typing.Dict[str, RegisterCallRealtimeRequestVariablesValue]]
             Per-call prompt variables that override the agent's
             `defaultVariables` for this session only. Values must be
@@ -231,6 +312,9 @@ class AsyncRawRealtimeClient:
             json={
                 "agent_id": agent_id,
                 "mode": mode,
+                "sample_rate": sample_rate,
+                "input_audio_format": input_audio_format,
+                "output_audio_format": output_audio_format,
                 "variables": convert_and_respect_annotation_metadata(
                     object_=variables,
                     annotation=typing.Dict[str, RegisterCallRealtimeRequestVariablesValue],

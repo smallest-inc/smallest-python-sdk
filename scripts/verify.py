@@ -16,6 +16,7 @@ Hard gates (1, 2, 4) fail the build; the field-drop audit (3) reports gaps as wa
 
     python scripts/verify.py        # or: make verify
 """
+
 import inspect
 import os
 import pathlib
@@ -33,7 +34,7 @@ warnings = []
 
 
 def hdr(t):
-    print(f"\n{'='*64}\n  {t}\n{'='*64}")
+    print(f"\n{'=' * 64}\n  {t}\n{'=' * 64}")
 
 
 # ---------------------------------------------------------------- layer 1
@@ -109,9 +110,11 @@ def live_client():
     if not key:
         return None
     from smallestai import SmallestAI
+
     base = os.environ.get("SMALLEST_BASE_URL")
     if base:
         from smallestai.environment import SmallestAIEnvironment
+
         base = base.rstrip("/")
         ws = base.replace("https://", "wss://").replace("http://", "ws://")
         env = SmallestAIEnvironment(atoms=f"{base}/atoms/v1", waves=base, waves_ws=ws)
@@ -138,8 +141,11 @@ def read_methods(client):
             if not (READ.match(m_name) or m_name in EXTRA):
                 continue
             try:
-                req = [p for p in inspect.signature(m).parameters.values()
-                       if p.default is p.empty and p.kind in (p.POSITIONAL_OR_KEYWORD, p.KEYWORD_ONLY)]
+                req = [
+                    p
+                    for p in inspect.signature(m).parameters.values()
+                    if p.default is p.empty and p.kind in (p.POSITIONAL_OR_KEYWORD, p.KEYWORD_ONLY)
+                ]
             except (TypeError, ValueError):
                 req = []
             if req:
@@ -151,6 +157,7 @@ def read_methods(client):
 def check_live_sweep(client):
     hdr("2. LIVE READ SWEEP — every no-arg read endpoint")
     from smallestai.atoms.helpers import as_page
+
     items_by_label = {}
     n = ok = 0
     for label, method in read_methods(client):
@@ -179,12 +186,14 @@ def _extras(model, path, noise={"__v"}):
         return found
     # aliases of declared fields: the unchecked-construct path can leave the raw alias
     # key in model_extra even when the field is populated — not a real drop.
-    aliases = {getattr(f, "alias", None)
-               for f in (type(model).model_fields.values() if hasattr(type(model), "model_fields") else [])}
-    for k in (getattr(model, "model_extra", None) or {}):
+    aliases = {
+        getattr(f, "alias", None)
+        for f in (type(model).model_fields.values() if hasattr(type(model), "model_fields") else [])
+    }
+    for k in getattr(model, "model_extra", None) or {}:
         if k not in noise and k not in aliases:
             found.append(f"{path}.{k}")
-    for fname in (type(model).model_fields if hasattr(type(model), "model_fields") else {}):
+    for fname in type(model).model_fields if hasattr(type(model), "model_fields") else {}:
         v = getattr(model, fname, None)
         if hasattr(v, "model_extra"):
             found += _extras(v, f"{path}.{fname}")
@@ -203,8 +212,10 @@ def check_field_drop(items_by_label):
         if drops:
             total += len(drops)
             warnings.append(f"field-drop: {label} -> {len(drops)} untyped")
-            shown = ['.'.join(d.split('.')[1:]) for d in drops[:6]]
-            print(f"  {YEL}GAP{END}  {label:<46} {len(drops)} untyped: {DIM}{', '.join(shown)}{'…' if len(drops)>6 else ''}{END}")
+            shown = [".".join(d.split(".")[1:]) for d in drops[:6]]
+            print(
+                f"  {YEL}GAP{END}  {label:<46} {len(drops)} untyped: {DIM}{', '.join(shown)}{'…' if len(drops) > 6 else ''}{END}"
+            )
         else:
             print(f"  {GREEN}ok{END}   {label:<46} all fields typed")
     print(f"  {DIM}{total} untyped fields total (tracked as 5.1.x spec completeness){END}")

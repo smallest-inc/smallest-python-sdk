@@ -1,3 +1,207 @@
+## 5.12.0 - 2026-08-24
+
+* **cli**: added `smallestai version` and a `--version/-V` flag.
+* **cli**: grouped the top-level help into named sections (BUILD & DEPLOY / VOICE
+  AGENTS / TELEPHONY / SPEECH / SETUP) instead of a flat command table.
+* **cli**: `--agent-id` now works on `agent-crew deploy`, `builds`, and `logs`, so crew
+  commands run from CI or outside a linked project directory (falls back to the linked
+  project agent). Shared resolver keeps precedence consistent.
+* **cli**: `--json` on `agents list/get/phone-status` and `agent-crew builds`; the
+  interactive `builds` picker is skipped in non-TTY / `--json` mode so it no longer hangs
+  in CI.
+* **cli**: new convenience commands - `whoami`, `status`, `open`, `docs`, and a top-level
+  `doctor` for environment/auth/connectivity checks.
+* **cli**: confirmation prompt before "Take Down" (making a live crew build not-live),
+  since it stops the agent serving calls.
+* **fix (cli)**: crew commands pointed users at the nonexistent `smallestai agent init`;
+  corrected to `smallestai agent-crew init` and to mention `--agent-id`.
+
+## 5.11.2 - 2026-08-20
+
+* **fix (crew)**: crew `transfer_call` / end-call tool_call events now carry a `response`
+  (status + destination + transfer type; warm transfers also include the whisper handoff),
+  auto-filled by the SDK from the emitted handoff event. Previously these tools returned
+  nothing, so the event showed only `arguments` — now it matches single-prompt agents with
+  no user code change.
+* **docs**: the PyPI README brands the speech surface as **Models** (the CLI group name),
+  not Waves. The SDK attribute stays `client.waves` in 5.x.
+
+## 5.11.1 - 2026-08-20
+
+* **fix (crew)**: crew tool calls now show on the platform's Events tab. The crew
+  `ToolRegistry` emits `tool_call_start`/`tool_call_end`/`tool_call_error` events over
+  the node websocket around each `@function_tool` (including `transfer_call`), in the same
+  format single-prompt agents already produce. Previously crew tools ran silently, so a
+  crew `transfer_call` was invisible on the platform even though it fired. No change to
+  user crew code; takes effect on redeploy.
+
+## 5.11.0 - 2026-08-19
+
+* **cli**: refreshed the bare `smallestai` banner - a "SMALLEST AI" wordmark in the brand
+  blue `#3B82F6` with pulsing concentric rings on an interactive terminal (static when piped,
+  in CI, or under `NO_COLOR` / `SMALLESTAI_NO_ANIM`; compact on narrow terminals).
+* **cli**: renamed the speech command group from `waves` to `models` (text-to-speech,
+  speech-to-text, voices). `waves` still works as a hidden, back-compatible alias.
+* **cli**: new `smallestai calls events <call-id>` streams a live call's events (transcript,
+  per-turn latency, node transitions, tool calls, errors); `calls transcript --follow` streams
+  just the conversation; `agent-crew logs [build-id]` streams a build's compile + deploy logs.
+* **fix (crew)**: startup validation no longer logs a spurious `Startup validation failed -
+  pod will not accept sessions. ValueError: Session not initialized` on every healthy boot.
+  The dry-run now builds the graph and halts cleanly; genuinely broken handlers (bad node
+  `__init__`, imports, cycles) still fail validation and keep the pod not-ready.
+
+## 5.10.1 - 2026-08-10
+
+* **fix**: the new waves endpoints (`post_call_analysis`, `voices`, `analytics`, `ops`)
+  called the atoms host and returned 404. They now target the waves host correctly.
+
+## 5.10.0 - 2026-08-07
+
+* **tools**: new `smallestai.tools` framework for prebuilt, pluggable crew tools. Each tool
+  plugs into a crew's `ToolRegistry` and is also callable directly; third-party libraries
+  install as optional extras, lazy-imported. First tool: `ExaSearchTool` (web search;
+  `pip install "smallestai[exa]"`, reads `EXA_API_KEY`).
+* **cli**: new `smallestai agent-crew doctor [--agent-id]` inspects a crew agent and flags
+  common gotchas (no live build, wrong workflow type, PII redaction on, `transfer_call`
+  toggled in the dashboard). `agent-crew init` now prints the crew-vs-platform config
+  ownership boundary.
+* **cli**: new `smallestai mcp` command to set up or run the Smallest AI MCP server
+  (`@developer-smallestai/smallest-mcp-server`) for Cursor / Claude. `mcp` prints the config
+  + `claude mcp add` line, `mcp run` launches it via npx, `mcp config` prints the mcp.json.
+* **cli**: running bare `smallestai` now shows a banner + command list instead of a
+  "Missing command" error.
+* **telemetry**: anonymous, opt-out usage telemetry (PostHog). No personal data or secrets:
+  only the event name, SDK/Python/OS version, and a random anonymous install id.
+  Fire-and-forget, never blocks. Opt out with `SMALLESTAI_TELEMETRY=0` (or `DO_NOT_TRACK=1`).
+* **crew**: `SDKSystemUpdateOutputAgentSettingsEvent` is deprecated - the platform does not
+  apply crew-sent output-agent settings. It will be removed in a future release.
+* **dev**: pre-commit hooks (ruff lint + format, gitleaks) and CI quality/security jobs -
+  `ruff check` / `ruff format --check` and a gitleaks secret scan gate publishing, plus
+  `pip-audit` dependency-CVE reporting (report-only for now).
+* **api (Voice Agents)**: new endpoints on the client:
+  * `client.atoms.user.get_subscription()` - plan id, credit balance, per-plan limits, feature flags.
+  * `client.atoms.account.get_account_details()` - profile plus the orgs the user belongs to.
+  * `client.atoms.account.update_organization_name(...)` - rename the active org (owner role).
+  * `client.atoms.web_call.start_web_chat_conversation(...)` / `start_web_call_conversation(...)` - mint a LiveKit token + room for a browser text/voice session.
+  * `client.atoms.campaigns.export_campaign_logs(...)` - campaign call logs.
+  * `client.atoms.campaigns.export_campaign_results_by_audience_member(...)` - results grouped by contact (`format=json|csv`).
+* **api (Speech)**: new endpoints on the client:
+  * `client.waves.post_call_analysis.analyze(...)` - disposition metrics from a transcript.
+  * `client.waves.post_call_analysis.generate(...)` - single-prompt text generation.
+  * `client.waves.voices.get_all_voice_models()` - the full voice catalog.
+  * `client.waves.analytics.*` - ASR/TTS logs and usage/credits/concurrency timeseries, webhook logs.
+  * `client.waves.ops.get_waves_health()` - service health.
+* **api (removed)**: `client.atoms.organization` is removed. Its endpoint (`GET /organization`)
+  returned 404 on the public API and was never functional; use
+  `client.atoms.account.get_account_details()` / `client.atoms.user.get_user_details()` instead.
+
+## 5.5.0 - 2026-08-05
+
+DevX pass (backward-compatible).
+
+* **errors**: a plan/entitlement-gated request (HTTP 400, "…please upgrade to a
+  higher plan…") is now raised as `PlanNotEntitledError` — a subclass of
+  `BadRequestError`, so `except BadRequestError` still catches it. Import it from
+  `smallestai` or the new `smallestai.errors` module.
+* **errors**: error messages now carry an actionable hint — 401 points to
+  `SMALLEST_API_KEY`, a plan-gated 400 points to upgrading, an org-gated 403
+  points to your account team.
+* **waves**: new TTS convenience helpers — `synthesize_to_file`,
+  `synthesize_bytes` (and `synthesize_with_expiry`) over `client.waves`.
+* **waves**: Enterprise content-expiry opt-in — pass `expire_content=True` to the
+  TTS helpers to send `x-expire-content`, or use `synthesize_with_expiry` to also
+  read the `x-content-expiry` outcome.
+
+## 5.4.2 - 2026-08-05
+
+* **observability**: every request now sends `X-Source: smallest-python-sdk` so
+  SDK-originated traffic is attributable in the backend, alongside other clients.
+* **observability**: `X-Fern-SDK-Version` now reports the installed package
+  version instead of a hardcoded `0.0.0`, making version adoption trackable.
+* **fix**: `import smallestai; smallestai.__version__` no longer raises. The
+  version lookup used the wrong distribution name (`smallest-ai` vs `smallestai`).
+* **cli**: new `waves` commands — `tts`, `stt`, `voices`, `clones`.
+* **cli**: new `campaigns` commands — `list`, `get`, `create`, `pause`,
+  `resume`, `delete` — and `phone-numbers` commands — `list`, `search`, `rent`,
+  `release`, `import-sip`. Billable/destructive actions prompt unless `--yes`.
+* **fix**: `SMALLEST_BASE_URL` no longer crashes the CLI. The custom-endpoint
+  path omitted the now-required `payment` url when building the environment.
+* **docs**: corrected the text-to-speech method names in the reference
+  (`synthesize_tts` / `tts.connect`, not the non-existent `text_to_speech`).
+
+## 5.4.1 - 2026-08-04
+
+* **crew**: stop generating after a handoff. Once a node emits a transfer or
+  end-call event, `OutputCrewNode` latches and ignores further LLM requests. A
+  fire-and-forget tool that emits the event records no tool_result, so the LLM
+  would otherwise re-decide the same action on every subsequent request and
+  re-fire it in a loop (e.g. a hold-message repeating for the whole transfer dial).
+
+## 5.4.0 - 2026-08-04
+
+Configure agent tools (transfer_call, end_call, ...) from code.
+
+* **`atoms.helpers.AgentTools`**: new helper to read and write a single-prompt
+  agent's tools by agentId, through the branch/revision versioning flow
+  (draft -> publish -> make-live) so the change actually takes effect on live
+  calls. Config is section-based, so the prompt and other tools are preserved
+  (never wiped). `add_transfer_call(...)` configures a transfer, including
+  `on_hold_music` so the caller hears audio while the transfer bridges instead of
+  silence; `make_live=False` stages a revision without activating it. Optional-None
+  fields are stripped (the API rejects nulls), and API error bodies are surfaced.
+* Re-exported `Tool`, `SinglePromptConfig`, and `ToolTransferOption` from
+  `smallestai.atoms.helpers` (they are not exported from `atoms.types`).
+* **crew (silent agent fix)**: `OutputCrewNode` now seeds its context from the
+  authoritative message list carried on the LLM-request event, instead of relying
+  only on separately-accumulated transcript events. Those could race the request or
+  be dropped, leaving the context empty — the custom LLM then errored on "no
+  non-system message" and the agent went silent for the whole call (greeting once,
+  never responding, never transferring). The node's own system prompt is preserved.
+* **crew (greeting lifecycle)**: send `AgentReady` before starting nodes so a
+  greeting emitted in `start()` works, and add an `on_event` hook so a subclass can
+  react to events without accidentally silencing the framework routing.
+* **crew**: `SDKAgentTransferConversationEvent.on_hold_music` is now optional
+  (defaults to `None`). It was declared `Optional[...]` but without a default, so
+  it was effectively required — every crew transfer had to pass it (even as
+  `None`) or event construction raised a `ValidationError`. Callers that want
+  audio during the transfer bridge still pass `ringtone` / `relaxing_sound` /
+  `uplifting_beats`. Note: `on_hold_music` applies to warm transfers; cold transfer
+  is a direct connect with no hold-music window.
+* **CLI** (`smallestai calls`): new `list`, `get`, `transcript`, and `recording`
+  subcommands to inspect call logs, details, transcripts, and recording URLs from
+  the terminal (read-only, dogfoods `client.atoms.calls`). Each supports `--json`.
+
+## 5.3.4 - 2026-07-31
+
+Corrects the deploy message. No API changes.
+
+* **CLI** (`smallestai agent-crew deploy`): drop the "first call can be silent, try
+  again" line from the post-deploy message. The crew is engaged at call time on the
+  current platform, so that guidance was misleading. The message now just says to
+  wait for the build to show Live before the first call.
+
+## 5.3.3 - 2026-07-30
+
+CLI deploy now reports real build status, and a hand-written README. No API changes.
+
+* **CLI** (`smallestai agent-crew deploy`): after upload, the command polls the build
+  to a terminal state (SUCCEEDED / failed) instead of returning at "queued", and on
+  success points to `agent-crew builds` -> Make Live with a note that the first call
+  after Make Live can need a few seconds while the pod warms up.
+* **README**: replaced the generated boilerplate with a hand-written front door
+  (agents, Waves TTS/STT, agent crew with a custom LLM, CLI). Added to `.fernignore`
+  so regeneration no longer overwrites it.
+
+## 5.3.2 - 2026-07-30
+
+Corrects the agent-crew deploy layout warning. No API or behaviour changes.
+
+* **CLI** (`smallestai agent-crew deploy`): the pre-deploy check no longer claims a `src/`
+  layout or a `pyproject.toml` project fails the cloud build. Both build and run (verified end
+  to end). The check is now a short note: flat directory with `server.py` + `requirements.txt`
+  at the root is the simplest, best-tested path; if you use a `pyproject.toml` with no
+  `requirements.txt`, declare every runtime dependency in it.
+
 ## 5.3.1 - 2026-07-29
 
 Billing read endpoints, a call-log type fix, and clearer agent-crew deploy warnings. Additive; no breaking changes.

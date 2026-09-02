@@ -227,6 +227,4 @@ class TaskManager(BaseTaskManager):
                 logger.debug(f"[{name}] Task done handler called")
                 del self._tasks[name]
             except KeyError as e:
-                logger.trace(
-                    f"{name}: unable to remove task data (already removed?): {e}"
-                )
+                logger.trace(f"{name}: unable to remove task data (already removed?): {e}")

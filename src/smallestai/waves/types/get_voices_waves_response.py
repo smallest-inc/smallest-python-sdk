@@ -11,7 +11,7 @@ from .get_voices_waves_response_voices_item import GetVoicesWavesResponseVoicesI
 class GetVoicesWavesResponse(UncheckedBaseModel):
     voices: typing.Optional[typing.List[GetVoicesWavesResponseVoicesItem]] = pydantic.Field(default=None)
     """
-    List of available voices.
+    List of available voices for the chosen pool.
     """
 
     if IS_PYDANTIC_V2:

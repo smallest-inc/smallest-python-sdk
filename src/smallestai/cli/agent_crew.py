@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import json as _json
 import sys
 from io import BytesIO
 from pathlib import Path
@@ -16,6 +17,8 @@ from rich.table import Table
 from smallestai.cli.lib.atoms import AgentBuildStatus, AtomsAPIClient
 from smallestai.cli.lib.auth import AuthClient
 from smallestai.cli.lib.chat import ChatClient, chat_loop
+from smallestai.cli.lib.ownership import SUMMARY as OWNERSHIP_SUMMARY
+from smallestai.cli.lib.ownership import render_ownership
 from smallestai.cli.lib.project_config import ProjectConfig
 from smallestai.cli.utils import create_zip_from_directory, find_required_env_vars
 
@@ -31,10 +34,19 @@ AGENT_BUILD_STATUS_COLORS = {
 console = Console()
 
 
-def initialise_agent_crew_app(
-    project_config: ProjectConfig, auth_client: AuthClient, atoms_client: AtomsAPIClient
-):
+def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthClient, atoms_client: AtomsAPIClient):
     app = typer.Typer(name="agent-crew")
+
+    def _resolve_agent_id(arg: Optional[str]) -> str:
+        """Explicit --agent-id wins; otherwise fall back to the linked project agent."""
+        agent_id = arg or project_config.get_agent_id()
+        if not agent_id:
+            console.print(
+                "[red]No agent linked. Run [bold]smallestai agent-crew init[/bold] in this "
+                "directory, or pass [bold]--agent-id <id>[/bold].[/red]"
+            )
+            raise typer.Exit(1)
+        return agent_id
 
     @app.command()
     def init(
@@ -52,32 +64,25 @@ def initialise_agent_crew_app(
         agent_id = project_config.get_agent_id()
 
         if agent_id:
-            console.print(
-                f"[green]Agent already initialized with ID: [bold]{agent_id}[/bold][/green]"
-            )
+            console.print(f"[green]Agent already initialized with ID: [bold]{agent_id}[/bold][/green]")
             return
 
         # Non-interactive path: link the provided id directly, no picker.
         if agent_id_arg:
             project_config.set_agent_id(agent_id_arg)
-            console.print(
-                f"[green]Agent initialized successfully with ID: [bold]{agent_id_arg}[/bold][/green]"
-            )
+            console.print(f"[green]Agent initialized successfully with ID: [bold]{agent_id_arg}[/bold][/green]")
+            _print_ownership_hint()
             return
 
         # Without an id, the picker needs a real TTY — fail clearly instead of crashing.
         if not sys.stdin.isatty():
-            console.print(
-                "[red]init requires an interactive terminal. Pass --agent-id <id> to skip the picker.[/red]"
-            )
+            console.print("[red]init requires an interactive terminal. Pass --agent-id <id> to skip the picker.[/red]")
             raise typer.Exit(1)
 
         # Check if user is logged in
         credentials = auth_client.get_credentials()
         if not credentials or not credentials.get("access_token"):
-            console.print(
-                "[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]"
-            )
+            console.print("[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]")
             raise typer.Exit(1)
 
         access_token = credentials["access_token"]
@@ -115,6 +120,17 @@ def initialise_agent_crew_app(
 
         project_config.set_agent_id(selected_agent)
         console.print("[green]Agent initialized successfully![/green]")
+        _print_ownership_hint()
+
+    def _print_ownership_hint():
+        console.print(
+            Panel(
+                OWNERSHIP_SUMMARY + "\n\n[dim]Run [bold]smallestai agent-crew doctor[/bold] to check this "
+                "agent's config for common gotchas.[/dim]",
+                title="What your crew controls vs the platform",
+                border_style="cyan",
+            )
+        )
 
     @app.command()
     def deploy(
@@ -124,30 +140,25 @@ def initialise_agent_crew_app(
             "-e",
             help="Entry point file name (e.g., server.py)",
         ),
+        agent_id: Optional[str] = typer.Option(
+            None, "--agent-id", help="Agent id to deploy to (defaults to the linked project agent)."
+        ),
     ):
         """
         Deploy an agent crew to the Atoms platform.
 
         Packages the agent-crew code directory into a zip file and deploys it to the backend.
         """
-        asyncio.run(async_deploy(".", entry_point))
+        asyncio.run(async_deploy(".", entry_point, agent_id))
 
-    async def async_deploy(directory: str, entry_point: str):
+    async def async_deploy(directory: str, entry_point: str, agent_id_arg: Optional[str] = None):
         """Deploy an agent crew asynchronously."""
-        agent_id = project_config.get_agent_id()
-
-        if not agent_id:
-            console.print(
-                "[red]Agent not initialized. Run 'smallestai agent init' first.[/red]"
-            )
-            return
+        agent_id = _resolve_agent_id(agent_id_arg)
 
         # Check if user is logged in
         credentials = auth_client.get_credentials()
         if not credentials or not credentials.get("access_token"):
-            console.print(
-                "[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]"
-            )
+            console.print("[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]")
             raise typer.Exit(1)
 
         access_token = credentials["access_token"]
@@ -164,45 +175,31 @@ def initialise_agent_crew_app(
         # Check if entry point file exists
         entry_point_path = dir_path / entry_point
         if not entry_point_path.exists():
-            console.print(
-                f"[red]Error: Entry point file '{entry_point}' not found in '{directory}'.[/red]"
-            )
+            console.print(f"[red]Error: Entry point file '{entry_point}' not found in '{directory}'.[/red]")
             return
 
-        console.print(
-            f"[bold cyan]Deploying agent from: {dir_path.absolute()}[/bold cyan]"
-        )
+        console.print(f"[bold cyan]Deploying agent from: {dir_path.absolute()}[/bold cyan]")
         console.print(f"[dim]Entry point: {entry_point}[/dim]")
         console.print(f"[dim]Agent ID: {agent_id}[/dim]\n")
 
-        # Pre-flight layout check. The cloud build runs `pip install .` from a
-        # pyproject before copying your source, so a src/ layout (or a nested
-        # entry point) fails there. The supported path is a flat directory with a
-        # requirements.txt (what the cookbook examples ship). Warn early instead
-        # of letting the build fail opaquely.
+        # Pre-flight layout note. Both a flat directory (server.py +
+        # requirements.txt at the root) and a src/ layout with a pyproject.toml
+        # build and run in the cloud. Flat + requirements.txt is what the cookbook
+        # examples ship and the best-tested path, so nudge toward it without
+        # blocking anything. One gotcha for pyproject projects: all runtime deps
+        # must be declared there (smallestai already pulls in the crew server's
+        # deps, so this is usually covered).
         has_pyproject = (dir_path / "pyproject.toml").exists()
         has_requirements = (dir_path / "requirements.txt").exists()
         has_src_dir = (dir_path / "src").is_dir()
         nested_entry = ("/" in entry_point) or ("\\" in entry_point)
-        if (has_pyproject and not has_requirements) or has_src_dir or nested_entry:
-            console.print("[yellow]⚠  Project layout may not build in the cloud:[/yellow]")
-            if has_src_dir or nested_entry:
-                console.print(
-                    "    [yellow]• src/ layout / nested entry point detected. The cloud "
-                    "build expects a flat directory with the entry file at the root "
-                    "(e.g. server.py), not under src/.[/yellow]"
-                )
-            if has_pyproject and not has_requirements:
-                console.print(
-                    "    [yellow]• pyproject.toml with no requirements.txt. The builder "
-                    "runs `pip install .` before your source is copied, which fails for "
-                    "src/ layouts. Add a requirements.txt (the builder prefers it and "
-                    "skips that step).[/yellow]"
-                )
+        if has_src_dir or nested_entry or (has_pyproject and not has_requirements):
             console.print(
-                "[dim]Supported layout: a flat directory with server.py + a "
-                "requirements.txt at the root. See the cookbook getting_started "
-                "example.[/dim]\n"
+                "[dim]Note: src/ + pyproject.toml layouts deploy fine. The simplest, "
+                "best-tested path is a flat directory with server.py + a "
+                "requirements.txt at the root (what the cookbook getting_started "
+                "example ships). If you use a pyproject with no requirements.txt, make "
+                "sure every runtime dependency is declared in it.[/dim]\n"
             )
 
         # Scan user code for env var references and warn — the deploy pipeline
@@ -214,9 +211,7 @@ def initialise_agent_crew_app(
         # SMALLEST_API_KEY is set by the platform; ignore from the warning list.
         required_env_vars.discard("SMALLEST_API_KEY")
         if required_env_vars:
-            console.print(
-                "[yellow]⚠  Your code references these environment variables:[/yellow]"
-            )
+            console.print("[yellow]⚠  Your code references these environment variables:[/yellow]")
             for var in sorted(required_env_vars):
                 console.print(f"    [yellow]• {var}[/yellow]")
             console.print(
@@ -246,9 +241,47 @@ def initialise_agent_crew_app(
                 api_key=access_token,
             )
 
-            console.print("[bold green]✓ Deployment successful![/bold green]")
+            console.print("[bold green]✓ Deployment uploaded![/bold green]")
             console.print(f"[dim]Build ID: {result.build_id}[/dim]")
-            console.print(f"[dim]Status: {result.message}[/dim]")
+
+            # Poll the build to a terminal state instead of returning at "queued".
+            # The build has to reach SUCCEEDED before you can Make Live, so
+            # surfacing the real status here saves guessing.
+            console.print("[yellow]Building (this usually takes 1-2 min)...[/yellow]")
+            terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED", "FAILED"}
+            last = None
+            status = None
+            for _ in range(60):  # ~5 min cap at 5s intervals
+                try:
+                    build = await atoms_client.get_agent_build(
+                        agent_id=agent_id,
+                        build_id=result.build_id,
+                        api_key=access_token,
+                    )
+                    status = str(getattr(build.status, "value", build.status))
+                except Exception:
+                    status = None
+                if status and status != last:
+                    console.print(f"[dim]  {status}[/dim]")
+                    last = status
+                if status in terminal:
+                    break
+                await asyncio.sleep(5)
+
+            if status == "SUCCEEDED":
+                console.print("[bold green]✓ Build succeeded.[/bold green]")
+                console.print(
+                    "[dim]Next: `smallestai agent-crew builds` -> Make Live, then "
+                    "wait for it to show Live before placing your first call.[/dim]"
+                )
+            elif status in terminal:
+                console.print(
+                    f"[red]Build ended with status: {status}. Check `smallestai agent-crew builds` for details.[/red]"
+                )
+            else:
+                console.print(
+                    "[yellow]Still building. Check `smallestai agent-crew builds` for the final status.[/yellow]"
+                )
 
         except Exception as e:
             console.print(f"[red]Error deploying agent {e}[/red]")
@@ -292,52 +325,57 @@ def initialise_agent_crew_app(
 
     @app.command("builds")
     def list_builds(
-        build_id: str = typer.Argument(
-            None, help="Optional build ID to manage directly"
+        build_id: str = typer.Argument(None, help="Optional build ID to manage directly"),
+        agent_id: Optional[str] = typer.Option(
+            None, "--agent-id", help="Agent id (defaults to the linked project agent)."
         ),
-        limit: int = typer.Option(
-            50, "--limit", "-l", help="Number of builds to fetch"
-        ),
-        offset: int = typer.Option(0, "--offset", "-o", help="Offset for pagination"),
+        limit: int = typer.Option(50, "--limit", "-l", help="Number of builds to fetch"),
+        offset: int = typer.Option(0, "--offset", help="Offset for pagination"),
+        as_json: bool = typer.Option(False, "--json", help="Emit raw JSON (non-interactive)"),
     ):
         """
         List all builds for the current agent crew and manage them interactively.
 
-        If a build_id is provided, directly manage that specific build.
+        If a build_id is provided, directly manage that specific build. With --json
+        or in a non-interactive terminal, list and exit without the picker.
         """
-        asyncio.run(async_list_builds(build_id, limit, offset))
+        asyncio.run(async_list_builds(build_id, agent_id, limit, offset, as_json))
 
-    async def async_list_builds(build_id: str | None, limit: int, offset: int):
+    async def async_list_builds(
+        build_id: str | None, agent_id_arg: Optional[str], limit: int, offset: int, as_json: bool
+    ):
         """Async implementation of list builds command."""
-        agent_id = project_config.get_agent_id()
-
-        if not agent_id:
-            console.print(
-                "[red]Agent not initialized. Run 'smallestai agent init' first.[/red]"
-            )
-            return
+        agent_id = _resolve_agent_id(agent_id_arg)
 
         credentials = auth_client.get_credentials()
         if not credentials or not credentials.get("access_token"):
-            console.print(
-                "[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]"
-            )
+            console.print("[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]")
             raise typer.Exit(1)
 
         access_token = credentials["access_token"]
 
         try:
             if build_id:
-                console.print(f"[dim]Fetching build: {build_id}[/dim]")
                 build = await atoms_client.get_agent_build(
                     agent_id=agent_id,
                     build_id=build_id,
                     api_key=access_token,
                 )
+                if as_json:
+                    console.print_json(
+                        _json.dumps(
+                            {
+                                "id": build.id,
+                                "status": build.status.value,
+                                "is_live": build.is_live,
+                                "created_at": build.created_at,
+                            },
+                            default=str,
+                        )
+                    )
+                    return
                 await _manage_build(agent_id, build, access_token)
                 return
-
-            console.print(f"[dim]Fetching builds for agent: {agent_id}[/dim]")
 
             result = await atoms_client.list_agent_builds(
                 agent_id=agent_id,
@@ -345,6 +383,18 @@ def initialise_agent_crew_app(
                 limit=limit,
                 offset=offset,
             )
+
+            if as_json:
+                console.print_json(
+                    _json.dumps(
+                        [
+                            {"id": b.id, "status": b.status.value, "is_live": b.is_live, "created_at": b.created_at}
+                            for b in result.builds
+                        ],
+                        default=str,
+                    )
+                )
+                return
 
             if not result.builds:
                 console.print("[yellow]No builds found for this agent.[/yellow]")
@@ -358,9 +408,7 @@ def initialise_agent_crew_app(
 
             for build in result.builds:
                 status_color = AGENT_BUILD_STATUS_COLORS[build.status]
-                status_text = (
-                    f"[{status_color}]{build.status.value.upper()}[/{status_color}]"
-                )
+                status_text = f"[{status_color}]{build.status.value.upper()}[/{status_color}]"
 
                 live_indicator = "[green]✓ LIVE[/green]" if build.is_live else "-"
 
@@ -372,9 +420,15 @@ def initialise_agent_crew_app(
                 )
 
             console.print(table)
-            console.print(
-                f"[dim]Showing {len(result.builds)} of {result.pagination.total} builds[/dim]\n"
-            )
+            console.print(f"[dim]Showing {len(result.builds)} of {result.pagination.total} builds[/dim]\n")
+
+            # No interactive picker outside a real terminal (would hang in CI).
+            if not sys.stdin.isatty():
+                console.print(
+                    "[dim]Manage a build directly: [bold]smallestai agent-crew builds <build-id>[/bold] "
+                    "(add [bold]--agent-id[/bold] outside a project dir).[/dim]"
+                )
+                return
 
             choices = [
                 questionary.Choice(
@@ -455,10 +509,14 @@ def initialise_agent_crew_app(
                     api_key=access_token,
                     is_live=True,
                 )
-                console.print(
-                    f"[bold green]✓ Build {build.id[:12]}... is now LIVE![/bold green]"
-                )
+                console.print(f"[bold green]✓ Build {build.id[:12]}... is now LIVE![/bold green]")
             elif selected_action == "take_down":
+                confirmed = await questionary.confirm(
+                    f"Take build {build.id[:12]}... offline? This stops the agent serving calls."
+                ).ask_async()
+                if not confirmed:
+                    console.print("[dim]Left the build live.[/dim]")
+                    return
                 console.print("[yellow]Taking down build...[/yellow]")
                 await atoms_client.update_agent_build(
                     agent_id=agent_id,
@@ -466,73 +524,144 @@ def initialise_agent_crew_app(
                     api_key=access_token,
                     is_live=False,
                 )
-                console.print(
-                    f"[bold green]✓ Build {build.id[:12]}... has been taken down.[/bold green]"
-                )
+                console.print(f"[bold green]✓ Build {build.id[:12]}... has been taken down.[/bold green]")
 
-    # @app.command("logs")
-    # def stream_build(
-    #     build_id: str = typer.Argument(..., help="The build ID to stream logs for"),
-    # ):
-    #     """
-    #     Stream build logs in real-time using Server-Sent Events.
-    #     """
-    #     asyncio.run(async_stream_build(build_id))
+    @app.command("logs")
+    def build_logs(
+        build_id: str = typer.Argument(None, help="Build ID to stream logs for (defaults to the latest build)"),
+        agent_id: Optional[str] = typer.Option(
+            None, "--agent-id", help="Agent id (defaults to the linked project agent)."
+        ),
+    ):
+        """Stream a build's logs (compile + deploy) in real time.
 
-    # async def async_stream_build(build_id: str):
-    #     """Async implementation of stream build command."""
-    #     agent_id = project_config.get_agent_id()
+        With no build ID, streams the most recent build for the current agent.
+        Use this to debug a deploy that failed or to watch one in progress.
+        """
+        asyncio.run(async_build_logs(build_id, agent_id))
 
-    #     if not agent_id:
-    #         console.print(
-    #             "[red]Agent not initialized. Run 'smallestai agent init' first.[/red]"
-    #         )
-    #         return
+    async def async_build_logs(build_id: str | None, agent_id_arg: Optional[str] = None):
+        agent_id = _resolve_agent_id(agent_id_arg)
 
-    #     credentials = auth_client.get_credentials()
-    #     if not credentials or not credentials.get("access_token"):
-    #         console.print(
-    #             "[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]"
-    #         )
-    #         raise typer.Exit(1)
+        credentials = auth_client.get_credentials()
+        if not credentials or not credentials.get("access_token"):
+            console.print("[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]")
+            raise typer.Exit(1)
+        access_token = credentials["access_token"]
 
-    #     access_token = credentials["access_token"]
+        if not build_id:
+            result = await atoms_client.list_agent_builds(agent_id=agent_id, api_key=access_token, limit=1, offset=0)
+            if not result.builds:
+                console.print("[yellow]No builds found. Run 'smallestai agent-crew deploy' first.[/yellow]")
+                raise typer.Exit(1)
+            build_id = result.builds[0].id
+            console.print(f"[dim]Latest build: {build_id}[/dim]")
 
-    #     console.print(f"[bold cyan]Streaming logs for build: {build_id}[/bold cyan]")
-    #     console.print("[dim]Press Ctrl+C to stop streaming[/dim]\n")
+        console.print(
+            f"[bold cyan]Streaming logs for build {build_id[:12]}...[/bold cyan]  [dim](Ctrl+C to stop)[/dim]\n"
+        )
 
-    #     try:
-    #         async for event in atoms_client.stream_agent_build(
-    #             agent_id=agent_id,
-    #             build_id=build_id,
-    #             api_key=access_token,
-    #         ):
-    #             event_type = event.get("type")
+        terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED"}
+        try:
+            async for event in atoms_client.stream_agent_build(
+                agent_id=agent_id, build_id=build_id, access_token=access_token
+            ):
+                etype = event.get("type")
+                if etype == "log":
+                    console.print(event.get("message", ""), highlight=False)
+                elif etype == "status":
+                    status = str(event.get("status", ""))
+                    color = {"SUCCEEDED": "green", "BUILD_FAILED": "red", "DEPLOY_FAILED": "red"}.get(status, "yellow")
+                    console.print(f"[bold {color}]● {status}[/bold {color}]")
+                    if status in terminal:
+                        break
+                elif etype == "error":
+                    console.print(f"[red]error:[/red] {event.get('message', '')}")
+                    break
+        except KeyboardInterrupt:
+            console.print("\n[yellow]Stopped.[/yellow]")
+        except Exception as e:
+            console.print(f"[red]Error streaming build logs: {e}[/red]")
+            raise typer.Exit(1)
 
-    #             if event_type == "log":
-    #                 console.print(f"[dim]LOG:[/dim] {event.get('message', '')}")
-    #             elif event_type == "status":
-    #                 status = event.get("status", "")
-    #                 status_style = {
-    #                     "SUCCEEDED": "[green]SUCCEEDED[/green]",
-    #                     "BUILD_FAILED": "[red]BUILD_FAILED[/red]",
-    #                     "DEPLOY_FAILED": "[red]DEPLOY_FAILED[/red]",
-    #                     "PENDING": "[yellow]PENDING[/yellow]",
-    #                     "BUILDING": "[yellow]BUILDING[/yellow]",
-    #                     "DEPLOYING": "[yellow]DEPLOYING[/yellow]",
-    #                 }.get(status, status)
-    #                 console.print(f"[bold]STATUS:[/bold] {status_style}")
+    @app.command()
+    def doctor(
+        agent_id: Optional[str] = typer.Option(
+            None,
+            "--agent-id",
+            help="Agent id to inspect. Defaults to the agent linked in this project.",
+        ),
+    ):
+        """Check a crew agent's config for common gotchas (live build, redaction, dashboard tools)."""
+        asyncio.run(async_doctor(agent_id))
 
-    #                 if status in ["SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED"]:
-    #                     console.print("\n[bold]Build stream ended.[/bold]")
-    #                     break
-    #             elif event_type == "error":
-    #                 console.print(f"[red]ERROR:[/red] {event.get('message', '')}")
-    #                 break
+    async def async_doctor(agent_id_arg: Optional[str]):
+        agent_id = agent_id_arg or project_config.get_agent_id()
+        if not agent_id:
+            console.print("[red]No agent id. Pass --agent-id <id>, or run `init` first.[/red]")
+            raise typer.Exit(1)
 
-    #     except KeyboardInterrupt:
-    #         console.print("\n[yellow]Streaming stopped by user.[/yellow]")
-    #     except Exception as e:
-    #         console.print(f"[red]Error streaming build logs: {e}[/red]")
+        credentials = auth_client.get_credentials()
+        if not credentials or not credentials.get("access_token"):
+            console.print("[red]You must be logged in. Run 'smallestai auth login'.[/red]")
+            raise typer.Exit(1)
+        token = credentials["access_token"]
+
+        console.print(f"[dim]Inspecting agent {agent_id}...[/dim]")
+        try:
+            agent = await atoms_client.get_agent_raw(token, agent_id)
+        except Exception as e:
+            console.print(f"[red]Could not fetch agent: {e}[/red]")
+            raise typer.Exit(1)
+        try:
+            builds = await atoms_client.list_agent_builds(agent_id, token)
+            build_items = builds.builds
+        except Exception:
+            build_items = []
+
+        oks: list[str] = []
+        warns: list[str] = []
+
+        live = [b for b in build_items if b.is_live]
+        if live:
+            oks.append(f"A crew build is live ({live[0].id[:12]}...).")
+        else:
+            warns.append(
+                "No live crew build. Run `agent-crew deploy`, then make the build live, "
+                "or your crew code will not serve."
+            )
+
+        wft = agent.get("workflowType")
+        if wft and wft != "single_prompt":
+            warns.append(f"workflowType is '{wft}'. A crew attaches to single_prompt agents.")
+
+        if (agent.get("redactionConfig") or {}).get("isEnabled"):
+            warns.append(
+                "PII redaction is ON. It rewrites emails/names/numbers in the transcript "
+                "(and can trim leading words like 'my email address is'). Set "
+                "redactionConfig.isEnabled off if you don't want it."
+            )
+        else:
+            oks.append("PII redaction is off.")
+
+        sp = (agent.get("workflow") or {}).get("singlePromptConfig") or agent.get("singlePromptConfig") or {}
+        tools = sp.get("tools") or []
+        tool_repr = " ".join(str(t).lower() for t in tools)
+        if "transfer" in tool_repr:
+            warns.append(
+                "The dashboard Tools panel has transfer_call enabled. For a crew agent that "
+                "panel is ignored (your code-side @function_tool is used). Leave it off to "
+                "avoid confusion."
+            )
+
+        console.print()
+        for m in oks:
+            console.print(f"[green]OK[/green]   {m}")
+        for m in warns:
+            console.print(f"[yellow]WARN[/yellow] {m}")
+        if not warns:
+            console.print("[bold green]No issues found.[/bold green]")
+        console.print()
+        render_ownership(console)
 
     return app

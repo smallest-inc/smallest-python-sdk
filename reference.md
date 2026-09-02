@@ -49,10 +49,27 @@ client.atoms.user.get_user_details()
 </dl>
 </details>
 
-## Atoms Organization
-<details><summary><code>client.atoms.organization.<a href="src/smallestai/atoms/organization/client.py">get_organization_details</a>() -> GetOrganizationResponse</code></summary>
+<details><summary><code>client.atoms.user.<a href="src/smallestai/atoms/user/client.py">get_subscription</a>() -> GetSubscriptionUserResponse</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the organization's current subscription: plan id, credit balance,
+renewal date, and the per-plan `limits` (agents, campaigns, numbers, daily and
+concurrent calls, knowledge-base sizes) plus the `features` map that gates
+capabilities like telephony, campaigns, and webhooks. Use it to check remaining
+credits or whether a feature is enabled before attempting an action.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -71,7 +88,7 @@ client = SmallestAI(
     environment=SmallestAIEnvironment.PRODUCTION,
 )
 
-client.atoms.organization.get_organization_details()
+client.atoms.user.get_subscription()
 
 ```
 </dd>
@@ -1046,260 +1063,6 @@ client.atoms.agents.update_agent(
 </dl>
 </details>
 
-<details><summary><code>client.atoms.agents.<a href="src/smallestai/atoms/agents/client.py">get_agent_widget_config</a>(...) -> GetAgentWidgetConfigResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Returns the current web widget configuration for the agent. Also includes `assistantId` (same as the agent ID) as a convenience field for the widget embed code.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from smallestai import SmallestAI
-from smallestai.environment import SmallestAIEnvironment
-
-client = SmallestAI(
-    api_key="<token>",
-    environment=SmallestAIEnvironment.PRODUCTION,
-)
-
-client.atoms.agents.get_agent_widget_config(
-    id="id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` — Agent ObjectId
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.atoms.agents.<a href="src/smallestai/atoms/agents/client.py">update_agent_widget_config</a>(...) -> UpdateAgentWidgetConfigResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Updates the web widget configuration for the agent. Only provided fields are updated (partial update). When `avatarUrl` is changed, the old CDN avatar is automatically deleted from S3. The `avatarUrl` must be a URL from the platform's CDN domain — use `POST /agent/{id}/avatar/presigned-url` to upload first.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from smallestai import SmallestAI
-from smallestai.environment import SmallestAIEnvironment
-
-client = SmallestAI(
-    api_key="<token>",
-    environment=SmallestAIEnvironment.PRODUCTION,
-)
-
-client.atoms.agents.update_agent_widget_config(
-    id="id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` — Agent ObjectId
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**widget_config:** `typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig]` — All fields are optional — only provided fields are updated
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.atoms.agents.<a href="src/smallestai/atoms/agents/client.py">get_agent_avatar_presigned_url</a>(...) -> GetAgentAvatarPresignedUrlResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Generates a pre-signed S3 upload URL for the agent's widget avatar image. Upload the image directly to S3 using the returned `presignedUrl`, then save `cdnUrl` as the agent's avatar via `PATCH /agent/{id}/widget-config`.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from smallestai import SmallestAI
-from smallestai.environment import SmallestAIEnvironment
-
-client = SmallestAI(
-    api_key="<token>",
-    environment=SmallestAIEnvironment.PRODUCTION,
-)
-
-client.atoms.agents.get_agent_avatar_presigned_url(
-    id="id",
-    file_name="fileName",
-    content_type="contentType",
-    file_size=1.1,
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` — Agent ObjectId
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**file_name:** `str` — Original file name (used to construct the S3 key)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**content_type:** `str` — MIME type — must start with `image/`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**file_size:** `float` — File size in bytes — must be > 0 and ≤ 2 MB (2,097,152 bytes)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
 <details><summary><code>client.atoms.agents.<a href="src/smallestai/atoms/agents/client.py">get_agent_call_logs</a>(...) -> GetAgentCallLogsResponse</code></summary>
 <dl>
 <dd>
@@ -1457,10 +1220,265 @@ client.atoms.agents.archive_agent(
 <dl>
 <dd>
 
-**on:** `typing.Optional[bool]` 
+**on:** `typing.Optional[ArchiveAgentAgentsRequestOn]` 
 
-`true` (default) — archive the agent.
-`false` — unarchive (restore) a previously archived agent.
+`"true"` (default) — archive the agent.
+`"false"` — unarchive (restore) a previously archived agent.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Atoms Widget
+<details><summary><code>client.atoms.widget.<a href="src/smallestai/atoms/widget/client.py">get_agent_widget_config</a>(...) -> GetAgentWidgetConfigResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the current web widget configuration for the agent. Also includes `assistantId` (same as the agent ID) as a convenience field for the widget embed code.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.widget.get_agent_widget_config(
+    id="id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` — Agent ObjectId
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.widget.<a href="src/smallestai/atoms/widget/client.py">update_agent_widget_config</a>(...) -> UpdateAgentWidgetConfigResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Updates the web widget configuration for the agent. Only provided fields are updated (partial update). When `avatarUrl` is changed, the old CDN avatar is automatically deleted from S3. The `avatarUrl` must be a URL from the platform's CDN domain. Use `POST /agent/{id}/avatar/presigned-url` to upload first.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.widget.update_agent_widget_config(
+    id="id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` — Agent ObjectId
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**widget_config:** `typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig]` — All fields are optional (only provided fields are updated)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.widget.<a href="src/smallestai/atoms/widget/client.py">get_agent_avatar_presigned_url</a>(...) -> GetAgentAvatarPresignedUrlResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Generates a pre-signed S3 upload URL for the agent's widget avatar image. Upload the image directly to S3 using the returned `presignedUrl`, then save `cdnUrl` as the agent's avatar via `PATCH /agent/{id}/widget-config`.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.widget.get_agent_avatar_presigned_url(
+    id="id",
+    file_name="fileName",
+    content_type="contentType",
+    file_size=1.1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` — Agent ObjectId
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file_name:** `str` — Original file name (used to construct the S3 key)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**content_type:** `str` — MIME type. Must start with `image/`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file_size:** `float` — File size in bytes. Must be greater than 0 and at most 2 MB (2,097,152 bytes)
     
 </dd>
 </dl>
@@ -1570,6 +1588,62 @@ audio out). `chat` = text-only pipeline. Defaults to `webcall`.
 <dl>
 <dd>
 
+**sample_rate:** `typing.Optional[int]` 
+
+**Deprecated. Use `output_audio_format` instead.** Still
+accepted, and will keep being accepted - existing
+integrations do not need to change.
+
+A bare rate meaning PCM at that rate, so `sample_rate: 24000`
+and `output_audio_format: "pcm_24000"` are the same request.
+It predates the one-token-per-direction contract and is the
+reason two fields exist for one thing. `44100` is only rendered by the
+`lightning-v3.1` and `lightning-v3.1-pro` voices; asking for a
+rate the agent's voice cannot render is refused here rather
+than failing mid-call. This does **not** set the rate of the
+audio you send - use `input_audio_format`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**input_audio_format:** `typing.Optional[RegisterCallRealtimeRequestInputAudioFormat]` 
+
+The format you will **send**, as one `<encoding>_<rate>` token
+naming both the encoding and the rate. Defaults to PCM at the
+output rate, so a client sending only `sample_rate` needs
+nothing else.
+
+The recogniser is configured at this rate and your audio is
+not resampled, so the token must match the bytes you send: a
+mismatch produces wrong transcripts and no error. G.711 exists
+only at 8000. Opus is raw packets, one per WebSocket message;
+Ogg-framed Opus is a different format and is refused.
+
+A browser client can also declare this later, on the connect
+URL, once its `AudioContext` reports the rate it actually got.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**output_audio_format:** `typing.Optional[RegisterCallRealtimeRequestOutputAudioFormat]` 
+
+The format the agent sends back. Same token shape as
+`input_audio_format`. Sending this together with `sample_rate`
+is allowed only if they agree; disagreeing values are refused
+rather than resolved by a precedence rule.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **variables:** `typing.Optional[typing.Dict[str, RegisterCallRealtimeRequestVariablesValue]]` 
 
 Per-call prompt variables that override the agent's
@@ -1613,6 +1687,14 @@ supplied.
 <dd>
 
 Retrieve paginated conversation logs with support for various filters. Returns call logs for agents belonging to the authenticated user's organization.
+
+**To discover new inbound calls, use webhooks instead of polling this endpoint.** Subscribe an agent to the `pre-conversation` webhook event: it fires the moment an inbound call connects and delivers `callId`, `fromPhone`, and `toPhone`, so you get every new call in real time with no polling load. See the [Webhooks guide](/voice-agents/platform/features/webhooks). Poll this endpoint only for backfill or reconciliation.
+
+**If you do poll, use the default sort.** The default query (no `sortBy`) sorts by `updatedAt` descending and is index-backed, so it stays fast even on large accounts. Request the first page and keep the list small: `page=1&limit=N` (optionally `callTypes=telephony_inbound` for inbound only). This returns in well under a second. To detect new calls between polls, track the conversation IDs you have already seen rather than a single timestamp, since the default order is `updatedAt` (a recently-updated older call can move to the top).
+
+**Avoid `sortBy=createdAt`, `dateFrom`, and `dateTo` on large accounts.** These sort or range-filter on `createdAt`, which is not index-backed for the organization-wide query and forces a full scan of your conversation history. On accounts with a large history this can exceed the gateway timeout and return a 504. Prefer the default `updatedAt` sort above.
+
+`agentIds` and `campaignIds` accept comma-separated IDs and narrow the result set, but do not pair them with `sortBy=createdAt` or `dateFrom` on large accounts (the `createdAt` sort/filter is the slow part, not the number of agents).
 </dd>
 </dl>
 </dd>
@@ -2202,7 +2284,7 @@ client.atoms.conversations.get_a_time_limited_recording_download_url(
 <dl>
 <dd>
 
-**call_id:** `str` — The `callId` string for the conversation (e.g. `CALL-1778226705739-7e4c17`). This is the `callId` field returned by `GET /conversation`, **not** the Mongo `_id` — passing `_id` returns `400 Invalid call ID format`.
+**call_id:** `str` — The `callId` string for the conversation (e.g. `CALL-1778226705739-7e4c17`). This is the `callId` field returned by `GET /conversation`, not the internal document id.
     
 </dd>
 </dl>
@@ -2575,7 +2657,7 @@ client.atoms.live_transcripts.subscribe_to_live_events(
 </dl>
 </details>
 
-## Atoms Campaigns
+## Campaigns
 <details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">list</a>(...) -> ListCampaignsResponse</code></summary>
 <dl>
 <dd>
@@ -3108,6 +3190,165 @@ client.atoms.campaigns.pause(
 <dd>
 
 **id:** `str` — The ID of the campaign
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">export_campaign_results_by_audience_member</a>(...) -> ExportCampaignResultsByAudienceMemberResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns one row per contact in the campaign audience with the outcome of every call
+attempt for that contact (status, disposition, duration, cost, call ID). Use this to
+reconcile a campaign run against a CRM, or to identify contacts that never connected.
+The response streams as CSV.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.campaigns.export_campaign_results_by_audience_member(
+    id="6a75935452c6e5eceaa16edf",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` — The campaign ID.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**format:** `typing.Optional[ExportCampaignResultsByAudienceMemberRequestFormat]` — Output format. Defaults to `json`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.campaigns.<a href="src/smallestai/atoms/campaigns/client.py">export_campaign_logs</a>(...) -> typing.Iterator[bytes]</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns one row per call attempt in the campaign (timestamp, contact, agent, outcome,
+duration, cost, recording URL, transcript URL). Use this for a flat call-level audit
+trail of a campaign. The response streams as CSV.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.campaigns.export_campaign_logs(
+    id="id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` — The campaign ID.
     
 </dd>
 </dl>
@@ -4478,7 +4719,7 @@ client = SmallestAI(
 
 client.atoms.phone_numbers.search_rentable(
     country_code="US",
-    provider="plivo",
+    provider="twilio",
 )
 
 ```
@@ -4637,7 +4878,7 @@ client = SmallestAI(
 
 client.atoms.phone_numbers.rent(
     phone_number="13183747513",
-    provider="plivo",
+    provider="twilio",
 )
 
 ```
@@ -4976,6 +5217,20 @@ client.atoms.phone_numbers.import_sip(
 <dd>
 
 **sip_password:** `typing.Optional[str]` — Password for SIP authentication (if your trunk requires it)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cps_limit:** `typing.Optional[float]` 
+
+Calls-per-second cap for this imported trunk. Defaults to 1 CPS (the
+safe floor for an unknown trunk). Values above 50 are rejected with
+`"CPS limit cannot exceed 50"`; values below 1 are rejected with
+`"CPS limit must be at least 1"`. Every imported number is always
+paced at this rate.
     
 </dd>
 </dl>
@@ -9086,6 +9341,10 @@ client.atoms.agent_versioning_branches.get_draft(
 <dd>
 
 Upsert the open draft on this branch. If no draft is open, one is created automatically. The request body is an agent config partial in the same camelCase shape as `GET /agent/{id}` (`globalPrompt`, `firstMessage`, `synthesizer`, `language`, `voiceDetectionConfig`, `smartTurnConfig`, ...) and must contain at least one recognized field; the server merges it into the existing draft and returns the resulting draft as a revision-shaped snapshot.
+
+**Send native JSON types, not stringified values.** Arrays (`language.supported: ["en"]`), booleans (`language.switching.isEnabled: false`), and objects (`timezone: {"label": "(GMT+5:30) Asia/Kolkata", "offset": 330}`) must be sent as real JSON. Passing `"[\"en\"]"`, `"false"`, or `"Asia/Kolkata"` instead is refused with a Zod-style error naming the offending path and the received type (e.g. `Invalid config: language.supported: Expected array, received string`). This is the single most common integration bug on this endpoint.
+
+Publish the draft with `POST /agent/{id}/branches/{branchId}/draft/publish` to make the changes live. The draft PUT alone does **not** affect running calls.
 </dd>
 </dl>
 </dd>
@@ -9183,7 +9442,7 @@ client.atoms.agent_versioning_branches.update_draft(
 <dl>
 <dd>
 
-**timezone:** `typing.Optional[str]` — IANA timezone identifier used for date/time interpretation in prompts and tool calls.
+**timezone:** `typing.Optional[UpdateBranchDraftRequestTimezone]` — Agent timezone applied to date/time interpretation in prompts, tool calls, and analytics bucketing. Object with a `label` (IANA-style label) and an `offset` (UTC offset in minutes). Sending a bare string is refused with `Invalid config: timezone: Expected object, received string`.
     
 </dd>
 </dl>
@@ -13469,6 +13728,300 @@ client.atoms.billing.get_invoice_pdf(
 </dl>
 </details>
 
+## Account
+<details><summary><code>client.atoms.account.<a href="src/smallestai/atoms/account/client.py">get_account_details</a>() -> GetAccountDetailsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the calling user's profile (email, name, avatar) along with every organization
+the user belongs to. Use this to resolve the user's active org list before switching
+context, or to render user info in a management UI.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.account.get_account_details()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.account.<a href="src/smallestai/atoms/account/client.py">update_organization_name</a>(...) -> UpdateOrganizationNameResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Renames the organization scoped by the API key. Requires the `owner` role. The `name`
+is what shows up in dashboards, invoices, and the org switcher.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.account.update_organization_name(
+    name="Acme Inc.",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` — The new organization name.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Web Call
+<details><summary><code>client.atoms.web_call.<a href="src/smallestai/atoms/web_call/client.py">start_web_chat_conversation</a>(...) -> WebSessionResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Mints a short-lived LiveKit access token and creates a room the browser client can
+join to have a text-first chat with the agent. The response includes the room name,
+the LiveKit host to connect to, a `conversationId` for correlation, and a `callId`
+that shows up in call logs. Pair with the [Web SDK](/voice-agents/developer-guide/client-libraries)
+to render the session in-browser.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.web_call.start_web_chat_conversation(
+    agent_id="6a75935452c6e5eceaa16edf",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request:** `WebSessionRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.atoms.web_call.<a href="src/smallestai/atoms/web_call/client.py">start_web_call_conversation</a>(...) -> WebSessionResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Mints a short-lived LiveKit access token and creates a room the browser client can
+join to have a voice-first call with the agent. Same response shape as `/conversation/chat`;
+the difference is the audio track defaults on the client side. Pair with the
+[Web SDK](/voice-agents/developer-guide/client-libraries) to open the room in-browser.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.atoms.web_call.start_web_call_conversation(
+    agent_id="6a75935452c6e5eceaa16edf",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request:** `WebSessionRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Waves
 <details><summary><code>client.waves.<a href="src/smallestai/waves/client.py">get_pronunciation_dicts</a>() -> typing.List[PronunciationDict]</code></summary>
 <dl>
@@ -14169,7 +14722,16 @@ client.waves.synthesize_sse_lightning_v2()
 <dl>
 <dd>
 
-List voices available for Lightning v3.1. The response is the union of the standard and Pro voice catalogs — the API does not return a per-voice "is Pro" flag, so consult the [Lightning v3.1 Pro](/models/model-cards/text-to-speech/lightning-v-3-1-pro) and [Lightning v3.1](/models/model-cards/text-to-speech/lightning-v-3-1) model cards for the canonical per-pool voice lists. Use the `voice_id` from this response together with `"model": "lightning_v3.1"` (default) or `"model": "lightning_v3.1_pro"` on the unified `/waves/v1/tts` route to pick the pool.
+Return the voice catalog for the chosen Lightning v3.1 pool. Two pools:
+
+- `lightning-v3.1` — the Standard catalog. Supports voice cloning; 20 language codes.
+- `lightning-v3.1-pro` — the Pro catalog. Curated set across American, British, and Indian accents plus 29 additional languages. Same latency and concurrency as Standard, on dedicated inference.
+
+The endpoint is pool-scoped: `/waves/v1/lightning-v3.1/get_voices` returns Standard voices only; `/waves/v1/lightning-v3.1-pro/get_voices` returns Pro voices only. Call one or both depending on which pool you plan to use.
+
+Each voice carries tags (`language`, `accent`, `gender`, `age`, `emotions`, `usecases`). Filter client-side to find the voices that match a target language, accent, or use case. Pass the returned `voiceId` as `voice_id` on the unified [`POST /waves/v1/tts`](/models/api-reference/text-to-speech/synthesize-speech) route, together with `"model": "lightning_v3.1"` (Standard) or `"model": "lightning_v3.1_pro"` (Pro).
+
+For the canonical per-language voice list (with previews and recommended pairings), see the [Lightning v3.1](/models/model-cards/text-to-speech/lightning-v-3-1) and [Lightning v3.1 Pro](/models/model-cards/text-to-speech/lightning-v-3-1-pro) model cards.
 </dd>
 </dl>
 </dd>
@@ -14210,7 +14772,7 @@ client.waves.get_voices(
 <dl>
 <dd>
 
-**model:** `GetVoicesWavesRequestModel` — The catalog to query. Currently only `lightning-v3.1` is supported — the response returns the union of standard Lightning v3.1 voices and Lightning v3.1 Pro voices. The API does not include a per-voice Pro flag; consult the model cards for the canonical per-pool catalogs.
+**model:** `GetVoicesWavesRequestModel` — The pool to query. `lightning-v3.1` returns Standard voices; `lightning-v3.1-pro` returns Pro voices. Note the hyphenated path form differs from the underscored body form used on `POST /waves/v1/tts` (`lightning_v3.1`, `lightning_v3.1_pro`).
     
 </dd>
 </dl>
@@ -14332,7 +14894,7 @@ curl -X POST "https://api.smallest.ai/waves/v1/tts" \
 
 - **Set `Accept: audio/wav`.** Omitting it can return an empty or unplayable response.
 - **Pair voice IDs with the right model.** Voice catalogs differ between `lightning_v3.1` and `lightning_v3.1_pro`. The API does not reject mismatched pairings, but using a Pro-only `voice_id` with `model=lightning_v3.1` (or omitting `model`) can return wrong or hallucinated audio. Pair Pro voices with `model=lightning_v3.1_pro`; standard catalog voices with `model=lightning_v3.1` (the default).
-- **Cloned voices** (`voice_*` from `add_voice`) work with `lightning_v3.1` only; voice cloning is not available on `lightning_v3.1_pro`.
+- **Cloned voices** (`voice_*`) work with the pool they were cloned onto. The voice-cloning API accepts `model: lightning-v3.1` (default) or `lightning-v3.1-pro`; pair the resulting `voice_id` with the matching TTS `model` (`lightning_v3.1` or `lightning_v3.1_pro`). Check the clone's `modelIds` if unsure.
 - **44.1 kHz output** is supported but most playback environments are happy with 24 kHz — drop the sample rate if bandwidth matters.
 </dd>
 </dl>
@@ -14357,6 +14919,7 @@ client = SmallestAI(
 )
 
 client.waves.synthesize_tts(
+    accept="audio/wav",
     text="Hello from Waves TTS.",
     voice_id="magnus",
 )
@@ -14384,6 +14947,17 @@ client.waves.synthesize_tts(
 <dd>
 
 **request:** `TtsRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**expire_content:** `typing.Optional[SynthesizeTtsWavesRequestXExpireContent]` 
+
+**Enterprise plans only.** Opt in if you want this request's content
+deleted after 7 days. Omit it to retain content, which is the default.
     
 </dd>
 </dl>
@@ -14432,9 +15006,9 @@ Pick the model with the `model` body parameter, same as the sync route.
 ## How it works
 
 1. POST your text + voice settings — same payload as `/waves/v1/tts`, plus optional `model`.
-2. The response is `Content-Type: text/event-stream`. Each chunk frame is `event: audio\n` followed by `data: {"audio": "<base64-pcm>"}\n\n`.
+2. The response is `Content-Type: text/event-stream`. Each chunk frame is `event: audio\n` followed by `data: {"audio": "<base64-pcm>", "done": false, "status": "206"}\n\n`.
 3. Decode each chunk's `audio` field with base64 and feed the PCM bytes to your audio pipeline (browser `MediaSource`, ffmpeg pipe, raw PCM player, etc.).
-4. A final `data: {"done": true}\n\n` frame marks end of stream.
+4. A final `data: {"status": "200", "done": true}\n\n` frame marks end of stream. Detect the terminator with `done == true`; every chunk frame also carries `done: false`, so `"done" in msg` matches every frame.
 
 ## Examples
 
@@ -14498,6 +15072,17 @@ client.waves.synthesize_sse_tts(
 <dd>
 
 **request:** `TtsRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**expire_content:** `typing.Optional[SynthesizeSseTtsWavesRequestXExpireContent]` 
+
+**Enterprise plans only.** Opt in if you want this request's content
+deleted after 7 days. Omit it to retain content, which is the default.
     
 </dd>
 </dl>
@@ -14682,7 +15267,7 @@ commas and trims whitespace (`"en, tone-test"` → `["en", "tone-test"]`).
 <dl>
 <dd>
 
-**language:** `typing.Optional[str]` 
+**language:** `typing.Optional[CreateVoiceCloneWavesRequestLanguage]` 
 
 Primary language the clone will be used for. Optional, but
 **strongly recommended** — set it to the language of your
@@ -14690,9 +15275,8 @@ reference audio. The TTS request's `language` should also
 match this code; setting it now avoids silent language
 mismatches at inference time.
 
-Must be one of the languages supported by `lightning-v3.1`
-(e.g. `en`, `hi`). The server validates and rejects
-unsupported codes with a 400.
+Must be one of the languages supported by `lightning-v3.1`.
+The server validates and rejects unsupported codes with a 400.
     
 </dd>
 </dl>
@@ -14703,8 +15287,9 @@ unsupported codes with a 400.
 **model:** `typing.Optional[CreateVoiceCloneWavesRequestModel]` 
 
 Voice cloning model. Defaults to `lightning-v3.1`.
+Pass `lightning-v3.1-pro` to clone onto the premium Pro pool.
 `lightning-v2` is accepted by the schema for historical
-reasons but is deprecated — the server returns 400 with
+reasons but is deprecated - the server returns 400 with
 `"Voice cloning for lightning-v2 is deprecated. Please use lightning-v3.1"`.
     
 </dd>
@@ -14818,7 +15403,6 @@ console.log((await res.json()).transcription);
 - **`model` is required.** Missing or invalid values return `400` with an enum-validation error.
 - **Pulse Pro is English only.** Pass `language=en`. Other language codes are accepted at the wire level but produce unpredictable output.
 - **Pulse Pro does not support audio-by-URL.** Send raw bytes or use `?model=pulse` for the URL flow.
-- **Async (webhook) mode is Pulse Pro only.** Pulse runs sync only on this endpoint.
 - **Max payload 250 MB.** Larger requests return `413`. Compress to mono 16 kHz PCM if you are close to the limit; quality is unaffected.
 </dd>
 </dl>
@@ -14906,7 +15490,7 @@ Language of the audio file. This endpoint is **Pre-Recorded (HTTP)** — for str
 <dl>
 <dd>
 
-**webhook_url:** `typing.Optional[str]` — Pulse Pro only. If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
+**webhook_url:** `typing.Optional[str]` — If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
     
 </dd>
 </dl>
@@ -14914,7 +15498,7 @@ Language of the audio file. This endpoint is **Pre-Recorded (HTTP)** — for str
 <dl>
 <dd>
 
-**webhook_method:** `typing.Optional[TranscribeRequestWebhookMethod]` — HTTP method to use when calling the webhook. Pulse Pro only.
+**webhook_method:** `typing.Optional[TranscribeRequestWebhookMethod]` — HTTP method to use when calling the webhook.
     
 </dd>
 </dl>
@@ -14922,7 +15506,7 @@ Language of the audio file. This endpoint is **Pre-Recorded (HTTP)** — for str
 <dl>
 <dd>
 
-**webhook_extra:** `typing.Optional[str]` — Arbitrary metadata returned to the webhook in addition to the transcription payload. Pulse Pro only.
+**webhook_extra:** `typing.Optional[str]` — Arbitrary metadata returned to the webhook in addition to the transcription payload.
     
 </dd>
 </dl>
@@ -15304,6 +15888,1201 @@ for details.
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Analytics
+<details><summary><code>client.waves.analytics.<a href="src/smallestai/waves/analytics/client.py">list_streaming_speech_to_text_logs</a>(...) -> StreamingSpeechToTextLogsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Paginated log of Speech to Text requests for the calling organization. Each entry
+records the model used, the transcript, the request parameters that were on the
+wire (word timestamps, diarization, PII / PCI redaction, keyword boosting), and
+any downstream signals the request opted into (emotion, gender, keyword hits).
+Use this to audit request-level activity or to reconcile with your own logs.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.analytics.list_streaming_speech_to_text_logs()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**page:** `typing.Optional[int]` — 1-indexed page number.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_size:** `typing.Optional[int]` — Number of records per page. Max 50.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**text:** `typing.Optional[str]` — Case-insensitive substring match against the transcription.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**language:** `typing.Optional[str]` — Exact-match filter on language code (e.g. `en`, `hi`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**model:** `typing.Optional[str]` — Exact-match filter on STT model (e.g. `pulse`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**duration_min:** `typing.Optional[float]` — Minimum audio duration in seconds.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**duration_max:** `typing.Optional[float]` — Maximum audio duration in seconds.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**timestamp_from:** `typing.Optional[int]` — Lower bound on request timestamp, Unix seconds.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**timestamp_to:** `typing.Optional[int]` — Upper bound on request timestamp, Unix seconds.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.waves.analytics.<a href="src/smallestai/waves/analytics/client.py">delete_streaming_speech_to_text_history</a>(...) -> DeleteStreamingSpeechToTextHistoryResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Soft-deletes a single Speech to Text request from the org's analytics history.
+Idempotent: a `request_id` that does not exist still returns `success`. Use this
+to redact a specific transcript from the dashboard log view.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.analytics.delete_streaming_speech_to_text_history(
+    request_id="3eea9859-609b-45c5-8a25-0337c9763c96",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_id:** `str` — The `request_id` (UUID) of the STT request to delete.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.waves.analytics.<a href="src/smallestai/waves/analytics/client.py">get_streaming_speech_to_text_usage_timeseries</a>(...) -> CountTimeseriesResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Bucketed request count for Speech to Text over a datetime range. Use for a
+traffic chart on the STT dashboard, or to reconcile daily usage.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+import datetime
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.analytics.get_streaming_speech_to_text_usage_timeseries(
+    from_=datetime.datetime.fromisoformat("2026-08-01T00:00:00+00:00"),
+    to=datetime.datetime.fromisoformat("2026-08-07T00:00:00+00:00"),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**from:** `typing.Optional[datetime.datetime]` — Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**to:** `typing.Optional[datetime.datetime]` — End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.waves.analytics.<a href="src/smallestai/waves/analytics/client.py">list_text_to_speech_logs</a>(...) -> TextToSpeechLogsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Paginated log of Text to Speech requests. Each entry records the model, voice,
+input text length, sample rate, output format, and credits consumed.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.analytics.list_text_to_speech_logs()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**page:** `typing.Optional[int]` — 1-indexed page number.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_size:** `typing.Optional[int]` — Number of records per page. Max 50.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**text:** `typing.Optional[str]` — Case-insensitive substring match against the input text.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**credits_min:** `typing.Optional[float]` — Minimum credits consumed by the request.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**credits_max:** `typing.Optional[float]` — Maximum credits consumed by the request.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**timestamp_from:** `typing.Optional[int]` — Lower bound on request timestamp, Unix seconds.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**timestamp_to:** `typing.Optional[int]` — Upper bound on request timestamp, Unix seconds.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**model:** `typing.Optional[str]` — Exact-match filter on TTS model (e.g. `lightning-v3.1-pro`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.waves.analytics.<a href="src/smallestai/waves/analytics/client.py">get_text_to_speech_usage_timeseries</a>(...) -> CountTimeseriesResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Bucketed request count for Text to Speech over a datetime range.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+import datetime
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.analytics.get_text_to_speech_usage_timeseries(
+    from_=datetime.datetime.fromisoformat("2026-08-01T00:00:00+00:00"),
+    to=datetime.datetime.fromisoformat("2026-08-07T00:00:00+00:00"),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**from:** `typing.Optional[datetime.datetime]` — Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**to:** `typing.Optional[datetime.datetime]` — End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.waves.analytics.<a href="src/smallestai/waves/analytics/client.py">get_text_to_speech_credits_timeseries</a>(...) -> CreditsTimeseriesResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Bucketed credit spend for Text to Speech over a datetime range. Use this to
+forecast spend or reconcile bills.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+import datetime
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.analytics.get_text_to_speech_credits_timeseries(
+    from_=datetime.datetime.fromisoformat("2026-08-01T00:00:00+00:00"),
+    to=datetime.datetime.fromisoformat("2026-08-07T00:00:00+00:00"),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**from:** `typing.Optional[datetime.datetime]` — Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**to:** `typing.Optional[datetime.datetime]` — End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.waves.analytics.<a href="src/smallestai/waves/analytics/client.py">get_text_to_speech_concurrency_timeseries</a>(...) -> ValuesTimeseriesResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Bucketed peak concurrency (simultaneous active TTS requests) over a datetime
+range. Use to size against your account concurrency cap.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+import datetime
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.analytics.get_text_to_speech_concurrency_timeseries(
+    from_=datetime.datetime.fromisoformat("2026-08-01T00:00:00+00:00"),
+    to=datetime.datetime.fromisoformat("2026-08-07T00:00:00+00:00"),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**from:** `typing.Optional[datetime.datetime]` — Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**to:** `typing.Optional[datetime.datetime]` — End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.waves.analytics.<a href="src/smallestai/waves/analytics/client.py">get_text_to_speech_websocket_connections_timeseries</a>(...) -> ValuesTimeseriesResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Bucketed count of open TTS WebSocket connections over a datetime range.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+import datetime
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.analytics.get_text_to_speech_websocket_connections_timeseries(
+    from_=datetime.datetime.fromisoformat("2026-08-01T00:00:00+00:00"),
+    to=datetime.datetime.fromisoformat("2026-08-07T00:00:00+00:00"),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**from:** `typing.Optional[datetime.datetime]` — Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**to:** `typing.Optional[datetime.datetime]` — End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.waves.analytics.<a href="src/smallestai/waves/analytics/client.py">list_webhook_logs</a>(...) -> WebhookLogsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Paginated log of webhook delivery attempts (e.g. `asr.completed` callbacks).
+Each entry records the destination URL, HTTP method, event type, delivery
+status, attempt number, response status code, and any error.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.analytics.list_webhook_logs()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**page:** `typing.Optional[int]` — 1-indexed page number.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_size:** `typing.Optional[int]` — Number of records per page. Max 50.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**timestamp_from:** `typing.Optional[int]` — Lower bound on delivery timestamp, Unix seconds.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**timestamp_to:** `typing.Optional[int]` — Upper bound on delivery timestamp, Unix seconds.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[ListWebhookLogsRequestStatus]` — Delivery-outcome filter.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**webhook_url:** `typing.Optional[str]` — Case-insensitive substring match against the destination URL.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**event_type:** `typing.Optional[str]` — Exact-match filter on event type (e.g. `asr.completed`).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_id:** `typing.Optional[str]` — Case-insensitive substring match against the source request id.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Waves Ops
+<details><summary><code>client.waves.ops.<a href="src/smallestai/waves/ops/client.py">get_waves_health</a>() -> HealthResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Liveness probe for the Waves control plane. Returns `status: "ok"` alongside
+the connection state of the backing services (MongoDB, Redis, RabbitMQ). No
+authentication required.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.ops.get_waves_health()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Waves PostCallAnalysis
+<details><summary><code>client.waves.post_call_analysis.<a href="src/smallestai/waves/post_call_analysis/client.py">analyze</a>(...) -> PcaResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Analyze a call transcript and extract structured disposition metrics. Provide the
+transcript and the metrics you want extracted; the response returns a short summary
+plus one result per requested metric, each with a value, a confidence score, and the
+transcript evidence for it. Values are grounded strictly in the transcript (no
+inference); when evidence is absent, the type's fallback is used.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+from smallestai.waves import DispositionMetric
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.post_call_analysis.analyze(
+    transcript="User: I want a refund for my torn jacket. Agent: I have logged your complaint and issued a full refund of $80.",
+    disposition_metrics=[
+        DispositionMetric(
+            identifier="refund_issued",
+            disposition_metric_prompt="Was a refund issued to the customer?",
+            disposition_metric_type="BOOLEAN",
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**transcript:** `str` — The full call transcript to analyze. Max 60,000 characters (~15,000 tokens / ~1 hour call).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**disposition_metrics:** `typing.Optional[typing.List[DispositionMetric]]` — The metrics to extract. Omit or pass an empty array to get just a summary.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.waves.post_call_analysis.<a href="src/smallestai/waves/post_call_analysis/client.py">generate</a>(...) -> GeneratePostCallAnalysisResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Run a single-prompt generation and get the model's text output. A lightweight
+text-in / text-out endpoint (no chat history); for multi-turn chat use the
+Electron chat completions API instead.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.post_call_analysis.generate(
+    prompt="Say hello in exactly three words.",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**prompt:** `str` — The prompt to generate from. Max 60,000 characters.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Waves Voices
+<details><summary><code>client.waves.voices.<a href="src/smallestai/waves/voices/client.py">get_all_voice_models</a>() -> GetAllVoiceModelsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List every available voice with its display name, description, a preview audio URL,
+and metadata tags (age, supported languages). Use a voice's `voiceId` with the
+unified `/waves/v1/tts` route.
+
+This is the browse-everything endpoint. To scope the list to a single model pool,
+use [`GET /waves/v1/{model}/get_voices`](/models/api-reference/text-to-speech/get-voices)
+with `model=lightning-v3.1` (Standard) or `model=lightning-v3.1-pro` (Pro).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from smallestai import SmallestAI
+from smallestai.environment import SmallestAIEnvironment
+
+client = SmallestAI(
+    api_key="<token>",
+    environment=SmallestAIEnvironment.PRODUCTION,
+)
+
+client.waves.voices.get_all_voice_models()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
 
 <dl>
 <dd>

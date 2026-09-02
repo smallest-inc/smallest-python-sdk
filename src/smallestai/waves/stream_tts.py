@@ -22,13 +22,14 @@ For new code, prefer the namespaced Fern client:
 
 This shim exists to avoid breaking customers on the 4.3.1 pattern.
 """
-import json
+
 import base64
-import time
-import threading
+import json
 import queue
+import threading
+import time
+from dataclasses import dataclass
 from typing import Generator, Optional, Sequence
-from dataclasses import dataclass, field
 
 from websocket import WebSocketApp  # from `websocket-client` package
 
@@ -40,6 +41,7 @@ class TTSConfig:
     Mirrors the 4.3.1 shape; `consistency` was removed because Lightning
     v3.1 does not accept it (silently dropped if passed via dict).
     """
+
     voice_id: str
     api_key: str
     model: str = "lightning_v3.1"
@@ -169,9 +171,11 @@ class WavesStreamingTTS:
         """Synthesize a single text string and stream back PCM audio chunks."""
         self._reset_state()
         self._connect()
+        ws = self.ws
+        assert ws is not None  # _connect() raises unless the socket opened
 
         payload = self._create_payload(text)
-        self.ws.send(json.dumps(payload))
+        ws.send(json.dumps(payload))
 
         while True:
             if not self.error_queue.empty():
@@ -187,7 +191,7 @@ class WavesStreamingTTS:
                     break
                 continue
 
-        self.ws.close()
+        ws.close()
 
     def synthesize_streaming(
         self,
@@ -198,17 +202,19 @@ class WavesStreamingTTS:
         """Synthesize a stream of text chunks. Useful when piping LLM output."""
         self._reset_state()
         self._connect()
+        ws = self.ws
+        assert ws is not None  # _connect() raises unless the socket opened
 
         def send_text():
             try:
                 for text_chunk in text_stream:
                     if text_chunk.strip():
                         payload = self._create_payload(text_chunk, continue_stream=continue_stream)
-                        self.ws.send(json.dumps(payload))
+                        ws.send(json.dumps(payload))
 
                 if auto_flush:
                     flush_payload = self._create_payload("", flush=True)
-                    self.ws.send(json.dumps(flush_payload))
+                    ws.send(json.dumps(flush_payload))
             except Exception as e:
                 self.error_queue.put(e)
 
@@ -230,17 +236,19 @@ class WavesStreamingTTS:
                     break
                 continue
 
-        self.ws.close()
+        ws.close()
 
     def send_text_chunk(self, text: str, continue_stream: bool = True, flush: bool = False):
         if not self.is_connected:
             raise Exception("WebSocket not connected")
+        assert self.ws is not None  # is_connected implies the socket is set
         payload = self._create_payload(text, continue_stream=continue_stream, flush=flush)
         self.ws.send(json.dumps(payload))
 
     def flush_buffer(self):
         if not self.is_connected:
             raise Exception("WebSocket not connected")
+        assert self.ws is not None  # is_connected implies the socket is set
         payload = self._create_payload("", flush=True)
         self.ws.send(json.dumps(payload))
 
@@ -268,4 +276,3 @@ class WavesStreamingTTS:
         self.is_complete = False
         self.is_connected = False
         self.request_id = None
-

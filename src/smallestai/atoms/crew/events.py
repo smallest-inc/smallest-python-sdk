@@ -112,9 +112,7 @@ class SDKAgentEvent(SDKEvent, type=EventType.AGENT_BASE.value):
     pass
 
 
-class SDKAgentTranscriptUpdateEvent(
-    SDKAgentEvent, type=EventType.AGENT_TRANSCRIPT_UPDATE.value
-):
+class SDKAgentTranscriptUpdateEvent(SDKAgentEvent, type=EventType.AGENT_TRANSCRIPT_UPDATE.value):
     role: Literal["user", "assistant"]
     content: str
 
@@ -199,19 +197,15 @@ class TransferOption(BaseModel):
     private_handoff_option: Optional[WarmTransferPrivateHandoffOption] = Field(
         default=None, alias="privateHandoffOption"
     )
-    public_handoff_option: Optional[WarmTransferPublicHandoffOption] = Field(
-        default=None, alias="publicHandoffOption"
-    )
+    public_handoff_option: Optional[WarmTransferPublicHandoffOption] = Field(default=None, alias="publicHandoffOption")
 
 
-class SDKAgentTransferConversationEvent(
-    SDKAgentEvent, type=EventType.AGENT_TRANSFER_CONVERSATION.value
-):
+class SDKAgentTransferConversationEvent(SDKAgentEvent, type=EventType.AGENT_TRANSFER_CONVERSATION.value):
     transfer_call_number: str
     transfer_options: TransferOption
-    on_hold_music: Optional[
-        Literal["ringtone", "relaxing_sound", "uplifting_beats", "none"]
-    ]
+    # Optional: audio played to the caller while the transfer bridges. Omit (None)
+    # to leave it to the platform default. Set a value to avoid a silent hold.
+    on_hold_music: Optional[Literal["ringtone", "relaxing_sound", "uplifting_beats", "none"]] = None
 
 
 class SDKSystemInitEvent(SDKSystemEvent, type=EventType.SYSTEM_INIT.value):
@@ -220,37 +214,54 @@ class SDKSystemInitEvent(SDKSystemEvent, type=EventType.SYSTEM_INIT.value):
     output_agent_settings: Optional[OutputAgentSettings] = None
 
 
-class SDKSystemUpdateOutputAgentSettingsEvent(
-    SDKSystemEvent, type=EventType.SYSTEM_UPDATE_OUTPUT_AGENT_SETTINGS.value
-):
+class SDKSystemUpdateOutputAgentSettingsEvent(SDKSystemEvent, type=EventType.SYSTEM_UPDATE_OUTPUT_AGENT_SETTINGS.value):
+    """Deprecated. The platform does not apply crew-sent output-agent settings.
+
+    A crew owns only the LLM turn; platform-owned settings (voice, STT, redaction,
+    interruption, ...) cannot be overridden at runtime from crew code. Emitting this
+    event has no effect and it will be removed in a future release.
+    """
+
     settings: Dict[str, Any]
+
+    def __init__(self, **data: Any) -> None:
+        import warnings
+
+        warnings.warn(
+            "SDKSystemUpdateOutputAgentSettingsEvent is deprecated and not applied by the "
+            "platform. A crew cannot override platform-owned settings (voice, STT, redaction, "
+            "interruption). This event will be removed in a future release.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(**data)
 
 
 class SDKSystemUserJoinedEvent(SDKSystemEvent, type=EventType.SYSTEM_USER_JOINED.value):
     pass
 
 
-class SDKSystemUserStartedSpeakingEvent(
-    SDKSystemEvent, type=EventType.SYSTEM_USER_STARTED_SPEAKING.value
-):
+class SDKSystemUserStartedSpeakingEvent(SDKSystemEvent, type=EventType.SYSTEM_USER_STARTED_SPEAKING.value):
     pass
 
 
-class SDKSystemUserStoppedSpeakingEvent(
-    SDKSystemEvent, type=EventType.SYSTEM_USER_STOPPED_SPEAKING.value
-):
+class SDKSystemUserStoppedSpeakingEvent(SDKSystemEvent, type=EventType.SYSTEM_USER_STOPPED_SPEAKING.value):
     pass
 
 
 class SDKSystemLLMRequestEvent(SDKSystemEvent, type=EventType.SYSTEM_LLM_REQUEST.value):
-    """Request to LLM for completion."""
+    """Request to LLM for completion.
 
+    ``messages`` carries the platform's authoritative conversation (system + user
+    + assistant turns) for this request. It is the reliable source of the current
+    context — prefer it over separately-accumulated transcript state.
+    """
+
+    messages: Optional[List[Dict[str, Any]]] = None
     extra_params: Dict[str, Any] = Field(default_factory=dict)
 
 
-class SDKSystemControlInterruptEvent(
-    SDKSystemEvent, type=EventType.SYSTEM_CONTROL_INTERRUPT.value
-):
+class SDKSystemControlInterruptEvent(SDKSystemEvent, type=EventType.SYSTEM_CONTROL_INTERRUPT.value):
     pass
 
 
@@ -293,41 +304,29 @@ class SDKAgentErrorEvent(SDKAgentEvent, type=EventType.AGENT_ERROR.value):
     payload: Dict[str, Any] = Field(default_factory=dict)
 
 
-class SDKAgentLLMResponseStartEvent(
-    SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_START.value
-):
+class SDKAgentLLMResponseStartEvent(SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_START.value):
     """Streaming response started."""
 
     request_id: Optional[str] = None
 
 
-class SDKAgentLLMResponseChunkEvent(
-    SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_CHUNK.value
-):
+class SDKAgentLLMResponseChunkEvent(SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_CHUNK.value):
     text: str
 
 
-class SDKAgentLLMResponseEndEvent(
-    SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_END.value
-):
+class SDKAgentLLMResponseEndEvent(SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_END.value):
     pass
 
 
-class SDKAgentControlInterruptEvent(
-    SDKAgentEvent, type=EventType.AGENT_CONTROL_INTERRUPT.value
-):
+class SDKAgentControlInterruptEvent(SDKAgentEvent, type=EventType.AGENT_CONTROL_INTERRUPT.value):
     pass
 
 
-class SDKAgentControlMuteUserEvent(
-    SDKAgentEvent, type=EventType.AGENT_CONTROL_MUTE_USER.value
-):
+class SDKAgentControlMuteUserEvent(SDKAgentEvent, type=EventType.AGENT_CONTROL_MUTE_USER.value):
     pass
 
 
-class SDKAgentControlUnmuteUserEvent(
-    SDKAgentEvent, type=EventType.AGENT_CONTROL_UNMUTE_USER.value
-):
+class SDKAgentControlUnmuteUserEvent(SDKAgentEvent, type=EventType.AGENT_CONTROL_UNMUTE_USER.value):
     pass
 
 
