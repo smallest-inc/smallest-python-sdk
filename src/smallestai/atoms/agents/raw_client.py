@@ -18,6 +18,7 @@ from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.workflow_type import WorkflowType
+from .types.archive_agent_agents_request_on import ArchiveAgentAgentsRequestOn
 from .types.archive_agent_agents_response import ArchiveAgentAgentsResponse
 from .types.create_agent_agents_response import CreateAgentAgentsResponse
 from .types.create_agent_request_background_sound import CreateAgentRequestBackgroundSound
@@ -36,16 +37,12 @@ from .types.create_agent_request_voice_detection_config import CreateAgentReques
 from .types.create_agent_request_voice_mail_detection_config import CreateAgentRequestVoiceMailDetectionConfig
 from .types.duplicate_agent_agents_response import DuplicateAgentAgentsResponse
 from .types.get_agent_agents_response import GetAgentAgentsResponse
-from .types.get_agent_avatar_presigned_url_response import GetAgentAvatarPresignedUrlResponse
 from .types.get_agent_call_logs_response import GetAgentCallLogsResponse
-from .types.get_agent_widget_config_response import GetAgentWidgetConfigResponse
 from .types.list_agents_agents_request_sort_field import ListAgentsAgentsRequestSortField
 from .types.list_agents_agents_request_sort_order import ListAgentsAgentsRequestSortOrder
 from .types.list_agents_agents_request_type import ListAgentsAgentsRequestType
 from .types.list_agents_agents_response import ListAgentsAgentsResponse
 from .types.update_agent_agents_response import UpdateAgentAgentsResponse
-from .types.update_agent_widget_config_request_widget_config import UpdateAgentWidgetConfigRequestWidgetConfig
-from .types.update_agent_widget_config_response import UpdateAgentWidgetConfigResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -868,299 +865,6 @@ class RawAgentsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_agent_widget_config(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[GetAgentWidgetConfigResponse]:
-        """
-        Returns the current web widget configuration for the agent. Also includes `assistantId` (same as the agent ID) as a convenience field for the widget embed code.
-
-        Parameters
-        ----------
-        id : str
-            Agent ObjectId
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[GetAgentWidgetConfigResponse]
-            Widget configuration
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/widget-config",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GetAgentWidgetConfigResponse,
-                    construct_type(
-                        type_=GetAgentWidgetConfigResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def update_agent_widget_config(
-        self,
-        id: str,
-        *,
-        widget_config: typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[UpdateAgentWidgetConfigResponse]:
-        """
-        Updates the web widget configuration for the agent. Only provided fields are updated (partial update). When `avatarUrl` is changed, the old CDN avatar is automatically deleted from S3. The `avatarUrl` must be a URL from the platform's CDN domain — use `POST /agent/{id}/avatar/presigned-url` to upload first.
-
-        Parameters
-        ----------
-        id : str
-            Agent ObjectId
-
-        widget_config : typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig]
-            All fields are optional — only provided fields are updated
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[UpdateAgentWidgetConfigResponse]
-            Updated widget configuration
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/widget-config",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="PATCH",
-            json={
-                "widgetConfig": convert_and_respect_annotation_metadata(
-                    object_=widget_config, annotation=UpdateAgentWidgetConfigRequestWidgetConfig, direction="write"
-                ),
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    UpdateAgentWidgetConfigResponse,
-                    construct_type(
-                        type_=UpdateAgentWidgetConfigResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def get_agent_avatar_presigned_url(
-        self,
-        id: str,
-        *,
-        file_name: str,
-        content_type: str,
-        file_size: float,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[GetAgentAvatarPresignedUrlResponse]:
-        """
-        Generates a pre-signed S3 upload URL for the agent's widget avatar image. Upload the image directly to S3 using the returned `presignedUrl`, then save `cdnUrl` as the agent's avatar via `PATCH /agent/{id}/widget-config`.
-
-        Parameters
-        ----------
-        id : str
-            Agent ObjectId
-
-        file_name : str
-            Original file name (used to construct the S3 key)
-
-        content_type : str
-            MIME type — must start with `image/`
-
-        file_size : float
-            File size in bytes — must be > 0 and ≤ 2 MB (2,097,152 bytes)
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[GetAgentAvatarPresignedUrlResponse]
-            Pre-signed upload URL and CDN URL
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/avatar/presigned-url",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="POST",
-            json={
-                "fileName": file_name,
-                "contentType": content_type,
-                "fileSize": file_size,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GetAgentAvatarPresignedUrlResponse,
-                    construct_type(
-                        type_=GetAgentAvatarPresignedUrlResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
     def get_agent_call_logs(
         self,
         id: str,
@@ -1243,7 +947,11 @@ class RawAgentsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     def archive_agent(
-        self, id: str, *, on: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
+        self,
+        id: str,
+        *,
+        on: typing.Optional[ArchiveAgentAgentsRequestOn] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ArchiveAgentAgentsResponse]:
         """
         Soft-archives the agent — it is excluded from listings and stops accepting calls,
@@ -1259,9 +967,9 @@ class RawAgentsClient:
         ----------
         id : str
 
-        on : typing.Optional[bool]
-            `true` (default) — archive the agent.
-            `false` — unarchive (restore) a previously archived agent.
+        on : typing.Optional[ArchiveAgentAgentsRequestOn]
+            `"true"` (default) — archive the agent.
+            `"false"` — unarchive (restore) a previously archived agent.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2182,299 +1890,6 @@ class AsyncRawAgentsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def get_agent_widget_config(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[GetAgentWidgetConfigResponse]:
-        """
-        Returns the current web widget configuration for the agent. Also includes `assistantId` (same as the agent ID) as a convenience field for the widget embed code.
-
-        Parameters
-        ----------
-        id : str
-            Agent ObjectId
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[GetAgentWidgetConfigResponse]
-            Widget configuration
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/widget-config",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GetAgentWidgetConfigResponse,
-                    construct_type(
-                        type_=GetAgentWidgetConfigResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def update_agent_widget_config(
-        self,
-        id: str,
-        *,
-        widget_config: typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[UpdateAgentWidgetConfigResponse]:
-        """
-        Updates the web widget configuration for the agent. Only provided fields are updated (partial update). When `avatarUrl` is changed, the old CDN avatar is automatically deleted from S3. The `avatarUrl` must be a URL from the platform's CDN domain — use `POST /agent/{id}/avatar/presigned-url` to upload first.
-
-        Parameters
-        ----------
-        id : str
-            Agent ObjectId
-
-        widget_config : typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig]
-            All fields are optional — only provided fields are updated
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[UpdateAgentWidgetConfigResponse]
-            Updated widget configuration
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/widget-config",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="PATCH",
-            json={
-                "widgetConfig": convert_and_respect_annotation_metadata(
-                    object_=widget_config, annotation=UpdateAgentWidgetConfigRequestWidgetConfig, direction="write"
-                ),
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    UpdateAgentWidgetConfigResponse,
-                    construct_type(
-                        type_=UpdateAgentWidgetConfigResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def get_agent_avatar_presigned_url(
-        self,
-        id: str,
-        *,
-        file_name: str,
-        content_type: str,
-        file_size: float,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[GetAgentAvatarPresignedUrlResponse]:
-        """
-        Generates a pre-signed S3 upload URL for the agent's widget avatar image. Upload the image directly to S3 using the returned `presignedUrl`, then save `cdnUrl` as the agent's avatar via `PATCH /agent/{id}/widget-config`.
-
-        Parameters
-        ----------
-        id : str
-            Agent ObjectId
-
-        file_name : str
-            Original file name (used to construct the S3 key)
-
-        content_type : str
-            MIME type — must start with `image/`
-
-        file_size : float
-            File size in bytes — must be > 0 and ≤ 2 MB (2,097,152 bytes)
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[GetAgentAvatarPresignedUrlResponse]
-            Pre-signed upload URL and CDN URL
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"agent/{encode_path_param(id)}/avatar/presigned-url",
-            base_url=self._client_wrapper.get_environment().atoms,
-            method="POST",
-            json={
-                "fileName": file_name,
-                "contentType": content_type,
-                "fileSize": file_size,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GetAgentAvatarPresignedUrlResponse,
-                    construct_type(
-                        type_=GetAgentAvatarPresignedUrlResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        construct_type(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
     async def get_agent_call_logs(
         self,
         id: str,
@@ -2557,7 +1972,11 @@ class AsyncRawAgentsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     async def archive_agent(
-        self, id: str, *, on: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
+        self,
+        id: str,
+        *,
+        on: typing.Optional[ArchiveAgentAgentsRequestOn] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ArchiveAgentAgentsResponse]:
         """
         Soft-archives the agent — it is excluded from listings and stops accepting calls,
@@ -2573,9 +1992,9 @@ class AsyncRawAgentsClient:
         ----------
         id : str
 
-        on : typing.Optional[bool]
-            `true` (default) — archive the agent.
-            `false` — unarchive (restore) a previously archived agent.
+        on : typing.Optional[ArchiveAgentAgentsRequestOn]
+            `"true"` (default) — archive the agent.
+            `"false"` — unarchive (restore) a previously archived agent.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

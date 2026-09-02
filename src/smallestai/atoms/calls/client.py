@@ -58,6 +58,14 @@ class CallsClient:
         """
         Retrieve paginated conversation logs with support for various filters. Returns call logs for agents belonging to the authenticated user's organization.
 
+        **To discover new inbound calls, use webhooks instead of polling this endpoint.** Subscribe an agent to the `pre-conversation` webhook event: it fires the moment an inbound call connects and delivers `callId`, `fromPhone`, and `toPhone`, so you get every new call in real time with no polling load. See the [Webhooks guide](/voice-agents/platform/features/webhooks). Poll this endpoint only for backfill or reconciliation.
+
+        **If you do poll, use the default sort.** The default query (no `sortBy`) sorts by `updatedAt` descending and is index-backed, so it stays fast even on large accounts. Request the first page and keep the list small: `page=1&limit=N` (optionally `callTypes=telephony_inbound` for inbound only). This returns in well under a second. To detect new calls between polls, track the conversation IDs you have already seen rather than a single timestamp, since the default order is `updatedAt` (a recently-updated older call can move to the top).
+
+        **Avoid `sortBy=createdAt`, `dateFrom`, and `dateTo` on large accounts.** These sort or range-filter on `createdAt`, which is not index-backed for the organization-wide query and forces a full scan of your conversation history. On accounts with a large history this can exceed the gateway timeout and return a 504. Prefer the default `updatedAt` sort above.
+
+        `agentIds` and `campaignIds` accept comma-separated IDs and narrow the result set, but do not pair them with `sortBy=createdAt` or `dateFrom` on large accounts (the `createdAt` sort/filter is the slow part, not the number of agents).
+
         Parameters
         ----------
         page : typing.Optional[int]
@@ -392,6 +400,14 @@ class AsyncCallsClient:
     ) -> ListCallsResponse:
         """
         Retrieve paginated conversation logs with support for various filters. Returns call logs for agents belonging to the authenticated user's organization.
+
+        **To discover new inbound calls, use webhooks instead of polling this endpoint.** Subscribe an agent to the `pre-conversation` webhook event: it fires the moment an inbound call connects and delivers `callId`, `fromPhone`, and `toPhone`, so you get every new call in real time with no polling load. See the [Webhooks guide](/voice-agents/platform/features/webhooks). Poll this endpoint only for backfill or reconciliation.
+
+        **If you do poll, use the default sort.** The default query (no `sortBy`) sorts by `updatedAt` descending and is index-backed, so it stays fast even on large accounts. Request the first page and keep the list small: `page=1&limit=N` (optionally `callTypes=telephony_inbound` for inbound only). This returns in well under a second. To detect new calls between polls, track the conversation IDs you have already seen rather than a single timestamp, since the default order is `updatedAt` (a recently-updated older call can move to the top).
+
+        **Avoid `sortBy=createdAt`, `dateFrom`, and `dateTo` on large accounts.** These sort or range-filter on `createdAt`, which is not index-backed for the organization-wide query and forces a full scan of your conversation history. On accounts with a large history this can exceed the gateway timeout and return a 504. Prefer the default `updatedAt` sort above.
+
+        `agentIds` and `campaignIds` accept comma-separated IDs and narrow the result set, but do not pair them with `sortBy=createdAt` or `dateFrom` on large accounts (the `createdAt` sort/filter is the slow part, not the number of agents).
 
         Parameters
         ----------

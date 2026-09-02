@@ -19,6 +19,7 @@ from ..core.unchecked_base_model import construct_type
 from .errors.bad_request_error import BadRequestError
 from .errors.internal_server_error import InternalServerError
 from .errors.unauthorized_error import UnauthorizedError
+from .types.create_voice_clone_waves_request_language import CreateVoiceCloneWavesRequestLanguage
 from .types.create_voice_clone_waves_request_model import CreateVoiceCloneWavesRequestModel
 from .types.create_voice_clone_waves_response import CreateVoiceCloneWavesResponse
 from .types.delete_pronunciation_dict_response import DeletePronunciationDictResponse
@@ -38,6 +39,8 @@ from .types.synthesize_sse_lightning_large_waves_request_output_format import (
 from .types.synthesize_sse_lightning_v2waves_request_output_format import (
     SynthesizeSseLightningV2WavesRequestOutputFormat,
 )
+from .types.synthesize_sse_tts_waves_request_x_expire_content import SynthesizeSseTtsWavesRequestXExpireContent
+from .types.synthesize_tts_waves_request_x_expire_content import SynthesizeTtsWavesRequestXExpireContent
 from .types.tts_request_language import TtsRequestLanguage
 from .types.tts_request_model import TtsRequestModel
 from .types.tts_request_number_pronunciation_language import TtsRequestNumberPronunciationLanguage
@@ -638,12 +641,21 @@ class RawWavesClient:
         self, model: GetVoicesWavesRequestModel, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[GetVoicesWavesResponse]:
         """
-        List voices available for Lightning v3.1. The response is the union of the standard and Pro voice catalogs — the API does not return a per-voice "is Pro" flag, so consult the [Lightning v3.1 Pro](/models/model-cards/text-to-speech/lightning-v-3-1-pro) and [Lightning v3.1](/models/model-cards/text-to-speech/lightning-v-3-1) model cards for the canonical per-pool voice lists. Use the `voice_id` from this response together with `"model": "lightning_v3.1"` (default) or `"model": "lightning_v3.1_pro"` on the unified `/waves/v1/tts` route to pick the pool.
+        Return the voice catalog for the chosen Lightning v3.1 pool. Two pools:
+
+        - `lightning-v3.1` — the Standard catalog. Supports voice cloning; 20 language codes.
+        - `lightning-v3.1-pro` — the Pro catalog. Curated set across American, British, and Indian accents plus 29 additional languages. Same latency and concurrency as Standard, on dedicated inference.
+
+        The endpoint is pool-scoped: `/waves/v1/lightning-v3.1/get_voices` returns Standard voices only; `/waves/v1/lightning-v3.1-pro/get_voices` returns Pro voices only. Call one or both depending on which pool you plan to use.
+
+        Each voice carries tags (`language`, `accent`, `gender`, `age`, `emotions`, `usecases`). Filter client-side to find the voices that match a target language, accent, or use case. Pass the returned `voiceId` as `voice_id` on the unified [`POST /waves/v1/tts`](/models/api-reference/text-to-speech/synthesize-speech) route, together with `"model": "lightning_v3.1"` (Standard) or `"model": "lightning_v3.1_pro"` (Pro).
+
+        For the canonical per-language voice list (with previews and recommended pairings), see the [Lightning v3.1](/models/model-cards/text-to-speech/lightning-v-3-1) and [Lightning v3.1 Pro](/models/model-cards/text-to-speech/lightning-v-3-1-pro) model cards.
 
         Parameters
         ----------
         model : GetVoicesWavesRequestModel
-            The catalog to query. Currently only `lightning-v3.1` is supported — the response returns the union of standard Lightning v3.1 voices and Lightning v3.1 Pro voices. The API does not include a per-voice Pro flag; consult the model cards for the canonical per-pool catalogs.
+            The pool to query. `lightning-v3.1` returns Standard voices; `lightning-v3.1-pro` returns Pro voices. Note the hyphenated path form differs from the underscored body form used on `POST /waves/v1/tts` (`lightning_v3.1`, `lightning_v3.1_pro`).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -717,11 +729,13 @@ class RawWavesClient:
         *,
         text: str,
         voice_id: str,
+        expire_content: typing.Optional[SynthesizeTtsWavesRequestXExpireContent] = None,
         model: typing.Optional[TtsRequestModel] = OMIT,
         sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         language: typing.Optional[TtsRequestLanguage] = OMIT,
         number_pronunciation_language: typing.Optional[TtsRequestNumberPronunciationLanguage] = OMIT,
+        math_notation: typing.Optional[bool] = OMIT,
         output_format: typing.Optional[TtsRequestOutputFormat] = OMIT,
         pronunciation_dicts: typing.Optional[typing.Sequence[str]] = OMIT,
         word_timestamps: typing.Optional[bool] = OMIT,
@@ -820,16 +834,20 @@ class RawWavesClient:
         
         - **Set `Accept: audio/wav`.** Omitting it can return an empty or unplayable response.
         - **Pair voice IDs with the right model.** Voice catalogs differ between `lightning_v3.1` and `lightning_v3.1_pro`. The API does not reject mismatched pairings, but using a Pro-only `voice_id` with `model=lightning_v3.1` (or omitting `model`) can return wrong or hallucinated audio. Pair Pro voices with `model=lightning_v3.1_pro`; standard catalog voices with `model=lightning_v3.1` (the default).
-        - **Cloned voices** (`voice_*` from `add_voice`) work with `lightning_v3.1` only; voice cloning is not available on `lightning_v3.1_pro`.
+        - **Cloned voices** (`voice_*`) work with the pool they were cloned onto. The voice-cloning API accepts `model: lightning-v3.1` (default) or `lightning-v3.1-pro`; pair the resulting `voice_id` with the matching TTS `model` (`lightning_v3.1` or `lightning_v3.1_pro`). Check the clone's `modelIds` if unsure.
         - **44.1 kHz output** is supported but most playback environments are happy with 24 kHz — drop the sample rate if bandwidth matters.
         
         Parameters
         ----------
         text : str
-            The text to convert to speech.
+            The text to convert to speech. Max 8000 characters after trim; whitespace-only strings are rejected.
         
         voice_id : str
             The voice identifier to use for speech generation. See the model card for available voices per model.
+        
+        expire_content : typing.Optional[SynthesizeTtsWavesRequestXExpireContent]
+            **Enterprise plans only.** Opt in if you want this request's content
+            deleted after 7 days. Omit it to retain content, which is the default.
         
         model : typing.Optional[TtsRequestModel]
             TTS model to route the request to. Controls which model pool serves
@@ -905,6 +923,41 @@ class RawWavesClient:
             Accepts the same language codes as `language` (including `auto`,
             `nl`, `sv`).
         
+        math_notation : typing.Optional[bool]
+            Opt-in flag that reads digit-flanked math operators (`5 x 3`,
+            `2 ^ 10`, `6 ÷ 2`) as words instead of leaving them for the
+            default number reader. Off by default because in real traffic
+            digit-flanked `NxN` is more often a product dimension, the
+            `24x7` idiom, or a vehicle-registration code than an actual
+            multiplication.
+            
+            When `true`, the normalizer replaces the operator with the
+            spoken word matched to `number_pronunciation_language`:
+            
+            | Glyphs | en (default / fallback) | hi | mr |
+            |---|---|---|---|
+            | `×` `x` `X` `*` | times | गुणा | गुणिले |
+            | `÷` and spaced `/` | divided by | बटा | भागिले |
+            | `+` | plus | प्लस | अधिक |
+            | spaced `-` `–` `−` | minus | माइनस | वजा |
+            | `=` | equals | बराबर | बरोबर |
+            | `^` `**` | to the power of | की घात | ची घात |
+            
+            Localized only for `hi` and `mr`; every other language falls
+            back to the English words. The operator word follows
+            `number_pronunciation_language`, not the synthesis
+            `language`, so `language=en, number_pronunciation_language=hi`
+            reads `6 x 7` as "छः गुणा सात".
+            
+            Matching rules: unambiguous glyphs (`× ÷ * ^ ** = +` and the
+            wrong-glyph `x`/`X`) fire glued or spaced (`5x3`, `5 x 3`).
+            The ambiguous `-` `–` `−` and `/` fire only when
+            space-padded, so `5-3` stays a range and `1/2` stays a
+            fraction. See [Math notation](/models/documentation/text-to-speech-lightning/math-notation)
+            for the full lexicon, known limitations (product dimensions,
+            `24x7` idiom, vehicle-reg codes), and EU-language
+            localizations.
+        
         output_format : typing.Optional[TtsRequestOutputFormat]
             Format of the returned audio. `pcm` is the lowest-latency option
             but requires a decoder to play; `mp3` and `wav` are directly
@@ -944,6 +997,7 @@ class RawWavesClient:
                 "speed": speed,
                 "language": language,
                 "number_pronunciation_language": number_pronunciation_language,
+                "math_notation": math_notation,
                 "output_format": output_format,
                 "pronunciation_dicts": pronunciation_dicts,
                 "word_timestamps": word_timestamps,
@@ -953,6 +1007,7 @@ class RawWavesClient:
             headers={
                 "content-type": "application/json",
                 "Accept": "audio/wav",
+                "x-expire-content": str(expire_content) if expire_content is not None else None,
             },
             request_options=request_options,
             omit=OMIT,
@@ -1021,11 +1076,13 @@ class RawWavesClient:
         *,
         text: str,
         voice_id: str,
+        expire_content: typing.Optional[SynthesizeSseTtsWavesRequestXExpireContent] = None,
         model: typing.Optional[TtsRequestModel] = OMIT,
         sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         language: typing.Optional[TtsRequestLanguage] = OMIT,
         number_pronunciation_language: typing.Optional[TtsRequestNumberPronunciationLanguage] = OMIT,
+        math_notation: typing.Optional[bool] = OMIT,
         output_format: typing.Optional[TtsRequestOutputFormat] = OMIT,
         pronunciation_dicts: typing.Optional[typing.Sequence[str]] = OMIT,
         word_timestamps: typing.Optional[bool] = OMIT,
@@ -1051,9 +1108,9 @@ class RawWavesClient:
         ## How it works
         
         1. POST your text + voice settings — same payload as `/waves/v1/tts`, plus optional `model`.
-        2. The response is `Content-Type: text/event-stream`. Each chunk frame is `event: audio\\n` followed by `data: {"audio": "<base64-pcm>"}\\n\\n`.
+        2. The response is `Content-Type: text/event-stream`. Each chunk frame is `event: audio\\n` followed by `data: {"audio": "<base64-pcm>", "done": false, "status": "206"}\\n\\n`.
         3. Decode each chunk's `audio` field with base64 and feed the PCM bytes to your audio pipeline (browser `MediaSource`, ffmpeg pipe, raw PCM player, etc.).
-        4. A final `data: {"done": true}\\n\\n` frame marks end of stream.
+        4. A final `data: {"status": "200", "done": true}\\n\\n` frame marks end of stream. Detect the terminator with `done == true`; every chunk frame also carries `done: false`, so `"done" in msg` matches every frame.
         
         ## Examples
         
@@ -1079,10 +1136,14 @@ class RawWavesClient:
         Parameters
         ----------
         text : str
-            The text to convert to speech.
+            The text to convert to speech. Max 8000 characters after trim; whitespace-only strings are rejected.
         
         voice_id : str
             The voice identifier to use for speech generation. See the model card for available voices per model.
+        
+        expire_content : typing.Optional[SynthesizeSseTtsWavesRequestXExpireContent]
+            **Enterprise plans only.** Opt in if you want this request's content
+            deleted after 7 days. Omit it to retain content, which is the default.
         
         model : typing.Optional[TtsRequestModel]
             TTS model to route the request to. Controls which model pool serves
@@ -1158,6 +1219,41 @@ class RawWavesClient:
             Accepts the same language codes as `language` (including `auto`,
             `nl`, `sv`).
         
+        math_notation : typing.Optional[bool]
+            Opt-in flag that reads digit-flanked math operators (`5 x 3`,
+            `2 ^ 10`, `6 ÷ 2`) as words instead of leaving them for the
+            default number reader. Off by default because in real traffic
+            digit-flanked `NxN` is more often a product dimension, the
+            `24x7` idiom, or a vehicle-registration code than an actual
+            multiplication.
+            
+            When `true`, the normalizer replaces the operator with the
+            spoken word matched to `number_pronunciation_language`:
+            
+            | Glyphs | en (default / fallback) | hi | mr |
+            |---|---|---|---|
+            | `×` `x` `X` `*` | times | गुणा | गुणिले |
+            | `÷` and spaced `/` | divided by | बटा | भागिले |
+            | `+` | plus | प्लस | अधिक |
+            | spaced `-` `–` `−` | minus | माइनस | वजा |
+            | `=` | equals | बराबर | बरोबर |
+            | `^` `**` | to the power of | की घात | ची घात |
+            
+            Localized only for `hi` and `mr`; every other language falls
+            back to the English words. The operator word follows
+            `number_pronunciation_language`, not the synthesis
+            `language`, so `language=en, number_pronunciation_language=hi`
+            reads `6 x 7` as "छः गुणा सात".
+            
+            Matching rules: unambiguous glyphs (`× ÷ * ^ ** = +` and the
+            wrong-glyph `x`/`X`) fire glued or spaced (`5x3`, `5 x 3`).
+            The ambiguous `-` `–` `−` and `/` fire only when
+            space-padded, so `5-3` stays a range and `1/2` stays a
+            fraction. See [Math notation](/models/documentation/text-to-speech-lightning/math-notation)
+            for the full lexicon, known limitations (product dimensions,
+            `24x7` idiom, vehicle-reg codes), and EU-language
+            localizations.
+        
         output_format : typing.Optional[TtsRequestOutputFormat]
             Format of the returned audio. `pcm` is the lowest-latency option
             but requires a decoder to play; `mp3` and `wav` are directly
@@ -1197,11 +1293,16 @@ class RawWavesClient:
                 "speed": speed,
                 "language": language,
                 "number_pronunciation_language": number_pronunciation_language,
+                "math_notation": math_notation,
                 "output_format": output_format,
                 "pronunciation_dicts": pronunciation_dicts,
                 "word_timestamps": word_timestamps,
                 "session_id": session_id,
                 "request_id": request_id,
+            },
+            headers={
+                "content-type": "application/json",
+                "x-expire-content": str(expire_content) if expire_content is not None else None,
             },
             request_options=request_options,
             omit=OMIT,
@@ -1358,7 +1459,7 @@ class RawWavesClient:
         description: typing.Optional[str] = OMIT,
         accent: typing.Optional[str] = OMIT,
         tags: typing.Optional[str] = OMIT,
-        language: typing.Optional[str] = OMIT,
+        language: typing.Optional[CreateVoiceCloneWavesRequestLanguage] = OMIT,
         model: typing.Optional[CreateVoiceCloneWavesRequestModel] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CreateVoiceCloneWavesResponse]:
@@ -1383,21 +1484,21 @@ class RawWavesClient:
             Optional comma-separated list of tags. Server splits on
             commas and trims whitespace (`"en, tone-test"` → `["en", "tone-test"]`).
 
-        language : typing.Optional[str]
+        language : typing.Optional[CreateVoiceCloneWavesRequestLanguage]
             Primary language the clone will be used for. Optional, but
             **strongly recommended** — set it to the language of your
             reference audio. The TTS request's `language` should also
             match this code; setting it now avoids silent language
             mismatches at inference time.
 
-            Must be one of the languages supported by `lightning-v3.1`
-            (e.g. `en`, `hi`). The server validates and rejects
-            unsupported codes with a 400.
+            Must be one of the languages supported by `lightning-v3.1`.
+            The server validates and rejects unsupported codes with a 400.
 
         model : typing.Optional[CreateVoiceCloneWavesRequestModel]
             Voice cloning model. Defaults to `lightning-v3.1`.
+            Pass `lightning-v3.1-pro` to clone onto the premium Pro pool.
             `lightning-v2` is accepted by the schema for historical
-            reasons but is deprecated — the server returns 400 with
+            reasons but is deprecated - the server returns 400 with
             `"Voice cloning for lightning-v2 is deprecated. Please use lightning-v3.1"`.
 
         request_options : typing.Optional[RequestOptions]
@@ -2069,12 +2170,21 @@ class AsyncRawWavesClient:
         self, model: GetVoicesWavesRequestModel, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[GetVoicesWavesResponse]:
         """
-        List voices available for Lightning v3.1. The response is the union of the standard and Pro voice catalogs — the API does not return a per-voice "is Pro" flag, so consult the [Lightning v3.1 Pro](/models/model-cards/text-to-speech/lightning-v-3-1-pro) and [Lightning v3.1](/models/model-cards/text-to-speech/lightning-v-3-1) model cards for the canonical per-pool voice lists. Use the `voice_id` from this response together with `"model": "lightning_v3.1"` (default) or `"model": "lightning_v3.1_pro"` on the unified `/waves/v1/tts` route to pick the pool.
+        Return the voice catalog for the chosen Lightning v3.1 pool. Two pools:
+
+        - `lightning-v3.1` — the Standard catalog. Supports voice cloning; 20 language codes.
+        - `lightning-v3.1-pro` — the Pro catalog. Curated set across American, British, and Indian accents plus 29 additional languages. Same latency and concurrency as Standard, on dedicated inference.
+
+        The endpoint is pool-scoped: `/waves/v1/lightning-v3.1/get_voices` returns Standard voices only; `/waves/v1/lightning-v3.1-pro/get_voices` returns Pro voices only. Call one or both depending on which pool you plan to use.
+
+        Each voice carries tags (`language`, `accent`, `gender`, `age`, `emotions`, `usecases`). Filter client-side to find the voices that match a target language, accent, or use case. Pass the returned `voiceId` as `voice_id` on the unified [`POST /waves/v1/tts`](/models/api-reference/text-to-speech/synthesize-speech) route, together with `"model": "lightning_v3.1"` (Standard) or `"model": "lightning_v3.1_pro"` (Pro).
+
+        For the canonical per-language voice list (with previews and recommended pairings), see the [Lightning v3.1](/models/model-cards/text-to-speech/lightning-v-3-1) and [Lightning v3.1 Pro](/models/model-cards/text-to-speech/lightning-v-3-1-pro) model cards.
 
         Parameters
         ----------
         model : GetVoicesWavesRequestModel
-            The catalog to query. Currently only `lightning-v3.1` is supported — the response returns the union of standard Lightning v3.1 voices and Lightning v3.1 Pro voices. The API does not include a per-voice Pro flag; consult the model cards for the canonical per-pool catalogs.
+            The pool to query. `lightning-v3.1` returns Standard voices; `lightning-v3.1-pro` returns Pro voices. Note the hyphenated path form differs from the underscored body form used on `POST /waves/v1/tts` (`lightning_v3.1`, `lightning_v3.1_pro`).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2148,11 +2258,13 @@ class AsyncRawWavesClient:
         *,
         text: str,
         voice_id: str,
+        expire_content: typing.Optional[SynthesizeTtsWavesRequestXExpireContent] = None,
         model: typing.Optional[TtsRequestModel] = OMIT,
         sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         language: typing.Optional[TtsRequestLanguage] = OMIT,
         number_pronunciation_language: typing.Optional[TtsRequestNumberPronunciationLanguage] = OMIT,
+        math_notation: typing.Optional[bool] = OMIT,
         output_format: typing.Optional[TtsRequestOutputFormat] = OMIT,
         pronunciation_dicts: typing.Optional[typing.Sequence[str]] = OMIT,
         word_timestamps: typing.Optional[bool] = OMIT,
@@ -2251,16 +2363,20 @@ class AsyncRawWavesClient:
         
         - **Set `Accept: audio/wav`.** Omitting it can return an empty or unplayable response.
         - **Pair voice IDs with the right model.** Voice catalogs differ between `lightning_v3.1` and `lightning_v3.1_pro`. The API does not reject mismatched pairings, but using a Pro-only `voice_id` with `model=lightning_v3.1` (or omitting `model`) can return wrong or hallucinated audio. Pair Pro voices with `model=lightning_v3.1_pro`; standard catalog voices with `model=lightning_v3.1` (the default).
-        - **Cloned voices** (`voice_*` from `add_voice`) work with `lightning_v3.1` only; voice cloning is not available on `lightning_v3.1_pro`.
+        - **Cloned voices** (`voice_*`) work with the pool they were cloned onto. The voice-cloning API accepts `model: lightning-v3.1` (default) or `lightning-v3.1-pro`; pair the resulting `voice_id` with the matching TTS `model` (`lightning_v3.1` or `lightning_v3.1_pro`). Check the clone's `modelIds` if unsure.
         - **44.1 kHz output** is supported but most playback environments are happy with 24 kHz — drop the sample rate if bandwidth matters.
         
         Parameters
         ----------
         text : str
-            The text to convert to speech.
+            The text to convert to speech. Max 8000 characters after trim; whitespace-only strings are rejected.
         
         voice_id : str
             The voice identifier to use for speech generation. See the model card for available voices per model.
+        
+        expire_content : typing.Optional[SynthesizeTtsWavesRequestXExpireContent]
+            **Enterprise plans only.** Opt in if you want this request's content
+            deleted after 7 days. Omit it to retain content, which is the default.
         
         model : typing.Optional[TtsRequestModel]
             TTS model to route the request to. Controls which model pool serves
@@ -2336,6 +2452,41 @@ class AsyncRawWavesClient:
             Accepts the same language codes as `language` (including `auto`,
             `nl`, `sv`).
         
+        math_notation : typing.Optional[bool]
+            Opt-in flag that reads digit-flanked math operators (`5 x 3`,
+            `2 ^ 10`, `6 ÷ 2`) as words instead of leaving them for the
+            default number reader. Off by default because in real traffic
+            digit-flanked `NxN` is more often a product dimension, the
+            `24x7` idiom, or a vehicle-registration code than an actual
+            multiplication.
+            
+            When `true`, the normalizer replaces the operator with the
+            spoken word matched to `number_pronunciation_language`:
+            
+            | Glyphs | en (default / fallback) | hi | mr |
+            |---|---|---|---|
+            | `×` `x` `X` `*` | times | गुणा | गुणिले |
+            | `÷` and spaced `/` | divided by | बटा | भागिले |
+            | `+` | plus | प्लस | अधिक |
+            | spaced `-` `–` `−` | minus | माइनस | वजा |
+            | `=` | equals | बराबर | बरोबर |
+            | `^` `**` | to the power of | की घात | ची घात |
+            
+            Localized only for `hi` and `mr`; every other language falls
+            back to the English words. The operator word follows
+            `number_pronunciation_language`, not the synthesis
+            `language`, so `language=en, number_pronunciation_language=hi`
+            reads `6 x 7` as "छः गुणा सात".
+            
+            Matching rules: unambiguous glyphs (`× ÷ * ^ ** = +` and the
+            wrong-glyph `x`/`X`) fire glued or spaced (`5x3`, `5 x 3`).
+            The ambiguous `-` `–` `−` and `/` fire only when
+            space-padded, so `5-3` stays a range and `1/2` stays a
+            fraction. See [Math notation](/models/documentation/text-to-speech-lightning/math-notation)
+            for the full lexicon, known limitations (product dimensions,
+            `24x7` idiom, vehicle-reg codes), and EU-language
+            localizations.
+        
         output_format : typing.Optional[TtsRequestOutputFormat]
             Format of the returned audio. `pcm` is the lowest-latency option
             but requires a decoder to play; `mp3` and `wav` are directly
@@ -2375,6 +2526,7 @@ class AsyncRawWavesClient:
                 "speed": speed,
                 "language": language,
                 "number_pronunciation_language": number_pronunciation_language,
+                "math_notation": math_notation,
                 "output_format": output_format,
                 "pronunciation_dicts": pronunciation_dicts,
                 "word_timestamps": word_timestamps,
@@ -2384,6 +2536,7 @@ class AsyncRawWavesClient:
             headers={
                 "content-type": "application/json",
                 "Accept": "audio/wav",
+                "x-expire-content": str(expire_content) if expire_content is not None else None,
             },
             request_options=request_options,
             omit=OMIT,
@@ -2453,11 +2606,13 @@ class AsyncRawWavesClient:
         *,
         text: str,
         voice_id: str,
+        expire_content: typing.Optional[SynthesizeSseTtsWavesRequestXExpireContent] = None,
         model: typing.Optional[TtsRequestModel] = OMIT,
         sample_rate: typing.Optional[int] = OMIT,
         speed: typing.Optional[float] = OMIT,
         language: typing.Optional[TtsRequestLanguage] = OMIT,
         number_pronunciation_language: typing.Optional[TtsRequestNumberPronunciationLanguage] = OMIT,
+        math_notation: typing.Optional[bool] = OMIT,
         output_format: typing.Optional[TtsRequestOutputFormat] = OMIT,
         pronunciation_dicts: typing.Optional[typing.Sequence[str]] = OMIT,
         word_timestamps: typing.Optional[bool] = OMIT,
@@ -2483,9 +2638,9 @@ class AsyncRawWavesClient:
         ## How it works
         
         1. POST your text + voice settings — same payload as `/waves/v1/tts`, plus optional `model`.
-        2. The response is `Content-Type: text/event-stream`. Each chunk frame is `event: audio\\n` followed by `data: {"audio": "<base64-pcm>"}\\n\\n`.
+        2. The response is `Content-Type: text/event-stream`. Each chunk frame is `event: audio\\n` followed by `data: {"audio": "<base64-pcm>", "done": false, "status": "206"}\\n\\n`.
         3. Decode each chunk's `audio` field with base64 and feed the PCM bytes to your audio pipeline (browser `MediaSource`, ffmpeg pipe, raw PCM player, etc.).
-        4. A final `data: {"done": true}\\n\\n` frame marks end of stream.
+        4. A final `data: {"status": "200", "done": true}\\n\\n` frame marks end of stream. Detect the terminator with `done == true`; every chunk frame also carries `done: false`, so `"done" in msg` matches every frame.
         
         ## Examples
         
@@ -2511,10 +2666,14 @@ class AsyncRawWavesClient:
         Parameters
         ----------
         text : str
-            The text to convert to speech.
+            The text to convert to speech. Max 8000 characters after trim; whitespace-only strings are rejected.
         
         voice_id : str
             The voice identifier to use for speech generation. See the model card for available voices per model.
+        
+        expire_content : typing.Optional[SynthesizeSseTtsWavesRequestXExpireContent]
+            **Enterprise plans only.** Opt in if you want this request's content
+            deleted after 7 days. Omit it to retain content, which is the default.
         
         model : typing.Optional[TtsRequestModel]
             TTS model to route the request to. Controls which model pool serves
@@ -2590,6 +2749,41 @@ class AsyncRawWavesClient:
             Accepts the same language codes as `language` (including `auto`,
             `nl`, `sv`).
         
+        math_notation : typing.Optional[bool]
+            Opt-in flag that reads digit-flanked math operators (`5 x 3`,
+            `2 ^ 10`, `6 ÷ 2`) as words instead of leaving them for the
+            default number reader. Off by default because in real traffic
+            digit-flanked `NxN` is more often a product dimension, the
+            `24x7` idiom, or a vehicle-registration code than an actual
+            multiplication.
+            
+            When `true`, the normalizer replaces the operator with the
+            spoken word matched to `number_pronunciation_language`:
+            
+            | Glyphs | en (default / fallback) | hi | mr |
+            |---|---|---|---|
+            | `×` `x` `X` `*` | times | गुणा | गुणिले |
+            | `÷` and spaced `/` | divided by | बटा | भागिले |
+            | `+` | plus | प्लस | अधिक |
+            | spaced `-` `–` `−` | minus | माइनस | वजा |
+            | `=` | equals | बराबर | बरोबर |
+            | `^` `**` | to the power of | की घात | ची घात |
+            
+            Localized only for `hi` and `mr`; every other language falls
+            back to the English words. The operator word follows
+            `number_pronunciation_language`, not the synthesis
+            `language`, so `language=en, number_pronunciation_language=hi`
+            reads `6 x 7` as "छः गुणा सात".
+            
+            Matching rules: unambiguous glyphs (`× ÷ * ^ ** = +` and the
+            wrong-glyph `x`/`X`) fire glued or spaced (`5x3`, `5 x 3`).
+            The ambiguous `-` `–` `−` and `/` fire only when
+            space-padded, so `5-3` stays a range and `1/2` stays a
+            fraction. See [Math notation](/models/documentation/text-to-speech-lightning/math-notation)
+            for the full lexicon, known limitations (product dimensions,
+            `24x7` idiom, vehicle-reg codes), and EU-language
+            localizations.
+        
         output_format : typing.Optional[TtsRequestOutputFormat]
             Format of the returned audio. `pcm` is the lowest-latency option
             but requires a decoder to play; `mp3` and `wav` are directly
@@ -2629,11 +2823,16 @@ class AsyncRawWavesClient:
                 "speed": speed,
                 "language": language,
                 "number_pronunciation_language": number_pronunciation_language,
+                "math_notation": math_notation,
                 "output_format": output_format,
                 "pronunciation_dicts": pronunciation_dicts,
                 "word_timestamps": word_timestamps,
                 "session_id": session_id,
                 "request_id": request_id,
+            },
+            headers={
+                "content-type": "application/json",
+                "x-expire-content": str(expire_content) if expire_content is not None else None,
             },
             request_options=request_options,
             omit=OMIT,
@@ -2790,7 +2989,7 @@ class AsyncRawWavesClient:
         description: typing.Optional[str] = OMIT,
         accent: typing.Optional[str] = OMIT,
         tags: typing.Optional[str] = OMIT,
-        language: typing.Optional[str] = OMIT,
+        language: typing.Optional[CreateVoiceCloneWavesRequestLanguage] = OMIT,
         model: typing.Optional[CreateVoiceCloneWavesRequestModel] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CreateVoiceCloneWavesResponse]:
@@ -2815,21 +3014,21 @@ class AsyncRawWavesClient:
             Optional comma-separated list of tags. Server splits on
             commas and trims whitespace (`"en, tone-test"` → `["en", "tone-test"]`).
 
-        language : typing.Optional[str]
+        language : typing.Optional[CreateVoiceCloneWavesRequestLanguage]
             Primary language the clone will be used for. Optional, but
             **strongly recommended** — set it to the language of your
             reference audio. The TTS request's `language` should also
             match this code; setting it now avoids silent language
             mismatches at inference time.
 
-            Must be one of the languages supported by `lightning-v3.1`
-            (e.g. `en`, `hi`). The server validates and rejects
-            unsupported codes with a 400.
+            Must be one of the languages supported by `lightning-v3.1`.
+            The server validates and rejects unsupported codes with a 400.
 
         model : typing.Optional[CreateVoiceCloneWavesRequestModel]
             Voice cloning model. Defaults to `lightning-v3.1`.
+            Pass `lightning-v3.1-pro` to clone onto the premium Pro pool.
             `lightning-v2` is accepted by the schema for historical
-            reasons but is deprecated — the server returns 400 with
+            reasons but is deprecated - the server returns 400 with
             `"Voice cloning for lightning-v2 is deprecated. Please use lightning-v3.1"`.
 
         request_options : typing.Optional[RequestOptions]

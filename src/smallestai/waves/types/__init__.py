@@ -28,8 +28,9 @@ if typing.TYPE_CHECKING:
     from .async_accepted import AsyncAccepted
     from .audio_chunk import AudioChunk
     from .audio_chunk_data import AudioChunkData
-    from .audio_chunk_status import AudioChunkStatus
     from .bad_request_error_body import BadRequestErrorBody
+    from .catalog_voice import CatalogVoice
+    from .catalog_voice_tags import CatalogVoiceTags
     from .chat_completion import ChatCompletion
     from .chat_completion_choices_item import ChatCompletionChoicesItem
     from .chat_completion_choices_item_finish_reason import ChatCompletionChoicesItemFinishReason
@@ -42,12 +43,17 @@ if typing.TYPE_CHECKING:
     from .conversation_item_role import ConversationItemRole
     from .conversation_item_status import ConversationItemStatus
     from .conversation_item_type import ConversationItemType
+    from .count_timeseries_response import CountTimeseriesResponse
+    from .create_voice_clone_waves_request_language import CreateVoiceCloneWavesRequestLanguage
     from .create_voice_clone_waves_request_model import CreateVoiceCloneWavesRequestModel
     from .create_voice_clone_waves_response import CreateVoiceCloneWavesResponse
     from .create_voice_clone_waves_response_data import CreateVoiceCloneWavesResponseData
     from .create_voice_clone_waves_response_data_samples_item import CreateVoiceCloneWavesResponseDataSamplesItem
     from .create_voice_clone_waves_response_data_status import CreateVoiceCloneWavesResponseDataStatus
+    from .credits_timeseries_response import CreditsTimeseriesResponse
     from .delete_pronunciation_dict_response import DeletePronunciationDictResponse
+    from .disposition_metric import DispositionMetric
+    from .disposition_metric_disposition_metric_type import DispositionMetricDispositionMetricType
     from .electron_message import ElectronMessage
     from .electron_tool_call import ElectronToolCall
     from .electron_tool_call_function import ElectronToolCallFunction
@@ -62,6 +68,7 @@ if typing.TYPE_CHECKING:
     from .get_voices_waves_response import GetVoicesWavesResponse
     from .get_voices_waves_response_voices_item import GetVoicesWavesResponseVoicesItem
     from .get_voices_waves_response_voices_item_tags import GetVoicesWavesResponseVoicesItemTags
+    from .health_response import HealthResponse
     from .internal_server_error_body import InternalServerErrorBody
     from .internal_server_error_body_error_code import InternalServerErrorBodyErrorCode
     from .lightning_large_request import LightningLargeRequest
@@ -77,11 +84,16 @@ if typing.TYPE_CHECKING:
     from .list_voice_clones_waves_response_data_item import ListVoiceClonesWavesResponseDataItem
     from .list_voice_clones_waves_response_data_item_cloning_type import ListVoiceClonesWavesResponseDataItemCloningType
     from .list_voice_clones_waves_response_data_item_status import ListVoiceClonesWavesResponseDataItemStatus
+    from .pca_response import PcaResponse
+    from .pca_response_disposition_metrics_item import PcaResponseDispositionMetricsItem
     from .pronunciation_dict import PronunciationDict
     from .pronunciation_item import PronunciationItem
+    from .service_status import ServiceStatus
     from .session_config import SessionConfig
     from .session_config_voice import SessionConfigVoice
-    from .streaming_tts_config import StreamingTtsConfig
+    from .streaming_speech_to_text_log_entry import StreamingSpeechToTextLogEntry
+    from .streaming_speech_to_text_log_entry_request_type import StreamingSpeechToTextLogEntryRequestType
+    from .streaming_speech_to_text_logs_response import StreamingSpeechToTextLogsResponse
     from .stt_error_response import SttErrorResponse
     from .synthesize_lightning_large_waves_request_output_format import SynthesizeLightningLargeWavesRequestOutputFormat
     from .synthesize_lightning_v2waves_request_output_format import SynthesizeLightningV2WavesRequestOutputFormat
@@ -90,6 +102,11 @@ if typing.TYPE_CHECKING:
         SynthesizeSseLightningLargeWavesRequestOutputFormat,
     )
     from .synthesize_sse_lightning_v2waves_request_output_format import SynthesizeSseLightningV2WavesRequestOutputFormat
+    from .synthesize_sse_tts_waves_request_x_expire_content import SynthesizeSseTtsWavesRequestXExpireContent
+    from .synthesize_tts_waves_request_x_expire_content import SynthesizeTtsWavesRequestXExpireContent
+    from .text_to_speech_log_entry import TextToSpeechLogEntry
+    from .text_to_speech_log_entry_request_type import TextToSpeechLogEntryRequestType
+    from .text_to_speech_logs_response import TextToSpeechLogsResponse
     from .tool import Tool
     from .tool_type import ToolType
     from .transcription_response import TranscriptionResponse
@@ -105,6 +122,9 @@ if typing.TYPE_CHECKING:
     from .usage import Usage
     from .usage_prompt_tokens_details import UsagePromptTokensDetails
     from .utterance import Utterance
+    from .values_timeseries_response import ValuesTimeseriesResponse
+    from .webhook_log_entry import WebhookLogEntry
+    from .webhook_logs_response import WebhookLogsResponse
     from .word import Word
 _dynamic_imports: typing.Dict[str, str] = {
     "CatalogVoice": ".catalog_voice",
@@ -129,8 +149,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "AsyncAccepted": ".async_accepted",
     "AudioChunk": ".audio_chunk",
     "AudioChunkData": ".audio_chunk_data",
-    "AudioChunkStatus": ".audio_chunk_status",
     "BadRequestErrorBody": ".bad_request_error_body",
+    "CatalogVoice": ".catalog_voice",
+    "CatalogVoiceTags": ".catalog_voice_tags",
     "ChatCompletion": ".chat_completion",
     "ChatCompletionChoicesItem": ".chat_completion_choices_item",
     "ChatCompletionChoicesItemFinishReason": ".chat_completion_choices_item_finish_reason",
@@ -143,12 +164,17 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ConversationItemRole": ".conversation_item_role",
     "ConversationItemStatus": ".conversation_item_status",
     "ConversationItemType": ".conversation_item_type",
+    "CountTimeseriesResponse": ".count_timeseries_response",
+    "CreateVoiceCloneWavesRequestLanguage": ".create_voice_clone_waves_request_language",
     "CreateVoiceCloneWavesRequestModel": ".create_voice_clone_waves_request_model",
     "CreateVoiceCloneWavesResponse": ".create_voice_clone_waves_response",
     "CreateVoiceCloneWavesResponseData": ".create_voice_clone_waves_response_data",
     "CreateVoiceCloneWavesResponseDataSamplesItem": ".create_voice_clone_waves_response_data_samples_item",
     "CreateVoiceCloneWavesResponseDataStatus": ".create_voice_clone_waves_response_data_status",
+    "CreditsTimeseriesResponse": ".credits_timeseries_response",
     "DeletePronunciationDictResponse": ".delete_pronunciation_dict_response",
+    "DispositionMetric": ".disposition_metric",
+    "DispositionMetricDispositionMetricType": ".disposition_metric_disposition_metric_type",
     "ElectronMessage": ".electron_message",
     "ElectronToolCall": ".electron_tool_call",
     "ElectronToolCallFunction": ".electron_tool_call_function",
@@ -163,6 +189,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GetVoicesWavesResponse": ".get_voices_waves_response",
     "GetVoicesWavesResponseVoicesItem": ".get_voices_waves_response_voices_item",
     "GetVoicesWavesResponseVoicesItemTags": ".get_voices_waves_response_voices_item_tags",
+    "HealthResponse": ".health_response",
     "InternalServerErrorBody": ".internal_server_error_body",
     "InternalServerErrorBodyErrorCode": ".internal_server_error_body_error_code",
     "LightningLargeRequest": ".lightning_large_request",
@@ -178,17 +205,27 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ListVoiceClonesWavesResponseDataItem": ".list_voice_clones_waves_response_data_item",
     "ListVoiceClonesWavesResponseDataItemCloningType": ".list_voice_clones_waves_response_data_item_cloning_type",
     "ListVoiceClonesWavesResponseDataItemStatus": ".list_voice_clones_waves_response_data_item_status",
+    "PcaResponse": ".pca_response",
+    "PcaResponseDispositionMetricsItem": ".pca_response_disposition_metrics_item",
     "PronunciationDict": ".pronunciation_dict",
     "PronunciationItem": ".pronunciation_item",
+    "ServiceStatus": ".service_status",
     "SessionConfig": ".session_config",
     "SessionConfigVoice": ".session_config_voice",
-    "StreamingTtsConfig": ".streaming_tts_config",
+    "StreamingSpeechToTextLogEntry": ".streaming_speech_to_text_log_entry",
+    "StreamingSpeechToTextLogEntryRequestType": ".streaming_speech_to_text_log_entry_request_type",
+    "StreamingSpeechToTextLogsResponse": ".streaming_speech_to_text_logs_response",
     "SttErrorResponse": ".stt_error_response",
     "SynthesizeLightningLargeWavesRequestOutputFormat": ".synthesize_lightning_large_waves_request_output_format",
     "SynthesizeLightningV2WavesRequestOutputFormat": ".synthesize_lightning_v2waves_request_output_format",
     "SynthesizeLightningWavesRequestOutputFormat": ".synthesize_lightning_waves_request_output_format",
     "SynthesizeSseLightningLargeWavesRequestOutputFormat": ".synthesize_sse_lightning_large_waves_request_output_format",
     "SynthesizeSseLightningV2WavesRequestOutputFormat": ".synthesize_sse_lightning_v2waves_request_output_format",
+    "SynthesizeSseTtsWavesRequestXExpireContent": ".synthesize_sse_tts_waves_request_x_expire_content",
+    "SynthesizeTtsWavesRequestXExpireContent": ".synthesize_tts_waves_request_x_expire_content",
+    "TextToSpeechLogEntry": ".text_to_speech_log_entry",
+    "TextToSpeechLogEntryRequestType": ".text_to_speech_log_entry_request_type",
+    "TextToSpeechLogsResponse": ".text_to_speech_logs_response",
     "Tool": ".tool",
     "ToolType": ".tool_type",
     "TranscriptionResponse": ".transcription_response",
@@ -204,6 +241,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "Usage": ".usage",
     "UsagePromptTokensDetails": ".usage_prompt_tokens_details",
     "Utterance": ".utterance",
+    "ValuesTimeseriesResponse": ".values_timeseries_response",
+    "WebhookLogEntry": ".webhook_log_entry",
+    "WebhookLogsResponse": ".webhook_logs_response",
     "Word": ".word",
 }
 
@@ -252,8 +292,9 @@ __all__ = [
     "AsyncAccepted",
     "AudioChunk",
     "AudioChunkData",
-    "AudioChunkStatus",
     "BadRequestErrorBody",
+    "CatalogVoice",
+    "CatalogVoiceTags",
     "ChatCompletion",
     "ChatCompletionChoicesItem",
     "ChatCompletionChoicesItemFinishReason",
@@ -266,12 +307,17 @@ __all__ = [
     "ConversationItemRole",
     "ConversationItemStatus",
     "ConversationItemType",
+    "CountTimeseriesResponse",
+    "CreateVoiceCloneWavesRequestLanguage",
     "CreateVoiceCloneWavesRequestModel",
     "CreateVoiceCloneWavesResponse",
     "CreateVoiceCloneWavesResponseData",
     "CreateVoiceCloneWavesResponseDataSamplesItem",
     "CreateVoiceCloneWavesResponseDataStatus",
+    "CreditsTimeseriesResponse",
     "DeletePronunciationDictResponse",
+    "DispositionMetric",
+    "DispositionMetricDispositionMetricType",
     "ElectronMessage",
     "ElectronToolCall",
     "ElectronToolCallFunction",
@@ -286,6 +332,7 @@ __all__ = [
     "GetVoicesWavesResponse",
     "GetVoicesWavesResponseVoicesItem",
     "GetVoicesWavesResponseVoicesItemTags",
+    "HealthResponse",
     "InternalServerErrorBody",
     "InternalServerErrorBodyErrorCode",
     "LightningLargeRequest",
@@ -301,17 +348,27 @@ __all__ = [
     "ListVoiceClonesWavesResponseDataItem",
     "ListVoiceClonesWavesResponseDataItemCloningType",
     "ListVoiceClonesWavesResponseDataItemStatus",
+    "PcaResponse",
+    "PcaResponseDispositionMetricsItem",
     "PronunciationDict",
     "PronunciationItem",
+    "ServiceStatus",
     "SessionConfig",
     "SessionConfigVoice",
-    "StreamingTtsConfig",
+    "StreamingSpeechToTextLogEntry",
+    "StreamingSpeechToTextLogEntryRequestType",
+    "StreamingSpeechToTextLogsResponse",
     "SttErrorResponse",
     "SynthesizeLightningLargeWavesRequestOutputFormat",
     "SynthesizeLightningV2WavesRequestOutputFormat",
     "SynthesizeLightningWavesRequestOutputFormat",
     "SynthesizeSseLightningLargeWavesRequestOutputFormat",
     "SynthesizeSseLightningV2WavesRequestOutputFormat",
+    "SynthesizeSseTtsWavesRequestXExpireContent",
+    "SynthesizeTtsWavesRequestXExpireContent",
+    "TextToSpeechLogEntry",
+    "TextToSpeechLogEntryRequestType",
+    "TextToSpeechLogsResponse",
     "Tool",
     "ToolType",
     "TranscriptionResponse",
@@ -327,5 +384,8 @@ __all__ = [
     "Usage",
     "UsagePromptTokensDetails",
     "Utterance",
+    "ValuesTimeseriesResponse",
+    "WebhookLogEntry",
+    "WebhookLogsResponse",
     "Word",
 ]

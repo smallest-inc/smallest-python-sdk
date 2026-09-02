@@ -45,7 +45,7 @@ class PostCallAnalysisClient:
         Parameters
         ----------
         transcript : str
-            The full call transcript to analyze.
+            The full call transcript to analyze. Max 60,000 characters (~15,000 tokens / ~1 hour call).
 
         disposition_metrics : typing.Optional[typing.Sequence[DispositionMetric]]
             The metrics to extract. Omit or pass an empty array to get just a summary.
@@ -93,7 +93,7 @@ class PostCallAnalysisClient:
         Parameters
         ----------
         prompt : str
-            The prompt to generate from.
+            The prompt to generate from. Max 60,000 characters.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -150,7 +150,7 @@ class AsyncPostCallAnalysisClient:
         Parameters
         ----------
         transcript : str
-            The full call transcript to analyze.
+            The full call transcript to analyze. Max 60,000 characters (~15,000 tokens / ~1 hour call).
 
         disposition_metrics : typing.Optional[typing.Sequence[DispositionMetric]]
             The metrics to extract. Omit or pass an empty array to get just a summary.
@@ -206,7 +206,7 @@ class AsyncPostCallAnalysisClient:
         Parameters
         ----------
         prompt : str
-            The prompt to generate from.
+            The prompt to generate from. Max 60,000 characters.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

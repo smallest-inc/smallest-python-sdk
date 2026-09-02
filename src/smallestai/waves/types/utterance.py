@@ -11,7 +11,10 @@ class Utterance(UncheckedBaseModel):
     text: typing.Optional[str] = None
     start: typing.Optional[float] = None
     end: typing.Optional[float] = None
-    speaker: typing.Optional[str] = None
+    speaker: typing.Optional[int] = pydantic.Field(default=None)
+    """
+    Zero-indexed speaker label. Present when `diarize=true` was set on the request.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

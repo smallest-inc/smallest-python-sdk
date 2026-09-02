@@ -30,14 +30,20 @@ generations:
     cli_version: unknown
     generator_versions:
       fernapi/fern-python-sdk: 5.12.12
-current_generation: 0a211d42874771b6c014819e8da42459bfdca96a
+  - commit_sha: 112cd96cf7d8c39e1cd9790bc1f636cc55e9522c
+    tree_hash: a5e138c09db8e64532c90fe8773509a773d74604
+    timestamp: 2026-09-02T12:35:27.523Z
+    cli_version: unknown
+    generator_versions:
+      fernapi/fern-python-sdk: 5.12.12
+current_generation: 112cd96cf7d8c39e1cd9790bc1f636cc55e9522c
 patches:
   - id: patch-0c9e9b4e
     content_hash: sha256:43cbb1c853a3de0a20a4d1e151169f4039eec0f4d998b32978cb5038f2a3b665
     original_commit: 0c9e9b4e2286bd64653a1bdeb91a2b871a56668e
     original_message: "refactor: rename agent-swarm -> agent-crew across SDK + CLI (4.4.2)"
     original_author: Maharshi Chattopadhyay <maharshichattopadhyay@Maharshis-MacBook-Pro-M4.local>
-    base_generation: 0a211d42874771b6c014819e8da42459bfdca96a
+    base_generation: 112cd96cf7d8c39e1cd9790bc1f636cc55e9522c
     files:
       - src/smallestai/atoms/swarm/__init__.py
       - src/smallestai/atoms/swarm/clients/__init__.py
@@ -193,4 +199,2810 @@ patches:
       -from smallestai.atoms.swarm.nodes.output_swarm import OutputSwarmNode
       -
       -__all__ = ["BackgroundSwarmNode", "OutputSwarmNode", "SwarmNode"]
+    user_owned: true
+  - id: patch-8f5588f2
+    content_hash: sha256:818c489672eb8772d4d2e768923d457bb67654eb8dee754a860175fda54fb255
+    original_commit: 8f5588f22f0d26269162e1246245e6d2d7cbafd2
+    original_message: "docs(sdk): fix waves TTS method names in reference cheatsheet (#81)"
+    original_author: Tofu <geekabhi@outlook.com>
+    base_generation: 112cd96cf7d8c39e1cd9790bc1f636cc55e9522c
+    files:
+      - docs/reference/methods.md
+    patch_content: |
+      diff --git a/docs/reference/methods.md b/docs/reference/methods.md
+      new file mode 100644
+      index 0000000..bbd08f4
+      --- /dev/null
+      +++ b/docs/reference/methods.md
+      @@ -0,0 +1,61 @@
+      +# Method cheatsheet
+      +
+      +The names you'll actually call. When unsure, list them:
+      +`[m for m in dir(client.atoms.agents) if not m.startswith("_")]`.
+      +
+      +## Agents — `client.atoms.agents`
+      +
+      +| Do this | Call |
+      +|---|---|
+      +| Create an agent | `create_agent(name=..., workflow_type="single_prompt", first_message=...)` → `.data` is the **id string** |
+      +| Get one | `get_agent(id=...)` → `.data` |
+      +| List | `list_agents()` (wrap with `helpers.as_page`) |
+      +| Archive | `archive_agent(id=...)` |
+      +| Duplicate | `duplicate_agent(id=...)` |
+      +| Create from a brief | `create_with_ai(description=...)` |
+      +| Call logs for an agent | `list_call_logs(id=...)` |
+      +
+      +## Tools / transfer — `atoms.helpers.AgentTools`
+      +
+      +| Do this | Call |
+      +|---|---|
+      +| Add a transfer | `add_transfer_call(agent_id, number=..., transfer_type="cold_transfer"|"warm_transfer", on_hold_music=...)` |
+      +| Set/merge tools | `set_tools(agent_id, [...], replace=False, make_live=True)` |
+      +| Read live tools | `get_tools(agent_id)` |
+      +| Remove a tool | `remove_tool(agent_id, name)` |
+      +
+      +Do **not** set tools via `create_agent`/`update_agent` (no tools param) or the
+      +legacy workflow doc (ignored on live calls).
+      +
+      +## Calls — `client.atoms.calls`
+      +
+      +| Do this | Call |
+      +|---|---|
+      +| Place outbound | `start_outbound_call(agent_id=..., phone_number=..., from_product_id=...)` |
+      +| Get one | `get(id="CALL-...")` |
+      +| List | `list(agent_ids=..., limit=..., call_types=...)` → `.data.logs` |
+      +| Search | `search(...)` |
+      +
+      +## Versioning — `client.atoms.agent_versioning_branches` / `...revisions`
+      +
+      +Branch/revision model (v2). The v1 `agent_versioning_drafts` /
+      +`agent_versioning_versions` are deprecated (return 409). For tools/prompt, prefer
+      +`AgentTools` / the versioning helper.
+      +
+      +## Crew — `smallestai.atoms.crew`
+      +
+      +| Thing | Import |
+      +|---|---|
+      +| Node base | `from smallestai.atoms.crew.nodes import OutputCrewNode` |
+      +| Transfer event | `from smallestai.atoms.crew.events import SDKAgentTransferConversationEvent, TransferOption, TransferOptionType` |
+      +
+      +## Waves (speech) — `client.waves`
+      +
+      +| Do this | Call |
+      +|---|---|
+      +| Text to speech (file) | `waves.synthesize_tts(...)` / `waves.synthesize_lightning(...)` |
+      +| Text to speech (SSE) | `waves.synthesize_sse_tts(...)` |
+      +| Text to speech (stream) | `waves.tts.connect(...)` |
+      +| Speech to text (file) | `waves.speech_to_text.transcribe(...)` |
+      +| Speech to text (stream) | `waves.speech_to_text.stream(...)` |
+      +| Voice cloning | `waves.create_voice_clone(...)` / `list_voice_clones()` |
+    theirs_snapshot:
+      docs/reference/methods.md: |
+        # Method cheatsheet
+
+        The names you'll actually call. When unsure, list them:
+        `[m for m in dir(client.atoms.agents) if not m.startswith("_")]`.
+
+        ## Agents — `client.atoms.agents`
+
+        | Do this | Call |
+        |---|---|
+        | Create an agent | `create_agent(name=..., workflow_type="single_prompt", first_message=...)` → `.data` is the **id string** |
+        | Get one | `get_agent(id=...)` → `.data` |
+        | List | `list_agents()` (wrap with `helpers.as_page`) |
+        | Archive | `archive_agent(id=...)` |
+        | Duplicate | `duplicate_agent(id=...)` |
+        | Create from a brief | `create_with_ai(description=...)` |
+        | Call logs for an agent | `list_call_logs(id=...)` |
+
+        ## Tools / transfer — `atoms.helpers.AgentTools`
+
+        | Do this | Call |
+        |---|---|
+        | Add a transfer | `add_transfer_call(agent_id, number=..., transfer_type="cold_transfer"|"warm_transfer", on_hold_music=...)` |
+        | Set/merge tools | `set_tools(agent_id, [...], replace=False, make_live=True)` |
+        | Read live tools | `get_tools(agent_id)` |
+        | Remove a tool | `remove_tool(agent_id, name)` |
+
+        Do **not** set tools via `create_agent`/`update_agent` (no tools param) or the
+        legacy workflow doc (ignored on live calls).
+
+        ## Calls — `client.atoms.calls`
+
+        | Do this | Call |
+        |---|---|
+        | Place outbound | `start_outbound_call(agent_id=..., phone_number=..., from_product_id=...)` |
+        | Get one | `get(id="CALL-...")` |
+        | List | `list(agent_ids=..., limit=..., call_types=...)` → `.data.logs` |
+        | Search | `search(...)` |
+
+        ## Versioning — `client.atoms.agent_versioning_branches` / `...revisions`
+
+        Branch/revision model (v2). The v1 `agent_versioning_drafts` /
+        `agent_versioning_versions` are deprecated (return 409). For tools/prompt, prefer
+        `AgentTools` / the versioning helper.
+
+        ## Crew — `smallestai.atoms.crew`
+
+        | Thing | Import |
+        |---|---|
+        | Node base | `from smallestai.atoms.crew.nodes import OutputCrewNode` |
+        | Transfer event | `from smallestai.atoms.crew.events import SDKAgentTransferConversationEvent, TransferOption, TransferOptionType` |
+
+        ## Waves (speech) — `client.waves`
+
+        | Do this | Call |
+        |---|---|
+        | Text to speech (file) | `waves.synthesize_tts(...)` / `waves.synthesize_lightning(...)` |
+        | Text to speech (SSE) | `waves.synthesize_sse_tts(...)` |
+        | Text to speech (stream) | `waves.tts.connect(...)` |
+        | Speech to text (file) | `waves.speech_to_text.transcribe(...)` |
+        | Speech to text (stream) | `waves.speech_to_text.stream(...)` |
+        | Voice cloning | `waves.create_voice_clone(...)` / `list_voice_clones()` |
+    user_owned: true
+  - id: patch-a7b7c3b9
+    content_hash: sha256:fa760885e42eca0777d9912bb84cfe593a65478003566a67f4a13d6c2fc52478
+    original_commit: a7b7c3b9314ba869a9890dbcb316084d7163b112
+    original_message: "feat(errors): actionable messages + PlanNotEntitledError for plan-gated 403s (#87)"
+    original_author: Tofu <geekabhi@outlook.com>
+    base_generation: 112cd96cf7d8c39e1cd9790bc1f636cc55e9522c
+    files:
+      - src/smallestai/__init__.py
+    patch_content: |
+      diff --git a/src/smallestai/__init__.py b/src/smallestai/__init__.py
+      index b4388a2..074279c 100644
+      --- a/src/smallestai/__init__.py
+      +++ b/src/smallestai/__init__.py
+      @@ -6,9 +6,10 @@ import typing
+       from importlib import import_module
+       
+       if typing.TYPE_CHECKING:
+      -    from . import atoms, waves
+      +    from . import atoms, errors, waves
+           from ._default_clients import DefaultAioHttpClient, DefaultAsyncHttpxClient
+           from .atoms.client import AsyncAtomsClient, AtomsClient
+      +    from .atoms.errors.bad_request_error import PlanNotEntitledError
+           from .client import AsyncSmallestAI, SmallestAI
+           from .environment import SmallestAIEnvironment
+           from .version import __version__
+      @@ -20,11 +21,13 @@ _dynamic_imports: typing.Dict[str, str] = {
+           "AtomsClient": ".atoms.client",
+           "DefaultAioHttpClient": "._default_clients",
+           "DefaultAsyncHttpxClient": "._default_clients",
+      +    "PlanNotEntitledError": ".atoms.errors.bad_request_error",
+           "SmallestAI": ".client",
+           "SmallestAIEnvironment": ".environment",
+           "WavesClient": ".waves.client",
+           "__version__": ".version",
+           "atoms": ".atoms",
+      +    "errors": ".errors",
+           "waves": ".waves",
+       }
+       
+      @@ -57,10 +60,12 @@ __all__ = [
+           "AtomsClient",
+           "DefaultAioHttpClient",
+           "DefaultAsyncHttpxClient",
+      +    "PlanNotEntitledError",
+           "SmallestAI",
+           "SmallestAIEnvironment",
+           "WavesClient",
+           "__version__",
+           "atoms",
+      +    "errors",
+           "waves",
+       ]
+    theirs_snapshot:
+      src/smallestai/__init__.py: |
+        # This file was auto-generated by Fern from our API Definition.
+
+        # isort: skip_file
+
+        import typing
+        from importlib import import_module
+
+        if typing.TYPE_CHECKING:
+            from . import atoms, errors, waves
+            from ._default_clients import DefaultAioHttpClient, DefaultAsyncHttpxClient
+            from .atoms.client import AsyncAtomsClient, AtomsClient
+            from .atoms.errors.bad_request_error import PlanNotEntitledError
+            from .client import AsyncSmallestAI, SmallestAI
+            from .environment import SmallestAIEnvironment
+            from .version import __version__
+            from .waves.client import AsyncWavesClient, WavesClient
+        _dynamic_imports: typing.Dict[str, str] = {
+            "AsyncAtomsClient": ".atoms.client",
+            "AsyncSmallestAI": ".client",
+            "AsyncWavesClient": ".waves.client",
+            "AtomsClient": ".atoms.client",
+            "DefaultAioHttpClient": "._default_clients",
+            "DefaultAsyncHttpxClient": "._default_clients",
+            "PlanNotEntitledError": ".atoms.errors.bad_request_error",
+            "SmallestAI": ".client",
+            "SmallestAIEnvironment": ".environment",
+            "WavesClient": ".waves.client",
+            "__version__": ".version",
+            "atoms": ".atoms",
+            "errors": ".errors",
+            "waves": ".waves",
+        }
+
+
+        def __getattr__(attr_name: str) -> typing.Any:
+            module_name = _dynamic_imports.get(attr_name)
+            if module_name is None:
+                raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
+            try:
+                module = import_module(module_name, __package__)
+                if module_name == f".{attr_name}":
+                    return module
+                else:
+                    return getattr(module, attr_name)
+            except ImportError as e:
+                raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
+            except AttributeError as e:
+                raise AttributeError(f"Failed to get {attr_name} from {module_name}: {e}") from e
+
+
+        def __dir__():
+            lazy_attrs = list(_dynamic_imports.keys())
+            return sorted(lazy_attrs)
+
+
+        __all__ = [
+            "AsyncAtomsClient",
+            "AsyncSmallestAI",
+            "AsyncWavesClient",
+            "AtomsClient",
+            "DefaultAioHttpClient",
+            "DefaultAsyncHttpxClient",
+            "PlanNotEntitledError",
+            "SmallestAI",
+            "SmallestAIEnvironment",
+            "WavesClient",
+            "__version__",
+            "atoms",
+            "errors",
+            "waves",
+        ]
+  - id: patch-c273a159
+    content_hash: sha256:da455623748a909e48d212a69512e010f39583ce498a121006bb0d5ddf9b5ce1
+    original_commit: c273a1591cef0b6646f8a8a0e91f6d9abafd8254
+    original_message: "fix: waves endpoints target the waves host (5.10.1) (#97)"
+    original_author: Tofu <geekabhi@outlook.com>
+    base_generation: 112cd96cf7d8c39e1cd9790bc1f636cc55e9522c
+    files:
+      - src/smallestai/waves/analytics/raw_client.py
+      - src/smallestai/waves/ops/raw_client.py
+      - src/smallestai/waves/post_call_analysis/raw_client.py
+      - src/smallestai/waves/voices/raw_client.py
+    patch_content: |
+      diff --git a/src/smallestai/waves/ops/raw_client.py b/src/smallestai/waves/ops/raw_client.py
+      index 96f3072..5bbdafb 100644
+      --- a/src/smallestai/waves/ops/raw_client.py
+      +++ b/src/smallestai/waves/ops/raw_client.py
+      @@ -72,6 +72,73 @@ class RawOpsClient:
+                   )
+               raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+       
+      +    def get_subscription(
+      +        self, *, request_options: typing.Optional[RequestOptions] = None
+      +    ) -> HttpResponse[GetSubscriptionUserResponse]:
+      +        """
+      +        Returns the organization's current subscription: plan id, credit balance,
+      +        renewal date, and the per-plan `limits` (agents, campaigns, numbers, daily and
+      +        concurrent calls, knowledge-base sizes) plus the `features` map that gates
+      +        capabilities like telephony, campaigns, and webhooks. Use it to check remaining
+      +        credits or whether a feature is enabled before attempting an action.
+      +
+      +        Parameters
+      +        ----------
+      +        request_options : typing.Optional[RequestOptions]
+      +            Request-specific configuration.
+      +
+      +        Returns
+      +        -------
+      +        HttpResponse[GetSubscriptionUserResponse]
+      +            Successful response
+      +        """
+      +        _response = self._client_wrapper.httpx_client.request(
+      +            "user/subscription",
+      +            base_url=self._client_wrapper.get_environment().atoms,
+      +            method="GET",
+      +            request_options=request_options,
+      +        )
+      +        try:
+      +            if 200 <= _response.status_code < 300:
+      +                _data = typing.cast(
+      +                    GetSubscriptionUserResponse,
+      +                    construct_type(
+      +                        type_=GetSubscriptionUserResponse,  # type: ignore
+      +                        object_=_response.json(),
+      +                    ),
+      +                )
+      +                return HttpResponse(response=_response, data=_data)
+      +            if _response.status_code == 401:
+      +                raise UnauthorizedError(
+      +                    headers=dict(_response.headers),
+      +                    body=typing.cast(
+      +                        typing.Any,
+      +                        construct_type(
+      +                            type_=typing.Any,  # type: ignore
+      +                            object_=_response.json(),
+      +                        ),
+      +                    ),
+      +                )
+      +            if _response.status_code == 500:
+      +                raise InternalServerError(
+      +                    headers=dict(_response.headers),
+      +                    body=typing.cast(
+      +                        typing.Any,
+      +                        construct_type(
+      +                            type_=typing.Any,  # type: ignore
+      +                            object_=_response.json(),
+      +                        ),
+      +                    ),
+      +                )
+      +            _response_json = _response.json()
+      +        except JSONDecodeError:
+      +            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+      +        except ValidationError as e:
+      +            raise ParsingError(
+      +                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+      +            )
+      +        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+      +
+       
+       class AsyncRawOpsClient:
+           def __init__(self, *, client_wrapper: AsyncClientWrapper):
+      @@ -130,3 +197,70 @@ class AsyncRawOpsClient:
+                       status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                   )
+               raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+      +
+      +    async def get_subscription(
+      +        self, *, request_options: typing.Optional[RequestOptions] = None
+      +    ) -> AsyncHttpResponse[GetSubscriptionUserResponse]:
+      +        """
+      +        Returns the organization's current subscription: plan id, credit balance,
+      +        renewal date, and the per-plan `limits` (agents, campaigns, numbers, daily and
+      +        concurrent calls, knowledge-base sizes) plus the `features` map that gates
+      +        capabilities like telephony, campaigns, and webhooks. Use it to check remaining
+      +        credits or whether a feature is enabled before attempting an action.
+      +
+      +        Parameters
+      +        ----------
+      +        request_options : typing.Optional[RequestOptions]
+      +            Request-specific configuration.
+      +
+      +        Returns
+      +        -------
+      +        AsyncHttpResponse[GetSubscriptionUserResponse]
+      +            Successful response
+      +        """
+      +        _response = await self._client_wrapper.httpx_client.request(
+      +            "user/subscription",
+      +            base_url=self._client_wrapper.get_environment().atoms,
+      +            method="GET",
+      +            request_options=request_options,
+      +        )
+      +        try:
+      +            if 200 <= _response.status_code < 300:
+      +                _data = typing.cast(
+      +                    GetSubscriptionUserResponse,
+      +                    construct_type(
+      +                        type_=GetSubscriptionUserResponse,  # type: ignore
+      +                        object_=_response.json(),
+      +                    ),
+      +                )
+      +                return AsyncHttpResponse(response=_response, data=_data)
+      +            if _response.status_code == 401:
+      +                raise UnauthorizedError(
+      +                    headers=dict(_response.headers),
+      +                    body=typing.cast(
+      +                        typing.Any,
+      +                        construct_type(
+      +                            type_=typing.Any,  # type: ignore
+      +                            object_=_response.json(),
+      +                        ),
+      +                    ),
+      +                )
+      +            if _response.status_code == 500:
+      +                raise InternalServerError(
+      +                    headers=dict(_response.headers),
+      +                    body=typing.cast(
+      +                        typing.Any,
+      +                        construct_type(
+      +                            type_=typing.Any,  # type: ignore
+      +                            object_=_response.json(),
+      +                        ),
+      +                    ),
+      +                )
+      +            _response_json = _response.json()
+      +        except JSONDecodeError:
+      +            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+      +        except ValidationError as e:
+      +            raise ParsingError(
+      +                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+      +            )
+      +        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+    theirs_snapshot:
+      src/smallestai/waves/analytics/raw_client.py: |
+        # This file was auto-generated by Fern from our API Definition.
+
+        import datetime as dt
+        import typing
+        from json.decoder import JSONDecodeError
+
+        from ...core.api_error import ApiError
+        from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+        from ...core.datetime_utils import serialize_datetime
+        from ...core.http_response import AsyncHttpResponse, HttpResponse
+        from ...core.jsonable_encoder import encode_path_param
+        from ...core.parse_error import ParsingError
+        from ...core.request_options import RequestOptions
+        from ...core.unchecked_base_model import construct_type
+        from ..errors.internal_server_error import InternalServerError
+        from ..errors.unauthorized_error import UnauthorizedError
+        from ..types.count_timeseries_response import CountTimeseriesResponse
+        from ..types.credits_timeseries_response import CreditsTimeseriesResponse
+        from ..types.streaming_speech_to_text_logs_response import StreamingSpeechToTextLogsResponse
+        from ..types.text_to_speech_logs_response import TextToSpeechLogsResponse
+        from ..types.values_timeseries_response import ValuesTimeseriesResponse
+        from ..types.webhook_logs_response import WebhookLogsResponse
+        from .types.delete_streaming_speech_to_text_history_response import DeleteStreamingSpeechToTextHistoryResponse
+        from .types.list_webhook_logs_request_status import ListWebhookLogsRequestStatus
+        from pydantic import ValidationError
+
+
+        class RawAnalyticsClient:
+            def __init__(self, *, client_wrapper: SyncClientWrapper):
+                self._client_wrapper = client_wrapper
+
+            def list_streaming_speech_to_text_logs(
+                self,
+                *,
+                page: typing.Optional[int] = None,
+                page_size: typing.Optional[int] = None,
+                text: typing.Optional[str] = None,
+                language: typing.Optional[str] = None,
+                model: typing.Optional[str] = None,
+                duration_min: typing.Optional[float] = None,
+                duration_max: typing.Optional[float] = None,
+                timestamp_from: typing.Optional[int] = None,
+                timestamp_to: typing.Optional[int] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> HttpResponse[StreamingSpeechToTextLogsResponse]:
+                """
+                Paginated log of Speech to Text requests for the calling organization. Each entry
+                records the model used, the transcript, the request parameters that were on the
+                wire (word timestamps, diarization, PII / PCI redaction, keyword boosting), and
+                any downstream signals the request opted into (emotion, gender, keyword hits).
+                Use this to audit request-level activity or to reconcile with your own logs.
+
+                Parameters
+                ----------
+                page : typing.Optional[int]
+                    1-indexed page number.
+
+                page_size : typing.Optional[int]
+                    Number of records per page. Max 50.
+
+                text : typing.Optional[str]
+                    Case-insensitive substring match against the transcription.
+
+                language : typing.Optional[str]
+                    Exact-match filter on language code (e.g. `en`, `hi`).
+
+                model : typing.Optional[str]
+                    Exact-match filter on STT model (e.g. `pulse`).
+
+                duration_min : typing.Optional[float]
+                    Minimum audio duration in seconds.
+
+                duration_max : typing.Optional[float]
+                    Maximum audio duration in seconds.
+
+                timestamp_from : typing.Optional[int]
+                    Lower bound on request timestamp, Unix seconds.
+
+                timestamp_to : typing.Optional[int]
+                    Upper bound on request timestamp, Unix seconds.
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                HttpResponse[StreamingSpeechToTextLogsResponse]
+                    STT logs retrieved successfully.
+                """
+                _response = self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/asr/logs",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "page": page,
+                        "pageSize": page_size,
+                        "text": text,
+                        "language": language,
+                        "model": model,
+                        "durationMin": duration_min,
+                        "durationMax": duration_max,
+                        "timestampFrom": timestamp_from,
+                        "timestampTo": timestamp_to,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            StreamingSpeechToTextLogsResponse,
+                            construct_type(
+                                type_=StreamingSpeechToTextLogsResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return HttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            def delete_streaming_speech_to_text_history(
+                self, request_id: str, *, request_options: typing.Optional[RequestOptions] = None
+            ) -> HttpResponse[DeleteStreamingSpeechToTextHistoryResponse]:
+                """
+                Soft-deletes a single Speech to Text request from the org's analytics history.
+                Idempotent: a `request_id` that does not exist still returns `success`. Use this
+                to redact a specific transcript from the dashboard log view.
+
+                Parameters
+                ----------
+                request_id : str
+                    The `request_id` (UUID) of the STT request to delete.
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                HttpResponse[DeleteStreamingSpeechToTextHistoryResponse]
+                    History entry deleted (or was already absent).
+                """
+                _response = self._client_wrapper.httpx_client.request(
+                    f"waves/v1/analytics/asr/history/{encode_path_param(request_id)}",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="DELETE",
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            DeleteStreamingSpeechToTextHistoryResponse,
+                            construct_type(
+                                type_=DeleteStreamingSpeechToTextHistoryResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return HttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            def get_streaming_speech_to_text_usage_timeseries(
+                self,
+                *,
+                from_: typing.Optional[dt.datetime] = None,
+                to: typing.Optional[dt.datetime] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> HttpResponse[CountTimeseriesResponse]:
+                """
+                Bucketed request count for Speech to Text over a datetime range. Use for a
+                traffic chart on the STT dashboard, or to reconcile daily usage.
+
+                Parameters
+                ----------
+                from_ : typing.Optional[dt.datetime]
+                    Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+
+                to : typing.Optional[dt.datetime]
+                    End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                HttpResponse[CountTimeseriesResponse]
+                    Timeseries retrieved successfully.
+                """
+                _response = self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/asr/usage/timeseries",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "from": serialize_datetime(from_) if from_ is not None else None,
+                        "to": serialize_datetime(to) if to is not None else None,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            CountTimeseriesResponse,
+                            construct_type(
+                                type_=CountTimeseriesResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return HttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            def list_text_to_speech_logs(
+                self,
+                *,
+                page: typing.Optional[int] = None,
+                page_size: typing.Optional[int] = None,
+                text: typing.Optional[str] = None,
+                credits_min: typing.Optional[float] = None,
+                credits_max: typing.Optional[float] = None,
+                timestamp_from: typing.Optional[int] = None,
+                timestamp_to: typing.Optional[int] = None,
+                model: typing.Optional[str] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> HttpResponse[TextToSpeechLogsResponse]:
+                """
+                Paginated log of Text to Speech requests. Each entry records the model, voice,
+                input text length, sample rate, output format, and credits consumed.
+
+                Parameters
+                ----------
+                page : typing.Optional[int]
+                    1-indexed page number.
+
+                page_size : typing.Optional[int]
+                    Number of records per page. Max 50.
+
+                text : typing.Optional[str]
+                    Case-insensitive substring match against the input text.
+
+                credits_min : typing.Optional[float]
+                    Minimum credits consumed by the request.
+
+                credits_max : typing.Optional[float]
+                    Maximum credits consumed by the request.
+
+                timestamp_from : typing.Optional[int]
+                    Lower bound on request timestamp, Unix seconds.
+
+                timestamp_to : typing.Optional[int]
+                    Upper bound on request timestamp, Unix seconds.
+
+                model : typing.Optional[str]
+                    Exact-match filter on TTS model (e.g. `lightning-v3.1-pro`).
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                HttpResponse[TextToSpeechLogsResponse]
+                    TTS logs retrieved successfully.
+                """
+                _response = self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/tts/logs",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "page": page,
+                        "pageSize": page_size,
+                        "text": text,
+                        "creditsMin": credits_min,
+                        "creditsMax": credits_max,
+                        "timestampFrom": timestamp_from,
+                        "timestampTo": timestamp_to,
+                        "model": model,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            TextToSpeechLogsResponse,
+                            construct_type(
+                                type_=TextToSpeechLogsResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return HttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            def get_text_to_speech_usage_timeseries(
+                self,
+                *,
+                from_: typing.Optional[dt.datetime] = None,
+                to: typing.Optional[dt.datetime] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> HttpResponse[CountTimeseriesResponse]:
+                """
+                Bucketed request count for Text to Speech over a datetime range.
+
+                Parameters
+                ----------
+                from_ : typing.Optional[dt.datetime]
+                    Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+
+                to : typing.Optional[dt.datetime]
+                    End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                HttpResponse[CountTimeseriesResponse]
+                    Timeseries retrieved successfully.
+                """
+                _response = self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/tts/usage/timeseries",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "from": serialize_datetime(from_) if from_ is not None else None,
+                        "to": serialize_datetime(to) if to is not None else None,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            CountTimeseriesResponse,
+                            construct_type(
+                                type_=CountTimeseriesResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return HttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            def get_text_to_speech_credits_timeseries(
+                self,
+                *,
+                from_: typing.Optional[dt.datetime] = None,
+                to: typing.Optional[dt.datetime] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> HttpResponse[CreditsTimeseriesResponse]:
+                """
+                Bucketed credit spend for Text to Speech over a datetime range. Use this to
+                forecast spend or reconcile bills.
+
+                Parameters
+                ----------
+                from_ : typing.Optional[dt.datetime]
+                    Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+
+                to : typing.Optional[dt.datetime]
+                    End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                HttpResponse[CreditsTimeseriesResponse]
+                    Credit timeseries retrieved successfully.
+                """
+                _response = self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/tts/usage/credits/timeseries",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "from": serialize_datetime(from_) if from_ is not None else None,
+                        "to": serialize_datetime(to) if to is not None else None,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            CreditsTimeseriesResponse,
+                            construct_type(
+                                type_=CreditsTimeseriesResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return HttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            def get_text_to_speech_concurrency_timeseries(
+                self,
+                *,
+                from_: typing.Optional[dt.datetime] = None,
+                to: typing.Optional[dt.datetime] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> HttpResponse[ValuesTimeseriesResponse]:
+                """
+                Bucketed peak concurrency (simultaneous active TTS requests) over a datetime
+                range. Use to size against your account concurrency cap.
+
+                Parameters
+                ----------
+                from_ : typing.Optional[dt.datetime]
+                    Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+
+                to : typing.Optional[dt.datetime]
+                    End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                HttpResponse[ValuesTimeseriesResponse]
+                    Concurrency timeseries retrieved successfully.
+                """
+                _response = self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/tts/concurrency/timeseries",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "from": serialize_datetime(from_) if from_ is not None else None,
+                        "to": serialize_datetime(to) if to is not None else None,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            ValuesTimeseriesResponse,
+                            construct_type(
+                                type_=ValuesTimeseriesResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return HttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            def get_text_to_speech_websocket_connections_timeseries(
+                self,
+                *,
+                from_: typing.Optional[dt.datetime] = None,
+                to: typing.Optional[dt.datetime] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> HttpResponse[ValuesTimeseriesResponse]:
+                """
+                Bucketed count of open TTS WebSocket connections over a datetime range.
+
+                Parameters
+                ----------
+                from_ : typing.Optional[dt.datetime]
+                    Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+
+                to : typing.Optional[dt.datetime]
+                    End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                HttpResponse[ValuesTimeseriesResponse]
+                    WebSocket-connection timeseries retrieved successfully.
+                """
+                _response = self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/tts/ws-connections/timeseries",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "from": serialize_datetime(from_) if from_ is not None else None,
+                        "to": serialize_datetime(to) if to is not None else None,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            ValuesTimeseriesResponse,
+                            construct_type(
+                                type_=ValuesTimeseriesResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return HttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            def list_webhook_logs(
+                self,
+                *,
+                page: typing.Optional[int] = None,
+                page_size: typing.Optional[int] = None,
+                timestamp_from: typing.Optional[int] = None,
+                timestamp_to: typing.Optional[int] = None,
+                status: typing.Optional[ListWebhookLogsRequestStatus] = None,
+                webhook_url: typing.Optional[str] = None,
+                event_type: typing.Optional[str] = None,
+                request_id: typing.Optional[str] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> HttpResponse[WebhookLogsResponse]:
+                """
+                Paginated log of webhook delivery attempts (e.g. `asr.completed` callbacks).
+                Each entry records the destination URL, HTTP method, event type, delivery
+                status, attempt number, response status code, and any error.
+
+                Parameters
+                ----------
+                page : typing.Optional[int]
+                    1-indexed page number.
+
+                page_size : typing.Optional[int]
+                    Number of records per page. Max 50.
+
+                timestamp_from : typing.Optional[int]
+                    Lower bound on delivery timestamp, Unix seconds.
+
+                timestamp_to : typing.Optional[int]
+                    Upper bound on delivery timestamp, Unix seconds.
+
+                status : typing.Optional[ListWebhookLogsRequestStatus]
+                    Delivery-outcome filter.
+
+                webhook_url : typing.Optional[str]
+                    Case-insensitive substring match against the destination URL.
+
+                event_type : typing.Optional[str]
+                    Exact-match filter on event type (e.g. `asr.completed`).
+
+                request_id : typing.Optional[str]
+                    Case-insensitive substring match against the source request id.
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                HttpResponse[WebhookLogsResponse]
+                    Webhook logs retrieved successfully.
+                """
+                _response = self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/webhooks/logs",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "page": page,
+                        "pageSize": page_size,
+                        "timestampFrom": timestamp_from,
+                        "timestampTo": timestamp_to,
+                        "status": status,
+                        "webhookUrl": webhook_url,
+                        "eventType": event_type,
+                        "requestId": request_id,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            WebhookLogsResponse,
+                            construct_type(
+                                type_=WebhookLogsResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return HttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+
+        class AsyncRawAnalyticsClient:
+            def __init__(self, *, client_wrapper: AsyncClientWrapper):
+                self._client_wrapper = client_wrapper
+
+            async def list_streaming_speech_to_text_logs(
+                self,
+                *,
+                page: typing.Optional[int] = None,
+                page_size: typing.Optional[int] = None,
+                text: typing.Optional[str] = None,
+                language: typing.Optional[str] = None,
+                model: typing.Optional[str] = None,
+                duration_min: typing.Optional[float] = None,
+                duration_max: typing.Optional[float] = None,
+                timestamp_from: typing.Optional[int] = None,
+                timestamp_to: typing.Optional[int] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> AsyncHttpResponse[StreamingSpeechToTextLogsResponse]:
+                """
+                Paginated log of Speech to Text requests for the calling organization. Each entry
+                records the model used, the transcript, the request parameters that were on the
+                wire (word timestamps, diarization, PII / PCI redaction, keyword boosting), and
+                any downstream signals the request opted into (emotion, gender, keyword hits).
+                Use this to audit request-level activity or to reconcile with your own logs.
+
+                Parameters
+                ----------
+                page : typing.Optional[int]
+                    1-indexed page number.
+
+                page_size : typing.Optional[int]
+                    Number of records per page. Max 50.
+
+                text : typing.Optional[str]
+                    Case-insensitive substring match against the transcription.
+
+                language : typing.Optional[str]
+                    Exact-match filter on language code (e.g. `en`, `hi`).
+
+                model : typing.Optional[str]
+                    Exact-match filter on STT model (e.g. `pulse`).
+
+                duration_min : typing.Optional[float]
+                    Minimum audio duration in seconds.
+
+                duration_max : typing.Optional[float]
+                    Maximum audio duration in seconds.
+
+                timestamp_from : typing.Optional[int]
+                    Lower bound on request timestamp, Unix seconds.
+
+                timestamp_to : typing.Optional[int]
+                    Upper bound on request timestamp, Unix seconds.
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                AsyncHttpResponse[StreamingSpeechToTextLogsResponse]
+                    STT logs retrieved successfully.
+                """
+                _response = await self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/asr/logs",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "page": page,
+                        "pageSize": page_size,
+                        "text": text,
+                        "language": language,
+                        "model": model,
+                        "durationMin": duration_min,
+                        "durationMax": duration_max,
+                        "timestampFrom": timestamp_from,
+                        "timestampTo": timestamp_to,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            StreamingSpeechToTextLogsResponse,
+                            construct_type(
+                                type_=StreamingSpeechToTextLogsResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return AsyncHttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            async def delete_streaming_speech_to_text_history(
+                self, request_id: str, *, request_options: typing.Optional[RequestOptions] = None
+            ) -> AsyncHttpResponse[DeleteStreamingSpeechToTextHistoryResponse]:
+                """
+                Soft-deletes a single Speech to Text request from the org's analytics history.
+                Idempotent: a `request_id` that does not exist still returns `success`. Use this
+                to redact a specific transcript from the dashboard log view.
+
+                Parameters
+                ----------
+                request_id : str
+                    The `request_id` (UUID) of the STT request to delete.
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                AsyncHttpResponse[DeleteStreamingSpeechToTextHistoryResponse]
+                    History entry deleted (or was already absent).
+                """
+                _response = await self._client_wrapper.httpx_client.request(
+                    f"waves/v1/analytics/asr/history/{encode_path_param(request_id)}",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="DELETE",
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            DeleteStreamingSpeechToTextHistoryResponse,
+                            construct_type(
+                                type_=DeleteStreamingSpeechToTextHistoryResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return AsyncHttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            async def get_streaming_speech_to_text_usage_timeseries(
+                self,
+                *,
+                from_: typing.Optional[dt.datetime] = None,
+                to: typing.Optional[dt.datetime] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> AsyncHttpResponse[CountTimeseriesResponse]:
+                """
+                Bucketed request count for Speech to Text over a datetime range. Use for a
+                traffic chart on the STT dashboard, or to reconcile daily usage.
+
+                Parameters
+                ----------
+                from_ : typing.Optional[dt.datetime]
+                    Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+
+                to : typing.Optional[dt.datetime]
+                    End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                AsyncHttpResponse[CountTimeseriesResponse]
+                    Timeseries retrieved successfully.
+                """
+                _response = await self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/asr/usage/timeseries",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "from": serialize_datetime(from_) if from_ is not None else None,
+                        "to": serialize_datetime(to) if to is not None else None,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            CountTimeseriesResponse,
+                            construct_type(
+                                type_=CountTimeseriesResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return AsyncHttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            async def list_text_to_speech_logs(
+                self,
+                *,
+                page: typing.Optional[int] = None,
+                page_size: typing.Optional[int] = None,
+                text: typing.Optional[str] = None,
+                credits_min: typing.Optional[float] = None,
+                credits_max: typing.Optional[float] = None,
+                timestamp_from: typing.Optional[int] = None,
+                timestamp_to: typing.Optional[int] = None,
+                model: typing.Optional[str] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> AsyncHttpResponse[TextToSpeechLogsResponse]:
+                """
+                Paginated log of Text to Speech requests. Each entry records the model, voice,
+                input text length, sample rate, output format, and credits consumed.
+
+                Parameters
+                ----------
+                page : typing.Optional[int]
+                    1-indexed page number.
+
+                page_size : typing.Optional[int]
+                    Number of records per page. Max 50.
+
+                text : typing.Optional[str]
+                    Case-insensitive substring match against the input text.
+
+                credits_min : typing.Optional[float]
+                    Minimum credits consumed by the request.
+
+                credits_max : typing.Optional[float]
+                    Maximum credits consumed by the request.
+
+                timestamp_from : typing.Optional[int]
+                    Lower bound on request timestamp, Unix seconds.
+
+                timestamp_to : typing.Optional[int]
+                    Upper bound on request timestamp, Unix seconds.
+
+                model : typing.Optional[str]
+                    Exact-match filter on TTS model (e.g. `lightning-v3.1-pro`).
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                AsyncHttpResponse[TextToSpeechLogsResponse]
+                    TTS logs retrieved successfully.
+                """
+                _response = await self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/tts/logs",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "page": page,
+                        "pageSize": page_size,
+                        "text": text,
+                        "creditsMin": credits_min,
+                        "creditsMax": credits_max,
+                        "timestampFrom": timestamp_from,
+                        "timestampTo": timestamp_to,
+                        "model": model,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            TextToSpeechLogsResponse,
+                            construct_type(
+                                type_=TextToSpeechLogsResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return AsyncHttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            async def get_text_to_speech_usage_timeseries(
+                self,
+                *,
+                from_: typing.Optional[dt.datetime] = None,
+                to: typing.Optional[dt.datetime] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> AsyncHttpResponse[CountTimeseriesResponse]:
+                """
+                Bucketed request count for Text to Speech over a datetime range.
+
+                Parameters
+                ----------
+                from_ : typing.Optional[dt.datetime]
+                    Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+
+                to : typing.Optional[dt.datetime]
+                    End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                AsyncHttpResponse[CountTimeseriesResponse]
+                    Timeseries retrieved successfully.
+                """
+                _response = await self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/tts/usage/timeseries",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "from": serialize_datetime(from_) if from_ is not None else None,
+                        "to": serialize_datetime(to) if to is not None else None,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            CountTimeseriesResponse,
+                            construct_type(
+                                type_=CountTimeseriesResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return AsyncHttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            async def get_text_to_speech_credits_timeseries(
+                self,
+                *,
+                from_: typing.Optional[dt.datetime] = None,
+                to: typing.Optional[dt.datetime] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> AsyncHttpResponse[CreditsTimeseriesResponse]:
+                """
+                Bucketed credit spend for Text to Speech over a datetime range. Use this to
+                forecast spend or reconcile bills.
+
+                Parameters
+                ----------
+                from_ : typing.Optional[dt.datetime]
+                    Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+
+                to : typing.Optional[dt.datetime]
+                    End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                AsyncHttpResponse[CreditsTimeseriesResponse]
+                    Credit timeseries retrieved successfully.
+                """
+                _response = await self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/tts/usage/credits/timeseries",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "from": serialize_datetime(from_) if from_ is not None else None,
+                        "to": serialize_datetime(to) if to is not None else None,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            CreditsTimeseriesResponse,
+                            construct_type(
+                                type_=CreditsTimeseriesResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return AsyncHttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            async def get_text_to_speech_concurrency_timeseries(
+                self,
+                *,
+                from_: typing.Optional[dt.datetime] = None,
+                to: typing.Optional[dt.datetime] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> AsyncHttpResponse[ValuesTimeseriesResponse]:
+                """
+                Bucketed peak concurrency (simultaneous active TTS requests) over a datetime
+                range. Use to size against your account concurrency cap.
+
+                Parameters
+                ----------
+                from_ : typing.Optional[dt.datetime]
+                    Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+
+                to : typing.Optional[dt.datetime]
+                    End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                AsyncHttpResponse[ValuesTimeseriesResponse]
+                    Concurrency timeseries retrieved successfully.
+                """
+                _response = await self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/tts/concurrency/timeseries",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "from": serialize_datetime(from_) if from_ is not None else None,
+                        "to": serialize_datetime(to) if to is not None else None,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            ValuesTimeseriesResponse,
+                            construct_type(
+                                type_=ValuesTimeseriesResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return AsyncHttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            async def get_text_to_speech_websocket_connections_timeseries(
+                self,
+                *,
+                from_: typing.Optional[dt.datetime] = None,
+                to: typing.Optional[dt.datetime] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> AsyncHttpResponse[ValuesTimeseriesResponse]:
+                """
+                Bucketed count of open TTS WebSocket connections over a datetime range.
+
+                Parameters
+                ----------
+                from_ : typing.Optional[dt.datetime]
+                    Start of the range, ISO 8601 datetime (e.g. `2026-08-01T00:00:00Z`).
+
+                to : typing.Optional[dt.datetime]
+                    End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                AsyncHttpResponse[ValuesTimeseriesResponse]
+                    WebSocket-connection timeseries retrieved successfully.
+                """
+                _response = await self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/tts/ws-connections/timeseries",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "from": serialize_datetime(from_) if from_ is not None else None,
+                        "to": serialize_datetime(to) if to is not None else None,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            ValuesTimeseriesResponse,
+                            construct_type(
+                                type_=ValuesTimeseriesResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return AsyncHttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            async def list_webhook_logs(
+                self,
+                *,
+                page: typing.Optional[int] = None,
+                page_size: typing.Optional[int] = None,
+                timestamp_from: typing.Optional[int] = None,
+                timestamp_to: typing.Optional[int] = None,
+                status: typing.Optional[ListWebhookLogsRequestStatus] = None,
+                webhook_url: typing.Optional[str] = None,
+                event_type: typing.Optional[str] = None,
+                request_id: typing.Optional[str] = None,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> AsyncHttpResponse[WebhookLogsResponse]:
+                """
+                Paginated log of webhook delivery attempts (e.g. `asr.completed` callbacks).
+                Each entry records the destination URL, HTTP method, event type, delivery
+                status, attempt number, response status code, and any error.
+
+                Parameters
+                ----------
+                page : typing.Optional[int]
+                    1-indexed page number.
+
+                page_size : typing.Optional[int]
+                    Number of records per page. Max 50.
+
+                timestamp_from : typing.Optional[int]
+                    Lower bound on delivery timestamp, Unix seconds.
+
+                timestamp_to : typing.Optional[int]
+                    Upper bound on delivery timestamp, Unix seconds.
+
+                status : typing.Optional[ListWebhookLogsRequestStatus]
+                    Delivery-outcome filter.
+
+                webhook_url : typing.Optional[str]
+                    Case-insensitive substring match against the destination URL.
+
+                event_type : typing.Optional[str]
+                    Exact-match filter on event type (e.g. `asr.completed`).
+
+                request_id : typing.Optional[str]
+                    Case-insensitive substring match against the source request id.
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                AsyncHttpResponse[WebhookLogsResponse]
+                    Webhook logs retrieved successfully.
+                """
+                _response = await self._client_wrapper.httpx_client.request(
+                    "waves/v1/analytics/webhooks/logs",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    params={
+                        "page": page,
+                        "pageSize": page_size,
+                        "timestampFrom": timestamp_from,
+                        "timestampTo": timestamp_to,
+                        "status": status,
+                        "webhookUrl": webhook_url,
+                        "eventType": event_type,
+                        "requestId": request_id,
+                    },
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            WebhookLogsResponse,
+                            construct_type(
+                                type_=WebhookLogsResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return AsyncHttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+      src/smallestai/waves/ops/raw_client.py: |
+        # This file was auto-generated by Fern from our API Definition.
+
+        import typing
+        from json.decoder import JSONDecodeError
+
+        from ...core.api_error import ApiError
+        from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+        from ...core.http_response import AsyncHttpResponse, HttpResponse
+        from ...core.parse_error import ParsingError
+        from ...core.request_options import RequestOptions
+        from ...core.unchecked_base_model import construct_type
+        from ..errors.service_unavailable_error import ServiceUnavailableError
+        from ..types.health_response import HealthResponse
+        from pydantic import ValidationError
+
+
+        class RawOpsClient:
+            def __init__(self, *, client_wrapper: SyncClientWrapper):
+                self._client_wrapper = client_wrapper
+
+            def get_waves_health(
+                self, *, request_options: typing.Optional[RequestOptions] = None
+            ) -> HttpResponse[HealthResponse]:
+                """
+                Liveness probe for the Waves control plane. Returns `status: "ok"` alongside
+                the connection state of the backing services (MongoDB, Redis, RabbitMQ). No
+                authentication required.
+
+                Parameters
+                ----------
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                HttpResponse[HealthResponse]
+                    Waves control plane is healthy.
+                """
+                _response = self._client_wrapper.httpx_client.request(
+                    "waves/v1/health",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            HealthResponse,
+                            construct_type(
+                                type_=HealthResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return HttpResponse(response=_response, data=_data)
+                    if _response.status_code == 503:
+                        raise ServiceUnavailableError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            def get_subscription(
+                self, *, request_options: typing.Optional[RequestOptions] = None
+            ) -> HttpResponse[GetSubscriptionUserResponse]:
+                """
+                Returns the organization's current subscription: plan id, credit balance,
+                renewal date, and the per-plan `limits` (agents, campaigns, numbers, daily and
+                concurrent calls, knowledge-base sizes) plus the `features` map that gates
+                capabilities like telephony, campaigns, and webhooks. Use it to check remaining
+                credits or whether a feature is enabled before attempting an action.
+
+                Parameters
+                ----------
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                HttpResponse[GetSubscriptionUserResponse]
+                    Successful response
+                """
+                _response = self._client_wrapper.httpx_client.request(
+                    "user/subscription",
+                    base_url=self._client_wrapper.get_environment().atoms,
+                    method="GET",
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            GetSubscriptionUserResponse,
+                            construct_type(
+                                type_=GetSubscriptionUserResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return HttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+
+        class AsyncRawOpsClient:
+            def __init__(self, *, client_wrapper: AsyncClientWrapper):
+                self._client_wrapper = client_wrapper
+
+            async def get_waves_health(
+                self, *, request_options: typing.Optional[RequestOptions] = None
+            ) -> AsyncHttpResponse[HealthResponse]:
+                """
+                Liveness probe for the Waves control plane. Returns `status: "ok"` alongside
+                the connection state of the backing services (MongoDB, Redis, RabbitMQ). No
+                authentication required.
+
+                Parameters
+                ----------
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                AsyncHttpResponse[HealthResponse]
+                    Waves control plane is healthy.
+                """
+                _response = await self._client_wrapper.httpx_client.request(
+                    "waves/v1/health",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            HealthResponse,
+                            construct_type(
+                                type_=HealthResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return AsyncHttpResponse(response=_response, data=_data)
+                    if _response.status_code == 503:
+                        raise ServiceUnavailableError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            async def get_subscription(
+                self, *, request_options: typing.Optional[RequestOptions] = None
+            ) -> AsyncHttpResponse[GetSubscriptionUserResponse]:
+                """
+                Returns the organization's current subscription: plan id, credit balance,
+                renewal date, and the per-plan `limits` (agents, campaigns, numbers, daily and
+                concurrent calls, knowledge-base sizes) plus the `features` map that gates
+                capabilities like telephony, campaigns, and webhooks. Use it to check remaining
+                credits or whether a feature is enabled before attempting an action.
+
+                Parameters
+                ----------
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                AsyncHttpResponse[GetSubscriptionUserResponse]
+                    Successful response
+                """
+                _response = await self._client_wrapper.httpx_client.request(
+                    "user/subscription",
+                    base_url=self._client_wrapper.get_environment().atoms,
+                    method="GET",
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            GetSubscriptionUserResponse,
+                            construct_type(
+                                type_=GetSubscriptionUserResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return AsyncHttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 500:
+                        raise InternalServerError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+      src/smallestai/waves/post_call_analysis/raw_client.py: |
+        # This file was auto-generated by Fern from our API Definition.
+
+        import typing
+        from json.decoder import JSONDecodeError
+
+        from ...core.api_error import ApiError
+        from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+        from ...core.http_response import AsyncHttpResponse, HttpResponse
+        from ...core.parse_error import ParsingError
+        from ...core.request_options import RequestOptions
+        from ...core.serialization import convert_and_respect_annotation_metadata
+        from ...core.unchecked_base_model import construct_type
+        from ..errors.bad_request_error import BadRequestError
+        from ..errors.unauthorized_error import UnauthorizedError
+        from ..types.disposition_metric import DispositionMetric
+        from ..types.pca_response import PcaResponse
+        from .types.generate_post_call_analysis_response import GeneratePostCallAnalysisResponse
+        from pydantic import ValidationError
+
+        # this is used as the default value for optional parameters
+        OMIT = typing.cast(typing.Any, ...)
+
+
+        class RawPostCallAnalysisClient:
+            def __init__(self, *, client_wrapper: SyncClientWrapper):
+                self._client_wrapper = client_wrapper
+
+            def analyze(
+                self,
+                *,
+                transcript: str,
+                disposition_metrics: typing.Optional[typing.Sequence[DispositionMetric]] = OMIT,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> HttpResponse[PcaResponse]:
+                """
+                Analyze a call transcript and extract structured disposition metrics. Provide the
+                transcript and the metrics you want extracted; the response returns a short summary
+                plus one result per requested metric, each with a value, a confidence score, and the
+                transcript evidence for it. Values are grounded strictly in the transcript (no
+                inference); when evidence is absent, the type's fallback is used.
+
+                Parameters
+                ----------
+                transcript : str
+                    The full call transcript to analyze. Max 60,000 characters (~15,000 tokens / ~1 hour call).
+
+                disposition_metrics : typing.Optional[typing.Sequence[DispositionMetric]]
+                    The metrics to extract. Omit or pass an empty array to get just a summary.
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                HttpResponse[PcaResponse]
+                    Analysis complete.
+                """
+                _response = self._client_wrapper.httpx_client.request(
+                    "waves/v1/pca",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="POST",
+                    json={
+                        "transcript": transcript,
+                        "dispositionMetrics": convert_and_respect_annotation_metadata(
+                            object_=disposition_metrics, annotation=typing.Sequence[DispositionMetric], direction="write"
+                        ),
+                    },
+                    headers={
+                        "content-type": "application/json",
+                    },
+                    request_options=request_options,
+                    omit=OMIT,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            PcaResponse,
+                            construct_type(
+                                type_=PcaResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return HttpResponse(response=_response, data=_data)
+                    if _response.status_code == 400:
+                        raise BadRequestError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            def generate(
+                self, *, prompt: str, request_options: typing.Optional[RequestOptions] = None
+            ) -> HttpResponse[GeneratePostCallAnalysisResponse]:
+                """
+                Run a single-prompt generation and get the model's text output. A lightweight
+                text-in / text-out endpoint (no chat history); for multi-turn chat use the
+                Electron chat completions API instead.
+
+                Parameters
+                ----------
+                prompt : str
+                    The prompt to generate from. Max 60,000 characters.
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                HttpResponse[GeneratePostCallAnalysisResponse]
+                    Generation complete.
+                """
+                _response = self._client_wrapper.httpx_client.request(
+                    "waves/v1/pca/generate",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="POST",
+                    json={
+                        "prompt": prompt,
+                    },
+                    headers={
+                        "content-type": "application/json",
+                    },
+                    request_options=request_options,
+                    omit=OMIT,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            GeneratePostCallAnalysisResponse,
+                            construct_type(
+                                type_=GeneratePostCallAnalysisResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return HttpResponse(response=_response, data=_data)
+                    if _response.status_code == 400:
+                        raise BadRequestError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+
+        class AsyncRawPostCallAnalysisClient:
+            def __init__(self, *, client_wrapper: AsyncClientWrapper):
+                self._client_wrapper = client_wrapper
+
+            async def analyze(
+                self,
+                *,
+                transcript: str,
+                disposition_metrics: typing.Optional[typing.Sequence[DispositionMetric]] = OMIT,
+                request_options: typing.Optional[RequestOptions] = None,
+            ) -> AsyncHttpResponse[PcaResponse]:
+                """
+                Analyze a call transcript and extract structured disposition metrics. Provide the
+                transcript and the metrics you want extracted; the response returns a short summary
+                plus one result per requested metric, each with a value, a confidence score, and the
+                transcript evidence for it. Values are grounded strictly in the transcript (no
+                inference); when evidence is absent, the type's fallback is used.
+
+                Parameters
+                ----------
+                transcript : str
+                    The full call transcript to analyze. Max 60,000 characters (~15,000 tokens / ~1 hour call).
+
+                disposition_metrics : typing.Optional[typing.Sequence[DispositionMetric]]
+                    The metrics to extract. Omit or pass an empty array to get just a summary.
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                AsyncHttpResponse[PcaResponse]
+                    Analysis complete.
+                """
+                _response = await self._client_wrapper.httpx_client.request(
+                    "waves/v1/pca",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="POST",
+                    json={
+                        "transcript": transcript,
+                        "dispositionMetrics": convert_and_respect_annotation_metadata(
+                            object_=disposition_metrics, annotation=typing.Sequence[DispositionMetric], direction="write"
+                        ),
+                    },
+                    headers={
+                        "content-type": "application/json",
+                    },
+                    request_options=request_options,
+                    omit=OMIT,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            PcaResponse,
+                            construct_type(
+                                type_=PcaResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return AsyncHttpResponse(response=_response, data=_data)
+                    if _response.status_code == 400:
+                        raise BadRequestError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+            async def generate(
+                self, *, prompt: str, request_options: typing.Optional[RequestOptions] = None
+            ) -> AsyncHttpResponse[GeneratePostCallAnalysisResponse]:
+                """
+                Run a single-prompt generation and get the model's text output. A lightweight
+                text-in / text-out endpoint (no chat history); for multi-turn chat use the
+                Electron chat completions API instead.
+
+                Parameters
+                ----------
+                prompt : str
+                    The prompt to generate from. Max 60,000 characters.
+
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                AsyncHttpResponse[GeneratePostCallAnalysisResponse]
+                    Generation complete.
+                """
+                _response = await self._client_wrapper.httpx_client.request(
+                    "waves/v1/pca/generate",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="POST",
+                    json={
+                        "prompt": prompt,
+                    },
+                    headers={
+                        "content-type": "application/json",
+                    },
+                    request_options=request_options,
+                    omit=OMIT,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            GeneratePostCallAnalysisResponse,
+                            construct_type(
+                                type_=GeneratePostCallAnalysisResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return AsyncHttpResponse(response=_response, data=_data)
+                    if _response.status_code == 400:
+                        raise BadRequestError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+      src/smallestai/waves/voices/raw_client.py: |
+        # This file was auto-generated by Fern from our API Definition.
+
+        import typing
+        from json.decoder import JSONDecodeError
+
+        from ...core.api_error import ApiError
+        from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+        from ...core.http_response import AsyncHttpResponse, HttpResponse
+        from ...core.parse_error import ParsingError
+        from ...core.request_options import RequestOptions
+        from ...core.unchecked_base_model import construct_type
+        from ..errors.unauthorized_error import UnauthorizedError
+        from .types.get_all_voice_models_response import GetAllVoiceModelsResponse
+        from pydantic import ValidationError
+
+
+        class RawVoicesClient:
+            def __init__(self, *, client_wrapper: SyncClientWrapper):
+                self._client_wrapper = client_wrapper
+
+            def get_all_voice_models(
+                self, *, request_options: typing.Optional[RequestOptions] = None
+            ) -> HttpResponse[GetAllVoiceModelsResponse]:
+                """
+                List every available voice with its display name, description, a preview audio URL,
+                and metadata tags (age, supported languages). Use a voice's `voiceId` with the
+                unified `/waves/v1/tts` route.
+
+                This is the browse-everything endpoint. To scope the list to a single model pool,
+                use [`GET /waves/v1/{model}/get_voices`](/models/api-reference/text-to-speech/get-voices)
+                with `model=lightning-v3.1` (Standard) or `model=lightning-v3.1-pro` (Pro).
+
+                Parameters
+                ----------
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                HttpResponse[GetAllVoiceModelsResponse]
+                    Voices retrieved.
+                """
+                _response = self._client_wrapper.httpx_client.request(
+                    "waves/v1/voice/get-all-models",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            GetAllVoiceModelsResponse,
+                            construct_type(
+                                type_=GetAllVoiceModelsResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return HttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+
+        class AsyncRawVoicesClient:
+            def __init__(self, *, client_wrapper: AsyncClientWrapper):
+                self._client_wrapper = client_wrapper
+
+            async def get_all_voice_models(
+                self, *, request_options: typing.Optional[RequestOptions] = None
+            ) -> AsyncHttpResponse[GetAllVoiceModelsResponse]:
+                """
+                List every available voice with its display name, description, a preview audio URL,
+                and metadata tags (age, supported languages). Use a voice's `voiceId` with the
+                unified `/waves/v1/tts` route.
+
+                This is the browse-everything endpoint. To scope the list to a single model pool,
+                use [`GET /waves/v1/{model}/get_voices`](/models/api-reference/text-to-speech/get-voices)
+                with `model=lightning-v3.1` (Standard) or `model=lightning-v3.1-pro` (Pro).
+
+                Parameters
+                ----------
+                request_options : typing.Optional[RequestOptions]
+                    Request-specific configuration.
+
+                Returns
+                -------
+                AsyncHttpResponse[GetAllVoiceModelsResponse]
+                    Voices retrieved.
+                """
+                _response = await self._client_wrapper.httpx_client.request(
+                    "waves/v1/voice/get-all-models",
+                    base_url=self._client_wrapper.get_environment().waves,
+                    method="GET",
+                    request_options=request_options,
+                )
+                try:
+                    if 200 <= _response.status_code < 300:
+                        _data = typing.cast(
+                            GetAllVoiceModelsResponse,
+                            construct_type(
+                                type_=GetAllVoiceModelsResponse,  # type: ignore
+                                object_=_response.json(),
+                            ),
+                        )
+                        return AsyncHttpResponse(response=_response, data=_data)
+                    if _response.status_code == 401:
+                        raise UnauthorizedError(
+                            headers=dict(_response.headers),
+                            body=typing.cast(
+                                typing.Any,
+                                construct_type(
+                                    type_=typing.Any,  # type: ignore
+                                    object_=_response.json(),
+                                ),
+                            ),
+                        )
+                    _response_json = _response.json()
+                except JSONDecodeError:
+                    raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+                except ValidationError as e:
+                    raise ParsingError(
+                        status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+                    )
+                raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
     user_owned: true

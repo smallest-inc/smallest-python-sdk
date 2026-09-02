@@ -9,14 +9,29 @@ from .completion_status_status import CompletionStatusStatus
 
 
 class CompletionStatus(UncheckedBaseModel):
-    request_id: str = pydantic.Field()
+    session_id: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Unique identifier for the TTS request
+    Internal session identifier (system-generated).
     """
 
-    status: CompletionStatusStatus = pydantic.Field()
+    request_id: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Indicates that the streaming synthesis is complete
+    Internal request identifier (system-generated).
+    """
+
+    external_session_id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Echoed client-provided session_id.
+    """
+
+    external_request_id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Echoed client-provided request_id.
+    """
+
+    status: typing.Optional[CompletionStatusStatus] = pydantic.Field(default=None)
+    """
+    Indicates that the streaming is complete
     """
 
     if IS_PYDANTIC_V2:

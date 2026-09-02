@@ -2,4 +2,4 @@
 
 import typing
 
-RentPhoneNumbersRequestProvider = typing.Union[typing.Literal["plivo", "twilio"], typing.Any]
+RentPhoneNumbersRequestProvider = typing.Union[typing.Literal["twilio", "plivo", "custom", "whatsapp"], typing.Any]

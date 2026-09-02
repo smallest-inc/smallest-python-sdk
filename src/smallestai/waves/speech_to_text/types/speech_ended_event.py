@@ -5,17 +5,23 @@ import typing
 import pydantic
 from ....core.pydantic_utilities import IS_PYDANTIC_V2
 from ....core.unchecked_base_model import UncheckedBaseModel
+from .speech_ended_event_type import SpeechEndedEventType
 
 
-class StreamTtsResponseMessageError(UncheckedBaseModel):
-    message: typing.Optional[str] = pydantic.Field(default=None)
+class SpeechEndedEvent(UncheckedBaseModel):
+    type: SpeechEndedEventType = pydantic.Field()
     """
-    Error message description
+    Discriminator. Always `speech_ended` for this event.
     """
 
-    code: typing.Optional[str] = pydantic.Field(default=None)
+    session_id: str = pydantic.Field()
     """
-    Error code identifier
+    Same session identifier returned on the `transcription` messages.
+    """
+
+    timestamp: float = pydantic.Field()
+    """
+    Acoustic offset of speech (end of a continuous voiced region), in seconds from the first audio frame.
     """
 
     if IS_PYDANTIC_V2:

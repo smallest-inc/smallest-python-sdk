@@ -139,7 +139,7 @@ class PhoneNumbersClient:
         )
         client.atoms.phone_numbers.search_rentable(
             country_code="US",
-            provider="plivo",
+            provider="twilio",
         )
         """
         _response = self._raw_client.search_rentable(
@@ -217,7 +217,7 @@ class PhoneNumbersClient:
         )
         client.atoms.phone_numbers.rent(
             phone_number="13183747513",
-            provider="plivo",
+            provider="twilio",
         )
         """
         _response = self._raw_client.rent(phone_number=phone_number, provider=provider, request_options=request_options)
@@ -322,6 +322,7 @@ class PhoneNumbersClient:
         name: typing.Optional[str] = OMIT,
         sip_username: typing.Optional[str] = OMIT,
         sip_password: typing.Optional[str] = OMIT,
+        cps_limit: typing.Optional[float] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ImportSipPhoneNumbersResponse:
         """
@@ -346,6 +347,13 @@ class PhoneNumbersClient:
 
         sip_password : typing.Optional[str]
             Password for SIP authentication (if your trunk requires it)
+
+        cps_limit : typing.Optional[float]
+            Calls-per-second cap for this imported trunk. Defaults to 1 CPS (the
+            safe floor for an unknown trunk). Values above 50 are rejected with
+            `"CPS limit cannot exceed 50"`; values below 1 are rejected with
+            `"CPS limit must be at least 1"`. Every imported number is always
+            paced at this rate.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -376,6 +384,7 @@ class PhoneNumbersClient:
             name=name,
             sip_username=sip_username,
             sip_password=sip_password,
+            cps_limit=cps_limit,
             request_options=request_options,
         )
         return _response.data
@@ -520,7 +529,7 @@ class AsyncPhoneNumbersClient:
         async def main() -> None:
             await client.atoms.phone_numbers.search_rentable(
                 country_code="US",
-                provider="plivo",
+                provider="twilio",
             )
 
 
@@ -614,7 +623,7 @@ class AsyncPhoneNumbersClient:
         async def main() -> None:
             await client.atoms.phone_numbers.rent(
                 phone_number="13183747513",
-                provider="plivo",
+                provider="twilio",
             )
 
 
@@ -750,6 +759,7 @@ class AsyncPhoneNumbersClient:
         name: typing.Optional[str] = OMIT,
         sip_username: typing.Optional[str] = OMIT,
         sip_password: typing.Optional[str] = OMIT,
+        cps_limit: typing.Optional[float] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ImportSipPhoneNumbersResponse:
         """
@@ -774,6 +784,13 @@ class AsyncPhoneNumbersClient:
 
         sip_password : typing.Optional[str]
             Password for SIP authentication (if your trunk requires it)
+
+        cps_limit : typing.Optional[float]
+            Calls-per-second cap for this imported trunk. Defaults to 1 CPS (the
+            safe floor for an unknown trunk). Values above 50 are rejected with
+            `"CPS limit cannot exceed 50"`; values below 1 are rejected with
+            `"CPS limit must be at least 1"`. Every imported number is always
+            paced at this rate.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -812,6 +829,7 @@ class AsyncPhoneNumbersClient:
             name=name,
             sip_username=sip_username,
             sip_password=sip_password,
+            cps_limit=cps_limit,
             request_options=request_options,
         )
         return _response.data
