@@ -653,6 +653,7 @@ class RawPhoneNumbersClient:
         name: typing.Optional[str] = OMIT,
         sip_username: typing.Optional[str] = OMIT,
         sip_password: typing.Optional[str] = OMIT,
+        cps_limit: typing.Optional[float] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ImportSipPhoneNumbersResponse]:
         """
@@ -678,6 +679,13 @@ class RawPhoneNumbersClient:
         sip_password : typing.Optional[str]
             Password for SIP authentication (if your trunk requires it)
 
+        cps_limit : typing.Optional[float]
+            Calls-per-second cap for this imported trunk. Defaults to 1 CPS (the
+            safe floor for an unknown trunk). Values above 50 are rejected with
+            `"CPS limit cannot exceed 50"`; values below 1 are rejected with
+            `"CPS limit must be at least 1"`. Every imported number is always
+            paced at this rate.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -696,6 +704,7 @@ class RawPhoneNumbersClient:
                 "name": name,
                 "sipUsername": sip_username,
                 "sipPassword": sip_password,
+                "cpsLimit": cps_limit,
             },
             headers={
                 "content-type": "application/json",
@@ -1380,6 +1389,7 @@ class AsyncRawPhoneNumbersClient:
         name: typing.Optional[str] = OMIT,
         sip_username: typing.Optional[str] = OMIT,
         sip_password: typing.Optional[str] = OMIT,
+        cps_limit: typing.Optional[float] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ImportSipPhoneNumbersResponse]:
         """
@@ -1405,6 +1415,13 @@ class AsyncRawPhoneNumbersClient:
         sip_password : typing.Optional[str]
             Password for SIP authentication (if your trunk requires it)
 
+        cps_limit : typing.Optional[float]
+            Calls-per-second cap for this imported trunk. Defaults to 1 CPS (the
+            safe floor for an unknown trunk). Values above 50 are rejected with
+            `"CPS limit cannot exceed 50"`; values below 1 are rejected with
+            `"CPS limit must be at least 1"`. Every imported number is always
+            paced at this rate.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -1423,6 +1440,7 @@ class AsyncRawPhoneNumbersClient:
                 "name": name,
                 "sipUsername": sip_username,
                 "sipPassword": sip_password,
+                "cpsLimit": cps_limit,
             },
             headers={
                 "content-type": "application/json",

@@ -17,7 +17,7 @@ from .update_agent_widget_config_request_widget_config_theme import UpdateAgentW
 
 class UpdateAgentWidgetConfigRequestWidgetConfig(UncheckedBaseModel):
     """
-    All fields are optional — only provided fields are updated
+    All fields are optional (only provided fields are updated)
     """
 
     position: typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfigPosition] = None

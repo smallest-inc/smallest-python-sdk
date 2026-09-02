@@ -145,7 +145,6 @@ class SpeechToTextClient:
         - **`model` is required.** Missing or invalid values return `400` with an enum-validation error.
         - **Pulse Pro is English only.** Pass `language=en`. Other language codes are accepted at the wire level but produce unpredictable output.
         - **Pulse Pro does not support audio-by-URL.** Send raw bytes or use `?model=pulse` for the URL flow.
-        - **Async (webhook) mode is Pulse Pro only.** Pulse runs sync only on this endpoint.
         - **Max payload 250 MB.** Larger requests return `413`. Compress to mono 16 kHz PCM if you are close to the limit; quality is unaffected.
         
         Parameters
@@ -178,13 +177,13 @@ class SpeechToTextClient:
             Multi-speaker identification; adds per-word and per-utterance speaker labels.
         
         webhook_url : typing.Optional[str]
-            Pulse Pro only. If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
+            If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
         
         webhook_method : typing.Optional[TranscribeRequestWebhookMethod]
-            HTTP method to use when calling the webhook. Pulse Pro only.
+            HTTP method to use when calling the webhook.
         
         webhook_extra : typing.Optional[str]
-            Arbitrary metadata returned to the webhook in addition to the transcription payload. Pulse Pro only.
+            Arbitrary metadata returned to the webhook in addition to the transcription payload.
         
         redact_pii : typing.Optional[TranscribeRequestRedactPii]
             Redact personally identifiable information from the transcript.
@@ -500,7 +499,6 @@ class AsyncSpeechToTextClient:
         - **`model` is required.** Missing or invalid values return `400` with an enum-validation error.
         - **Pulse Pro is English only.** Pass `language=en`. Other language codes are accepted at the wire level but produce unpredictable output.
         - **Pulse Pro does not support audio-by-URL.** Send raw bytes or use `?model=pulse` for the URL flow.
-        - **Async (webhook) mode is Pulse Pro only.** Pulse runs sync only on this endpoint.
         - **Max payload 250 MB.** Larger requests return `413`. Compress to mono 16 kHz PCM if you are close to the limit; quality is unaffected.
         
         Parameters
@@ -533,13 +531,13 @@ class AsyncSpeechToTextClient:
             Multi-speaker identification; adds per-word and per-utterance speaker labels.
         
         webhook_url : typing.Optional[str]
-            Pulse Pro only. If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
+            If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
         
         webhook_method : typing.Optional[TranscribeRequestWebhookMethod]
-            HTTP method to use when calling the webhook. Pulse Pro only.
+            HTTP method to use when calling the webhook.
         
         webhook_extra : typing.Optional[str]
-            Arbitrary metadata returned to the webhook in addition to the transcription payload. Pulse Pro only.
+            Arbitrary metadata returned to the webhook in addition to the transcription payload.
         
         redact_pii : typing.Optional[TranscribeRequestRedactPii]
             Redact personally identifiable information from the transcript.

@@ -6,6 +6,7 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
+    from .archive_agent_agents_request_on import ArchiveAgentAgentsRequestOn
     from .archive_agent_agents_response import ArchiveAgentAgentsResponse
     from .archive_agent_agents_response_data import ArchiveAgentAgentsResponseData
     from .archive_agent_agents_response_data_message import ArchiveAgentAgentsResponseDataMessage
@@ -37,32 +38,17 @@ if typing.TYPE_CHECKING:
     from .duplicate_agent_agents_response import DuplicateAgentAgentsResponse
     from .duplicate_agent_agents_response_data import DuplicateAgentAgentsResponseData
     from .get_agent_agents_response import GetAgentAgentsResponse
-    from .get_agent_avatar_presigned_url_response import GetAgentAvatarPresignedUrlResponse
-    from .get_agent_avatar_presigned_url_response_data import GetAgentAvatarPresignedUrlResponseData
     from .get_agent_call_logs_response import GetAgentCallLogsResponse
     from .get_agent_call_logs_response_data import GetAgentCallLogsResponseData
     from .get_agent_call_logs_response_data_call_logs_item import GetAgentCallLogsResponseDataCallLogsItem
-    from .get_agent_widget_config_response import GetAgentWidgetConfigResponse
-    from .get_agent_widget_config_response_data import GetAgentWidgetConfigResponseData
-    from .get_agent_widget_config_response_data_mode import GetAgentWidgetConfigResponseDataMode
-    from .get_agent_widget_config_response_data_position import GetAgentWidgetConfigResponseDataPosition
-    from .get_agent_widget_config_response_data_size import GetAgentWidgetConfigResponseDataSize
-    from .get_agent_widget_config_response_data_theme import GetAgentWidgetConfigResponseDataTheme
     from .list_agents_agents_request_sort_field import ListAgentsAgentsRequestSortField
     from .list_agents_agents_request_sort_order import ListAgentsAgentsRequestSortOrder
     from .list_agents_agents_request_type import ListAgentsAgentsRequestType
     from .list_agents_agents_response import ListAgentsAgentsResponse
     from .list_agents_agents_response_data import ListAgentsAgentsResponseData
     from .update_agent_agents_response import UpdateAgentAgentsResponse
-    from .update_agent_widget_config_request_widget_config import UpdateAgentWidgetConfigRequestWidgetConfig
-    from .update_agent_widget_config_request_widget_config_mode import UpdateAgentWidgetConfigRequestWidgetConfigMode
-    from .update_agent_widget_config_request_widget_config_position import (
-        UpdateAgentWidgetConfigRequestWidgetConfigPosition,
-    )
-    from .update_agent_widget_config_request_widget_config_size import UpdateAgentWidgetConfigRequestWidgetConfigSize
-    from .update_agent_widget_config_request_widget_config_theme import UpdateAgentWidgetConfigRequestWidgetConfigTheme
-    from .update_agent_widget_config_response import UpdateAgentWidgetConfigResponse
 _dynamic_imports: typing.Dict[str, str] = {
+    "ArchiveAgentAgentsRequestOn": ".archive_agent_agents_request_on",
     "ArchiveAgentAgentsResponse": ".archive_agent_agents_response",
     "ArchiveAgentAgentsResponseData": ".archive_agent_agents_response_data",
     "ArchiveAgentAgentsResponseDataMessage": ".archive_agent_agents_response_data_message",
@@ -92,29 +78,15 @@ _dynamic_imports: typing.Dict[str, str] = {
     "DuplicateAgentAgentsResponse": ".duplicate_agent_agents_response",
     "DuplicateAgentAgentsResponseData": ".duplicate_agent_agents_response_data",
     "GetAgentAgentsResponse": ".get_agent_agents_response",
-    "GetAgentAvatarPresignedUrlResponse": ".get_agent_avatar_presigned_url_response",
-    "GetAgentAvatarPresignedUrlResponseData": ".get_agent_avatar_presigned_url_response_data",
     "GetAgentCallLogsResponse": ".get_agent_call_logs_response",
     "GetAgentCallLogsResponseData": ".get_agent_call_logs_response_data",
     "GetAgentCallLogsResponseDataCallLogsItem": ".get_agent_call_logs_response_data_call_logs_item",
-    "GetAgentWidgetConfigResponse": ".get_agent_widget_config_response",
-    "GetAgentWidgetConfigResponseData": ".get_agent_widget_config_response_data",
-    "GetAgentWidgetConfigResponseDataMode": ".get_agent_widget_config_response_data_mode",
-    "GetAgentWidgetConfigResponseDataPosition": ".get_agent_widget_config_response_data_position",
-    "GetAgentWidgetConfigResponseDataSize": ".get_agent_widget_config_response_data_size",
-    "GetAgentWidgetConfigResponseDataTheme": ".get_agent_widget_config_response_data_theme",
     "ListAgentsAgentsRequestSortField": ".list_agents_agents_request_sort_field",
     "ListAgentsAgentsRequestSortOrder": ".list_agents_agents_request_sort_order",
     "ListAgentsAgentsRequestType": ".list_agents_agents_request_type",
     "ListAgentsAgentsResponse": ".list_agents_agents_response",
     "ListAgentsAgentsResponseData": ".list_agents_agents_response_data",
     "UpdateAgentAgentsResponse": ".update_agent_agents_response",
-    "UpdateAgentWidgetConfigRequestWidgetConfig": ".update_agent_widget_config_request_widget_config",
-    "UpdateAgentWidgetConfigRequestWidgetConfigMode": ".update_agent_widget_config_request_widget_config_mode",
-    "UpdateAgentWidgetConfigRequestWidgetConfigPosition": ".update_agent_widget_config_request_widget_config_position",
-    "UpdateAgentWidgetConfigRequestWidgetConfigSize": ".update_agent_widget_config_request_widget_config_size",
-    "UpdateAgentWidgetConfigRequestWidgetConfigTheme": ".update_agent_widget_config_request_widget_config_theme",
-    "UpdateAgentWidgetConfigResponse": ".update_agent_widget_config_response",
 }
 
 
@@ -140,6 +112,7 @@ def __dir__():
 
 
 __all__ = [
+    "ArchiveAgentAgentsRequestOn",
     "ArchiveAgentAgentsResponse",
     "ArchiveAgentAgentsResponseData",
     "ArchiveAgentAgentsResponseDataMessage",
@@ -169,27 +142,13 @@ __all__ = [
     "DuplicateAgentAgentsResponse",
     "DuplicateAgentAgentsResponseData",
     "GetAgentAgentsResponse",
-    "GetAgentAvatarPresignedUrlResponse",
-    "GetAgentAvatarPresignedUrlResponseData",
     "GetAgentCallLogsResponse",
     "GetAgentCallLogsResponseData",
     "GetAgentCallLogsResponseDataCallLogsItem",
-    "GetAgentWidgetConfigResponse",
-    "GetAgentWidgetConfigResponseData",
-    "GetAgentWidgetConfigResponseDataMode",
-    "GetAgentWidgetConfigResponseDataPosition",
-    "GetAgentWidgetConfigResponseDataSize",
-    "GetAgentWidgetConfigResponseDataTheme",
     "ListAgentsAgentsRequestSortField",
     "ListAgentsAgentsRequestSortOrder",
     "ListAgentsAgentsRequestType",
     "ListAgentsAgentsResponse",
     "ListAgentsAgentsResponseData",
     "UpdateAgentAgentsResponse",
-    "UpdateAgentWidgetConfigRequestWidgetConfig",
-    "UpdateAgentWidgetConfigRequestWidgetConfigMode",
-    "UpdateAgentWidgetConfigRequestWidgetConfigPosition",
-    "UpdateAgentWidgetConfigRequestWidgetConfigSize",
-    "UpdateAgentWidgetConfigRequestWidgetConfigTheme",
-    "UpdateAgentWidgetConfigResponse",
 ]

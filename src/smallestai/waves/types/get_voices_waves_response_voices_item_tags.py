@@ -9,27 +9,27 @@ from ...core.unchecked_base_model import UncheckedBaseModel
 
 class GetVoicesWavesResponseVoicesItemTags(UncheckedBaseModel):
     """
-    Tag metadata used to identify the voice's characteristics. Filter on these fields to find voices for a target language, accent, or use case. Fields may be empty on some voices.
+    Metadata describing the voice. Filter client-side to find voices for a target language, accent, or use case. Fields may be empty on some voices.
     """
 
     language: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
     """
-    Languages the voice was trained on (e.g., `["english"]`, `["english", "hindi"]`).
+    Languages the voice was trained on (e.g. `["english"]`, `["english", "hindi"]`).
     """
 
     accent: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Accent of the voice (e.g., `american`, `british`, `indian`).
+    Accent (e.g. `american`, `british`, `indian`).
     """
 
     gender: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Gender of the voice (`male` or `female`).
+    Gender label (`male` or `female`).
     """
 
     age: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Age range of the voice (e.g., `young`, `middle aged`, `senior`).
+    Age range (e.g. `young`, `middle aged`, `senior`).
     """
 
     emotions: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
@@ -39,7 +39,7 @@ class GetVoicesWavesResponseVoicesItemTags(UncheckedBaseModel):
 
     usecases: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
     """
-    Recommended use cases for the voice (e.g., `conversational`, `narration`).
+    Recommended use cases (e.g. `conversational`, `narration`).
     """
 
     if IS_PYDANTIC_V2:

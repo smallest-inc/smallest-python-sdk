@@ -42,7 +42,7 @@ class ConversationsClient:
         Parameters
         ----------
         call_id : str
-            The `callId` string for the conversation (e.g. `CALL-1778226705739-7e4c17`). This is the `callId` field returned by `GET /conversation`, **not** the Mongo `_id` — passing `_id` returns `400 Invalid call ID format`.
+            The `callId` string for the conversation (e.g. `CALL-1778226705739-7e4c17`). This is the `callId` field returned by `GET /conversation`, not the internal document id.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -210,7 +210,7 @@ class AsyncConversationsClient:
         Parameters
         ----------
         call_id : str
-            The `callId` string for the conversation (e.g. `CALL-1778226705739-7e4c17`). This is the `callId` field returned by `GET /conversation`, **not** the Mongo `_id` — passing `_id` returns `400 Invalid call ID format`.
+            The `callId` string for the conversation (e.g. `CALL-1778226705739-7e4c17`). This is the `callId` field returned by `GET /conversation`, not the internal document id.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

@@ -2,4 +2,4 @@
 
 import typing
 
-GetVoicesWavesRequestModel = typing.Union[typing.Literal["lightning-v3.1"], typing.Any]
+GetVoicesWavesRequestModel = typing.Union[typing.Literal["lightning-v3.1", "lightning-v3.1-pro"], typing.Any]

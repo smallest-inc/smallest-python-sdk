@@ -2,4 +2,4 @@
 
 import typing
 
-AudioChunkStatus = typing.Union[typing.Literal["chunk"], typing.Any]
+SpeechEndedEventType = typing.Union[typing.Literal["speech_ended"], typing.Any]

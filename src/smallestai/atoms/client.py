@@ -38,6 +38,7 @@ if typing.TYPE_CHECKING:
     from .user.client import AsyncUserClient, UserClient
     from .web_call.client import AsyncWebCallClient, WebCallClient
     from .webhooks.client import AsyncWebhooksClient, WebhooksClient
+    from .widget.client import AsyncWidgetClient, WidgetClient
 
 
 class AtomsClient:
@@ -47,6 +48,7 @@ class AtomsClient:
         self._user: typing.Optional[UserClient] = None
         self._agent_templates: typing.Optional[AgentTemplatesClient] = None
         self._agents: typing.Optional[AgentsClient] = None
+        self._widget: typing.Optional[WidgetClient] = None
         self._realtime: typing.Optional[RealtimeClient] = None
         self._calls: typing.Optional[CallsClient] = None
         self._conversations: typing.Optional[ConversationsClient] = None
@@ -106,6 +108,14 @@ class AtomsClient:
 
             self._agents = AgentsClient(client_wrapper=self._client_wrapper)
         return self._agents
+
+    @property
+    def widget(self):
+        if self._widget is None:
+            from .widget.client import WidgetClient  # noqa: E402
+
+            self._widget = WidgetClient(client_wrapper=self._client_wrapper)
+        return self._widget
 
     @property
     def realtime(self):
@@ -307,6 +317,7 @@ class AsyncAtomsClient:
         self._user: typing.Optional[AsyncUserClient] = None
         self._agent_templates: typing.Optional[AsyncAgentTemplatesClient] = None
         self._agents: typing.Optional[AsyncAgentsClient] = None
+        self._widget: typing.Optional[AsyncWidgetClient] = None
         self._realtime: typing.Optional[AsyncRealtimeClient] = None
         self._calls: typing.Optional[AsyncCallsClient] = None
         self._conversations: typing.Optional[AsyncConversationsClient] = None
@@ -366,6 +377,14 @@ class AsyncAtomsClient:
 
             self._agents = AsyncAgentsClient(client_wrapper=self._client_wrapper)
         return self._agents
+
+    @property
+    def widget(self):
+        if self._widget is None:
+            from .widget.client import AsyncWidgetClient  # noqa: E402
+
+            self._widget = AsyncWidgetClient(client_wrapper=self._client_wrapper)
+        return self._widget
 
     @property
     def realtime(self):

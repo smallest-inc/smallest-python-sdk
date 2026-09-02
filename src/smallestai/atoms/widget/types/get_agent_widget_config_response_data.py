@@ -22,7 +22,7 @@ class GetAgentWidgetConfigResponseData(UncheckedBaseModel):
         typing.Optional[str],
         FieldMetadata(alias="assistantId"),
         pydantic.Field(
-            alias="assistantId", description="Same as the agent ID — convenience field for the widget embed code"
+            alias="assistantId", description="Same as the agent ID. Convenience field for the widget embed code"
         ),
     ] = None
     position: typing.Optional[GetAgentWidgetConfigResponseDataPosition] = None

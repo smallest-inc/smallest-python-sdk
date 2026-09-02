@@ -5,22 +5,23 @@ import typing
 import pydantic
 from ....core.pydantic_utilities import IS_PYDANTIC_V2
 from ....core.unchecked_base_model import UncheckedBaseModel
+from .speech_started_event_type import SpeechStartedEventType
 
 
-class StreamTtsResponseMessageData(UncheckedBaseModel):
-    audio: typing.Optional[str] = pydantic.Field(default=None)
+class SpeechStartedEvent(UncheckedBaseModel):
+    type: SpeechStartedEventType = pydantic.Field()
     """
-    Base64-encoded PCM audio chunk (raw audio data)
-    """
-
-    format: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    Audio format specification
+    Discriminator. Always `speech_started` for this event.
     """
 
-    sample_rate: typing.Optional[int] = pydantic.Field(default=None)
+    session_id: str = pydantic.Field()
     """
-    Sample rate of the audio chunk
+    Matches the `session_id` on `transcription` messages from the same connection; use it to correlate VAD events with transcript turns.
+    """
+
+    timestamp: float = pydantic.Field()
+    """
+    Acoustic onset of speech, in seconds from the first audio frame sent on this connection.
     """
 
     if IS_PYDANTIC_V2:

@@ -6,6 +6,7 @@ from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.request_options import RequestOptions
 from ..types.workflow_type import WorkflowType
 from .raw_client import AsyncRawAgentsClient, RawAgentsClient
+from .types.archive_agent_agents_request_on import ArchiveAgentAgentsRequestOn
 from .types.archive_agent_agents_response import ArchiveAgentAgentsResponse
 from .types.create_agent_agents_response import CreateAgentAgentsResponse
 from .types.create_agent_request_background_sound import CreateAgentRequestBackgroundSound
@@ -24,16 +25,12 @@ from .types.create_agent_request_voice_detection_config import CreateAgentReques
 from .types.create_agent_request_voice_mail_detection_config import CreateAgentRequestVoiceMailDetectionConfig
 from .types.duplicate_agent_agents_response import DuplicateAgentAgentsResponse
 from .types.get_agent_agents_response import GetAgentAgentsResponse
-from .types.get_agent_avatar_presigned_url_response import GetAgentAvatarPresignedUrlResponse
 from .types.get_agent_call_logs_response import GetAgentCallLogsResponse
-from .types.get_agent_widget_config_response import GetAgentWidgetConfigResponse
 from .types.list_agents_agents_request_sort_field import ListAgentsAgentsRequestSortField
 from .types.list_agents_agents_request_sort_order import ListAgentsAgentsRequestSortOrder
 from .types.list_agents_agents_request_type import ListAgentsAgentsRequestType
 from .types.list_agents_agents_response import ListAgentsAgentsResponse
 from .types.update_agent_agents_response import UpdateAgentAgentsResponse
-from .types.update_agent_widget_config_request_widget_config import UpdateAgentWidgetConfigRequestWidgetConfig
-from .types.update_agent_widget_config_response import UpdateAgentWidgetConfigResponse
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -524,134 +521,6 @@ class AgentsClient:
         )
         return _response.data
 
-    def get_agent_widget_config(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetAgentWidgetConfigResponse:
-        """
-        Returns the current web widget configuration for the agent. Also includes `assistantId` (same as the agent ID) as a convenience field for the widget embed code.
-
-        Parameters
-        ----------
-        id : str
-            Agent ObjectId
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        GetAgentWidgetConfigResponse
-            Widget configuration
-
-        Examples
-        --------
-        from smallestai import SmallestAI
-
-        client = SmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-        client.atoms.agents.get_agent_widget_config(
-            id="id",
-        )
-        """
-        _response = self._raw_client.get_agent_widget_config(id, request_options=request_options)
-        return _response.data
-
-    def update_agent_widget_config(
-        self,
-        id: str,
-        *,
-        widget_config: typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> UpdateAgentWidgetConfigResponse:
-        """
-        Updates the web widget configuration for the agent. Only provided fields are updated (partial update). When `avatarUrl` is changed, the old CDN avatar is automatically deleted from S3. The `avatarUrl` must be a URL from the platform's CDN domain — use `POST /agent/{id}/avatar/presigned-url` to upload first.
-
-        Parameters
-        ----------
-        id : str
-            Agent ObjectId
-
-        widget_config : typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig]
-            All fields are optional — only provided fields are updated
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        UpdateAgentWidgetConfigResponse
-            Updated widget configuration
-
-        Examples
-        --------
-        from smallestai import SmallestAI
-
-        client = SmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-        client.atoms.agents.update_agent_widget_config(
-            id="id",
-        )
-        """
-        _response = self._raw_client.update_agent_widget_config(
-            id, widget_config=widget_config, request_options=request_options
-        )
-        return _response.data
-
-    def get_agent_avatar_presigned_url(
-        self,
-        id: str,
-        *,
-        file_name: str,
-        content_type: str,
-        file_size: float,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetAgentAvatarPresignedUrlResponse:
-        """
-        Generates a pre-signed S3 upload URL for the agent's widget avatar image. Upload the image directly to S3 using the returned `presignedUrl`, then save `cdnUrl` as the agent's avatar via `PATCH /agent/{id}/widget-config`.
-
-        Parameters
-        ----------
-        id : str
-            Agent ObjectId
-
-        file_name : str
-            Original file name (used to construct the S3 key)
-
-        content_type : str
-            MIME type — must start with `image/`
-
-        file_size : float
-            File size in bytes — must be > 0 and ≤ 2 MB (2,097,152 bytes)
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        GetAgentAvatarPresignedUrlResponse
-            Pre-signed upload URL and CDN URL
-
-        Examples
-        --------
-        from smallestai import SmallestAI
-
-        client = SmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-        client.atoms.agents.get_agent_avatar_presigned_url(
-            id="id",
-            file_name="fileName",
-            content_type="contentType",
-            file_size=1.1,
-        )
-        """
-        _response = self._raw_client.get_agent_avatar_presigned_url(
-            id, file_name=file_name, content_type=content_type, file_size=file_size, request_options=request_options
-        )
-        return _response.data
-
     def get_agent_call_logs(
         self,
         id: str,
@@ -697,7 +566,11 @@ class AgentsClient:
         return _response.data
 
     def archive_agent(
-        self, id: str, *, on: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
+        self,
+        id: str,
+        *,
+        on: typing.Optional[ArchiveAgentAgentsRequestOn] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> ArchiveAgentAgentsResponse:
         """
         Soft-archives the agent — it is excluded from listings and stops accepting calls,
@@ -713,9 +586,9 @@ class AgentsClient:
         ----------
         id : str
 
-        on : typing.Optional[bool]
-            `true` (default) — archive the agent.
-            `false` — unarchive (restore) a previously archived agent.
+        on : typing.Optional[ArchiveAgentAgentsRequestOn]
+            `"true"` (default) — archive the agent.
+            `"false"` — unarchive (restore) a previously archived agent.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1265,158 +1138,6 @@ class AsyncAgentsClient:
         )
         return _response.data
 
-    async def get_agent_widget_config(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetAgentWidgetConfigResponse:
-        """
-        Returns the current web widget configuration for the agent. Also includes `assistantId` (same as the agent ID) as a convenience field for the widget embed code.
-
-        Parameters
-        ----------
-        id : str
-            Agent ObjectId
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        GetAgentWidgetConfigResponse
-            Widget configuration
-
-        Examples
-        --------
-        import asyncio
-
-        from smallestai import AsyncSmallestAI
-
-        client = AsyncSmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.atoms.agents.get_agent_widget_config(
-                id="id",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.get_agent_widget_config(id, request_options=request_options)
-        return _response.data
-
-    async def update_agent_widget_config(
-        self,
-        id: str,
-        *,
-        widget_config: typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> UpdateAgentWidgetConfigResponse:
-        """
-        Updates the web widget configuration for the agent. Only provided fields are updated (partial update). When `avatarUrl` is changed, the old CDN avatar is automatically deleted from S3. The `avatarUrl` must be a URL from the platform's CDN domain — use `POST /agent/{id}/avatar/presigned-url` to upload first.
-
-        Parameters
-        ----------
-        id : str
-            Agent ObjectId
-
-        widget_config : typing.Optional[UpdateAgentWidgetConfigRequestWidgetConfig]
-            All fields are optional — only provided fields are updated
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        UpdateAgentWidgetConfigResponse
-            Updated widget configuration
-
-        Examples
-        --------
-        import asyncio
-
-        from smallestai import AsyncSmallestAI
-
-        client = AsyncSmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.atoms.agents.update_agent_widget_config(
-                id="id",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.update_agent_widget_config(
-            id, widget_config=widget_config, request_options=request_options
-        )
-        return _response.data
-
-    async def get_agent_avatar_presigned_url(
-        self,
-        id: str,
-        *,
-        file_name: str,
-        content_type: str,
-        file_size: float,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetAgentAvatarPresignedUrlResponse:
-        """
-        Generates a pre-signed S3 upload URL for the agent's widget avatar image. Upload the image directly to S3 using the returned `presignedUrl`, then save `cdnUrl` as the agent's avatar via `PATCH /agent/{id}/widget-config`.
-
-        Parameters
-        ----------
-        id : str
-            Agent ObjectId
-
-        file_name : str
-            Original file name (used to construct the S3 key)
-
-        content_type : str
-            MIME type — must start with `image/`
-
-        file_size : float
-            File size in bytes — must be > 0 and ≤ 2 MB (2,097,152 bytes)
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        GetAgentAvatarPresignedUrlResponse
-            Pre-signed upload URL and CDN URL
-
-        Examples
-        --------
-        import asyncio
-
-        from smallestai import AsyncSmallestAI
-
-        client = AsyncSmallestAI(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.atoms.agents.get_agent_avatar_presigned_url(
-                id="id",
-                file_name="fileName",
-                content_type="contentType",
-                file_size=1.1,
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.get_agent_avatar_presigned_url(
-            id, file_name=file_name, content_type=content_type, file_size=file_size, request_options=request_options
-        )
-        return _response.data
-
     async def get_agent_call_logs(
         self,
         id: str,
@@ -1472,7 +1193,11 @@ class AsyncAgentsClient:
         return _response.data
 
     async def archive_agent(
-        self, id: str, *, on: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
+        self,
+        id: str,
+        *,
+        on: typing.Optional[ArchiveAgentAgentsRequestOn] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> ArchiveAgentAgentsResponse:
         """
         Soft-archives the agent — it is excluded from listings and stops accepting calls,
@@ -1488,9 +1213,9 @@ class AsyncAgentsClient:
         ----------
         id : str
 
-        on : typing.Optional[bool]
-            `true` (default) — archive the agent.
-            `false` — unarchive (restore) a previously archived agent.
+        on : typing.Optional[ArchiveAgentAgentsRequestOn]
+            `"true"` (default) — archive the agent.
+            `"false"` — unarchive (restore) a previously archived agent.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

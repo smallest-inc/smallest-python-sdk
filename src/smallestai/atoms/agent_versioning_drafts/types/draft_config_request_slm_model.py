@@ -10,6 +10,7 @@ DraftConfigRequestSlmModel = typing.Union[
         "gpt-4o",
         "gpt-4.1",
         "gpt-5.2",
+        "gpt-5.2-azure",
         "gpt-realtime",
         "gpt-realtime-mini",
     ],

@@ -6,12 +6,16 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
+    from .register_call_realtime_request_input_audio_format import RegisterCallRealtimeRequestInputAudioFormat
     from .register_call_realtime_request_mode import RegisterCallRealtimeRequestMode
+    from .register_call_realtime_request_output_audio_format import RegisterCallRealtimeRequestOutputAudioFormat
     from .register_call_realtime_request_variables_value import RegisterCallRealtimeRequestVariablesValue
     from .register_call_realtime_response import RegisterCallRealtimeResponse
     from .register_call_realtime_response_data import RegisterCallRealtimeResponseData
 _dynamic_imports: typing.Dict[str, str] = {
+    "RegisterCallRealtimeRequestInputAudioFormat": ".register_call_realtime_request_input_audio_format",
     "RegisterCallRealtimeRequestMode": ".register_call_realtime_request_mode",
+    "RegisterCallRealtimeRequestOutputAudioFormat": ".register_call_realtime_request_output_audio_format",
     "RegisterCallRealtimeRequestVariablesValue": ".register_call_realtime_request_variables_value",
     "RegisterCallRealtimeResponse": ".register_call_realtime_response",
     "RegisterCallRealtimeResponseData": ".register_call_realtime_response_data",
@@ -40,7 +44,9 @@ def __dir__():
 
 
 __all__ = [
+    "RegisterCallRealtimeRequestInputAudioFormat",
     "RegisterCallRealtimeRequestMode",
+    "RegisterCallRealtimeRequestOutputAudioFormat",
     "RegisterCallRealtimeRequestVariablesValue",
     "RegisterCallRealtimeResponse",
     "RegisterCallRealtimeResponseData",

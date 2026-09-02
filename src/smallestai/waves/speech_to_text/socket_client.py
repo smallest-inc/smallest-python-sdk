@@ -11,6 +11,8 @@ from ...core.events import EventEmitterMixin, EventType
 from ...core.unchecked_base_model import construct_type
 from .types.close_stream import CloseStream
 from .types.finalize_signal import FinalizeSignal
+from .types.speech_ended_event import SpeechEndedEvent
+from .types.speech_started_event import SpeechStartedEvent
 from .types.transcription_error_event import TranscriptionErrorEvent
 from .types.transcription_event import TranscriptionEvent
 
@@ -20,7 +22,9 @@ except ImportError:
     from websockets import WebSocketClientProtocol  # type: ignore
 
 _logger = logging.getLogger(__name__)
-SpeechToTextSocketClientResponse = typing.Union[TranscriptionEvent, TranscriptionErrorEvent]
+SpeechToTextSocketClientResponse = typing.Union[
+    TranscriptionEvent, TranscriptionErrorEvent, SpeechStartedEvent, SpeechEndedEvent
+]
 
 
 class AsyncSpeechToTextSocketClient(EventEmitterMixin):
