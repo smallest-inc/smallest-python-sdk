@@ -46,6 +46,15 @@ class Page:
     has_more: Optional[bool] = None
 
 
+def _first_present(*values: Any) -> Any:
+    """First value the server actually sent, treating 0 and False as sent.
+
+    `a or b` would skip a real 0, so a page the server honestly reports as empty
+    came back with total_count None instead of 0.
+    """
+    return next((value for value in values if value is not None), None)
+
+
 def _get(obj: Any, name: str) -> Any:
     """Attribute- or key-based access (works for pydantic models and dicts)."""
     if obj is None:
@@ -83,18 +92,16 @@ def as_page(response: Any) -> Page:
         if items is not None:
             return Page(
                 items=list(items),
-                total_count=(
-                    _get(data, "total_count")
-                    or _get(data, "total")
-                    or _get(data, "count")
-                    or _get(data, "total_campaign_count")
-                    or _get(pagination, "total")
-                    or _get(pagination, "total_count")
+                total_count=_first_present(
+                    _get(data, "total_count"),
+                    _get(data, "total"),
+                    _get(data, "count"),
+                    _get(data, "total_campaign_count"),
+                    _get(pagination, "total"),
+                    _get(pagination, "total_count"),
                 ),
-                total_pages=_get(data, "total_pages") or _get(pagination, "total_pages"),
-                has_more=(
-                    _get(data, "has_more") if _get(data, "has_more") is not None else _get(pagination, "has_more")
-                ),
+                total_pages=_first_present(_get(data, "total_pages"), _get(pagination, "total_pages")),
+                has_more=_first_present(_get(data, "has_more"), _get(pagination, "has_more")),
             )
 
     # Unknown shape — return the payload as a single-item page rather than guessing.

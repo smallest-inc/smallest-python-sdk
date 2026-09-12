@@ -49,3 +49,26 @@ def test_campaigns_total_campaign_count() -> None:
 def test_nested_pagination() -> None:
     pg = as_page(_Resp({"logs": [1, 2], "pagination": {"total": 9, "hasMore": True}}))
     assert pg.items == [1, 2] and pg.total_count == 9
+
+
+def test_an_honestly_empty_page_keeps_its_zeros() -> None:
+    # `a or b` chaining skipped a real 0, so a page the server reported as empty came
+    # back as total_count None, which reads as "the server did not say".
+    pg = as_page(_Resp({"agents": [], "total_count": 0, "total_pages": 0, "has_more": False}))
+    assert pg.items == []
+    assert pg.total_count == 0
+    assert pg.total_pages == 0
+    assert pg.has_more is False
+
+
+def test_zeros_from_nested_pagination_are_kept_too() -> None:
+    pg = as_page(_Resp({"agents": [], "pagination": {"total": 0, "total_pages": 0, "has_more": False}}))
+    assert pg.total_count == 0
+    assert pg.total_pages == 0
+    assert pg.has_more is False
+
+
+def test_a_flat_zero_still_wins_over_a_nested_value() -> None:
+    # Precedence is unchanged: the flat field is read first whether or not it is truthy.
+    pg = as_page(_Resp({"agents": [], "total_count": 0, "pagination": {"total": 7}}))
+    assert pg.total_count == 0
