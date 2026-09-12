@@ -107,7 +107,10 @@ class TaskManager(BaseTaskManager):
 
     def __init__(self) -> None:
         """Initialize the task manager with empty task registry."""
-        self._tasks: Dict[str, TaskData] = {}
+        # Keyed by the task itself: names are not unique, so keying by name let a
+        # second task with the same name evict the first and then, on that first
+        # task's completion, delete the live one's entry.
+        self._tasks: Dict[asyncio.Task, TaskData] = {}
         self._params: Optional[TaskManagerParams] = None
 
     def setup(self, params: TaskManagerParams):
@@ -212,8 +215,7 @@ class TaskManager(BaseTaskManager):
         Args:
             task_data: The task metadata.
         """
-        name = task_data.task.get_name()
-        self._tasks[name] = task_data
+        self._tasks[task_data.task] = task_data
 
     def _task_done_handler(self, task: asyncio.Task):
         """Handle task completion by removing the task from the registry.
@@ -222,9 +224,9 @@ class TaskManager(BaseTaskManager):
             task: The completed asyncio task.
         """
         name = task.get_name()
-        if name in self._tasks:
+        if task in self._tasks:
             try:
                 logger.debug(f"[{name}] Task done handler called")
-                del self._tasks[name]
+                del self._tasks[task]
             except KeyError as e:
                 logger.trace(f"{name}: unable to remove task data (already removed?): {e}")

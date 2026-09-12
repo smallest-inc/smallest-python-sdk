@@ -368,7 +368,7 @@ class CrewSession:
 
         current_tasks = self.task_manager.current_tasks()
         if current_tasks:
-            task_names = ", ".join(list(self.task_manager._tasks.keys()))
+            task_names = ", ".join(task.get_name() for task in current_tasks)
             logger.info(f"[{self.name}] Tasks: {task_names}")
             logger.info(f"[{self.name}] Waiting for {len(current_tasks)} tasks to complete")
             await asyncio.gather(*current_tasks, return_exceptions=True)
