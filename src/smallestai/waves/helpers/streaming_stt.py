@@ -32,38 +32,27 @@ underlying ``stream()`` returns (a sync or async context manager).
 
 Booleans are sent to the server as the strings ``"true"`` / ``"false"``, and list
 params (``keywords``, ``redact_pii``, ``redact_pci``) are sent comma-joined, matching
-what the endpoint expects.
+what the endpoint expects. Params given through ``additional_query_parameters`` or
+``request_options["additional_query_parameters"]`` are shaped the same way, so an
+unnamed knob reaches the wire in the form the endpoint reads.
 """
 
 import typing
 
 __all__ = ["stream_speech_to_text", "build_stt_stream_query"]
 
-# Sent to the server as "true" / "false" (the controller compares === "true").
-_BOOLEAN_KNOBS = frozenset(
-    {
-        "word_timestamps",
-        "sentence_timestamps",
-        "diarize",
-        "punctuate",
-        "capitalize",
-        "itn_normalize",
-        "numerals",
-        "finalize_on_words",
-        "full_transcript",
-        "vad",
-        "vad_events",
-    }
-)
 
-# Sent comma-joined when given a list/tuple (a plain string passes through as-is).
-_LIST_KNOBS = frozenset({"keywords", "redact_pii", "redact_pci"})
+def _coerce(value: typing.Any) -> typing.Any:
+    """Put one query value in the shape the handshake expects.
 
-
-def _coerce(key: str, value: typing.Any) -> typing.Any:
-    if key in _BOOLEAN_KNOBS and isinstance(value, bool):
+    Booleans go as "true" / "false" (the controller compares === "true") and
+    list/tuple values go comma-joined; a plain string passes through as-is. Keyed off
+    the value's type rather than the param name so params the SDK does not know yet,
+    which are exactly what the escape hatch is for, serialize the same way.
+    """
+    if isinstance(value, bool):
         return "true" if value else "false"
-    if key in _LIST_KNOBS and isinstance(value, (list, tuple)):
+    if isinstance(value, (list, tuple)):
         return ",".join(str(v) for v in value)
     return value
 
@@ -137,9 +126,9 @@ def build_stt_stream_query(
     for key, value in optional.items():
         if value is None:
             continue
-        params[key] = _coerce(key, value)
-    if additional_query_parameters:
-        params.update(additional_query_parameters)
+        params[key] = _coerce(value)
+    for key, value in (additional_query_parameters or {}).items():
+        params[key] = _coerce(value)
     return params
 
 
@@ -209,6 +198,8 @@ def stream_speech_to_text(
         additional_query_parameters=additional_query_parameters,
     )
     resolved: typing.Dict[str, typing.Any] = dict(request_options or {})
-    caller_overrides = resolved.get("additional_query_parameters") or {}
+    caller_overrides = {
+        key: _coerce(value) for key, value in (resolved.get("additional_query_parameters") or {}).items()
+    }
     resolved["additional_query_parameters"] = {**query, **caller_overrides}
     return client.waves.speech_to_text.stream(request_options=resolved)
