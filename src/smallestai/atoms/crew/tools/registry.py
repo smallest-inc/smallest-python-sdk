@@ -163,17 +163,21 @@ class ToolRegistry:
         tasks = [self._execute_single(call, context) for call in tool_calls]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
-        # Handle exceptions
+        # gather preserves input order, so each result pairs with its own call and the
+        # error path can carry the id the LLM needs to match the result to the call.
         final_results: List[ToolResult] = []
-        for result in results:
+        for call, result in zip(tool_calls, results):
+            if isinstance(result, asyncio.CancelledError):
+                # Cancellation is not a tool failure: swallowing it here would let a
+                # cancelled turn carry on and report a made-up result for the call.
+                raise result
             if isinstance(result, BaseException):
-                # Create error result
-                logger.exception(f"Tool execution failed: {result}")
+                logger.exception(f"Tool execution failed: {call.name}: {result}")
                 final_results.append(
                     ToolResult(
-                        tool_call_id="",
-                        name="",
-                        content=str(result),
+                        tool_call_id=call.id,
+                        name=call.name,
+                        content=str(result) or type(result).__name__,
                         is_error=True,
                     )
                 )
