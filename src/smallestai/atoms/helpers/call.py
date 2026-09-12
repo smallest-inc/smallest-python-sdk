@@ -16,6 +16,7 @@ import requests
 
 # Default API base URL
 DEFAULT_BASE_URL = "https://api.smallest.ai/atoms/v1"
+DEFAULT_REQUEST_TIMEOUT = 30.0
 
 
 class CallAnalytics:
@@ -34,6 +35,8 @@ class CallAnalytics:
         self,
         base_url: Optional[str] = None,
         api_key: Optional[str] = None,
+        *,
+        request_timeout: float = DEFAULT_REQUEST_TIMEOUT,
     ):
         """
         Initialize Call manager.
@@ -41,9 +44,11 @@ class CallAnalytics:
         Args:
             base_url: API base URL (default: api.smallest.ai/atoms/v1)
             api_key: API key (default: SMALLEST_API_KEY env var)
+            request_timeout: Per-request timeout in seconds
         """
         self.base_url = base_url or os.environ.get("SMALLEST_BASE_URL", DEFAULT_BASE_URL)
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY", "")
+        self.request_timeout = request_timeout
 
     def _get_headers(self) -> Dict[str, str]:
         return {
@@ -58,7 +63,7 @@ class CallAnalytics:
     def get_call(self, call_id: str) -> Dict[str, Any]:
         """Get details for a single call."""
         url = f"{self.base_url}/conversation/{call_id}"
-        response = requests.get(url, headers=self._get_headers())
+        response = requests.get(url, headers=self._get_headers(), timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
@@ -86,7 +91,7 @@ class CallAnalytics:
         if search:
             params["search"] = search
 
-        response = requests.get(url, headers=self._get_headers(), params=params)
+        response = requests.get(url, headers=self._get_headers(), params=params, timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
@@ -97,6 +102,7 @@ class CallAnalytics:
             url,
             headers=self._get_headers(),
             json={"callIds": call_ids},
+            timeout=self.request_timeout,
         )
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
@@ -108,7 +114,7 @@ class CallAnalytics:
     def get_post_call_config(self, agent_id: str) -> Dict[str, Any]:
         """Get post-call analytics config for an agent."""
         url = f"{self.base_url}/agent/{agent_id}/post-call-analytics"
-        response = requests.get(url, headers=self._get_headers())
+        response = requests.get(url, headers=self._get_headers(), timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
@@ -126,7 +132,7 @@ class CallAnalytics:
         if disposition_metrics is not None:
             payload["dispositionMetrics"] = disposition_metrics
 
-        response = requests.post(url, headers=self._get_headers(), json=payload)
+        response = requests.post(url, headers=self._get_headers(), json=payload, timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
