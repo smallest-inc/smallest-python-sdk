@@ -32,11 +32,13 @@ _LAZY_EXPORTS = {
 __all__ = list(_LAZY_EXPORTS.keys())
 
 if TYPE_CHECKING:
-    from smallestai.atoms.crew.clients.openai import OpenAIClient
-    from smallestai.atoms.crew.nodes import BackgroundCrewNode, OutputCrewNode
-    from smallestai.atoms.crew.server import AtomsCrewApp
-    from smallestai.atoms.crew.session import CrewSession
-    from smallestai.atoms.crew.tools import ToolRegistry, function_tool
+    from smallestai.atoms.crew.clients.openai import OpenAIClient as OpenAIClient
+    from smallestai.atoms.crew.nodes import BackgroundCrewNode as BackgroundCrewNode
+    from smallestai.atoms.crew.nodes import OutputCrewNode as OutputCrewNode
+    from smallestai.atoms.crew.server import AtomsCrewApp as AtomsCrewApp
+    from smallestai.atoms.crew.session import CrewSession as CrewSession
+    from smallestai.atoms.crew.tools import ToolRegistry as ToolRegistry
+    from smallestai.atoms.crew.tools import function_tool as function_tool
 
 
 def __getattr__(name: str):
