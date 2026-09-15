@@ -6,6 +6,8 @@ from smallestai.atoms.helpers.audience import Audience
 from smallestai.atoms.helpers.call import Call, CallAnalytics
 from smallestai.atoms.helpers.campaign import Campaign
 from smallestai.atoms.helpers.kb import KB
+from smallestai.atoms.helpers.secrets import Secrets
+from smallestai.atoms.helpers.tools import Tools
 from smallestai.atoms.helpers.versioning import (
     BaseRevisionUnavailableError,
     DraftConflictError,
@@ -29,6 +31,8 @@ __all__ = [
     "Call",
     "Campaign",
     "KB",
+    "Secrets",
+    "Tools",
     "Page",
     "as_page",
     "require_id",
