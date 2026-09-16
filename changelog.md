@@ -1,4 +1,4 @@
-## 5.12.2 - 2026-09-16
+## 5.12.2 - 2026-09-17
 
 * **waves**: `WavesStreamingTTS` now raises when the socket closes before a `complete`
   message instead of returning truncated audio as if it were the whole answer
