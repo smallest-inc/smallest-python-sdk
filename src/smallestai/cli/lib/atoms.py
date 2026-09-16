@@ -1,3 +1,4 @@
+import json as _json
 from enum import Enum
 from typing import List, Optional
 
@@ -161,6 +162,23 @@ class AtomsAPIClient:
 
             return agents_response.data
 
+    async def get_agent_raw(self, access_token: str, agent_id: str) -> dict:
+        """Fetch a single agent's full config as a raw dict (for `doctor` inspection)."""
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{self.base_url}/atoms/v1/agent/{agent_id}",
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
+            response.raise_for_status()
+            body = response.json()
+            if isinstance(body, dict) and body.get("status") is False:
+                raise Exception(body.get("errors"))
+            data = body.get("data", body) if isinstance(body, dict) else body
+            # some responses nest under data.agent
+            if isinstance(data, dict) and "agent" in data and isinstance(data["agent"], dict):
+                data = data["agent"]
+            return data if isinstance(data, dict) else {}
+
     async def get_account_details(
         self,
         access_token: str,
@@ -175,14 +193,9 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            account_details_response = AccountDetailsAPIResponse.model_validate(
-                response.json()
-            )
+            account_details_response = AccountDetailsAPIResponse.model_validate(response.json())
 
-            if (
-                account_details_response.status is False
-                or account_details_response.data is None
-            ):
+            if account_details_response.status is False or account_details_response.data is None:
                 raise Exception(account_details_response.errors)
 
             return account_details_response.data
@@ -208,14 +221,9 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            create_agent_build_response = CreateAgentBuildAPIResponse.model_validate(
-                response.json()
-            )
+            create_agent_build_response = CreateAgentBuildAPIResponse.model_validate(response.json())
 
-            if (
-                create_agent_build_response.status is False
-                or create_agent_build_response.data is None
-            ):
+            if create_agent_build_response.status is False or create_agent_build_response.data is None:
                 raise Exception(create_agent_build_response.errors)
 
             return create_agent_build_response.data
@@ -241,14 +249,9 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            list_builds_response = ListAgentBuildsAPIResponse.model_validate(
-                response.json()
-            )
+            list_builds_response = ListAgentBuildsAPIResponse.model_validate(response.json())
 
-            if (
-                list_builds_response.status is False
-                or list_builds_response.data is None
-            ):
+            if list_builds_response.status is False or list_builds_response.data is None:
                 raise Exception(list_builds_response.errors)
 
             return list_builds_response.data
@@ -269,9 +272,7 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            get_build_response = GetAgentBuildAPIResponse.model_validate(
-                response.json()
-            )
+            get_build_response = GetAgentBuildAPIResponse.model_validate(response.json())
 
             if get_build_response.status is False or get_build_response.data is None:
                 raise Exception(get_build_response.errors)
@@ -298,40 +299,53 @@ class AtomsAPIClient:
 
             response.raise_for_status()
 
-            update_build_response = UpdateAgentBuildAPIResponse.model_validate(
-                response.json()
-            )
+            update_build_response = UpdateAgentBuildAPIResponse.model_validate(response.json())
 
-            if (
-                update_build_response.status is False
-                or update_build_response.data is None
-            ):
+            if update_build_response.status is False or update_build_response.data is None:
                 raise Exception(update_build_response.errors)
 
             return update_build_response.data
 
-    # async def stream_agent_build(
-    #     self,
-    #     agent_id: str,
-    #     build_id: str,
-    #     api_key: str,
-    # ):
-    #     """
-    #     Stream build logs using Server-Sent Events.
-    #     Yields tuples of (event_type, data) where event_type is 'log', 'status', or 'error'.
-    #     """
-    #     async with httpx.AsyncClient(timeout=None) as client:
-    #         async with client.stream(
-    #             "GET",
-    #             f"{self.base_url}/atoms/v1/sdk/agents/{agent_id}/builds/{build_id}/stream",
-    #             headers={
-    #                 "Authorization": f"Bearer {api_key}",
-    #             },
-    #         ) as response:
-    #             response.raise_for_status()
-    #             async for line in response.aiter_lines():
-    #                 if line.startswith("data: "):
-    #                     import json
+    async def _stream_sse(self, url: str, access_token: str):
+        """Open an SSE stream and yield each `data:` frame as a parsed dict.
 
-    #                     data = json.loads(line[6:])
-    #                     yield data
+        Shared by build-log and call-event streaming. Blank keep-alive lines and
+        non-JSON frames are skipped. The stream ends when the server closes it.
+        """
+        async with httpx.AsyncClient(timeout=None) as client:
+            async with client.stream(
+                "GET",
+                url,
+                headers={"Authorization": f"Bearer {access_token}"},
+            ) as response:
+                response.raise_for_status()
+                async for line in response.aiter_lines():
+                    if not line.startswith("data:"):
+                        continue
+                    payload = line[5:].lstrip()
+                    if not payload:
+                        continue
+                    try:
+                        yield _json.loads(payload)
+                    except _json.JSONDecodeError:
+                        continue
+
+    async def stream_agent_build(self, agent_id: str, build_id: str, access_token: str):
+        """Stream a build's logs (SSE). Yields dicts of the form
+        `{"type": "log"|"status"|"error", "message"|"status": ...}`.
+        """
+        url = f"{self.base_url}/atoms/v1/sdk/agents/{agent_id}/builds/{build_id}/stream"
+        async for event in self._stream_sse(url, access_token):
+            yield event
+
+    async def stream_call_events(self, call_id: str, access_token: str):
+        """Stream a live call's events (SSE). Yields dicts with an `event_type`
+        field (e.g. `user_transcription`, `tts_completed`, `turn_latency`,
+        `agent_node_state`, `tool_call_start`, `agent_error`, `call_end`).
+
+        The call must be in progress; the platform returns 400 for a completed
+        call (use `calls transcript` for finished calls).
+        """
+        url = f"{self.base_url}/atoms/v1/events?callId={call_id}"
+        async for event in self._stream_sse(url, access_token):
+            yield event

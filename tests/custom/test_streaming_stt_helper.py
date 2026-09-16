@@ -100,9 +100,7 @@ def test_none_optionals_are_omitted():
 
 
 def test_numeric_optionals_pass_through():
-    q = build_stt_stream_query(
-        language="en", eou_timeout_ms=1000, vad_threshold=0.5, vad_min_speech_ms=120
-    )
+    q = build_stt_stream_query(language="en", eou_timeout_ms=1000, vad_threshold=0.5, vad_min_speech_ms=120)
     assert q["eou_timeout_ms"] == 1000
     assert q["vad_threshold"] == 0.5
     assert q["vad_min_speech_ms"] == 120
@@ -135,12 +133,42 @@ def test_caller_overrides_win_over_typed_values():
 
 def test_existing_request_options_preserved():
     client = _FakeClient()
-    stream_speech_to_text(
-        client, language="en", request_options={"max_retries": 3}
-    )
+    stream_speech_to_text(client, language="en", request_options={"max_retries": 3})
     ro = client._stt.captured_request_options
     assert ro["max_retries"] == 3
     assert ro["additional_query_parameters"]["language"] == "en"
+
+
+def test_additional_query_parameters_are_serialized_like_typed_ones():
+    """The escape hatch used to hand the value straight to the query string, so a bool
+    reached the wire as "True" (the controller compares === "true") and a list as its
+    Python repr, silently turning the knob off."""
+    q = build_stt_stream_query(
+        language="en",
+        additional_query_parameters={"punctuate": True, "diarize": False, "keywords": ["a", "b"]},
+    )
+    assert q["punctuate"] == "true"
+    assert q["diarize"] == "false"
+    assert q["keywords"] == "a,b"
+
+
+def test_a_knob_the_sdk_does_not_name_is_serialized_too():
+    """Unnamed params are exactly what the escape hatch is for, so they get the same shape."""
+    q = build_stt_stream_query(language="en", additional_query_parameters={"some_new_flag": True})
+    assert q["some_new_flag"] == "true"
+
+
+def test_request_options_query_overrides_are_serialized():
+    """The second way a caller passes raw query params bypassed the same coercion."""
+    client = _FakeClient()
+    stream_speech_to_text(
+        client,
+        language="en",
+        request_options={"additional_query_parameters": {"vad": True, "keywords": ["x", "y"]}},
+    )
+    aqp = client._stt.captured_request_options["additional_query_parameters"]
+    assert aqp["vad"] == "true"
+    assert aqp["keywords"] == "x,y"
 
 
 if __name__ == "__main__":

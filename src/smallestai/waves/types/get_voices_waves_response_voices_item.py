@@ -16,17 +16,17 @@ class GetVoicesWavesResponseVoicesItem(UncheckedBaseModel):
         FieldMetadata(alias="voiceId"),
         pydantic.Field(
             alias="voiceId",
-            description="Unique Voice ID. Pass this value as `voice_id` on `POST /waves/v1/tts` (or the streaming route).",
+            description="Unique voice identifier. Pass this value as `voice_id` on `POST /waves/v1/tts` (or the streaming route).",
         ),
     ]
     display_name: typing_extensions.Annotated[
         str,
         FieldMetadata(alias="displayName"),
-        pydantic.Field(alias="displayName", description="Display name for the voice."),
+        pydantic.Field(alias="displayName", description="Human-readable name for the voice."),
     ]
     tags: typing.Optional[GetVoicesWavesResponseVoicesItemTags] = pydantic.Field(default=None)
     """
-    Tag metadata used to identify the voice's characteristics. Filter on these fields to find voices for a target language, accent, or use case. Fields may be empty on some voices.
+    Metadata describing the voice. Filter client-side to find voices for a target language, accent, or use case. Fields may be empty on some voices.
     """
 
     if IS_PYDANTIC_V2:

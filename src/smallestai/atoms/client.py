@@ -8,6 +8,8 @@ from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .raw_client import AsyncRawAtomsClient, RawAtomsClient
 
 if typing.TYPE_CHECKING:
+    from .account.client import AccountClient, AsyncAccountClient
+    from .agent_telephony.client import AgentTelephonyClient, AsyncAgentTelephonyClient
     from .agent_templates.client import AgentTemplatesClient, AsyncAgentTemplatesClient
     from .agent_versioning_branches.client import AgentVersioningBranchesClient, AsyncAgentVersioningBranchesClient
     from .agent_versioning_drafts.client import AgentVersioningDraftsClient, AsyncAgentVersioningDraftsClient
@@ -17,7 +19,6 @@ if typing.TYPE_CHECKING:
     from .analytics.client import AnalyticsClient, AsyncAnalyticsClient
     from .audience.client import AsyncAudienceClient, AudienceClient
     from .billing.client import AsyncBillingClient, BillingClient
-    from .call_actions.client import AsyncCallActionsClient, CallActionsClient
     from .calls.client import AsyncCallsClient, CallsClient
     from .campaigns.client import AsyncCampaignsClient, CampaignsClient
     from .compliance.client import AsyncComplianceClient, ComplianceClient
@@ -31,12 +32,17 @@ if typing.TYPE_CHECKING:
     from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
     from .knowledge_base.client import AsyncKnowledgeBaseClient, KnowledgeBaseClient
     from .live_transcripts.client import AsyncLiveTranscriptsClient, LiveTranscriptsClient
-    from .organization.client import AsyncOrganizationClient, OrganizationClient
     from .phone_numbers.client import AsyncPhoneNumbersClient, PhoneNumbersClient
     from .prompt_scoring.client import AsyncPromptScoringClient, PromptScoringClient
     from .realtime.client import AsyncRealtimeClient, RealtimeClient
+    from .recordings.client import AsyncRecordingsClient, RecordingsClient
+    from .secrets.client import AsyncSecretsClient, SecretsClient
+    from .sip_trunks.client import AsyncSipTrunksClient, SipTrunksClient
+    from .tools.client import AsyncToolsClient, ToolsClient
     from .user.client import AsyncUserClient, UserClient
+    from .web_call.client import AsyncWebCallClient, WebCallClient
     from .webhooks.client import AsyncWebhooksClient, WebhooksClient
+    from .widget.client import AsyncWidgetClient, WidgetClient
 
 
 class AtomsClient:
@@ -44,16 +50,19 @@ class AtomsClient:
         self._raw_client = RawAtomsClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
         self._user: typing.Optional[UserClient] = None
-        self._organization: typing.Optional[OrganizationClient] = None
         self._agent_templates: typing.Optional[AgentTemplatesClient] = None
         self._agents: typing.Optional[AgentsClient] = None
+        self._widget: typing.Optional[WidgetClient] = None
         self._realtime: typing.Optional[RealtimeClient] = None
         self._calls: typing.Optional[CallsClient] = None
+        self._recordings: typing.Optional[RecordingsClient] = None
         self._conversations: typing.Optional[ConversationsClient] = None
         self._live_transcripts: typing.Optional[LiveTranscriptsClient] = None
         self._campaigns: typing.Optional[CampaignsClient] = None
         self._knowledge_base: typing.Optional[KnowledgeBaseClient] = None
         self._phone_numbers: typing.Optional[PhoneNumbersClient] = None
+        self._sip_trunks: typing.Optional[SipTrunksClient] = None
+        self._agent_telephony: typing.Optional[AgentTelephonyClient] = None
         self._compliance: typing.Optional[ComplianceClient] = None
         self._webhooks: typing.Optional[WebhooksClient] = None
         self._audience: typing.Optional[AudienceClient] = None
@@ -63,12 +72,15 @@ class AtomsClient:
         self._agent_versioning_revisions: typing.Optional[AgentVersioningRevisionsClient] = None
         self._prompt_scoring: typing.Optional[PromptScoringClient] = None
         self._analytics: typing.Optional[AnalyticsClient] = None
-        self._call_actions: typing.Optional[CallActionsClient] = None
         self._integrations: typing.Optional[IntegrationsClient] = None
         self._concurrency: typing.Optional[ConcurrencyClient] = None
         self._disposition_metric_templates: typing.Optional[DispositionMetricTemplatesClient] = None
         self._dnc: typing.Optional[DncClient] = None
         self._billing: typing.Optional[BillingClient] = None
+        self._account: typing.Optional[AccountClient] = None
+        self._web_call: typing.Optional[WebCallClient] = None
+        self._tools: typing.Optional[ToolsClient] = None
+        self._secrets: typing.Optional[SecretsClient] = None
 
     @property
     def with_raw_response(self) -> RawAtomsClient:
@@ -90,14 +102,6 @@ class AtomsClient:
         return self._user
 
     @property
-    def organization(self):
-        if self._organization is None:
-            from .organization.client import OrganizationClient  # noqa: E402
-
-            self._organization = OrganizationClient(client_wrapper=self._client_wrapper)
-        return self._organization
-
-    @property
     def agent_templates(self):
         if self._agent_templates is None:
             from .agent_templates.client import AgentTemplatesClient  # noqa: E402
@@ -114,6 +118,14 @@ class AtomsClient:
         return self._agents
 
     @property
+    def widget(self):
+        if self._widget is None:
+            from .widget.client import WidgetClient  # noqa: E402
+
+            self._widget = WidgetClient(client_wrapper=self._client_wrapper)
+        return self._widget
+
+    @property
     def realtime(self):
         if self._realtime is None:
             from .realtime.client import RealtimeClient  # noqa: E402
@@ -128,6 +140,14 @@ class AtomsClient:
 
             self._calls = CallsClient(client_wrapper=self._client_wrapper)
         return self._calls
+
+    @property
+    def recordings(self):
+        if self._recordings is None:
+            from .recordings.client import RecordingsClient  # noqa: E402
+
+            self._recordings = RecordingsClient(client_wrapper=self._client_wrapper)
+        return self._recordings
 
     @property
     def conversations(self):
@@ -168,6 +188,22 @@ class AtomsClient:
 
             self._phone_numbers = PhoneNumbersClient(client_wrapper=self._client_wrapper)
         return self._phone_numbers
+
+    @property
+    def sip_trunks(self):
+        if self._sip_trunks is None:
+            from .sip_trunks.client import SipTrunksClient  # noqa: E402
+
+            self._sip_trunks = SipTrunksClient(client_wrapper=self._client_wrapper)
+        return self._sip_trunks
+
+    @property
+    def agent_telephony(self):
+        if self._agent_telephony is None:
+            from .agent_telephony.client import AgentTelephonyClient  # noqa: E402
+
+            self._agent_telephony = AgentTelephonyClient(client_wrapper=self._client_wrapper)
+        return self._agent_telephony
 
     @property
     def compliance(self):
@@ -242,14 +278,6 @@ class AtomsClient:
         return self._analytics
 
     @property
-    def call_actions(self):
-        if self._call_actions is None:
-            from .call_actions.client import CallActionsClient  # noqa: E402
-
-            self._call_actions = CallActionsClient(client_wrapper=self._client_wrapper)
-        return self._call_actions
-
-    @property
     def integrations(self):
         if self._integrations is None:
             from .integrations.client import IntegrationsClient  # noqa: E402
@@ -289,22 +317,57 @@ class AtomsClient:
             self._billing = BillingClient(client_wrapper=self._client_wrapper)
         return self._billing
 
+    @property
+    def account(self):
+        if self._account is None:
+            from .account.client import AccountClient  # noqa: E402
+
+            self._account = AccountClient(client_wrapper=self._client_wrapper)
+        return self._account
+
+    @property
+    def web_call(self):
+        if self._web_call is None:
+            from .web_call.client import WebCallClient  # noqa: E402
+
+            self._web_call = WebCallClient(client_wrapper=self._client_wrapper)
+        return self._web_call
+
+    @property
+    def tools(self):
+        if self._tools is None:
+            from .tools.client import ToolsClient  # noqa: E402
+
+            self._tools = ToolsClient(client_wrapper=self._client_wrapper)
+        return self._tools
+
+    @property
+    def secrets(self):
+        if self._secrets is None:
+            from .secrets.client import SecretsClient  # noqa: E402
+
+            self._secrets = SecretsClient(client_wrapper=self._client_wrapper)
+        return self._secrets
+
 
 class AsyncAtomsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._raw_client = AsyncRawAtomsClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
         self._user: typing.Optional[AsyncUserClient] = None
-        self._organization: typing.Optional[AsyncOrganizationClient] = None
         self._agent_templates: typing.Optional[AsyncAgentTemplatesClient] = None
         self._agents: typing.Optional[AsyncAgentsClient] = None
+        self._widget: typing.Optional[AsyncWidgetClient] = None
         self._realtime: typing.Optional[AsyncRealtimeClient] = None
         self._calls: typing.Optional[AsyncCallsClient] = None
+        self._recordings: typing.Optional[AsyncRecordingsClient] = None
         self._conversations: typing.Optional[AsyncConversationsClient] = None
         self._live_transcripts: typing.Optional[AsyncLiveTranscriptsClient] = None
         self._campaigns: typing.Optional[AsyncCampaignsClient] = None
         self._knowledge_base: typing.Optional[AsyncKnowledgeBaseClient] = None
         self._phone_numbers: typing.Optional[AsyncPhoneNumbersClient] = None
+        self._sip_trunks: typing.Optional[AsyncSipTrunksClient] = None
+        self._agent_telephony: typing.Optional[AsyncAgentTelephonyClient] = None
         self._compliance: typing.Optional[AsyncComplianceClient] = None
         self._webhooks: typing.Optional[AsyncWebhooksClient] = None
         self._audience: typing.Optional[AsyncAudienceClient] = None
@@ -314,12 +377,15 @@ class AsyncAtomsClient:
         self._agent_versioning_revisions: typing.Optional[AsyncAgentVersioningRevisionsClient] = None
         self._prompt_scoring: typing.Optional[AsyncPromptScoringClient] = None
         self._analytics: typing.Optional[AsyncAnalyticsClient] = None
-        self._call_actions: typing.Optional[AsyncCallActionsClient] = None
         self._integrations: typing.Optional[AsyncIntegrationsClient] = None
         self._concurrency: typing.Optional[AsyncConcurrencyClient] = None
         self._disposition_metric_templates: typing.Optional[AsyncDispositionMetricTemplatesClient] = None
         self._dnc: typing.Optional[AsyncDncClient] = None
         self._billing: typing.Optional[AsyncBillingClient] = None
+        self._account: typing.Optional[AsyncAccountClient] = None
+        self._web_call: typing.Optional[AsyncWebCallClient] = None
+        self._tools: typing.Optional[AsyncToolsClient] = None
+        self._secrets: typing.Optional[AsyncSecretsClient] = None
 
     @property
     def with_raw_response(self) -> AsyncRawAtomsClient:
@@ -341,14 +407,6 @@ class AsyncAtomsClient:
         return self._user
 
     @property
-    def organization(self):
-        if self._organization is None:
-            from .organization.client import AsyncOrganizationClient  # noqa: E402
-
-            self._organization = AsyncOrganizationClient(client_wrapper=self._client_wrapper)
-        return self._organization
-
-    @property
     def agent_templates(self):
         if self._agent_templates is None:
             from .agent_templates.client import AsyncAgentTemplatesClient  # noqa: E402
@@ -365,6 +423,14 @@ class AsyncAtomsClient:
         return self._agents
 
     @property
+    def widget(self):
+        if self._widget is None:
+            from .widget.client import AsyncWidgetClient  # noqa: E402
+
+            self._widget = AsyncWidgetClient(client_wrapper=self._client_wrapper)
+        return self._widget
+
+    @property
     def realtime(self):
         if self._realtime is None:
             from .realtime.client import AsyncRealtimeClient  # noqa: E402
@@ -379,6 +445,14 @@ class AsyncAtomsClient:
 
             self._calls = AsyncCallsClient(client_wrapper=self._client_wrapper)
         return self._calls
+
+    @property
+    def recordings(self):
+        if self._recordings is None:
+            from .recordings.client import AsyncRecordingsClient  # noqa: E402
+
+            self._recordings = AsyncRecordingsClient(client_wrapper=self._client_wrapper)
+        return self._recordings
 
     @property
     def conversations(self):
@@ -419,6 +493,22 @@ class AsyncAtomsClient:
 
             self._phone_numbers = AsyncPhoneNumbersClient(client_wrapper=self._client_wrapper)
         return self._phone_numbers
+
+    @property
+    def sip_trunks(self):
+        if self._sip_trunks is None:
+            from .sip_trunks.client import AsyncSipTrunksClient  # noqa: E402
+
+            self._sip_trunks = AsyncSipTrunksClient(client_wrapper=self._client_wrapper)
+        return self._sip_trunks
+
+    @property
+    def agent_telephony(self):
+        if self._agent_telephony is None:
+            from .agent_telephony.client import AsyncAgentTelephonyClient  # noqa: E402
+
+            self._agent_telephony = AsyncAgentTelephonyClient(client_wrapper=self._client_wrapper)
+        return self._agent_telephony
 
     @property
     def compliance(self):
@@ -493,14 +583,6 @@ class AsyncAtomsClient:
         return self._analytics
 
     @property
-    def call_actions(self):
-        if self._call_actions is None:
-            from .call_actions.client import AsyncCallActionsClient  # noqa: E402
-
-            self._call_actions = AsyncCallActionsClient(client_wrapper=self._client_wrapper)
-        return self._call_actions
-
-    @property
     def integrations(self):
         if self._integrations is None:
             from .integrations.client import AsyncIntegrationsClient  # noqa: E402
@@ -541,3 +623,35 @@ class AsyncAtomsClient:
 
             self._billing = AsyncBillingClient(client_wrapper=self._client_wrapper)
         return self._billing
+
+    @property
+    def account(self):
+        if self._account is None:
+            from .account.client import AsyncAccountClient  # noqa: E402
+
+            self._account = AsyncAccountClient(client_wrapper=self._client_wrapper)
+        return self._account
+
+    @property
+    def web_call(self):
+        if self._web_call is None:
+            from .web_call.client import AsyncWebCallClient  # noqa: E402
+
+            self._web_call = AsyncWebCallClient(client_wrapper=self._client_wrapper)
+        return self._web_call
+
+    @property
+    def tools(self):
+        if self._tools is None:
+            from .tools.client import AsyncToolsClient  # noqa: E402
+
+            self._tools = AsyncToolsClient(client_wrapper=self._client_wrapper)
+        return self._tools
+
+    @property
+    def secrets(self):
+        if self._secrets is None:
+            from .secrets.client import AsyncSecretsClient  # noqa: E402
+
+            self._secrets = AsyncSecretsClient(client_wrapper=self._client_wrapper)
+        return self._secrets

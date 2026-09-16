@@ -4,10 +4,10 @@ shipped 4.4.7 SDK. Each check prints: <id> | <verdict> | <detail>.
 verdict: FIXED (no longer a bug), BUG (reproduces), N/A (needs richer flow).
 owner:   sdk / platform / spec / cli
 """
-import io
+
 import os
 import warnings
-import contextlib
+
 from _env import client
 
 c = client()
@@ -28,8 +28,11 @@ def agent_id_helper():
 try:
     from smallestai import SmallestAI
     from smallestai.environment import SmallestAIEnvironment
+
     base = os.environ["SMALLEST_BASE_URL"].rstrip("/")
-    env = SmallestAIEnvironment(atoms=f"{base}/atoms/v1", waves=base, waves_ws=base.replace("https", "wss"), payment=base)
+    env = SmallestAIEnvironment(
+        atoms=f"{base}/atoms/v1", waves=base, waves_ws=base.replace("https", "wss"), payment=base
+    )
     saved = {k: os.environ.pop(k, None) for k in ("SMALLEST_AI_TOKEN",)}
     os.environ["SMALLEST_API_KEY"] = os.environ["SMALLEST_API_KEY"]
     c2 = SmallestAI(environment=env)  # no api_key arg -> must read SMALLEST_API_KEY
@@ -65,7 +68,12 @@ try:
     g = c.atoms.agents.get_agent_by_id(id="")
     d = getattr(g, "data", None)
     is_list = hasattr(d, "agents")
-    rec("#18", "BUG" if is_list else "FIXED", "sdk/platform", f"empty id -> {'list payload' if is_list else type(d).__name__}")
+    rec(
+        "#18",
+        "BUG" if is_list else "FIXED",
+        "sdk/platform",
+        f"empty id -> {'list payload' if is_list else type(d).__name__}",
+    )
 except Exception as e:
     rec("#18", "FIXED", "sdk", f"raises {type(e).__name__} (good)")
 
@@ -84,13 +92,19 @@ try:
         b = getattr(c.atoms.agents.create_a_new_agent(name="triage-dup-2026-06-18"), "data", None)
         rec("#21", "BUG", "platform", f"dup name allowed (a={a} b={b})")
     except Exception as e:
-        rec("#21", "FIXED", "platform", f"dup rejected: {getattr(e,'status_code','?')}")
+        rec("#21", "FIXED", "platform", f"dup rejected: {getattr(e, 'status_code', '?')}")
 except Exception as e:
     rec("#21", "ERR", "platform", str(e)[:90])
 
 # --- #22 update_workflow_configuration still public ---
-rec("#22", "BUG" if hasattr(c.atoms.agents, "update_workflow_configuration") else "FIXED",
-    "sdk", "update_workflow_configuration on public surface" if hasattr(c.atoms.agents, "update_workflow_configuration") else "hidden")
+rec(
+    "#22",
+    "BUG" if hasattr(c.atoms.agents, "update_workflow_configuration") else "FIXED",
+    "sdk",
+    "update_workflow_configuration on public surface"
+    if hasattr(c.atoms.agents, "update_workflow_configuration")
+    else "hidden",
+)
 
 # --- #24 pydantic serialization warning on list ---
 try:
@@ -114,6 +128,7 @@ except Exception as e:
 # --- #1 / #12 / #12a / #15 crew + helpers surface (import-level) ---
 try:
     from smallestai.atoms.crew.clients.openai import OpenAIClient
+
     raised = False
     try:
         os.environ.pop("OPENAI_API_KEY", None)
@@ -122,13 +137,24 @@ try:
         raised = True
     except Exception:
         raised = False
-    rec("#1", "FIXED" if raised else "BUG", "sdk", "OpenAIClient(api_key=None) raises" if raised else "no raise (warns + proceeds)")
-    rec("#12", "FIXED" if hasattr(OpenAIClient, "electron") else "BUG", "sdk", "electron() factory present" if hasattr(OpenAIClient, "electron") else "no electron() factory")
+    rec(
+        "#1",
+        "FIXED" if raised else "BUG",
+        "sdk",
+        "OpenAIClient(api_key=None) raises" if raised else "no raise (warns + proceeds)",
+    )
+    rec(
+        "#12",
+        "FIXED" if hasattr(OpenAIClient, "electron") else "BUG",
+        "sdk",
+        "electron() factory present" if hasattr(OpenAIClient, "electron") else "no electron() factory",
+    )
 except Exception as e:
     rec("#1", "ERR", "sdk", f"import crew openai failed: {str(e)[:80]}")
 
 try:
     import smallestai.atoms.helpers as h
+
     names = [n for n in dir(h) if not n.startswith("_")]
     rec("#15", "BUG" if "Call" in names and "CallAnalytics" not in names else "FIXED", "sdk", f"helpers: {names}")
 except Exception as e:

@@ -17,6 +17,7 @@ adds the two things Fern cannot generate for any SDK:
 This is a thin wrapper over `client.atoms.agent_versioning_branches` /
 `.agent_versioning_revisions`, so it rides future regens without changes.
 """
+
 from __future__ import annotations
 
 import time
@@ -159,11 +160,17 @@ class Versioning:
         *,
         timeout: float = 120.0,
         poll_interval: float = 2.0,
+        after_revision_id: typing.Optional[str] = None,
     ) -> typing.Any:
         """Poll the branch's newest revision until it reaches `status == "published"`.
 
         Returns the published Revision. Raises SecurityCheckFailedError if the scan
         fails, or TimeoutError if it does not finish within `timeout` seconds.
+
+        `after_revision_id` is the newest revision id *before* the publish that this
+        call is waiting on. While the newest listed revision still equals it, the new
+        revision has not surfaced yet, so we keep polling rather than matching the
+        already-published previous revision (which would return early and wrong).
         """
         deadline = time.monotonic() + timeout
         last_status = None
@@ -172,6 +179,10 @@ class Versioning:
             revs = getattr(listed.data, "revisions", None) or []
             if revs:
                 rev_id = revs[0].id
+                if after_revision_id is not None and rev_id == after_revision_id:
+                    # New revision not listed yet; the newest is still the pre-publish one.
+                    time.sleep(poll_interval)
+                    continue
                 got = self.revisions.get(id=agent_id, branch_id=branch_id, revision_id=rev_id)
                 rev = getattr(got.data, "revision", None) or got.data
                 last_status = getattr(rev, "status", None)
@@ -182,9 +193,7 @@ class Versioning:
                 if sec_status == "failed":
                     raise SecurityCheckFailedError(f"security check failed for revision {rev_id}")
             time.sleep(poll_interval)
-        raise TimeoutError(
-            f"revision did not reach 'published' within {timeout}s (last status={last_status})"
-        )
+        raise TimeoutError(f"revision did not reach 'published' within {timeout}s (last status={last_status})")
 
     def publish_and_wait(
         self,
@@ -200,12 +209,28 @@ class Versioning:
         Handles both publish outcomes: sync `committed` (revision inline) and async
         `scanning` (poll until published).
         """
+        # Capture the newest revision *before* publishing so wait_for_commit does not
+        # match the previous (already-published) revision during the window before the
+        # new one surfaces in the listing.
+        baseline_id: typing.Optional[str] = None
+        try:
+            pre = self.revisions.list(id=agent_id, branch_id=branch_id, limit=1)
+            pre_revs = getattr(pre.data, "revisions", None) or []
+            if pre_revs:
+                baseline_id = pre_revs[0].id
+        except Exception:
+            baseline_id = None
+
         res = self.branches.publish_draft(id=agent_id, branch_id=branch_id, label=label)
         data = res.data
         if _state(data) == "committed" and getattr(data, "revision", None) is not None:
             return data.revision
         return self.wait_for_commit(
-            agent_id, branch_id, timeout=timeout, poll_interval=poll_interval
+            agent_id,
+            branch_id,
+            timeout=timeout,
+            poll_interval=poll_interval,
+            after_revision_id=baseline_id,
         )
 
     def edit_and_publish(
@@ -229,6 +254,4 @@ class Versioning:
         if expected_revision is not None:
             kwargs["expected_revision"] = expected_revision
         self.update_draft(agent_id, branch_id, **kwargs)
-        return self.publish_and_wait(
-            agent_id, branch_id, label=label, timeout=timeout, poll_interval=poll_interval
-        )
+        return self.publish_and_wait(agent_id, branch_id, label=label, timeout=timeout, poll_interval=poll_interval)

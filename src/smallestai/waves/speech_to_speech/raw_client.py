@@ -39,22 +39,45 @@ class RawSpeechToSpeechClient:
         - **Use the Pulse → Electron → Lightning v3.1 stack** when you need explicit text in the middle (analytics, custom RAG, regulated content moderation, BYOM).
         - **Use just Lightning v3.1** when you already have text and only need TTS.
 
+        ## Model versions
+
+        Two Hydra tags are served on this endpoint; pick one with `?model=`. The session protocol (event catalog, `session.configure` shape, tool calling, interruption handling) is identical across both.
+
+        | Version | Query string |
+        |---|---|
+        | `hydra-v1.0` | `?model=hydra-v1.0` |
+        | `hydra-v1.1` | `?model=hydra-v1.1` |
+
+        `?model=hydra` (bare, no version) currently routes to `hydra-v1.0`. This parameter will be deprecated in the future.
+
+        See the [Hydra model card](/models/model-cards/speech-to-speech/hydra) for per-version voice rosters.
+
         ## How it works
 
-        1. Connect: `wss://api.smallest.ai/waves/v1/s2s?model=hydra&api_key=<SMALLEST_API_KEY>`.
+        1. Connect: `wss://api.smallest.ai/waves/v1/s2s?model=hydra-v1.0&api_key=<SMALLEST_API_KEY>`.
         2. Receive `session.created` → send `session.configure` with persona, voice, optional tools.
-        3. Stream `input_audio_buffer.append` continuously while the mic is open — even while the model is speaking. Hydra detects turn boundaries on its own.
-        4. Receive `response.output_audio.delta` chunks (base64 PCM16) and queue them for playback at 48000 Hz.
+        3. Stream `input_audio_buffer.append` continuously while the mic is open, including while the model is speaking. Hydra detects turn boundaries on its own.
+        4. Read `session.configured.session.output_audio_sample_rate` and initialize your audio pipeline at that rate. Then receive `response.output_audio.delta` chunks (base64 PCM16) and queue them for playback.
         5. Handle barge-in: if `response.created` arrives before the previous response's `response.output_audio.done`, drop any still-scheduled audio buffers from the previous response.
 
         ## Audio formats
 
-        - **Input** (client → server): PCM16, signed little-endian, mono, **16 kHz**, base64 inside `input_audio_buffer.append`. Recommended chunk size 20–40 ms (640–1280 samples).
-        - **Output** (server → client): PCM16, signed little-endian, mono, **48000 Hz**. Each chunk arrives base64-encoded inside `response.output_audio.delta`.
+        - **Input** (client → server): PCM16, signed little-endian, mono, **16 kHz**, base64 inside `input_audio_buffer.append`.
+        - **Output** (server → client): PCM16, signed little-endian, mono. Sample rate is per-model and echoed on `session.configured.session.output_audio_sample_rate`:
+          - `hydra-v1.0` outputs **48000 Hz**
+          - `hydra-v1.1` outputs **24000 Hz**
+
+          Each chunk arrives base64-encoded inside `response.output_audio.delta`.
 
         ## Voices
 
-        Currently supported: `wren`, `sloane`, `marlowe`, `reed`, `knox`, `tate`.
+        Set on `session.configure.session.voice` and frozen at handshake. Rosters are **per version and do not overlap** — when you switch versions, also pick a voice from the new roster.
+
+        - **`hydra-v1.0`**, fourteen voices: `vaughn`, `brooks`, `cole`, `hayes`, `pierce`, `sterling`, `ellis`, `lane`, `quinn`, `arden`, `rowan`, `blair`, `emery`, `sawyer`.
+        - **`hydra-v1.1`**, ten voices: `zoe`, `maya`, `elena`, `ivy`, `grace`, `alex`, `aria`, `leo`, `sam`, `kai`.
+        - **`hydra`** currently routes to `hydra-v1.0` and will be deprecated in the future; pass an explicit version and pick a voice from its roster.
+
+        Omit `voice` and the server applies `sterling`. An unrecognised voice is rejected with an `error` frame (`code: "invalid_request_error"`, `param: "session.configure.session.voice"`) rather than silently defaulted — validate client-side. The [Hydra model card](/models/model-cards/speech-to-speech/hydra) carries the per-version table.
 
         ## Idle timeout
 
@@ -133,22 +156,45 @@ class AsyncRawSpeechToSpeechClient:
         - **Use the Pulse → Electron → Lightning v3.1 stack** when you need explicit text in the middle (analytics, custom RAG, regulated content moderation, BYOM).
         - **Use just Lightning v3.1** when you already have text and only need TTS.
 
+        ## Model versions
+
+        Two Hydra tags are served on this endpoint; pick one with `?model=`. The session protocol (event catalog, `session.configure` shape, tool calling, interruption handling) is identical across both.
+
+        | Version | Query string |
+        |---|---|
+        | `hydra-v1.0` | `?model=hydra-v1.0` |
+        | `hydra-v1.1` | `?model=hydra-v1.1` |
+
+        `?model=hydra` (bare, no version) currently routes to `hydra-v1.0`. This parameter will be deprecated in the future.
+
+        See the [Hydra model card](/models/model-cards/speech-to-speech/hydra) for per-version voice rosters.
+
         ## How it works
 
-        1. Connect: `wss://api.smallest.ai/waves/v1/s2s?model=hydra&api_key=<SMALLEST_API_KEY>`.
+        1. Connect: `wss://api.smallest.ai/waves/v1/s2s?model=hydra-v1.0&api_key=<SMALLEST_API_KEY>`.
         2. Receive `session.created` → send `session.configure` with persona, voice, optional tools.
-        3. Stream `input_audio_buffer.append` continuously while the mic is open — even while the model is speaking. Hydra detects turn boundaries on its own.
-        4. Receive `response.output_audio.delta` chunks (base64 PCM16) and queue them for playback at 48000 Hz.
+        3. Stream `input_audio_buffer.append` continuously while the mic is open, including while the model is speaking. Hydra detects turn boundaries on its own.
+        4. Read `session.configured.session.output_audio_sample_rate` and initialize your audio pipeline at that rate. Then receive `response.output_audio.delta` chunks (base64 PCM16) and queue them for playback.
         5. Handle barge-in: if `response.created` arrives before the previous response's `response.output_audio.done`, drop any still-scheduled audio buffers from the previous response.
 
         ## Audio formats
 
-        - **Input** (client → server): PCM16, signed little-endian, mono, **16 kHz**, base64 inside `input_audio_buffer.append`. Recommended chunk size 20–40 ms (640–1280 samples).
-        - **Output** (server → client): PCM16, signed little-endian, mono, **48000 Hz**. Each chunk arrives base64-encoded inside `response.output_audio.delta`.
+        - **Input** (client → server): PCM16, signed little-endian, mono, **16 kHz**, base64 inside `input_audio_buffer.append`.
+        - **Output** (server → client): PCM16, signed little-endian, mono. Sample rate is per-model and echoed on `session.configured.session.output_audio_sample_rate`:
+          - `hydra-v1.0` outputs **48000 Hz**
+          - `hydra-v1.1` outputs **24000 Hz**
+
+          Each chunk arrives base64-encoded inside `response.output_audio.delta`.
 
         ## Voices
 
-        Currently supported: `wren`, `sloane`, `marlowe`, `reed`, `knox`, `tate`.
+        Set on `session.configure.session.voice` and frozen at handshake. Rosters are **per version and do not overlap** — when you switch versions, also pick a voice from the new roster.
+
+        - **`hydra-v1.0`**, fourteen voices: `vaughn`, `brooks`, `cole`, `hayes`, `pierce`, `sterling`, `ellis`, `lane`, `quinn`, `arden`, `rowan`, `blair`, `emery`, `sawyer`.
+        - **`hydra-v1.1`**, ten voices: `zoe`, `maya`, `elena`, `ivy`, `grace`, `alex`, `aria`, `leo`, `sam`, `kai`.
+        - **`hydra`** currently routes to `hydra-v1.0` and will be deprecated in the future; pass an explicit version and pick a voice from its roster.
+
+        Omit `voice` and the server applies `sterling`. An unrecognised voice is rejected with an `error` frame (`code: "invalid_request_error"`, `param: "session.configure.session.voice"`) rather than silently defaulted — validate client-side. The [Hydra model card](/models/model-cards/speech-to-speech/hydra) carries the per-version table.
 
         ## Idle timeout
 

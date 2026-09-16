@@ -3,6 +3,8 @@
 import typing
 
 ToolType = typing.Union[
-    typing.Literal["end_call", "transfer_call", "api_call", "extract_dynamic_variables", "knowledge_base_search"],
+    typing.Literal[
+        "end_call", "transfer_call", "api_call", "client_tool", "extract_dynamic_variables", "knowledge_base_search"
+    ],
     typing.Any,
 ]

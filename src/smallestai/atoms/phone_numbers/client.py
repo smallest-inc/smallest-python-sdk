@@ -139,7 +139,7 @@ class PhoneNumbersClient:
         )
         client.atoms.phone_numbers.search_rentable(
             country_code="US",
-            provider="plivo",
+            provider="twilio",
         )
         """
         _response = self._raw_client.search_rentable(
@@ -189,14 +189,14 @@ class PhoneNumbersClient:
         """
         Rents an available number returned by [`GET /product/get-available-numbers`](#operation/searchAvailablePhoneNumbers). Charges the organization the prorated amount returned by [`GET /product/proration-amount`](#operation/getProrationAmount) immediately, then the monthly rate on each billing cycle.
 
-        Always call `GET /product/proration-amount` first to surface the immediate charge to your customer. The endpoint may return `200` with a body containing `requiresAction: true` when payment requires customer interaction (3-D Secure, etc.) — handle that branch in your client.
+        Always call `GET /product/proration-amount` first to surface the immediate charge to your customer. The endpoint may return `200` with a body containing `requiresAction: true` when payment requires customer interaction (3-D Secure, etc.); handle that branch in your client.
 
         Released later via [`POST /product/release-number`](#operation/releasePhoneNumber).
 
         Parameters
         ----------
         phone_number : str
-            The number to rent — exactly as returned by `GET /product/get-available-numbers` (no leading `+`).
+            The number to rent, exactly as returned by `GET /product/get-available-numbers` (no leading `+`).
 
         provider : RentPhoneNumbersRequestProvider
 
@@ -217,7 +217,7 @@ class PhoneNumbersClient:
         )
         client.atoms.phone_numbers.rent(
             phone_number="13183747513",
-            provider="plivo",
+            provider="twilio",
         )
         """
         _response = self._raw_client.rent(phone_number=phone_number, provider=provider, request_options=request_options)
@@ -229,7 +229,12 @@ class PhoneNumbersClient:
         """
         Releases a phone number previously rented via `POST /product/rent-number`. The number goes back into provider inventory and recurring charges stop.
 
-        Returns `400` if the number is still assigned to an agent — detach it from the agent first (`PATCH /agent/{agentId}` with `productId: null`).
+        Returns `400` while the number is still in use: an agent answers on it or dials
+        from it ("You cannot release this number because an agent answers on it or dials
+        from it."), a live campaign uses it, or it is an agent's transfer number. Detach
+        answer bindings with `DELETE /agent/{agentId}/answers/{sourceId}`, caller-ID
+        bindings with `DELETE /agent/{agentId}/caller-ids/{sourceId}`, and clear
+        transfer numbers via `PUT /agent/{agentId}/transfer-source`.
 
         Parameters
         ----------
@@ -322,13 +327,22 @@ class PhoneNumbersClient:
         name: typing.Optional[str] = OMIT,
         sip_username: typing.Optional[str] = OMIT,
         sip_password: typing.Optional[str] = OMIT,
+        cps_limit: typing.Optional[float] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ImportSipPhoneNumbersResponse:
         """
+        **Deprecated.** Use [`POST /sip-trunk/inbound`](#operation/createInboundSipTrunk) and
+        [`POST /sip-trunk/outbound`](#operation/createOutboundSipTrunk) instead. One resource per
+        direction, and the only way to configure a trunk that answers extensions without a phone
+        number. This endpoint keeps working for 45 days after the trunks rework's release
+        (responses carry a `Deprecation: true` header), then returns 404; the concrete sunset date
+        is published on the Deprecation Notices page and in the changelog. See the
+        [Telephony API migration guide](/voice-agents/deprecations/telephony-migration).
+
         Bring your own SIP trunk by importing an existing phone number with its SIP termination URL.
         Atoms creates both inbound and outbound SIP trunks so your number works for making and receiving calls through the platform.
 
-        If `name` is omitted, a name is auto-generated from the phone number and user ID.
+        If `name` is omitted, the phone number itself is used as the name.
 
         Parameters
         ----------
@@ -347,13 +361,21 @@ class PhoneNumbersClient:
         sip_password : typing.Optional[str]
             Password for SIP authentication (if your trunk requires it)
 
+        cps_limit : typing.Optional[float]
+            Calls-per-second cap for this imported trunk. Defaults to 1 CPS (the
+            safe floor for an unknown trunk). Values above 50 are rejected with
+            `"CPS limit cannot exceed 50"`; values below 1 are rejected with
+            `"CPS limit must be at least 1"`. When a trunk already exists on the
+            same carrier address, its existing CPS setting is kept and this value
+            is ignored.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
         ImportSipPhoneNumbersResponse
-            Phone number imported successfully
+            Phone number imported; both trunks created
 
         Examples
         --------
@@ -376,6 +398,7 @@ class PhoneNumbersClient:
             name=name,
             sip_username=sip_username,
             sip_password=sip_password,
+            cps_limit=cps_limit,
             request_options=request_options,
         )
         return _response.data
@@ -520,7 +543,7 @@ class AsyncPhoneNumbersClient:
         async def main() -> None:
             await client.atoms.phone_numbers.search_rentable(
                 country_code="US",
-                provider="plivo",
+                provider="twilio",
             )
 
 
@@ -581,14 +604,14 @@ class AsyncPhoneNumbersClient:
         """
         Rents an available number returned by [`GET /product/get-available-numbers`](#operation/searchAvailablePhoneNumbers). Charges the organization the prorated amount returned by [`GET /product/proration-amount`](#operation/getProrationAmount) immediately, then the monthly rate on each billing cycle.
 
-        Always call `GET /product/proration-amount` first to surface the immediate charge to your customer. The endpoint may return `200` with a body containing `requiresAction: true` when payment requires customer interaction (3-D Secure, etc.) — handle that branch in your client.
+        Always call `GET /product/proration-amount` first to surface the immediate charge to your customer. The endpoint may return `200` with a body containing `requiresAction: true` when payment requires customer interaction (3-D Secure, etc.); handle that branch in your client.
 
         Released later via [`POST /product/release-number`](#operation/releasePhoneNumber).
 
         Parameters
         ----------
         phone_number : str
-            The number to rent — exactly as returned by `GET /product/get-available-numbers` (no leading `+`).
+            The number to rent, exactly as returned by `GET /product/get-available-numbers` (no leading `+`).
 
         provider : RentPhoneNumbersRequestProvider
 
@@ -614,7 +637,7 @@ class AsyncPhoneNumbersClient:
         async def main() -> None:
             await client.atoms.phone_numbers.rent(
                 phone_number="13183747513",
-                provider="plivo",
+                provider="twilio",
             )
 
 
@@ -631,7 +654,12 @@ class AsyncPhoneNumbersClient:
         """
         Releases a phone number previously rented via `POST /product/rent-number`. The number goes back into provider inventory and recurring charges stop.
 
-        Returns `400` if the number is still assigned to an agent — detach it from the agent first (`PATCH /agent/{agentId}` with `productId: null`).
+        Returns `400` while the number is still in use: an agent answers on it or dials
+        from it ("You cannot release this number because an agent answers on it or dials
+        from it."), a live campaign uses it, or it is an agent's transfer number. Detach
+        answer bindings with `DELETE /agent/{agentId}/answers/{sourceId}`, caller-ID
+        bindings with `DELETE /agent/{agentId}/caller-ids/{sourceId}`, and clear
+        transfer numbers via `PUT /agent/{agentId}/transfer-source`.
 
         Parameters
         ----------
@@ -750,13 +778,22 @@ class AsyncPhoneNumbersClient:
         name: typing.Optional[str] = OMIT,
         sip_username: typing.Optional[str] = OMIT,
         sip_password: typing.Optional[str] = OMIT,
+        cps_limit: typing.Optional[float] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ImportSipPhoneNumbersResponse:
         """
+        **Deprecated.** Use [`POST /sip-trunk/inbound`](#operation/createInboundSipTrunk) and
+        [`POST /sip-trunk/outbound`](#operation/createOutboundSipTrunk) instead. One resource per
+        direction, and the only way to configure a trunk that answers extensions without a phone
+        number. This endpoint keeps working for 45 days after the trunks rework's release
+        (responses carry a `Deprecation: true` header), then returns 404; the concrete sunset date
+        is published on the Deprecation Notices page and in the changelog. See the
+        [Telephony API migration guide](/voice-agents/deprecations/telephony-migration).
+
         Bring your own SIP trunk by importing an existing phone number with its SIP termination URL.
         Atoms creates both inbound and outbound SIP trunks so your number works for making and receiving calls through the platform.
 
-        If `name` is omitted, a name is auto-generated from the phone number and user ID.
+        If `name` is omitted, the phone number itself is used as the name.
 
         Parameters
         ----------
@@ -775,13 +812,21 @@ class AsyncPhoneNumbersClient:
         sip_password : typing.Optional[str]
             Password for SIP authentication (if your trunk requires it)
 
+        cps_limit : typing.Optional[float]
+            Calls-per-second cap for this imported trunk. Defaults to 1 CPS (the
+            safe floor for an unknown trunk). Values above 50 are rejected with
+            `"CPS limit cannot exceed 50"`; values below 1 are rejected with
+            `"CPS limit must be at least 1"`. When a trunk already exists on the
+            same carrier address, its existing CPS setting is kept and this value
+            is ignored.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
         ImportSipPhoneNumbersResponse
-            Phone number imported successfully
+            Phone number imported; both trunks created
 
         Examples
         --------
@@ -812,6 +857,7 @@ class AsyncPhoneNumbersClient:
             name=name,
             sip_username=sip_username,
             sip_password=sip_password,
+            cps_limit=cps_limit,
             request_options=request_options,
         )
         return _response.data

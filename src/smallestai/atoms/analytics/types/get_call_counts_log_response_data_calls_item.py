@@ -47,7 +47,12 @@ class GetCallCountsLogResponseDataCallsItem(UncheckedBaseModel):
     ] = None
     source: typing.Optional[str] = None
     recording_url: typing_extensions.Annotated[
-        typing.Optional[str], FieldMetadata(alias="recordingUrl"), pydantic.Field(alias="recordingUrl")
+        typing.Optional[str],
+        FieldMetadata(alias="recordingUrl"),
+        pydantic.Field(
+            alias="recordingUrl",
+            description="Still returned on every response. Resolve the audio via `GET /recordings/{callId}?channel=mono` (or `?channel=dual`) to get a short-lived presigned S3 URL. Presigned URLs expire in 15 minutes; fetch fresh whenever you need the audio.",
+        ),
     ] = None
     call_status: typing_extensions.Annotated[
         typing.Optional[str], FieldMetadata(alias="callStatus"), pydantic.Field(alias="callStatus")

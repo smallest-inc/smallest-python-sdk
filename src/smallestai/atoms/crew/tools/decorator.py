@@ -6,7 +6,7 @@ Provides @function_tool decorator for marking functions as tools.
 
 import inspect
 from dataclasses import dataclass
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, List, Optional, overload
 
 from smallestai.atoms.crew.tools.schema import FunctionSchema, extract_function_schema
 
@@ -19,6 +19,14 @@ class FunctionToolInfo:
     description: str
     schema: FunctionSchema
     function: Callable
+
+
+@overload
+def function_tool(name: Callable) -> Callable: ...
+
+
+@overload
+def function_tool(name: Optional[str] = ..., description: Optional[str] = ...) -> Callable: ...
 
 
 def function_tool(

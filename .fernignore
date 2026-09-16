@@ -8,6 +8,17 @@ src/smallestai/atoms/crew/**
 src/smallestai/atoms/helpers/**
 src/smallestai/cli/**
 
+# Observability customizations (source attribution + real SDK version header;
+# correct dist-name lookup for __version__). See header comments in each file.
+src/smallestai/core/client_wrapper.py
+src/smallestai/version.py
+
+# DevX: actionable error messages + PlanNotEntitledError specialization.
+src/smallestai/core/api_error.py
+src/smallestai/core/_error_hints.py
+src/smallestai/atoms/errors/bad_request_error.py
+src/smallestai/errors.py
+
 # Customer-added files (generator never produces these)
 src/smallestai/waves/stream_tts.py
 src/smallestai/waves/types/sample_rate.py
@@ -48,3 +59,18 @@ RELEASE.md
 scripts/**
 Makefile
 src/smallestai/waves/helpers/**
+
+# Hand-written README (do not regenerate)
+README.md
+
+
+# Prebuilt tools framework (hand-written)
+src/smallestai/tools/**
+
+# Anonymous opt-out telemetry (hand-written)
+src/smallestai/telemetry.py
+
+# Dev quality/security tooling (hand-written)
+.pre-commit-config.yaml
+.gitleaks.toml
+.deepsource.toml

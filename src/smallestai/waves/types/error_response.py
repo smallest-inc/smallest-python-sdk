@@ -10,13 +10,8 @@ from .error_response_status import ErrorResponseStatus
 
 
 class ErrorResponse(UncheckedBaseModel):
-    request_id: str = pydantic.Field()
-    """
-    Unique identifier for the failed request
-    """
-
-    status: ErrorResponseStatus
-    error: ErrorResponseError
+    status: typing.Optional[ErrorResponseStatus] = None
+    error: typing.Optional[ErrorResponseError] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
