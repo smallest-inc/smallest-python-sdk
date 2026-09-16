@@ -1,3 +1,14 @@
+## 5.12.2 - 2026-09-16
+
+* **waves**: `WavesStreamingTTS` now raises when the socket closes before a `complete`
+  message instead of returning truncated audio as if it were the whole answer
+  (issue #115). Any audio already delivered is still yielded first.
+* **helpers**: `Versioning.publish_and_wait` no longer returns the previous
+  already-published revision during the window before the new one surfaces; it captures
+  the pre-publish revision as a baseline and waits for a new one (issue #116).
+* **tests**: added a live-gated realtime integration test (`-m integration`, requires
+  `SMALLEST_API_KEY`) covering register-call → websocket → the agent's spoken turn.
+
 ## 5.12.1 - 2026-09-16
 
 * **crew**: `smallestai.atoms.crew` exports its public API directly again, so

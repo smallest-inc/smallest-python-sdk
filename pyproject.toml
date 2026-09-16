@@ -5,7 +5,7 @@ dynamic = ["version"]
 
 [tool.poetry]
 name = "smallestai"
-version = "5.12.1"
+version = "5.12.2"
 description = ""
 readme = "README.md"
 authors = []
@@ -81,6 +81,7 @@ testpaths = [ "tests" ]
 asyncio_mode = "auto"
 markers = [
     "aiohttp: tests that require httpx_aiohttp to be installed",
+    "integration: live tests that hit the real API; require SMALLEST_API_KEY and are skipped without it",
 ]
 
 [tool.mypy]
