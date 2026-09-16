@@ -26,6 +26,18 @@ class RegisterCallRealtimeResponseData(UncheckedBaseModel):
     back in the WebSocket `session.created` event.
     """
 
+    input_audio_format: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    The input format resolved for this session. Read it back
+    to confirm the server understood what you meant before
+    you send any audio.
+    """
+
+    output_audio_format: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    The output format resolved for this session.
+    """
+
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
     else:
