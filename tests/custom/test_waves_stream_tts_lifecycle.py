@@ -107,6 +107,29 @@ def test_synthesize_closes_the_socket_when_the_caller_stops_early():
     assert _only_socket().close_calls == 1
 
 
+def test_synthesize_raises_when_the_socket_closes_before_complete():
+    """Issue #115: a clean close mid-stream (LB idle timeout, worker restart) must not
+    look like a finished stream. It used to share the `None` sentinel with `complete`,
+    so the consumer read a dropped connection as a finished one and got truncated audio
+    with no error. Now it raises; any audio already delivered is still yielded first.
+
+    The socket is dropped *after* the two chunks are consumed (firing on_close inside
+    run_forever would reset is_connected before the connect handshake completes)."""
+    tts = _tts(lambda ws: (ws.audio("YQ=="), ws.audio("Yg==")))  # "a", "b"; no complete
+
+    stream = tts.synthesize("hello")
+    assert next(stream) == b"a"
+    assert next(stream) == b"b"
+
+    sock = _only_socket()
+    sock.on_close(sock)  # socket drops mid-stream, no `complete` message
+
+    with pytest.raises(ConnectionError, match="closed before completion"):
+        next(stream)
+
+    assert sock.close_calls == 1  # the generator's finally still closed the socket
+
+
 def test_start_streaming_session_closes_the_socket():
     """This one had no close on any path, and no public way to reach the socket."""
     tts = _tts(lambda ws: ws.complete())

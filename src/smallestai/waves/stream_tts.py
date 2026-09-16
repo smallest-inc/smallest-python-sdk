@@ -140,7 +140,11 @@ class WavesStreamingTTS:
     def _on_close(self, ws, *args):
         self.is_connected = False
         if not self.is_complete:
-            self.audio_queue.put(None)
+            # The socket closed before a `complete` message arrived (LB idle timeout,
+            # worker restart, network drop). Surface it as an error instead of the
+            # `None` completion sentinel, so a truncated stream does not look finished.
+            # Every consume loop checks error_queue at the top of each iteration.
+            self.error_queue.put(ConnectionError("TTS stream closed before completion; received audio is truncated"))
 
     def _connect(self):
         self.close()

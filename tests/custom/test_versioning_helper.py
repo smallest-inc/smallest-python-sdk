@@ -72,3 +72,39 @@ def test_facade_wires_generated_clients():
     v = Versioning(_Client())
     assert v.branches is branches
     assert v.revisions is revisions
+
+
+def test_publish_and_wait_ignores_the_previous_published_revision():
+    """Issue #116: on a branch published before, `publish_and_wait` must not return the
+    stale previous revision during the window after `publish_draft` returns `scanning`
+    but before the new revision surfaces in the listing. It captures the pre-publish
+    newest id as a baseline and keeps polling until a different (new) revision appears."""
+    from types import SimpleNamespace as NS
+
+    # newest-revision listing over successive calls: r1 (baseline), r1 (new not surfaced
+    # yet), then r2. Both rows report "published"; only the baseline check tells them apart.
+    listings = [["r1"], ["r1"], ["r2"]]
+    seen = {"i": 0}
+
+    class _Revisions:
+        def list(self, *, id, branch_id, limit):
+            i = min(seen["i"], len(listings) - 1)
+            seen["i"] += 1
+            return NS(data=NS(revisions=[NS(id=x) for x in listings[i]]))
+
+        def get(self, *, id, branch_id, revision_id):
+            return NS(data=NS(revision=NS(id=revision_id, status="published", security_check=None)))
+
+    class _Branches:
+        def publish_draft(self, *, id, branch_id, label=None):
+            return NS(data=NS(state="scanning", revision=None))
+
+    class _Atoms:
+        agent_versioning_branches = _Branches()
+        agent_versioning_revisions = _Revisions()
+
+    class _Client:
+        atoms = _Atoms()
+
+    rev = Versioning(_Client()).publish_and_wait("agent1", "branch1", poll_interval=0.0)
+    assert rev.id == "r2"  # the new revision, not the stale previously-published r1

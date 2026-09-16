@@ -17,6 +17,7 @@ pip install smallestai
 - [Quickstart](#quickstart-create-an-agent-and-call-it)
 - [Text-to-speech and speech-to-text](#text-to-speech-and-speech-to-text-models)
 - [Agent crew: your own LLM](#agent-crew-your-own-llm-in-the-middle)
+- [Reusable tools and secrets](#reusable-tools-and-secrets)
 - [CLI](#cli)
 - [Async client](#async-client)
 - [Environments](#environments)
@@ -112,6 +113,42 @@ smallestai agent-crew builds        # pick the build -> Make Live
 A flat directory (`server.py` + `requirements.txt` at the root) is the simplest
 layout; a `src/` layout with a `pyproject.toml` also works (declare all runtime
 deps in the pyproject).
+
+## Reusable tools and secrets
+
+Build a tool once in your org's registry and reference it from any agent, and store
+API keys in a write-only secrets vault. `Tools` and `Secrets` wrap the `/tool` and
+`/secret` endpoints; both default to the `SMALLEST_API_KEY` environment variable.
+
+```python
+from smallestai.atoms.helpers import Tools, Secrets
+
+tools = Tools()  # or Tools(api_key="sk_...")
+created = tools.create(
+    {
+        "name": "get_order_status",
+        "description": "Look up an order status by id",
+        "type": "api_call",
+        "method": "GET",
+        "url": "https://api.example.com/orders",
+        "parameters": [{"name": "order_id", "type": "text", "description": "order id", "required": True}],
+    }
+)
+tool_id = created["data"]["toolId"]
+tools.list()
+tools.duplicate(tool_id)
+tools.delete(tool_id)
+
+# secrets are write-only: the value is encrypted at rest and never returned
+secrets = Secrets()
+secrets.create(name="example_api_key", value="...")
+secrets.list()  # names and metadata only
+```
+
+Reference a saved tool from an agent with `toolRefs: ["<toolId>"]` on its single-prompt
+config. The tool must exist in the registry first, or the reference is dropped when the
+agent runs. Referencing a tool makes it available; the agent only calls it when its
+prompt says to.
 
 ## CLI
 
