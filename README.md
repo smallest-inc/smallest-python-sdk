@@ -131,9 +131,7 @@ created = tools.create(
         "type": "api_call",
         "method": "GET",
         "url": "https://api.example.com/orders",
-        "parameters": [
-            {"name": "order_id", "type": "text", "description": "order id", "required": True}
-        ],
+        "parameters": [{"name": "order_id", "type": "text", "description": "order id", "required": True}],
     }
 )
 tool_id = created["data"]["toolId"]
