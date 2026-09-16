@@ -63,6 +63,11 @@ class WavesStreamingTTS:
         config = TTSConfig(voice_id="magnus", api_key="...")
         streaming_tts = WavesStreamingTTS(config)
         audio_chunks = list(streaming_tts.synthesize("Hello world"))
+
+    Each generator closes its own socket when it finishes, raises, or is abandoned
+    part way through. ``start_streaming_session`` drives the socket by hand through
+    ``send_text_chunk`` / ``flush_buffer``, so call ``close()`` when that session is
+    over if you never exhaust the generator.
     """
 
     # Unified TTS streaming endpoint. The old per-model URL
@@ -138,8 +143,7 @@ class WavesStreamingTTS:
             self.audio_queue.put(None)
 
     def _connect(self):
-        if self.ws:
-            self.ws.close()
+        self.close()
 
         self.ws = WebSocketApp(
             self.ws_url,
@@ -161,11 +165,19 @@ class WavesStreamingTTS:
             time.sleep(0.1)
 
         if not self.is_connected:
+            self.close()
             raise Exception(
                 "Failed to connect to WebSocket "
                 f"{self.ws_url} within {timeout}s. "
                 "Check your network and that SMALLEST_API_KEY is valid."
             )
+
+    def close(self):
+        """Close the socket if one is open. Safe to call more than once."""
+        ws, self.ws = self.ws, None
+        self.is_connected = False
+        if ws is not None:
+            ws.close()
 
     def synthesize(self, text: str) -> Generator[bytes, None, None]:
         """Synthesize a single text string and stream back PCM audio chunks."""
@@ -177,21 +189,22 @@ class WavesStreamingTTS:
         payload = self._create_payload(text)
         ws.send(json.dumps(payload))
 
-        while True:
-            if not self.error_queue.empty():
-                raise self.error_queue.get()
+        try:
+            while True:
+                if not self.error_queue.empty():
+                    raise self.error_queue.get()
 
-            try:
-                chunk = self.audio_queue.get(timeout=1.0)
-                if chunk is None:
-                    break
-                yield chunk
-            except queue.Empty:
-                if self.is_complete:
-                    break
-                continue
-
-        ws.close()
+                try:
+                    chunk = self.audio_queue.get(timeout=1.0)
+                    if chunk is None:
+                        break
+                    yield chunk
+                except queue.Empty:
+                    if self.is_complete:
+                        break
+                    continue
+        finally:
+            self.close()
 
     def synthesize_streaming(
         self,
@@ -222,21 +235,22 @@ class WavesStreamingTTS:
         sender_thread.daemon = True
         sender_thread.start()
 
-        while True:
-            if not self.error_queue.empty():
-                raise self.error_queue.get()
+        try:
+            while True:
+                if not self.error_queue.empty():
+                    raise self.error_queue.get()
 
-            try:
-                chunk = self.audio_queue.get(timeout=1.0)
-                if chunk is None:
-                    break
-                yield chunk
-            except queue.Empty:
-                if self.is_complete:
-                    break
-                continue
-
-        ws.close()
+                try:
+                    chunk = self.audio_queue.get(timeout=1.0)
+                    if chunk is None:
+                        break
+                    yield chunk
+                except queue.Empty:
+                    if self.is_complete:
+                        break
+                    continue
+        finally:
+            self.close()
 
     def send_text_chunk(self, text: str, continue_stream: bool = True, flush: bool = False):
         if not self.is_connected:
@@ -256,19 +270,22 @@ class WavesStreamingTTS:
         self._reset_state()
         self._connect()
 
-        while True:
-            if not self.error_queue.empty():
-                raise self.error_queue.get()
+        try:
+            while True:
+                if not self.error_queue.empty():
+                    raise self.error_queue.get()
 
-            try:
-                chunk = self.audio_queue.get(timeout=0.1)
-                if chunk is None:
-                    break
-                yield chunk
-            except queue.Empty:
-                if self.is_complete:
-                    break
-                continue
+                try:
+                    chunk = self.audio_queue.get(timeout=0.1)
+                    if chunk is None:
+                        break
+                    yield chunk
+                except queue.Empty:
+                    if self.is_complete:
+                        break
+                    continue
+        finally:
+            self.close()
 
     def _reset_state(self):
         self.audio_queue = queue.Queue()

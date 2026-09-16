@@ -1,3 +1,19 @@
+## 5.12.1 - 2026-09-16
+
+* **crew**: `smallestai.atoms.crew` exports its public API directly again, so
+  `from smallestai.atoms.crew import AtomsCrewApp` works without reaching into
+  `.crew.server`.
+* **helpers**: `Tools` and `Secrets` managers for the org reusable-tools registry
+  (`/tool`, `/secret`).
+* **waves**: serialize STT query params passed through the escape hatch; close the
+  streaming-TTS socket on every exit path (error mid-stream, early generator stop,
+  and manual session start).
+* **helpers**: keep a pagination zero in `as_page`; give the Atoms REST helpers a
+  request timeout.
+* **crew**: key the task registry by task rather than name; keep the call id when a
+  parallel tool fails; type-check the documented bare `@function_tool` form via
+  overloads.
+
 ## 5.12.0 - 2026-08-24
 
 * **cli**: added `smallestai version` and a `--version/-V` flag.
