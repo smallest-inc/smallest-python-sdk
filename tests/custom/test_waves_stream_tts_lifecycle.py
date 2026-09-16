@@ -21,7 +21,7 @@ class _FakeWebSocketApp:
     """Stands in for websocket.WebSocketApp. `script` runs once the socket is open."""
 
     script = None
-    opened = []
+    opened: "list[_FakeWebSocketApp]" = []
 
     def __init__(self, url, header=None, on_open=None, on_message=None, on_error=None, on_close=None):
         type(self).opened.append(self)
