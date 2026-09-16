@@ -60,18 +60,23 @@ def test_register_call_then_connect_and_hear_the_agent():
         got_audio = False
         async with websockets.connect(url, ssl=ssl.create_default_context(), open_timeout=20) as ws:
             # Collect frames for up to 15s: the session, then the agent's first spoken turn.
+            # asyncio.wait_for (not asyncio.timeout) so this runs on Python 3.9+.
+            loop = asyncio.get_event_loop()
+            deadline = loop.time() + 15
             try:
-                async with asyncio.timeout(15):
-                    while True:
-                        raw = await ws.recv()
-                        msg = json.loads(raw) if isinstance(raw, (str, bytes)) else {}
-                        t = msg.get("type", "")
-                        types.append(t)
-                        # audio arrives as base64 payloads on audio/response events
-                        if "audio" in t or msg.get("audio") or "audio" in msg.get("data", {}):
-                            got_audio = True
-                        if got_audio and len(types) >= 3:
-                            break
+                while True:
+                    remaining = deadline - loop.time()
+                    if remaining <= 0:
+                        break
+                    raw = await asyncio.wait_for(ws.recv(), timeout=remaining)
+                    msg = json.loads(raw) if isinstance(raw, (str, bytes)) else {}
+                    t = msg.get("type", "")
+                    types.append(t)
+                    # audio arrives as base64 payloads on audio/response events
+                    if "audio" in t or msg.get("audio") or "audio" in msg.get("data", {}):
+                        got_audio = True
+                    if got_audio and len(types) >= 3:
+                        break
             except (asyncio.TimeoutError, websockets.ConnectionClosed):
                 pass
         return types, got_audio
