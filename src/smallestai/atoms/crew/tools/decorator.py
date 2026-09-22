@@ -85,6 +85,14 @@ def function_tool(
     return decorator
 
 
+# Line-parity alias. A "loopback" tool is the default: its result goes back to the
+# LLM to continue reasoning, exactly like @function_tool. Provided so agents written
+# to the loopback/passthrough vocabulary read naturally. (Passthrough — routing a
+# tool result straight to the caller, skipping the LLM — is a separate change on the
+# tool-execution path, since crew's tool loop is caller-driven via ToolRegistry.execute.)
+loopback_tool = function_tool
+
+
 def is_function_tool(func: Any) -> bool:
     """
     Check if function is decorated with @function_tool.

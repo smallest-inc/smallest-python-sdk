@@ -26,6 +26,7 @@ _LAZY_EXPORTS = {
     "BackgroundCrewNode": "smallestai.atoms.crew.nodes",
     "OpenAIClient": "smallestai.atoms.crew.clients.openai",
     "function_tool": "smallestai.atoms.crew.tools",
+    "loopback_tool": "smallestai.atoms.crew.tools",
     "ToolRegistry": "smallestai.atoms.crew.tools",
 }
 
@@ -39,6 +40,7 @@ if TYPE_CHECKING:
     from smallestai.atoms.crew.session import CrewSession as CrewSession
     from smallestai.atoms.crew.tools import ToolRegistry as ToolRegistry
     from smallestai.atoms.crew.tools import function_tool as function_tool
+    from smallestai.atoms.crew.tools import loopback_tool as loopback_tool
 
 
 def __getattr__(name: str):
