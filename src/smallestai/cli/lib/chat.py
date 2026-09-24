@@ -108,6 +108,7 @@ class EventType(str, Enum):
 
     AGENT_END_CALL = "agent.end_call"
     AGENT_TRANSFER_CONVERSATION = "agent.transfer_call"
+    AGENT_LOG = "agent.log"
 
 
 class SDKEvent(TypedModel, type=EventType.BASE.value):
@@ -225,6 +226,18 @@ class SDKAgentLLMResponseChunkEvent(SDKAgentEvent, type=EventType.AGENT_LLM_RESP
 
 class SDKAgentLLMResponseEndEvent(SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_END.value):
     pass
+
+
+class SDKAgentLogEvent(SDKAgentEvent, type=EventType.AGENT_LOG.value):
+    """Node-emitted log / tool-call activity (e.g. tool_call_start/end/error).
+
+    The crew tool registry emits these on every tool call. Registering the type
+    here means the chat client can render tool activity instead of raising
+    'Unknown type agent.log' and dropping the turn.
+    """
+
+    name: Optional[str] = None
+    payload: Optional[dict] = None
 
 
 class SDKAgentControlInterruptEvent(SDKAgentEvent, type=EventType.AGENT_CONTROL_INTERRUPT.value):
@@ -425,6 +438,17 @@ class ChatClient:
                                     border_style="blue",
                                 )
                             )
+
+                        elif isinstance(event, SDKAgentLogEvent):
+                            # Tool-call activity (tool_call_start/end/error). Show it
+                            # dimly so the CLI reflects what the node is doing instead
+                            # of erroring on the unknown type.
+                            payload = event.payload or {}
+                            tool = payload.get("function_name")
+                            label = (event.name or "log").replace("tool_call_", "tool ")
+                            ok = payload.get("success")
+                            mark = "" if ok is None else (" ✓" if ok else " ✗")
+                            console.print(f"[dim]· {label}{f': {tool}' if tool else ''}{mark}[/dim]")
 
                     except asyncio.TimeoutError:
                         console.print("[yellow]Response timeout[/yellow]")
