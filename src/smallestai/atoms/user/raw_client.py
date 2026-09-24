@@ -11,6 +11,7 @@ from ...core.request_options import RequestOptions
 from ...core.unchecked_base_model import construct_type
 from ..errors.internal_server_error import InternalServerError
 from ..errors.unauthorized_error import UnauthorizedError
+from .types.get_subscription_user_response import GetSubscriptionUserResponse
 from .types.get_user_response import GetUserResponse
 from pydantic import ValidationError
 
@@ -80,6 +81,73 @@ class RawUserClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def get_subscription(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[GetSubscriptionUserResponse]:
+        """
+        Returns the organization's current subscription: plan id, credit balance,
+        renewal date, and the per-plan `limits` (agents, campaigns, numbers, daily and
+        concurrent calls, knowledge-base sizes) plus the `features` map that gates
+        capabilities like telephony, campaigns, and webhooks. Use it to check remaining
+        credits or whether a feature is enabled before attempting an action.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[GetSubscriptionUserResponse]
+            Successful response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "user/subscription",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GetSubscriptionUserResponse,
+                    construct_type(
+                        type_=GetSubscriptionUserResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
 
 class AsyncRawUserClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -111,6 +179,73 @@ class AsyncRawUserClient:
                     GetUserResponse,
                     construct_type(
                         type_=GetUserResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_subscription(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[GetSubscriptionUserResponse]:
+        """
+        Returns the organization's current subscription: plan id, credit balance,
+        renewal date, and the per-plan `limits` (agents, campaigns, numbers, daily and
+        concurrent calls, knowledge-base sizes) plus the `features` map that gates
+        capabilities like telephony, campaigns, and webhooks. Use it to check remaining
+        credits or whether a feature is enabled before attempting an action.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[GetSubscriptionUserResponse]
+            Successful response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "user/subscription",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GetSubscriptionUserResponse,
+                    construct_type(
+                        type_=GetSubscriptionUserResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

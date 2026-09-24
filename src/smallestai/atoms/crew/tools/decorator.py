@@ -6,7 +6,7 @@ Provides @function_tool decorator for marking functions as tools.
 
 import inspect
 from dataclasses import dataclass
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, List, Optional, overload
 
 from smallestai.atoms.crew.tools.schema import FunctionSchema, extract_function_schema
 
@@ -19,6 +19,14 @@ class FunctionToolInfo:
     description: str
     schema: FunctionSchema
     function: Callable
+
+
+@overload
+def function_tool(name: Callable) -> Callable: ...
+
+
+@overload
+def function_tool(name: Optional[str] = ..., description: Optional[str] = ...) -> Callable: ...
 
 
 def function_tool(
@@ -75,6 +83,14 @@ def function_tool(
         return decorator(func)
 
     return decorator
+
+
+# Line-parity alias. A "loopback" tool is the default: its result goes back to the
+# LLM to continue reasoning, exactly like @function_tool. Provided so agents written
+# to the loopback/passthrough vocabulary read naturally. (Passthrough — routing a
+# tool result straight to the caller, skipping the LLM — is a separate change on the
+# tool-execution path, since crew's tool loop is caller-driven via ToolRegistry.execute.)
+loopback_tool = function_tool
 
 
 def is_function_tool(func: Any) -> bool:

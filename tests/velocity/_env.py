@@ -3,6 +3,7 @@
 Reads SMALLEST_API_KEY + base from the repo .env and builds a SmallestAI
 client pointed at the Velocity dev stack. NOT for CI — live target only.
 """
+
 import os
 import pathlib
 

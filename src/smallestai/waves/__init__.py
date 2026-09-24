@@ -6,6 +6,37 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
+    from .types import CatalogVoice
+    from .types import CatalogVoiceTags
+    from .types import CountTimeseriesResponse
+    from .types import CreditsTimeseriesResponse
+    from .analytics import DeleteStreamingSpeechToTextHistoryResponse
+    from .types import DispositionMetric
+    from .types import DispositionMetricDispositionMetricType
+    from .post_call_analysis import GeneratePostCallAnalysisResponse
+    from .voices import GetAllVoiceModelsResponse
+    from .analytics import GetStreamingSpeechToTextUsageTimeseriesRequestGranularity
+    from .analytics import GetTextToSpeechConcurrencyTimeseriesRequestGranularity
+    from .analytics import GetTextToSpeechCreditsTimeseriesRequestGranularity
+    from .analytics import GetTextToSpeechUsageTimeseriesRequestGranularity
+    from .analytics import GetTextToSpeechWebsocketConnectionsTimeseriesRequestGranularity
+    from .types import HealthResponse
+    from .types import PcaResponse
+    from .types import PcaResponseDispositionMetricsItem
+    from .types import ServiceStatus
+    from .types import StreamingSpeechToTextLogEntry
+    from .types import StreamingSpeechToTextLogEntryRequestType
+    from .types import StreamingSpeechToTextLogsResponse
+    from .types import TextToSpeechLogEntry
+    from .types import TextToSpeechLogEntryRequestType
+    from .types import TextToSpeechLogsResponse
+    from .types import ValuesTimeseriesResponse
+    from .types import WebhookLogEntry
+    from .types import WebhookLogsResponse
+    from . import analytics
+    from . import ops
+    from . import post_call_analysis
+    from . import voices
     from .types import (
         AsyncAccepted,
         AudioChunk,
@@ -98,6 +129,7 @@ if typing.TYPE_CHECKING:
         UnauthorizedError,
     )
     from . import electron, speech_to_speech, speech_to_text, streaming_tts, tts
+
     # Backward-compat shim for the 4.3.1 surface (source in stream_tts.py, .fernignore'd).
     from .stream_tts import TTSConfig, WavesStreamingTTS
     from .electron import (
@@ -202,6 +234,37 @@ if typing.TYPE_CHECKING:
         TtsResponseMessageStatus,
     )
 _dynamic_imports: typing.Dict[str, str] = {
+    "CatalogVoice": ".types",
+    "CatalogVoiceTags": ".types",
+    "CountTimeseriesResponse": ".types",
+    "CreditsTimeseriesResponse": ".types",
+    "DeleteStreamingSpeechToTextHistoryResponse": ".analytics",
+    "DispositionMetric": ".types",
+    "DispositionMetricDispositionMetricType": ".types",
+    "GeneratePostCallAnalysisResponse": ".post_call_analysis",
+    "GetAllVoiceModelsResponse": ".voices",
+    "GetStreamingSpeechToTextUsageTimeseriesRequestGranularity": ".analytics",
+    "GetTextToSpeechConcurrencyTimeseriesRequestGranularity": ".analytics",
+    "GetTextToSpeechCreditsTimeseriesRequestGranularity": ".analytics",
+    "GetTextToSpeechUsageTimeseriesRequestGranularity": ".analytics",
+    "GetTextToSpeechWebsocketConnectionsTimeseriesRequestGranularity": ".analytics",
+    "HealthResponse": ".types",
+    "PcaResponse": ".types",
+    "PcaResponseDispositionMetricsItem": ".types",
+    "ServiceStatus": ".types",
+    "StreamingSpeechToTextLogEntry": ".types",
+    "StreamingSpeechToTextLogEntryRequestType": ".types",
+    "StreamingSpeechToTextLogsResponse": ".types",
+    "TextToSpeechLogEntry": ".types",
+    "TextToSpeechLogEntryRequestType": ".types",
+    "TextToSpeechLogsResponse": ".types",
+    "ValuesTimeseriesResponse": ".types",
+    "WebhookLogEntry": ".types",
+    "WebhookLogsResponse": ".types",
+    "analytics": ".analytics",
+    "ops": ".ops",
+    "post_call_analysis": ".post_call_analysis",
+    "voices": ".voices",
     "WavesStreamingTTS": ".stream_tts",
     "TTSConfig": ".stream_tts",
     "AsyncAccepted": ".types",
@@ -412,6 +475,37 @@ def __dir__():
 
 
 __all__ = [
+    "CatalogVoice",
+    "CatalogVoiceTags",
+    "CountTimeseriesResponse",
+    "CreditsTimeseriesResponse",
+    "DeleteStreamingSpeechToTextHistoryResponse",
+    "DispositionMetric",
+    "DispositionMetricDispositionMetricType",
+    "GeneratePostCallAnalysisResponse",
+    "GetAllVoiceModelsResponse",
+    "GetStreamingSpeechToTextUsageTimeseriesRequestGranularity",
+    "GetTextToSpeechConcurrencyTimeseriesRequestGranularity",
+    "GetTextToSpeechCreditsTimeseriesRequestGranularity",
+    "GetTextToSpeechUsageTimeseriesRequestGranularity",
+    "GetTextToSpeechWebsocketConnectionsTimeseriesRequestGranularity",
+    "HealthResponse",
+    "PcaResponse",
+    "PcaResponseDispositionMetricsItem",
+    "ServiceStatus",
+    "StreamingSpeechToTextLogEntry",
+    "StreamingSpeechToTextLogEntryRequestType",
+    "StreamingSpeechToTextLogsResponse",
+    "TextToSpeechLogEntry",
+    "TextToSpeechLogEntryRequestType",
+    "TextToSpeechLogsResponse",
+    "ValuesTimeseriesResponse",
+    "WebhookLogEntry",
+    "WebhookLogsResponse",
+    "analytics",
+    "ops",
+    "post_call_analysis",
+    "voices",
     "TTSConfig",
     "WavesStreamingTTS",
     "AsyncAccepted",

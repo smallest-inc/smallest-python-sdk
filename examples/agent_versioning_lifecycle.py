@@ -13,10 +13,11 @@ rolled back. Under the branch model, runtime-config edits go through this flow;
     export SMALLEST_API_KEY=sk_...
     python examples/agent_versioning_lifecycle.py
 """
+
 import os
 
 from smallestai import SmallestAI
-from smallestai.atoms.helpers.versioning import Versioning, DraftConflictError
+from smallestai.atoms.helpers.versioning import DraftConflictError, Versioning
 
 client = SmallestAI(api_key=os.environ["SMALLEST_API_KEY"])
 
@@ -44,7 +45,8 @@ main_id = next(b for b in branches if b.branch.is_default).branch.id
 # Quick edit: change the config and publish in one call (draft -> publish -> live,
 # security scan handled). This is the simple "update my agent" path.
 revision = v.edit_and_publish(
-    agent_id, main_id,
+    agent_id,
+    main_id,
     global_prompt="You are a warm, concise receptionist. Confirm details before booking.",
     label="tone tweak",
 )
@@ -60,7 +62,7 @@ print("test call id:", test.data.call_id)
 # Fork Main so real traffic keeps hitting the live config while you experiment.
 staging_id = v.branches.create_branch(id=agent_id, source_branch_id=main_id, name="staging").data.id
 v.edit_and_publish(agent_id, staging_id, global_prompt="New experimental prompt.", label="experiment")
-v.branches.make_live(id=agent_id, branch_id=staging_id)   # staging live, Main flips to not-live
+v.branches.make_live(id=agent_id, branch_id=staging_id)  # staging live, Main flips to not-live
 
 # Roll back: restore an older revision as a new head revision on the live branch.
 older = v.revisions.list(id=agent_id, branch_id=staging_id).data.revisions[-1].id
@@ -72,8 +74,9 @@ v.revisions.restore(id=agent_id, branch_id=staging_id, revision_id=older)
 draft = v.branches.get_draft(id=agent_id, branch_id=main_id).data
 try:
     v.edit_and_publish(
-        agent_id, main_id,
-        expected_revision=draft.latest.draft_revision,   # only apply if nobody edited since
+        agent_id,
+        main_id,
+        expected_revision=draft.latest.draft_revision,  # only apply if nobody edited since
         global_prompt="Applied only if no conflicting edit landed first.",
     )
 except DraftConflictError as e:

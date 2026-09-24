@@ -6,9 +6,15 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
+    from .get_subscription_user_response import GetSubscriptionUserResponse
+    from .get_subscription_user_response_data import GetSubscriptionUserResponseData
+    from .get_subscription_user_response_data_limits import GetSubscriptionUserResponseDataLimits
     from .get_user_response import GetUserResponse
     from .get_user_response_data import GetUserResponseData
 _dynamic_imports: typing.Dict[str, str] = {
+    "GetSubscriptionUserResponse": ".get_subscription_user_response",
+    "GetSubscriptionUserResponseData": ".get_subscription_user_response_data",
+    "GetSubscriptionUserResponseDataLimits": ".get_subscription_user_response_data_limits",
     "GetUserResponse": ".get_user_response",
     "GetUserResponseData": ".get_user_response_data",
 }
@@ -35,4 +41,10 @@ def __dir__():
     return sorted(lazy_attrs)
 
 
-__all__ = ["GetUserResponse", "GetUserResponseData"]
+__all__ = [
+    "GetSubscriptionUserResponse",
+    "GetSubscriptionUserResponseData",
+    "GetSubscriptionUserResponseDataLimits",
+    "GetUserResponse",
+    "GetUserResponseData",
+]

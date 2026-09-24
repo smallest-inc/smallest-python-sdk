@@ -58,6 +58,14 @@ class CallsClient:
         """
         Retrieve paginated conversation logs with support for various filters. Returns call logs for agents belonging to the authenticated user's organization.
 
+        **To discover new inbound calls, use webhooks instead of polling this endpoint.** Subscribe an agent to the `pre-conversation` webhook event: it fires the moment an inbound call connects and delivers `callId`, `fromPhone`, and `toPhone`, so you get every new call in real time with no polling load. See the [Webhooks guide](/voice-agents/platform/features/webhooks). Poll this endpoint only for backfill or reconciliation.
+
+        **If you do poll, use the default sort.** The default query (no `sortBy`) sorts by `updatedAt` descending and is index-backed, so it stays fast even on large accounts. Request the first page and keep the list small: `page=1&limit=N` (optionally `callTypes=telephony_inbound` for inbound only). This returns in well under a second. To detect new calls between polls, track the conversation IDs you have already seen rather than a single timestamp, since the default order is `updatedAt` (a recently-updated older call can move to the top).
+
+        **Avoid `sortBy=createdAt`, `dateFrom`, and `dateTo` on large accounts.** These sort or range-filter on `createdAt`, which is not index-backed for the organization-wide query and forces a full scan of your conversation history. On accounts with a large history this can exceed the gateway timeout and return a 504. Prefer the default `updatedAt` sort above.
+
+        `agentIds` and `campaignIds` accept comma-separated IDs and narrow the result set, but do not pair them with `sortBy=createdAt` or `dateFrom` on large accounts (the `createdAt` sort/filter is the slow part, not the number of agents).
+
         Parameters
         ----------
         page : typing.Optional[int]
@@ -242,6 +250,7 @@ class CallsClient:
         phone_number: str,
         test_call: typing.Optional[StartOutboundCallCallsRequestXTestCall] = None,
         variables: typing.Optional[typing.Dict[str, StartOutboundCallCallsRequestVariablesValue]] = OMIT,
+        from_number: typing.Optional[str] = OMIT,
         from_product_id: typing.Optional[str] = OMIT,
         version_id: typing.Optional[str] = OMIT,
         operator_id: typing.Optional[str] = OMIT,
@@ -253,16 +262,25 @@ class CallsClient:
 
         ## Caller-ID resolution
 
-        When `fromProductId` is omitted **and** the agent has no telephony
-        product attached, the call dispatches from a Smallest-managed Plivo
-        trunk using a default caller-ID number (chosen by destination
-        country). The call still places and the response is still
-        `200 + conversationId`, but the recipient sees the default Smallest
-        number rather than your own. For production traffic, either:
+        Every call names the number it dials from:
 
-        - pass `fromProductId` explicitly (look up your owned numbers via
-          `GET /product/phone-numbers`), or
-        - attach a phone-number product to the agent.
+        1. `fromNumber` present: resolved against the numbers your organization owns
+           (rented numbers and outbound SIP trunk caller IDs). Must match **exactly** as
+           stored, E.164 with the leading `+` and no spaces (`+14155552671`). An unowned
+           or unmatched number returns `400` ("... is not one of your outbound numbers").
+        2. `fromNumber` omitted (**deprecated fallback**): the call dials from the
+           agent's attached caller IDs (see `POST /agent/{agentId}/caller-ids`), first
+           attached wins. This fallback is the compatibility bridge and sunsets with the
+           migration window, after which `fromNumber` is required; calls that used it
+           respond with a `Deprecation: true` header so you can find them in your logs.
+           With no caller IDs attached, the call is refused with `400` ("No caller ID
+           for this call — pass a number to dial from, or attach a caller ID to the
+           agent"). Calls to numbers on the Do Not Call list are refused with `403`
+           ("Call blocked: number is on Do Not Call list").
+
+        There is no silent fallback to a platform-owned number (dashboard test calls are
+        the only exception). `fromProductId` is still accepted as a legacy alias and is
+        resolved to its phone number first.
 
         ## Resolved-config check
 
@@ -281,6 +299,9 @@ class CallsClient:
         - Invalid `agentId` format (`"Invalid agent id"`)
         - Invalid `phoneNumber` format (`"Invalid phone number"`)
         - Invalid `fromProductId` format (`"Invalid product id"`)
+        - `fromNumber` that is not one of your rented numbers or outbound-trunk caller IDs (`"...is not one of your outbound numbers"`)
+        - `fromProductId` that does not resolve to an active number in your organization (`"Phone number not found or not active for your organization"`)
+        - No number to dial from: `fromNumber` omitted and the agent has no caller ID attached (`"No caller ID for this call — pass a number to dial from, or attach a caller ID to the agent"`)
         - Agent not found or not in the caller's org (`"Agent not found"`)
         - Agent is archived (`"Agent is archived and cannot initiate calls"`)
         - `workflow_graph` agent has no workflow configured (`"Workflow not found"`)
@@ -306,8 +327,14 @@ class CallsClient:
             Variables to inject into the agent's prompt at call time.
             Values must be string, number, or boolean — nested objects are not supported.
 
+        from_number : typing.Optional[str]
+            The caller ID to dial from, E.164 with the leading `+`, matched exactly
+            against your rented numbers and outbound SIP trunk caller IDs (no
+            normalization is applied; `+1 415 555 2671` or `14155552671` will not
+            resolve). See "Caller-ID resolution" above for what happens when omitted.
+
         from_product_id : typing.Optional[str]
-            ID of the telephony product (phone number) to call from. Get this from `GET /product/phone-numbers`.
+            Legacy alias for `fromNumber`. The ID of a telephony product (phone number) to call from, resolved to its number before dialing. Prefer `fromNumber`.
 
         version_id : typing.Optional[str]
             ID of a specific published agent version to use for this call.
@@ -346,6 +373,7 @@ class CallsClient:
             phone_number=phone_number,
             test_call=test_call,
             variables=variables,
+            from_number=from_number,
             from_product_id=from_product_id,
             version_id=version_id,
             operator_id=operator_id,
@@ -392,6 +420,14 @@ class AsyncCallsClient:
     ) -> ListCallsResponse:
         """
         Retrieve paginated conversation logs with support for various filters. Returns call logs for agents belonging to the authenticated user's organization.
+
+        **To discover new inbound calls, use webhooks instead of polling this endpoint.** Subscribe an agent to the `pre-conversation` webhook event: it fires the moment an inbound call connects and delivers `callId`, `fromPhone`, and `toPhone`, so you get every new call in real time with no polling load. See the [Webhooks guide](/voice-agents/platform/features/webhooks). Poll this endpoint only for backfill or reconciliation.
+
+        **If you do poll, use the default sort.** The default query (no `sortBy`) sorts by `updatedAt` descending and is index-backed, so it stays fast even on large accounts. Request the first page and keep the list small: `page=1&limit=N` (optionally `callTypes=telephony_inbound` for inbound only). This returns in well under a second. To detect new calls between polls, track the conversation IDs you have already seen rather than a single timestamp, since the default order is `updatedAt` (a recently-updated older call can move to the top).
+
+        **Avoid `sortBy=createdAt`, `dateFrom`, and `dateTo` on large accounts.** These sort or range-filter on `createdAt`, which is not index-backed for the organization-wide query and forces a full scan of your conversation history. On accounts with a large history this can exceed the gateway timeout and return a 504. Prefer the default `updatedAt` sort above.
+
+        `agentIds` and `campaignIds` accept comma-separated IDs and narrow the result set, but do not pair them with `sortBy=createdAt` or `dateFrom` on large accounts (the `createdAt` sort/filter is the slow part, not the number of agents).
 
         Parameters
         ----------
@@ -600,6 +636,7 @@ class AsyncCallsClient:
         phone_number: str,
         test_call: typing.Optional[StartOutboundCallCallsRequestXTestCall] = None,
         variables: typing.Optional[typing.Dict[str, StartOutboundCallCallsRequestVariablesValue]] = OMIT,
+        from_number: typing.Optional[str] = OMIT,
         from_product_id: typing.Optional[str] = OMIT,
         version_id: typing.Optional[str] = OMIT,
         operator_id: typing.Optional[str] = OMIT,
@@ -611,16 +648,25 @@ class AsyncCallsClient:
 
         ## Caller-ID resolution
 
-        When `fromProductId` is omitted **and** the agent has no telephony
-        product attached, the call dispatches from a Smallest-managed Plivo
-        trunk using a default caller-ID number (chosen by destination
-        country). The call still places and the response is still
-        `200 + conversationId`, but the recipient sees the default Smallest
-        number rather than your own. For production traffic, either:
+        Every call names the number it dials from:
 
-        - pass `fromProductId` explicitly (look up your owned numbers via
-          `GET /product/phone-numbers`), or
-        - attach a phone-number product to the agent.
+        1. `fromNumber` present: resolved against the numbers your organization owns
+           (rented numbers and outbound SIP trunk caller IDs). Must match **exactly** as
+           stored, E.164 with the leading `+` and no spaces (`+14155552671`). An unowned
+           or unmatched number returns `400` ("... is not one of your outbound numbers").
+        2. `fromNumber` omitted (**deprecated fallback**): the call dials from the
+           agent's attached caller IDs (see `POST /agent/{agentId}/caller-ids`), first
+           attached wins. This fallback is the compatibility bridge and sunsets with the
+           migration window, after which `fromNumber` is required; calls that used it
+           respond with a `Deprecation: true` header so you can find them in your logs.
+           With no caller IDs attached, the call is refused with `400` ("No caller ID
+           for this call — pass a number to dial from, or attach a caller ID to the
+           agent"). Calls to numbers on the Do Not Call list are refused with `403`
+           ("Call blocked: number is on Do Not Call list").
+
+        There is no silent fallback to a platform-owned number (dashboard test calls are
+        the only exception). `fromProductId` is still accepted as a legacy alias and is
+        resolved to its phone number first.
 
         ## Resolved-config check
 
@@ -639,6 +685,9 @@ class AsyncCallsClient:
         - Invalid `agentId` format (`"Invalid agent id"`)
         - Invalid `phoneNumber` format (`"Invalid phone number"`)
         - Invalid `fromProductId` format (`"Invalid product id"`)
+        - `fromNumber` that is not one of your rented numbers or outbound-trunk caller IDs (`"...is not one of your outbound numbers"`)
+        - `fromProductId` that does not resolve to an active number in your organization (`"Phone number not found or not active for your organization"`)
+        - No number to dial from: `fromNumber` omitted and the agent has no caller ID attached (`"No caller ID for this call — pass a number to dial from, or attach a caller ID to the agent"`)
         - Agent not found or not in the caller's org (`"Agent not found"`)
         - Agent is archived (`"Agent is archived and cannot initiate calls"`)
         - `workflow_graph` agent has no workflow configured (`"Workflow not found"`)
@@ -664,8 +713,14 @@ class AsyncCallsClient:
             Variables to inject into the agent's prompt at call time.
             Values must be string, number, or boolean — nested objects are not supported.
 
+        from_number : typing.Optional[str]
+            The caller ID to dial from, E.164 with the leading `+`, matched exactly
+            against your rented numbers and outbound SIP trunk caller IDs (no
+            normalization is applied; `+1 415 555 2671` or `14155552671` will not
+            resolve). See "Caller-ID resolution" above for what happens when omitted.
+
         from_product_id : typing.Optional[str]
-            ID of the telephony product (phone number) to call from. Get this from `GET /product/phone-numbers`.
+            Legacy alias for `fromNumber`. The ID of a telephony product (phone number) to call from, resolved to its number before dialing. Prefer `fromNumber`.
 
         version_id : typing.Optional[str]
             ID of a specific published agent version to use for this call.
@@ -712,6 +767,7 @@ class AsyncCallsClient:
             phone_number=phone_number,
             test_call=test_call,
             variables=variables,
+            from_number=from_number,
             from_product_id=from_product_id,
             version_id=version_id,
             operator_id=operator_id,

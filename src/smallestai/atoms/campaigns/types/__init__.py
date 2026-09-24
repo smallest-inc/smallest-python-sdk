@@ -10,6 +10,13 @@ if typing.TYPE_CHECKING:
     from .create_campaigns_response_data import CreateCampaignsResponseData
     from .create_campaigns_response_data_status import CreateCampaignsResponseDataStatus
     from .delete_campaigns_response import DeleteCampaignsResponse
+    from .export_campaign_results_by_audience_member_request_format import (
+        ExportCampaignResultsByAudienceMemberRequestFormat,
+    )
+    from .export_campaign_results_by_audience_member_response import ExportCampaignResultsByAudienceMemberResponse
+    from .export_campaign_results_by_audience_member_response_data_item import (
+        ExportCampaignResultsByAudienceMemberResponseDataItem,
+    )
     from .get_campaigns_response import GetCampaignsResponse
     from .get_campaigns_response_data import GetCampaignsResponseData
     from .get_campaigns_response_data_campaign import GetCampaignsResponseDataCampaign
@@ -36,6 +43,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CreateCampaignsResponseData": ".create_campaigns_response_data",
     "CreateCampaignsResponseDataStatus": ".create_campaigns_response_data_status",
     "DeleteCampaignsResponse": ".delete_campaigns_response",
+    "ExportCampaignResultsByAudienceMemberRequestFormat": ".export_campaign_results_by_audience_member_request_format",
+    "ExportCampaignResultsByAudienceMemberResponse": ".export_campaign_results_by_audience_member_response",
+    "ExportCampaignResultsByAudienceMemberResponseDataItem": ".export_campaign_results_by_audience_member_response_data_item",
     "GetCampaignsResponse": ".get_campaigns_response",
     "GetCampaignsResponseData": ".get_campaigns_response_data",
     "GetCampaignsResponseDataCampaign": ".get_campaigns_response_data_campaign",
@@ -86,6 +96,9 @@ __all__ = [
     "CreateCampaignsResponseData",
     "CreateCampaignsResponseDataStatus",
     "DeleteCampaignsResponse",
+    "ExportCampaignResultsByAudienceMemberRequestFormat",
+    "ExportCampaignResultsByAudienceMemberResponse",
+    "ExportCampaignResultsByAudienceMemberResponseDataItem",
     "GetCampaignsResponse",
     "GetCampaignsResponseData",
     "GetCampaignsResponseDataCampaign",

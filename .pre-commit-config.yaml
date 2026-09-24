@@ -1,0 +1,14 @@
+# Local quality + security gates. Install once with `pre-commit install`,
+# then hooks run on every commit. Check everything with `pre-commit run --all-files`.
+# Keep the ruff rev in sync with the `lint` job in .github/workflows/ci.yml.
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.1
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.2
+    hooks:
+      - id: gitleaks

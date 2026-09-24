@@ -16,6 +16,7 @@ import requests
 
 # Default API base URL
 DEFAULT_BASE_URL = "https://api.smallest.ai/atoms/v1"
+DEFAULT_REQUEST_TIMEOUT = 30.0
 
 
 class Campaign:
@@ -31,6 +32,8 @@ class Campaign:
         self,
         base_url: Optional[str] = None,
         api_key: Optional[str] = None,
+        *,
+        request_timeout: float = DEFAULT_REQUEST_TIMEOUT,
     ):
         """
         Initialize Campaign manager.
@@ -38,9 +41,11 @@ class Campaign:
         Args:
             base_url: API base URL (default: api.smallest.ai/atoms/v1)
             api_key: API key (default: SMALLEST_API_KEY env var)
+            request_timeout: Per-request timeout in seconds
         """
         self.base_url = base_url or os.environ.get("SMALLEST_BASE_URL", DEFAULT_BASE_URL)
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY", "")
+        self.request_timeout = request_timeout
 
     def _get_headers(self) -> Dict[str, str]:
         return {
@@ -73,14 +78,14 @@ class Campaign:
             "maxRetries": max_retries,
             "retryDelay": retry_delay,
         }
-        response = requests.post(url, headers=self._get_headers(), json=payload)  # type: ignore[arg-type]
+        response = requests.post(url, headers=self._get_headers(), json=payload, timeout=self.request_timeout)  # type: ignore[arg-type]
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
     def get(self, campaign_id: str) -> Dict[str, Any]:
         """Get campaign details."""
         url = f"{self.base_url}/campaign/{campaign_id}"
-        response = requests.get(url, headers=self._get_headers())
+        response = requests.get(url, headers=self._get_headers(), timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
@@ -88,14 +93,14 @@ class Campaign:
         """List all campaigns."""
         url = f"{self.base_url}/campaign"
         params = {"limit": limit}
-        response = requests.get(url, headers=self._get_headers(), params=params)
+        response = requests.get(url, headers=self._get_headers(), params=params, timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
     def delete(self, campaign_id: str) -> Dict[str, Any]:
         """Delete a campaign."""
         url = f"{self.base_url}/campaign/{campaign_id}"
-        response = requests.delete(url, headers=self._get_headers())
+        response = requests.delete(url, headers=self._get_headers(), timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
@@ -106,20 +111,20 @@ class Campaign:
     def start(self, campaign_id: str) -> Dict[str, Any]:
         """Start a campaign."""
         url = f"{self.base_url}/campaign/{campaign_id}/start"
-        response = requests.post(url, headers=self._get_headers())
+        response = requests.post(url, headers=self._get_headers(), timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
     def stop(self, campaign_id: str) -> Dict[str, Any]:
         """Stop a campaign."""
         url = f"{self.base_url}/campaign/{campaign_id}/stop"
-        response = requests.post(url, headers=self._get_headers())
+        response = requests.post(url, headers=self._get_headers(), timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
     def pause(self, campaign_id: str) -> Dict[str, Any]:
         """Pause a campaign."""
         url = f"{self.base_url}/campaign/{campaign_id}/pause"
-        response = requests.post(url, headers=self._get_headers())
+        response = requests.post(url, headers=self._get_headers(), timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]

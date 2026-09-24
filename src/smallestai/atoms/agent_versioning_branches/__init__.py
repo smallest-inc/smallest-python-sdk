@@ -25,6 +25,7 @@ if typing.TYPE_CHECKING:
         TestCallV2RequestMode,
         UpdateBranchDraftRequestBackgroundSound,
         UpdateBranchDraftRequestSlmModel,
+        UpdateBranchDraftRequestTimezone,
         UpdateDraftAgentVersioningBranchesResponse,
     )
 _dynamic_imports: typing.Dict[str, str] = {
@@ -46,6 +47,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "TestCallV2RequestMode": ".types",
     "UpdateBranchDraftRequestBackgroundSound": ".types",
     "UpdateBranchDraftRequestSlmModel": ".types",
+    "UpdateBranchDraftRequestTimezone": ".types",
     "UpdateDraftAgentVersioningBranchesResponse": ".types",
 }
 
@@ -90,5 +92,6 @@ __all__ = [
     "TestCallV2RequestMode",
     "UpdateBranchDraftRequestBackgroundSound",
     "UpdateBranchDraftRequestSlmModel",
+    "UpdateBranchDraftRequestTimezone",
     "UpdateDraftAgentVersioningBranchesResponse",
 ]

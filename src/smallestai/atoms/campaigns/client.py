@@ -8,6 +8,10 @@ from ...core.request_options import RequestOptions
 from .raw_client import AsyncRawCampaignsClient, RawCampaignsClient
 from .types.create_campaigns_response import CreateCampaignsResponse
 from .types.delete_campaigns_response import DeleteCampaignsResponse
+from .types.export_campaign_results_by_audience_member_request_format import (
+    ExportCampaignResultsByAudienceMemberRequestFormat,
+)
+from .types.export_campaign_results_by_audience_member_response import ExportCampaignResultsByAudienceMemberResponse
 from .types.get_campaigns_response import GetCampaignsResponse
 from .types.list_campaigns_request_sort_field import ListCampaignsRequestSortField
 from .types.list_campaigns_request_sort_order import ListCampaignsRequestSortOrder
@@ -104,6 +108,7 @@ class CampaignsClient:
         audience_id: str,
         agent_id: str,
         description: typing.Optional[str] = OMIT,
+        from_numbers: typing.Optional[typing.Sequence[str]] = OMIT,
         phone_number_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         scheduled_at: typing.Optional[dt.datetime] = OMIT,
         max_retries: typing.Optional[int] = OMIT,
@@ -127,10 +132,18 @@ class CampaignsClient:
         description : typing.Optional[str]
             The description of the campaign
 
+        from_numbers : typing.Optional[typing.Sequence[str]]
+            The caller IDs this campaign presents, E.164 with the leading `+`, each
+            matched against numbers your organization owns. Several numbers rotate
+            positionally across calls; retries reuse the number the recipient already
+            saw. The list is frozen on the campaign at creation. A campaign cannot be
+            created without at least one resolvable number (`400` "Choose at least one
+            number to call from"); one bad number fails the whole request.
+
         phone_number_ids : typing.Optional[typing.Sequence[str]]
-            Optional list of caller-ID phone number IDs to rotate across
-            when placing outbound calls for this campaign. If omitted,
-            the agent's default phone number is used.
+            Legacy alias for `fromNumbers`: caller-ID phone number IDs, resolved to
+            their numbers at creation. Ignored when `fromNumbers` is present. Prefer
+            `fromNumbers`.
 
         scheduled_at : typing.Optional[dt.datetime]
             Optional ISO-8601 timestamp for when the campaign should
@@ -151,8 +164,8 @@ class CampaignsClient:
         Returns
         -------
         CreateCampaignsResponse
-            Campaign created successfully. Note: the response is the raw Mongoose document — `agentId`
-            and `audienceId` are plain ObjectId strings here, not nested objects as returned by GET endpoints.
+            Campaign created successfully. Note: `agentId` and `audienceId` are plain
+            id strings in this response, not the nested objects the GET endpoints return.
 
         Examples
         --------
@@ -172,6 +185,7 @@ class CampaignsClient:
             audience_id=audience_id,
             agent_id=agent_id,
             description=description,
+            from_numbers=from_numbers,
             phone_number_ids=phone_number_ids,
             scheduled_at=scheduled_at,
             max_retries=max_retries,
@@ -311,6 +325,90 @@ class CampaignsClient:
         _response = self._raw_client.pause(id, request_options=request_options)
         return _response.data
 
+    def export_campaign_results_by_audience_member(
+        self,
+        id: str,
+        *,
+        format: typing.Optional[ExportCampaignResultsByAudienceMemberRequestFormat] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ExportCampaignResultsByAudienceMemberResponse:
+        """
+        Returns one row per contact in the campaign audience with the outcome of every call
+        attempt for that contact (status, disposition, duration, cost, call ID). Use this to
+        reconcile a campaign run against a CRM, or to identify contacts that never connected.
+        The response streams as CSV.
+
+        Parameters
+        ----------
+        id : str
+            The campaign ID.
+
+        format : typing.Optional[ExportCampaignResultsByAudienceMemberRequestFormat]
+            Output format. Defaults to `json`.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ExportCampaignResultsByAudienceMemberResponse
+            The grouped export. The default `json` returns the structured object below;
+            `format=csv` streams `text/csv` with one row per audience-member contact. The
+            CSV column set matches your dashboard's campaign export for this campaign.
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.campaigns.export_campaign_results_by_audience_member(
+            id="6a75935452c6e5eceaa16edf",
+        )
+        """
+        _response = self._raw_client.export_campaign_results_by_audience_member(
+            id, format=format, request_options=request_options
+        )
+        return _response.data
+
+    def export_campaign_logs(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.Iterator[bytes]:
+        """
+        Returns one row per call attempt in the campaign (timestamp, contact, agent, outcome,
+        duration, cost, recording URL, transcript URL). Use this for a flat call-level audit
+        trail of a campaign. The response streams as CSV.
+
+        Parameters
+        ----------
+        id : str
+            The campaign ID.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration. You can pass in configuration such as `chunk_size`, and more to customize the request and response.
+
+        Returns
+        -------
+        typing.Iterator[bytes]
+            CSV export streamed successfully. One row per call attempt.
+            The exact column set matches what your dashboard's campaign export produces for this
+            campaign; check a live export against your own campaign to confirm the column list.
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.campaigns.export_campaign_logs(
+            id="id",
+        )
+        """
+        with self._raw_client.export_campaign_logs(id, request_options=request_options) as r:
+            yield from r.data
+
 
 class AsyncCampaignsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -404,6 +502,7 @@ class AsyncCampaignsClient:
         audience_id: str,
         agent_id: str,
         description: typing.Optional[str] = OMIT,
+        from_numbers: typing.Optional[typing.Sequence[str]] = OMIT,
         phone_number_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         scheduled_at: typing.Optional[dt.datetime] = OMIT,
         max_retries: typing.Optional[int] = OMIT,
@@ -427,10 +526,18 @@ class AsyncCampaignsClient:
         description : typing.Optional[str]
             The description of the campaign
 
+        from_numbers : typing.Optional[typing.Sequence[str]]
+            The caller IDs this campaign presents, E.164 with the leading `+`, each
+            matched against numbers your organization owns. Several numbers rotate
+            positionally across calls; retries reuse the number the recipient already
+            saw. The list is frozen on the campaign at creation. A campaign cannot be
+            created without at least one resolvable number (`400` "Choose at least one
+            number to call from"); one bad number fails the whole request.
+
         phone_number_ids : typing.Optional[typing.Sequence[str]]
-            Optional list of caller-ID phone number IDs to rotate across
-            when placing outbound calls for this campaign. If omitted,
-            the agent's default phone number is used.
+            Legacy alias for `fromNumbers`: caller-ID phone number IDs, resolved to
+            their numbers at creation. Ignored when `fromNumbers` is present. Prefer
+            `fromNumbers`.
 
         scheduled_at : typing.Optional[dt.datetime]
             Optional ISO-8601 timestamp for when the campaign should
@@ -451,8 +558,8 @@ class AsyncCampaignsClient:
         Returns
         -------
         CreateCampaignsResponse
-            Campaign created successfully. Note: the response is the raw Mongoose document — `agentId`
-            and `audienceId` are plain ObjectId strings here, not nested objects as returned by GET endpoints.
+            Campaign created successfully. Note: `agentId` and `audienceId` are plain
+            id strings in this response, not the nested objects the GET endpoints return.
 
         Examples
         --------
@@ -480,6 +587,7 @@ class AsyncCampaignsClient:
             audience_id=audience_id,
             agent_id=agent_id,
             description=description,
+            from_numbers=from_numbers,
             phone_number_ids=phone_number_ids,
             scheduled_at=scheduled_at,
             max_retries=max_retries,
@@ -654,3 +762,104 @@ class AsyncCampaignsClient:
         """
         _response = await self._raw_client.pause(id, request_options=request_options)
         return _response.data
+
+    async def export_campaign_results_by_audience_member(
+        self,
+        id: str,
+        *,
+        format: typing.Optional[ExportCampaignResultsByAudienceMemberRequestFormat] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ExportCampaignResultsByAudienceMemberResponse:
+        """
+        Returns one row per contact in the campaign audience with the outcome of every call
+        attempt for that contact (status, disposition, duration, cost, call ID). Use this to
+        reconcile a campaign run against a CRM, or to identify contacts that never connected.
+        The response streams as CSV.
+
+        Parameters
+        ----------
+        id : str
+            The campaign ID.
+
+        format : typing.Optional[ExportCampaignResultsByAudienceMemberRequestFormat]
+            Output format. Defaults to `json`.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ExportCampaignResultsByAudienceMemberResponse
+            The grouped export. The default `json` returns the structured object below;
+            `format=csv` streams `text/csv` with one row per audience-member contact. The
+            CSV column set matches your dashboard's campaign export for this campaign.
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.campaigns.export_campaign_results_by_audience_member(
+                id="6a75935452c6e5eceaa16edf",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.export_campaign_results_by_audience_member(
+            id, format=format, request_options=request_options
+        )
+        return _response.data
+
+    async def export_campaign_logs(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.AsyncIterator[bytes]:
+        """
+        Returns one row per call attempt in the campaign (timestamp, contact, agent, outcome,
+        duration, cost, recording URL, transcript URL). Use this for a flat call-level audit
+        trail of a campaign. The response streams as CSV.
+
+        Parameters
+        ----------
+        id : str
+            The campaign ID.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration. You can pass in configuration such as `chunk_size`, and more to customize the request and response.
+
+        Returns
+        -------
+        typing.AsyncIterator[bytes]
+            CSV export streamed successfully. One row per call attempt.
+            The exact column set matches what your dashboard's campaign export produces for this
+            campaign; check a live export against your own campaign to confirm the column list.
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.campaigns.export_campaign_logs(
+                id="id",
+            )
+
+
+        asyncio.run(main())
+        """
+        async with self._raw_client.export_campaign_logs(id, request_options=request_options) as r:
+            async for _chunk in r.data:
+                yield _chunk

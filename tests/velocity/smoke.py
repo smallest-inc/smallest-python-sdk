@@ -1,4 +1,5 @@
 """Velocity smoke test via the shipped SDK: user -> create(first_message) -> get -> list."""
+
 from _env import client
 
 c = client()

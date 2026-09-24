@@ -16,6 +16,7 @@ import requests
 
 # Default API base URL
 DEFAULT_BASE_URL = "https://api.smallest.ai/atoms/v1"
+DEFAULT_REQUEST_TIMEOUT = 30.0
 
 
 class Audience:
@@ -31,6 +32,8 @@ class Audience:
         self,
         base_url: Optional[str] = None,
         api_key: Optional[str] = None,
+        *,
+        request_timeout: float = DEFAULT_REQUEST_TIMEOUT,
     ):
         """
         Initialize Audience manager.
@@ -38,9 +41,11 @@ class Audience:
         Args:
             base_url: API base URL (default: api.smallest.ai/atoms/v1)
             api_key: API key (default: SMALLEST_API_KEY env var)
+            request_timeout: Per-request timeout in seconds
         """
         self.base_url = base_url or os.environ.get("SMALLEST_BASE_URL", DEFAULT_BASE_URL)
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY", "")
+        self.request_timeout = request_timeout
 
     def _get_headers(self) -> Dict[str, str]:
         return {"Authorization": f"Bearer {self.api_key}"}
@@ -90,7 +95,7 @@ class Audience:
             "description": description,
         }
 
-        response = requests.post(url, headers=self._get_headers(), files=files, data=data)
+        response = requests.post(url, headers=self._get_headers(), files=files, data=data, timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
@@ -99,7 +104,7 @@ class Audience:
         url = f"{self.base_url}/audience/{audience_id}"
         headers = self._get_headers()
         headers["Content-Type"] = "application/json"
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
@@ -118,7 +123,7 @@ class Audience:
 
         headers = self._get_headers()
         headers["Content-Type"] = "application/json"
-        response = requests.get(url, headers=headers, params=params)
+        response = requests.get(url, headers=headers, params=params, timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
@@ -127,7 +132,7 @@ class Audience:
         url = f"{self.base_url}/audience"
         headers = self._get_headers()
         headers["Content-Type"] = "application/json"
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
@@ -136,7 +141,7 @@ class Audience:
         url = f"{self.base_url}/audience/{audience_id}"
         headers = self._get_headers()
         headers["Content-Type"] = "application/json"
-        response = requests.delete(url, headers=headers)
+        response = requests.delete(url, headers=headers, timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
@@ -167,6 +172,6 @@ class Audience:
                 member["lastName"] = str(i + 1)
             members.append(member)
 
-        response = requests.post(url, headers=headers, json={"members": members})
+        response = requests.post(url, headers=headers, json={"members": members}, timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]

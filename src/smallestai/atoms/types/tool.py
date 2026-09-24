@@ -7,6 +7,7 @@ import typing_extensions
 from ...core.pydantic_utilities import IS_PYDANTIC_V2
 from ...core.serialization import FieldMetadata
 from ...core.unchecked_base_model import UncheckedBaseModel
+from .tool_auth import ToolAuth
 from .tool_headers_array_item import ToolHeadersArrayItem
 from .tool_llm_parameters_item import ToolLlmParametersItem
 from .tool_method import ToolMethod
@@ -136,6 +137,22 @@ class Tool(UncheckedBaseModel):
             description="Optional for api_call type. Parameters the LLM can supply dynamically at runtime.",
         ),
     ] = None
+    timeout_ms: typing_extensions.Annotated[
+        typing.Optional[int],
+        FieldMetadata(alias="timeoutMs"),
+        pydantic.Field(
+            alias="timeoutMs",
+            description="Optional for client_tool type. How long the agent waits for `function_call.result` before recovering verbally.",
+        ),
+    ] = None
+    expects_response: typing_extensions.Annotated[
+        typing.Optional[bool],
+        FieldMetadata(alias="expectsResponse"),
+        pydantic.Field(
+            alias="expectsResponse",
+            description="Optional for client_tool type. When false, fire-and-forget — the app acts on the event and the agent does not wait for a result.",
+        ),
+    ] = None
     response_variables: typing_extensions.Annotated[
         typing.Optional[typing.List[ToolResponseVariablesItem]],
         FieldMetadata(alias="responseVariables"),
@@ -144,6 +161,16 @@ class Tool(UncheckedBaseModel):
             description="Optional for api_call type. Variables to extract from the API response into the agent's variable store.",
         ),
     ] = None
+    auth: typing.Optional[ToolAuth] = pydantic.Field(default=None)
+    """
+    Optional for `api_call` type. Authentication for the outbound request.
+    Credentials are referenced **by secret name** (from the org Secrets vault,
+    see `POST /secret`), never inline. At call time the platform decrypts the
+    secret, injects it into the request, and strips the `auth` block before the
+    config reaches the runtime, cache, or webhooks. `token`, `value`, and
+    `password` below are secret names, not literal values.
+    """
+
     variables_extraction_schema: typing_extensions.Annotated[
         typing.Optional[typing.List[ToolVariablesExtractionSchemaItem]],
         FieldMetadata(alias="variablesExtractionSchema"),
@@ -165,7 +192,7 @@ class Tool(UncheckedBaseModel):
         FieldMetadata(alias="fillerPhrases"),
         pydantic.Field(
             alias="fillerPhrases",
-            description="Optional for knowledge_base_search type. Phrases spoken while searching.",
+            description="Optional for knowledge_base_search and client_tool types. Phrases spoken while the tool runs so the pause is not silent.",
         ),
     ] = None
 
