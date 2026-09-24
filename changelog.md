@@ -1,3 +1,23 @@
+## 5.13.0 - 2026-09-24
+
+* **telephony**: new `atoms.sip_trunks` client (`create/list/update/delete` for
+  inbound and outbound SIP trunks) and `atoms.agent_telephony` client
+  (`attach_answer`/`detach_answer`/`list_answers`, `attach_caller_id`/
+  `detach_caller_id`/`list_caller_ids`, `set_transfer_source`) for the per-direction
+  trunk + agent-binding model.
+* **telephony**: `calls.start_outbound_call` gains `from_number` and
+  `from_product_id` to set the outbound caller-ID explicitly.
+* **atoms**: new generated clients for `secrets`, `tools`, `recordings`,
+  `concurrency`, `dnc`, `compliance`, `disposition_metric_templates`, `web_call`,
+  and `live_transcripts`, matching endpoints already live on the platform.
+* **BREAKING** — `atoms.call_actions` removed (endpoints deprecated and withdrawn).
+* **BREAKING** — agent widget ops moved from `atoms.agents` to `atoms.widget`
+  (`get_agent_widget_config`, `update_agent_widget_config`,
+  `get_agent_avatar_presigned_url`).
+* **BREAKING** — time-limited recording download URL moved from
+  `atoms.conversations.get_a_time_limited_recording_download_url` to
+  `atoms.recordings.get`.
+
 ## 5.12.2 - 2026-09-17
 
 * **waves**: `WavesStreamingTTS` now raises when the socket closes before a `complete`
