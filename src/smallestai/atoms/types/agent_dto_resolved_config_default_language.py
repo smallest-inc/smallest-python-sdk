@@ -3,5 +3,25 @@
 import typing
 
 AgentDtoResolvedConfigDefaultLanguage = typing.Union[
-    typing.Literal["en", "hi", "mr", "gu", "ta", "es", "north_indic", "bn", "or"], typing.Any
+    typing.Literal[
+        "en",
+        "hi",
+        "mr",
+        "gu",
+        "ta",
+        "te",
+        "kn",
+        "ml",
+        "es",
+        "north_indic",
+        "bn",
+        "or",
+        "fr",
+        "de",
+        "it",
+        "nl",
+        "pt",
+        "ru",
+    ],
+    typing.Any,
 ]

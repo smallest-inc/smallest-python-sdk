@@ -13,13 +13,17 @@ if typing.TYPE_CHECKING:
         GetCallsResponseDataPostCallAnalyticsDispositionMetricsItem,
     )
     from .get_calls_response_data_status import GetCallsResponseDataStatus
+    from .get_calls_response_data_tool_calls_item import GetCallsResponseDataToolCallsItem
     from .get_calls_response_data_transcript_item import GetCallsResponseDataTranscriptItem
     from .get_calls_response_data_transcript_item_role import GetCallsResponseDataTranscriptItemRole
     from .get_calls_response_data_turn_latency_metrics import GetCallsResponseDataTurnLatencyMetrics
     from .get_calls_response_data_turn_latency_metrics_transitions_item import (
         GetCallsResponseDataTurnLatencyMetricsTransitionsItem,
     )
+    from .get_calls_response_data_turns_item import GetCallsResponseDataTurnsItem
+    from .get_calls_response_data_turns_item_tokens import GetCallsResponseDataTurnsItemTokens
     from .get_calls_response_data_type import GetCallsResponseDataType
+    from .get_calls_response_data_usage import GetCallsResponseDataUsage
     from .get_calls_response_data_voice_config_used import GetCallsResponseDataVoiceConfigUsed
     from .list_calls_request_call_types import ListCallsRequestCallTypes
     from .list_calls_request_sort_by import ListCallsRequestSortBy
@@ -71,11 +75,15 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GetCallsResponseDataPostCallAnalytics": ".get_calls_response_data_post_call_analytics",
     "GetCallsResponseDataPostCallAnalyticsDispositionMetricsItem": ".get_calls_response_data_post_call_analytics_disposition_metrics_item",
     "GetCallsResponseDataStatus": ".get_calls_response_data_status",
+    "GetCallsResponseDataToolCallsItem": ".get_calls_response_data_tool_calls_item",
     "GetCallsResponseDataTranscriptItem": ".get_calls_response_data_transcript_item",
     "GetCallsResponseDataTranscriptItemRole": ".get_calls_response_data_transcript_item_role",
     "GetCallsResponseDataTurnLatencyMetrics": ".get_calls_response_data_turn_latency_metrics",
     "GetCallsResponseDataTurnLatencyMetricsTransitionsItem": ".get_calls_response_data_turn_latency_metrics_transitions_item",
+    "GetCallsResponseDataTurnsItem": ".get_calls_response_data_turns_item",
+    "GetCallsResponseDataTurnsItemTokens": ".get_calls_response_data_turns_item_tokens",
     "GetCallsResponseDataType": ".get_calls_response_data_type",
+    "GetCallsResponseDataUsage": ".get_calls_response_data_usage",
     "GetCallsResponseDataVoiceConfigUsed": ".get_calls_response_data_voice_config_used",
     "ListCallsRequestCallTypes": ".list_calls_request_call_types",
     "ListCallsRequestSortBy": ".list_calls_request_sort_by",
@@ -135,11 +143,15 @@ __all__ = [
     "GetCallsResponseDataPostCallAnalytics",
     "GetCallsResponseDataPostCallAnalyticsDispositionMetricsItem",
     "GetCallsResponseDataStatus",
+    "GetCallsResponseDataToolCallsItem",
     "GetCallsResponseDataTranscriptItem",
     "GetCallsResponseDataTranscriptItemRole",
     "GetCallsResponseDataTurnLatencyMetrics",
     "GetCallsResponseDataTurnLatencyMetricsTransitionsItem",
+    "GetCallsResponseDataTurnsItem",
+    "GetCallsResponseDataTurnsItemTokens",
     "GetCallsResponseDataType",
+    "GetCallsResponseDataUsage",
     "GetCallsResponseDataVoiceConfigUsed",
     "ListCallsRequestCallTypes",
     "ListCallsRequestSortBy",

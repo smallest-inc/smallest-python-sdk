@@ -55,6 +55,7 @@ class RawSpeechToTextClient:
         request: typing.Union[bytes, typing.Iterator[bytes], typing.AsyncIterator[bytes]],
         word_timestamps: typing.Optional[bool] = None,
         diarize: typing.Optional[bool] = None,
+        keywords: typing.Optional[str] = None,
         webhook_url: typing.Optional[str] = None,
         webhook_method: typing.Optional[TranscribeRequestWebhookMethod] = None,
         webhook_extra: typing.Optional[str] = None,
@@ -145,7 +146,6 @@ class RawSpeechToTextClient:
         - **`model` is required.** Missing or invalid values return `400` with an enum-validation error.
         - **Pulse Pro is English only.** Pass `language=en`. Other language codes are accepted at the wire level but produce unpredictable output.
         - **Pulse Pro does not support audio-by-URL.** Send raw bytes or use `?model=pulse` for the URL flow.
-        - **Async (webhook) mode is Pulse Pro only.** Pulse runs sync only on this endpoint.
         - **Max payload 250 MB.** Larger requests return `413`. Compress to mono 16 kHz PCM if you are close to the limit; quality is unaffected.
         
         Parameters
@@ -177,14 +177,40 @@ class RawSpeechToTextClient:
         diarize : typing.Optional[bool]
             Multi-speaker identification; adds per-word and per-utterance speaker labels.
         
+        keywords : typing.Optional[str]
+            Pulse only. Boost recognition of specific words or phrases for
+            this request. The same parameter works on the realtime WebSocket
+            endpoint.
+            
+            **Entry format:** `KEYWORD` or `KEYWORD:INTENSIFIER`, where
+            `INTENSIFIER` is a number that defaults to `1`. Example:
+            `Blackwell:2,Jensen Huang:2`. Matching is case-sensitive.
+            Duplicates: last-wins (`NVIDIA:1,NVIDIA:5` is equivalent to
+            `NVIDIA:5`). Max 100 keywords per request; sending more returns
+            `400` with `keywords too large (max 100)` in `errors[]`.
+            
+            **Encodings.** Comma-string (recommended), repeated key
+            (`keywords=a&keywords=b`), and bracketed array (`keywords[]=a`)
+            are all accepted. A JSON-array literal (`["a","b"]`) does not
+            boost. Pass the raw string.
+            
+            **Intensifier.** Default `1`, recommended `1` to `3`. Above
+            `10` is not recommended: higher values increase the chance
+            of hallucinating the keyword when it was not spoken. Reuse
+            the same keyword list across requests when the vocabulary
+            is stable.
+            
+            See [Keyword Boosting](/models/documentation/speech-to-text-pulse/features/keyword-boosting)
+            for the full contract and worked examples.
+        
         webhook_url : typing.Optional[str]
-            Pulse Pro only. If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
+            If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
         
         webhook_method : typing.Optional[TranscribeRequestWebhookMethod]
-            HTTP method to use when calling the webhook. Pulse Pro only.
+            HTTP method to use when calling the webhook.
         
         webhook_extra : typing.Optional[str]
-            Arbitrary metadata returned to the webhook in addition to the transcription payload. Pulse Pro only.
+            Arbitrary metadata returned to the webhook in addition to the transcription payload.
         
         redact_pii : typing.Optional[TranscribeRequestRedactPii]
             Redact personally identifiable information from the transcript.
@@ -236,6 +262,7 @@ class RawSpeechToTextClient:
                 "language": language,
                 "word_timestamps": word_timestamps,
                 "diarize": diarize,
+                "keywords": keywords,
                 "webhook_url": webhook_url,
                 "webhook_method": webhook_method,
                 "webhook_extra": webhook_extra,
@@ -491,6 +518,7 @@ class AsyncRawSpeechToTextClient:
         request: typing.Union[bytes, typing.Iterator[bytes], typing.AsyncIterator[bytes]],
         word_timestamps: typing.Optional[bool] = None,
         diarize: typing.Optional[bool] = None,
+        keywords: typing.Optional[str] = None,
         webhook_url: typing.Optional[str] = None,
         webhook_method: typing.Optional[TranscribeRequestWebhookMethod] = None,
         webhook_extra: typing.Optional[str] = None,
@@ -581,7 +609,6 @@ class AsyncRawSpeechToTextClient:
         - **`model` is required.** Missing or invalid values return `400` with an enum-validation error.
         - **Pulse Pro is English only.** Pass `language=en`. Other language codes are accepted at the wire level but produce unpredictable output.
         - **Pulse Pro does not support audio-by-URL.** Send raw bytes or use `?model=pulse` for the URL flow.
-        - **Async (webhook) mode is Pulse Pro only.** Pulse runs sync only on this endpoint.
         - **Max payload 250 MB.** Larger requests return `413`. Compress to mono 16 kHz PCM if you are close to the limit; quality is unaffected.
         
         Parameters
@@ -613,14 +640,40 @@ class AsyncRawSpeechToTextClient:
         diarize : typing.Optional[bool]
             Multi-speaker identification; adds per-word and per-utterance speaker labels.
         
+        keywords : typing.Optional[str]
+            Pulse only. Boost recognition of specific words or phrases for
+            this request. The same parameter works on the realtime WebSocket
+            endpoint.
+            
+            **Entry format:** `KEYWORD` or `KEYWORD:INTENSIFIER`, where
+            `INTENSIFIER` is a number that defaults to `1`. Example:
+            `Blackwell:2,Jensen Huang:2`. Matching is case-sensitive.
+            Duplicates: last-wins (`NVIDIA:1,NVIDIA:5` is equivalent to
+            `NVIDIA:5`). Max 100 keywords per request; sending more returns
+            `400` with `keywords too large (max 100)` in `errors[]`.
+            
+            **Encodings.** Comma-string (recommended), repeated key
+            (`keywords=a&keywords=b`), and bracketed array (`keywords[]=a`)
+            are all accepted. A JSON-array literal (`["a","b"]`) does not
+            boost. Pass the raw string.
+            
+            **Intensifier.** Default `1`, recommended `1` to `3`. Above
+            `10` is not recommended: higher values increase the chance
+            of hallucinating the keyword when it was not spoken. Reuse
+            the same keyword list across requests when the vocabulary
+            is stable.
+            
+            See [Keyword Boosting](/models/documentation/speech-to-text-pulse/features/keyword-boosting)
+            for the full contract and worked examples.
+        
         webhook_url : typing.Optional[str]
-            Pulse Pro only. If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
+            If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
         
         webhook_method : typing.Optional[TranscribeRequestWebhookMethod]
-            HTTP method to use when calling the webhook. Pulse Pro only.
+            HTTP method to use when calling the webhook.
         
         webhook_extra : typing.Optional[str]
-            Arbitrary metadata returned to the webhook in addition to the transcription payload. Pulse Pro only.
+            Arbitrary metadata returned to the webhook in addition to the transcription payload.
         
         redact_pii : typing.Optional[TranscribeRequestRedactPii]
             Redact personally identifiable information from the transcript.
@@ -672,6 +725,7 @@ class AsyncRawSpeechToTextClient:
                 "language": language,
                 "word_timestamps": word_timestamps,
                 "diarize": diarize,
+                "keywords": keywords,
                 "webhook_url": webhook_url,
                 "webhook_method": webhook_method,
                 "webhook_extra": webhook_extra,

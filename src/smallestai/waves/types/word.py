@@ -16,9 +16,14 @@ class Word(UncheckedBaseModel):
     Per-word confidence score, from 0.0 to 1.0.
     """
 
-    speaker: typing.Optional[str] = pydantic.Field(default=None)
+    speaker: typing.Optional[int] = pydantic.Field(default=None)
     """
-    Present when `diarize=true`.
+    Zero-indexed speaker label. Present on Pulse when `diarize=true`. Pulse Pro does not diarize, so this field is absent on Pro responses.
+    """
+
+    speaker_confidence: typing.Optional[float] = pydantic.Field(default=None)
+    """
+    Speaker-attribution confidence for this word, from 0.0 to 1.0. Present on Pulse alongside `speaker`.
     """
 
     if IS_PYDANTIC_V2:

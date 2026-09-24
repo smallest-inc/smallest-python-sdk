@@ -188,7 +188,10 @@ class AgentDto(UncheckedBaseModel):
     allow_inbound_call: typing_extensions.Annotated[
         typing.Optional[bool],
         FieldMetadata(alias="allowInboundCall"),
-        pydantic.Field(alias="allowInboundCall", description="Whether the agent accepts inbound calls."),
+        pydantic.Field(
+            alias="allowInboundCall",
+            description="**Deprecated read field.** Present during the migration window; reflects the\nlegacy kill switch only.",
+        ),
     ] = None
     phone_number: typing_extensions.Annotated[
         typing.Optional[typing.List[str]],

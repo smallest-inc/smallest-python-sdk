@@ -24,8 +24,11 @@ class RawVoicesClient:
         """
         List every available voice with its display name, description, a preview audio URL,
         and metadata tags (age, supported languages). Use a voice's `voiceId` with the
-        unified `/waves/v1/tts` route. This is the browse/catalog endpoint; to list only the
-        voices for a specific model, use `GET /waves/v1/{model}/get_voices`.
+        unified `/waves/v1/tts` route.
+
+        This is the browse-everything endpoint. To scope the list to a single model pool,
+        use [`GET /waves/v1/{model}/get_voices`](/models/api-reference/text-to-speech/get-voices)
+        with `model=lightning-v3.1` (Standard) or `model=lightning-v3.1-pro` (Pro).
 
         Parameters
         ----------
@@ -84,8 +87,11 @@ class AsyncRawVoicesClient:
         """
         List every available voice with its display name, description, a preview audio URL,
         and metadata tags (age, supported languages). Use a voice's `voiceId` with the
-        unified `/waves/v1/tts` route. This is the browse/catalog endpoint; to list only the
-        voices for a specific model, use `GET /waves/v1/{model}/get_voices`.
+        unified `/waves/v1/tts` route.
+
+        This is the browse-everything endpoint. To scope the list to a single model pool,
+        use [`GET /waves/v1/{model}/get_voices`](/models/api-reference/text-to-speech/get-voices)
+        with `model=lightning-v3.1` (Standard) or `model=lightning-v3.1-pro` (Pro).
 
         Parameters
         ----------
