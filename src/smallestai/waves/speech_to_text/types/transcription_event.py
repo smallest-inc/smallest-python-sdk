@@ -39,7 +39,11 @@ class TranscriptionEvent(UncheckedBaseModel):
     True when this `is_final` was produced by a client-sent `{"type":"finalize"}` rather than the server's automatic finalizer. Useful in multi-turn flows for per-turn latency measurement.
     """
 
-    session_id: typing.Optional[str] = None
+    session_id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Server-generated session identifier, stable for the connection lifetime. The client-provided `external_session_id` query param is not echoed back — keep your own mapping if you need it.
+    """
+
     language: typing.Optional[str] = pydantic.Field(default=None)
     """
     The language code Pulse detected or was pinned to for this segment.

@@ -19,6 +19,7 @@ from .types.test_call_agent_versioning_branches_response import TestCallAgentVer
 from .types.test_call_v2request_mode import TestCallV2RequestMode
 from .types.update_branch_draft_request_background_sound import UpdateBranchDraftRequestBackgroundSound
 from .types.update_branch_draft_request_slm_model import UpdateBranchDraftRequestSlmModel
+from .types.update_branch_draft_request_timezone import UpdateBranchDraftRequestTimezone
 from .types.update_draft_agent_versioning_branches_response import UpdateDraftAgentVersioningBranchesResponse
 
 # this is used as the default value for optional parameters
@@ -314,7 +315,7 @@ class AgentVersioningBranchesClient:
         first_message: typing.Optional[str] = OMIT,
         slm_model: typing.Optional[UpdateBranchDraftRequestSlmModel] = OMIT,
         background_sound: typing.Optional[UpdateBranchDraftRequestBackgroundSound] = OMIT,
-        timezone: typing.Optional[str] = OMIT,
+        timezone: typing.Optional[UpdateBranchDraftRequestTimezone] = OMIT,
         global_knowledge_base_id: typing.Optional[str] = OMIT,
         mute_user_until_first_bot_response: typing.Optional[bool] = OMIT,
         allow_interruptions: typing.Optional[bool] = OMIT,
@@ -340,6 +341,17 @@ class AgentVersioningBranchesClient:
         """
         Upsert the open draft on this branch. If no draft is open, one is created automatically. The request body is an agent config partial in the same camelCase shape as `GET /agent/{id}` (`globalPrompt`, `firstMessage`, `synthesizer`, `language`, `voiceDetectionConfig`, `smartTurnConfig`, ...) and must contain at least one recognized field; the server merges it into the existing draft and returns the resulting draft as a revision-shaped snapshot.
 
+        **Send native JSON types, not stringified values.** Arrays (`language.supported: ["en"]`), booleans (`language.switching.isEnabled: false`), and objects (`timezone: {"label": "(GMT+5:30) Asia/Kolkata", "offset": 330}`) must be sent as real JSON. Passing `"[\\"en\\"]"`, `"false"`, or `"Asia/Kolkata"` instead is refused with a Zod-style error naming the offending path and the received type (e.g. `Invalid config: language.supported: Expected array, received string`). This is the single most common integration bug on this endpoint.
+
+        **Post-call-analytics limits.** When the payload includes `postCallAnalyticsConfig.dispositionMetrics`, two aggregate limits are enforced with `400` errors:
+
+        - **Combined prompt length**. The total of every `dispositionMetricPrompt` across all metrics must be ≤ 50,000 characters. Error: `The combined disposition metric prompts can be at most 50000 characters.`
+        - **Enum-choice cap**. Each `dispositionMetricType: ENUM` metric may have at most 20 `choices`. Error: `Each enum metric can have at most 20 choices. Ones already over the limit can stay as they are, but can't grow any further. Remove the extra choices to save.`
+
+        Both limits are grandfathered: an agent already over either limit can still save as long as the change does not make it worse (the combined prompt length does not grow, and no over-limit enum grows or gains new choices). No cap on the number of metrics or on a single prompt's length.
+
+        Publish the draft with `POST /agent/{id}/branches/{branchId}/draft/publish` to make the changes live. The draft PUT alone does **not** affect running calls.
+
         Parameters
         ----------
         id : str
@@ -363,8 +375,8 @@ class AgentVersioningBranchesClient:
         background_sound : typing.Optional[UpdateBranchDraftRequestBackgroundSound]
             Ambient background sound during calls.
 
-        timezone : typing.Optional[str]
-            IANA timezone identifier used for date/time interpretation in prompts and tool calls.
+        timezone : typing.Optional[UpdateBranchDraftRequestTimezone]
+            Agent timezone applied to date/time interpretation in prompts, tool calls, and analytics bucketing. Object with a `label` (IANA-style label) and an `offset` (UTC offset in minutes). Sending a bare string is refused with `Invalid config: timezone: Expected object, received string`.
 
         global_knowledge_base_id : typing.Optional[str]
             Knowledge base attached to the agent for retrieval-augmented responses.
@@ -999,7 +1011,7 @@ class AsyncAgentVersioningBranchesClient:
         first_message: typing.Optional[str] = OMIT,
         slm_model: typing.Optional[UpdateBranchDraftRequestSlmModel] = OMIT,
         background_sound: typing.Optional[UpdateBranchDraftRequestBackgroundSound] = OMIT,
-        timezone: typing.Optional[str] = OMIT,
+        timezone: typing.Optional[UpdateBranchDraftRequestTimezone] = OMIT,
         global_knowledge_base_id: typing.Optional[str] = OMIT,
         mute_user_until_first_bot_response: typing.Optional[bool] = OMIT,
         allow_interruptions: typing.Optional[bool] = OMIT,
@@ -1025,6 +1037,17 @@ class AsyncAgentVersioningBranchesClient:
         """
         Upsert the open draft on this branch. If no draft is open, one is created automatically. The request body is an agent config partial in the same camelCase shape as `GET /agent/{id}` (`globalPrompt`, `firstMessage`, `synthesizer`, `language`, `voiceDetectionConfig`, `smartTurnConfig`, ...) and must contain at least one recognized field; the server merges it into the existing draft and returns the resulting draft as a revision-shaped snapshot.
 
+        **Send native JSON types, not stringified values.** Arrays (`language.supported: ["en"]`), booleans (`language.switching.isEnabled: false`), and objects (`timezone: {"label": "(GMT+5:30) Asia/Kolkata", "offset": 330}`) must be sent as real JSON. Passing `"[\\"en\\"]"`, `"false"`, or `"Asia/Kolkata"` instead is refused with a Zod-style error naming the offending path and the received type (e.g. `Invalid config: language.supported: Expected array, received string`). This is the single most common integration bug on this endpoint.
+
+        **Post-call-analytics limits.** When the payload includes `postCallAnalyticsConfig.dispositionMetrics`, two aggregate limits are enforced with `400` errors:
+
+        - **Combined prompt length**. The total of every `dispositionMetricPrompt` across all metrics must be ≤ 50,000 characters. Error: `The combined disposition metric prompts can be at most 50000 characters.`
+        - **Enum-choice cap**. Each `dispositionMetricType: ENUM` metric may have at most 20 `choices`. Error: `Each enum metric can have at most 20 choices. Ones already over the limit can stay as they are, but can't grow any further. Remove the extra choices to save.`
+
+        Both limits are grandfathered: an agent already over either limit can still save as long as the change does not make it worse (the combined prompt length does not grow, and no over-limit enum grows or gains new choices). No cap on the number of metrics or on a single prompt's length.
+
+        Publish the draft with `POST /agent/{id}/branches/{branchId}/draft/publish` to make the changes live. The draft PUT alone does **not** affect running calls.
+
         Parameters
         ----------
         id : str
@@ -1048,8 +1071,8 @@ class AsyncAgentVersioningBranchesClient:
         background_sound : typing.Optional[UpdateBranchDraftRequestBackgroundSound]
             Ambient background sound during calls.
 
-        timezone : typing.Optional[str]
-            IANA timezone identifier used for date/time interpretation in prompts and tool calls.
+        timezone : typing.Optional[UpdateBranchDraftRequestTimezone]
+            Agent timezone applied to date/time interpretation in prompts, tool calls, and analytics bucketing. Object with a `label` (IANA-style label) and an `offset` (UTC offset in minutes). Sending a bare string is refused with `Invalid config: timezone: Expected object, received string`.
 
         global_knowledge_base_id : typing.Optional[str]
             Knowledge base attached to the agent for retrieval-augmented responses.

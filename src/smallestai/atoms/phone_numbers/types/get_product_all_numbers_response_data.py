@@ -19,7 +19,10 @@ class GetProductAllNumbersResponseData(UncheckedBaseModel):
     custom_products: typing_extensions.Annotated[
         typing.Optional[typing.List[Product]],
         FieldMetadata(alias="customProducts"),
-        pydantic.Field(alias="customProducts"),
+        pydantic.Field(
+            alias="customProducts",
+            description="**Deprecated read shape.** Populated during the migration window,\nderived live from your SIP trunks. Use `GET /sip-trunk/inbound`\nand `GET /sip-trunk/outbound` instead.",
+        ),
     ] = None
 
     if IS_PYDANTIC_V2:

@@ -10,6 +10,14 @@ if typing.TYPE_CHECKING:
     from .close_stream_type import CloseStreamType
     from .finalize_signal import FinalizeSignal
     from .finalize_signal_type import FinalizeSignalType
+    from .keep_alive_signal import KeepAliveSignal
+    from .keep_alive_signal_type import KeepAliveSignalType
+    from .pong_event import PongEvent
+    from .pong_event_type import PongEventType
+    from .speech_ended_event import SpeechEndedEvent
+    from .speech_ended_event_type import SpeechEndedEventType
+    from .speech_started_event import SpeechStartedEvent
+    from .speech_started_event_type import SpeechStartedEventType
     from .transcribe_request_emotion_detection import TranscribeRequestEmotionDetection
     from .transcribe_request_gender_detection import TranscribeRequestGenderDetection
     from .transcribe_request_language import TranscribeRequestLanguage
@@ -17,6 +25,7 @@ if typing.TYPE_CHECKING:
     from .transcribe_request_redact_pci import TranscribeRequestRedactPci
     from .transcribe_request_redact_pii import TranscribeRequestRedactPii
     from .transcribe_request_webhook_method import TranscribeRequestWebhookMethod
+    from .transcribe_request_x_expire_content import TranscribeRequestXExpireContent
     from .transcribe_response import TranscribeResponse
     from .transcription_error_event import TranscriptionErrorEvent
     from .transcription_error_event_type import TranscriptionErrorEventType
@@ -29,6 +38,14 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CloseStreamType": ".close_stream_type",
     "FinalizeSignal": ".finalize_signal",
     "FinalizeSignalType": ".finalize_signal_type",
+    "KeepAliveSignal": ".keep_alive_signal",
+    "KeepAliveSignalType": ".keep_alive_signal_type",
+    "PongEvent": ".pong_event",
+    "PongEventType": ".pong_event_type",
+    "SpeechEndedEvent": ".speech_ended_event",
+    "SpeechEndedEventType": ".speech_ended_event_type",
+    "SpeechStartedEvent": ".speech_started_event",
+    "SpeechStartedEventType": ".speech_started_event_type",
     "TranscribeRequestEmotionDetection": ".transcribe_request_emotion_detection",
     "TranscribeRequestGenderDetection": ".transcribe_request_gender_detection",
     "TranscribeRequestLanguage": ".transcribe_request_language",
@@ -36,6 +53,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "TranscribeRequestRedactPci": ".transcribe_request_redact_pci",
     "TranscribeRequestRedactPii": ".transcribe_request_redact_pii",
     "TranscribeRequestWebhookMethod": ".transcribe_request_webhook_method",
+    "TranscribeRequestXExpireContent": ".transcribe_request_x_expire_content",
     "TranscribeResponse": ".transcribe_response",
     "TranscriptionErrorEvent": ".transcription_error_event",
     "TranscriptionErrorEventType": ".transcription_error_event_type",
@@ -72,6 +90,14 @@ __all__ = [
     "CloseStreamType",
     "FinalizeSignal",
     "FinalizeSignalType",
+    "KeepAliveSignal",
+    "KeepAliveSignalType",
+    "PongEvent",
+    "PongEventType",
+    "SpeechEndedEvent",
+    "SpeechEndedEventType",
+    "SpeechStartedEvent",
+    "SpeechStartedEventType",
     "TranscribeRequestEmotionDetection",
     "TranscribeRequestGenderDetection",
     "TranscribeRequestLanguage",
@@ -79,6 +105,7 @@ __all__ = [
     "TranscribeRequestRedactPci",
     "TranscribeRequestRedactPii",
     "TranscribeRequestWebhookMethod",
+    "TranscribeRequestXExpireContent",
     "TranscribeResponse",
     "TranscriptionErrorEvent",
     "TranscriptionErrorEventType",

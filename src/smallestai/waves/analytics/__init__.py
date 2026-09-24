@@ -6,21 +6,10 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from .types import (
-        DeleteStreamingSpeechToTextHistoryResponse,
-        GetStreamingSpeechToTextUsageTimeseriesRequestGranularity,
-        GetTextToSpeechConcurrencyTimeseriesRequestGranularity,
-        GetTextToSpeechCreditsTimeseriesRequestGranularity,
-        GetTextToSpeechUsageTimeseriesRequestGranularity,
-        GetTextToSpeechWebsocketConnectionsTimeseriesRequestGranularity,
-    )
+    from .types import DeleteStreamingSpeechToTextHistoryResponse, ListWebhookLogsRequestStatus
 _dynamic_imports: typing.Dict[str, str] = {
     "DeleteStreamingSpeechToTextHistoryResponse": ".types",
-    "GetStreamingSpeechToTextUsageTimeseriesRequestGranularity": ".types",
-    "GetTextToSpeechConcurrencyTimeseriesRequestGranularity": ".types",
-    "GetTextToSpeechCreditsTimeseriesRequestGranularity": ".types",
-    "GetTextToSpeechUsageTimeseriesRequestGranularity": ".types",
-    "GetTextToSpeechWebsocketConnectionsTimeseriesRequestGranularity": ".types",
+    "ListWebhookLogsRequestStatus": ".types",
 }
 
 
@@ -45,11 +34,4 @@ def __dir__():
     return sorted(lazy_attrs)
 
 
-__all__ = [
-    "DeleteStreamingSpeechToTextHistoryResponse",
-    "GetStreamingSpeechToTextUsageTimeseriesRequestGranularity",
-    "GetTextToSpeechConcurrencyTimeseriesRequestGranularity",
-    "GetTextToSpeechCreditsTimeseriesRequestGranularity",
-    "GetTextToSpeechUsageTimeseriesRequestGranularity",
-    "GetTextToSpeechWebsocketConnectionsTimeseriesRequestGranularity",
-]
+__all__ = ["DeleteStreamingSpeechToTextHistoryResponse", "ListWebhookLogsRequestStatus"]

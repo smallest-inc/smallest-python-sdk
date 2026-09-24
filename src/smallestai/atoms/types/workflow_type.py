@@ -2,4 +2,4 @@
 
 import typing
 
-WorkflowType = typing.Union[typing.Literal["workflow_graph", "single_prompt"], typing.Any]
+WorkflowType = typing.Union[typing.Literal["workflow_graph", "single_prompt", "multi_agents"], typing.Any]

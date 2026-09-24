@@ -17,7 +17,7 @@ class WidgetConfig(UncheckedBaseModel):
     """
     Configuration for the embeddable web widget. Used by `GET /agent/{id}/widget-config`
     (returned with `assistantId` injected) and `PATCH /agent/{id}/widget-config`
-    (merge-patched). Every field is optional — only the fields present in a PATCH
+    (merge-patched). Every field is optional. Only the fields present in a PATCH
     request body are written, so partial updates are safe.
     """
 
