@@ -10,35 +10,34 @@ from ...core.unchecked_base_model import UncheckedBaseModel
 
 
 class TranscriptionResponseMetadata(UncheckedBaseModel):
+    """
+    Response metadata. Pulse responses carry `duration` and `fileSize`. Pulse Pro responses carry `duration`, `processing_time_ms`, `rtfx`, and `num_chunks`.
+    """
+
     duration: typing.Optional[float] = pydantic.Field(default=None)
     """
-    Audio duration in seconds.
+    Audio duration in seconds. Present on both Pulse and Pulse Pro.
     """
 
     processing_time_ms: typing.Optional[float] = pydantic.Field(default=None)
     """
-    Pulse Pro only.
+    Server-side processing time in milliseconds. Pulse Pro only.
     """
 
     rtfx: typing.Optional[float] = pydantic.Field(default=None)
     """
-    Real-time factor for this request (Pulse Pro only).
+    Real-time factor for this request. Pulse Pro only.
     """
 
     num_chunks: typing.Optional[float] = pydantic.Field(default=None)
     """
-    Number of internal chunks the audio was split into (Pulse Pro only).
-    """
-
-    filename: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    Pulse responses include this when sent via URL.
+    Number of internal chunks the audio was split into. Pulse Pro only.
     """
 
     file_size: typing_extensions.Annotated[
         typing.Optional[float],
         FieldMetadata(alias="fileSize"),
-        pydantic.Field(alias="fileSize", description="Bytes received (Pulse responses)."),
+        pydantic.Field(alias="fileSize", description="Bytes received. Pulse only."),
     ] = None
 
     if IS_PYDANTIC_V2:

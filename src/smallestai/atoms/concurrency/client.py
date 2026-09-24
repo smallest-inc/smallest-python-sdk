@@ -6,10 +6,12 @@ from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.request_options import RequestOptions
 from .raw_client import AsyncRawConcurrencyClient, RawConcurrencyClient
 from .types.get_concurrency_response import GetConcurrencyResponse
+from .types.get_cps_limits_response import GetCpsLimitsResponse
 from .types.update_concurrency_reservations_request_reservations_item import (
     UpdateConcurrencyReservationsRequestReservationsItem,
 )
 from .types.update_concurrency_reservations_response import UpdateConcurrencyReservationsResponse
+from .types.update_custom_trunk_cps_limit_response import UpdateCustomTrunkCpsLimitResponse
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -102,6 +104,75 @@ class ConcurrencyClient:
         """
         _response = self._raw_client.update_concurrency_reservations(
             reservations=reservations, request_options=request_options
+        )
+        return _response.data
+
+    def get_cps_limits(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetCpsLimitsResponse:
+        """
+        Returns the organization's calls-per-second (CPS) settings: the rate per provider for rented numbers, every imported SIP trunk with the numbers on it and its shared rate, and the total across trunks.
+
+        CPS is how fast new outbound calls may **start**; concurrency is how many may run at once. See the [Calls per second guide](/voice-agents/platform/create-agent/cps).
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetCpsLimitsResponse
+            CPS overview
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.concurrency.get_cps_limits()
+        """
+        _response = self._raw_client.get_cps_limits(request_options=request_options)
+        return _response.data
+
+    def update_custom_trunk_cps_limit(
+        self, *, termination_url: str, cps_limit: int, request_options: typing.Optional[RequestOptions] = None
+    ) -> UpdateCustomTrunkCpsLimitResponse:
+        """
+        Sets the calls-per-second rate for one of your imported SIP trunks. The rate applies to **every number on that trunk** and takes effect within about a second, including for calls already queued. **Admin role required.**
+
+        Set it to what your carrier actually allows: too high and the carrier rejects calls, too low and campaigns run slower than they need to. See the [Calls per second guide](/voice-agents/platform/create-agent/cps).
+
+        Parameters
+        ----------
+        termination_url : str
+            The trunk's address as shown on the Concurrency page. Normalized the same way as at import, so `sip:` prefixes and URI parameters are ignored; a different port is a different trunk.
+
+        cps_limit : int
+            Calls per second for every number on the trunk. Whole number from 1 to 50.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        UpdateCustomTrunkCpsLimitResponse
+            Rate applied
+
+        Examples
+        --------
+        from smallestai import SmallestAI
+
+        client = SmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+        client.atoms.concurrency.update_custom_trunk_cps_limit(
+            termination_url="43.205.53.11:5091",
+            cps_limit=2,
+        )
+        """
+        _response = self._raw_client.update_custom_trunk_cps_limit(
+            termination_url=termination_url, cps_limit=cps_limit, request_options=request_options
         )
         return _response.data
 
@@ -211,5 +282,90 @@ class AsyncConcurrencyClient:
         """
         _response = await self._raw_client.update_concurrency_reservations(
             reservations=reservations, request_options=request_options
+        )
+        return _response.data
+
+    async def get_cps_limits(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetCpsLimitsResponse:
+        """
+        Returns the organization's calls-per-second (CPS) settings: the rate per provider for rented numbers, every imported SIP trunk with the numbers on it and its shared rate, and the total across trunks.
+
+        CPS is how fast new outbound calls may **start**; concurrency is how many may run at once. See the [Calls per second guide](/voice-agents/platform/create-agent/cps).
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetCpsLimitsResponse
+            CPS overview
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.concurrency.get_cps_limits()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_cps_limits(request_options=request_options)
+        return _response.data
+
+    async def update_custom_trunk_cps_limit(
+        self, *, termination_url: str, cps_limit: int, request_options: typing.Optional[RequestOptions] = None
+    ) -> UpdateCustomTrunkCpsLimitResponse:
+        """
+        Sets the calls-per-second rate for one of your imported SIP trunks. The rate applies to **every number on that trunk** and takes effect within about a second, including for calls already queued. **Admin role required.**
+
+        Set it to what your carrier actually allows: too high and the carrier rejects calls, too low and campaigns run slower than they need to. See the [Calls per second guide](/voice-agents/platform/create-agent/cps).
+
+        Parameters
+        ----------
+        termination_url : str
+            The trunk's address as shown on the Concurrency page. Normalized the same way as at import, so `sip:` prefixes and URI parameters are ignored; a different port is a different trunk.
+
+        cps_limit : int
+            Calls per second for every number on the trunk. Whole number from 1 to 50.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        UpdateCustomTrunkCpsLimitResponse
+            Rate applied
+
+        Examples
+        --------
+        import asyncio
+
+        from smallestai import AsyncSmallestAI
+
+        client = AsyncSmallestAI(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.atoms.concurrency.update_custom_trunk_cps_limit(
+                termination_url="43.205.53.11:5091",
+                cps_limit=2,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.update_custom_trunk_cps_limit(
+            termination_url=termination_url, cps_limit=cps_limit, request_options=request_options
         )
         return _response.data

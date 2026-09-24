@@ -21,21 +21,7 @@ from ..types.text_to_speech_logs_response import TextToSpeechLogsResponse
 from ..types.values_timeseries_response import ValuesTimeseriesResponse
 from ..types.webhook_logs_response import WebhookLogsResponse
 from .types.delete_streaming_speech_to_text_history_response import DeleteStreamingSpeechToTextHistoryResponse
-from .types.get_streaming_speech_to_text_usage_timeseries_request_granularity import (
-    GetStreamingSpeechToTextUsageTimeseriesRequestGranularity,
-)
-from .types.get_text_to_speech_concurrency_timeseries_request_granularity import (
-    GetTextToSpeechConcurrencyTimeseriesRequestGranularity,
-)
-from .types.get_text_to_speech_credits_timeseries_request_granularity import (
-    GetTextToSpeechCreditsTimeseriesRequestGranularity,
-)
-from .types.get_text_to_speech_usage_timeseries_request_granularity import (
-    GetTextToSpeechUsageTimeseriesRequestGranularity,
-)
-from .types.get_text_to_speech_websocket_connections_timeseries_request_granularity import (
-    GetTextToSpeechWebsocketConnectionsTimeseriesRequestGranularity,
-)
+from .types.list_webhook_logs_request_status import ListWebhookLogsRequestStatus
 from pydantic import ValidationError
 
 
@@ -48,6 +34,13 @@ class RawAnalyticsClient:
         *,
         page: typing.Optional[int] = None,
         page_size: typing.Optional[int] = None,
+        text: typing.Optional[str] = None,
+        language: typing.Optional[str] = None,
+        model: typing.Optional[str] = None,
+        duration_min: typing.Optional[float] = None,
+        duration_max: typing.Optional[float] = None,
+        timestamp_from: typing.Optional[int] = None,
+        timestamp_to: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[StreamingSpeechToTextLogsResponse]:
         """
@@ -63,7 +56,28 @@ class RawAnalyticsClient:
             1-indexed page number.
 
         page_size : typing.Optional[int]
-            Number of records per page.
+            Number of records per page. Max 50.
+
+        text : typing.Optional[str]
+            Case-insensitive substring match against the transcription.
+
+        language : typing.Optional[str]
+            Exact-match filter on language code (e.g. `en`, `hi`).
+
+        model : typing.Optional[str]
+            Exact-match filter on STT model (e.g. `pulse`).
+
+        duration_min : typing.Optional[float]
+            Minimum audio duration in seconds.
+
+        duration_max : typing.Optional[float]
+            Maximum audio duration in seconds.
+
+        timestamp_from : typing.Optional[int]
+            Lower bound on request timestamp, Unix seconds.
+
+        timestamp_to : typing.Optional[int]
+            Upper bound on request timestamp, Unix seconds.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -80,6 +94,13 @@ class RawAnalyticsClient:
             params={
                 "page": page,
                 "pageSize": page_size,
+                "text": text,
+                "language": language,
+                "model": model,
+                "durationMin": duration_min,
+                "durationMax": duration_max,
+                "timestampFrom": timestamp_from,
+                "timestampTo": timestamp_to,
             },
             request_options=request_options,
         )
@@ -135,7 +156,7 @@ class RawAnalyticsClient:
         Parameters
         ----------
         request_id : str
-            The `request_id` of the STT request to delete.
+            The `request_id` (UUID) of the STT request to delete.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -197,7 +218,6 @@ class RawAnalyticsClient:
         *,
         from_: typing.Optional[dt.datetime] = None,
         to: typing.Optional[dt.datetime] = None,
-        granularity: typing.Optional[GetStreamingSpeechToTextUsageTimeseriesRequestGranularity] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CountTimeseriesResponse]:
         """
@@ -211,9 +231,6 @@ class RawAnalyticsClient:
 
         to : typing.Optional[dt.datetime]
             End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
-
-        granularity : typing.Optional[GetStreamingSpeechToTextUsageTimeseriesRequestGranularity]
-            Bucket size for the timeseries.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -230,7 +247,6 @@ class RawAnalyticsClient:
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
                 "to": serialize_datetime(to) if to is not None else None,
-                "granularity": granularity,
             },
             request_options=request_options,
         )
@@ -280,6 +296,12 @@ class RawAnalyticsClient:
         *,
         page: typing.Optional[int] = None,
         page_size: typing.Optional[int] = None,
+        text: typing.Optional[str] = None,
+        credits_min: typing.Optional[float] = None,
+        credits_max: typing.Optional[float] = None,
+        timestamp_from: typing.Optional[int] = None,
+        timestamp_to: typing.Optional[int] = None,
+        model: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[TextToSpeechLogsResponse]:
         """
@@ -292,7 +314,25 @@ class RawAnalyticsClient:
             1-indexed page number.
 
         page_size : typing.Optional[int]
-            Number of records per page.
+            Number of records per page. Max 50.
+
+        text : typing.Optional[str]
+            Case-insensitive substring match against the input text.
+
+        credits_min : typing.Optional[float]
+            Minimum credits consumed by the request.
+
+        credits_max : typing.Optional[float]
+            Maximum credits consumed by the request.
+
+        timestamp_from : typing.Optional[int]
+            Lower bound on request timestamp, Unix seconds.
+
+        timestamp_to : typing.Optional[int]
+            Upper bound on request timestamp, Unix seconds.
+
+        model : typing.Optional[str]
+            Exact-match filter on TTS model (e.g. `lightning-v3.1-pro`).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -309,6 +349,12 @@ class RawAnalyticsClient:
             params={
                 "page": page,
                 "pageSize": page_size,
+                "text": text,
+                "creditsMin": credits_min,
+                "creditsMax": credits_max,
+                "timestampFrom": timestamp_from,
+                "timestampTo": timestamp_to,
+                "model": model,
             },
             request_options=request_options,
         )
@@ -358,7 +404,6 @@ class RawAnalyticsClient:
         *,
         from_: typing.Optional[dt.datetime] = None,
         to: typing.Optional[dt.datetime] = None,
-        granularity: typing.Optional[GetTextToSpeechUsageTimeseriesRequestGranularity] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CountTimeseriesResponse]:
         """
@@ -371,9 +416,6 @@ class RawAnalyticsClient:
 
         to : typing.Optional[dt.datetime]
             End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
-
-        granularity : typing.Optional[GetTextToSpeechUsageTimeseriesRequestGranularity]
-            Bucket size for the timeseries.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -390,7 +432,6 @@ class RawAnalyticsClient:
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
                 "to": serialize_datetime(to) if to is not None else None,
-                "granularity": granularity,
             },
             request_options=request_options,
         )
@@ -440,7 +481,6 @@ class RawAnalyticsClient:
         *,
         from_: typing.Optional[dt.datetime] = None,
         to: typing.Optional[dt.datetime] = None,
-        granularity: typing.Optional[GetTextToSpeechCreditsTimeseriesRequestGranularity] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CreditsTimeseriesResponse]:
         """
@@ -454,9 +494,6 @@ class RawAnalyticsClient:
 
         to : typing.Optional[dt.datetime]
             End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
-
-        granularity : typing.Optional[GetTextToSpeechCreditsTimeseriesRequestGranularity]
-            Bucket size for the timeseries.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -473,7 +510,6 @@ class RawAnalyticsClient:
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
                 "to": serialize_datetime(to) if to is not None else None,
-                "granularity": granularity,
             },
             request_options=request_options,
         )
@@ -523,7 +559,6 @@ class RawAnalyticsClient:
         *,
         from_: typing.Optional[dt.datetime] = None,
         to: typing.Optional[dt.datetime] = None,
-        granularity: typing.Optional[GetTextToSpeechConcurrencyTimeseriesRequestGranularity] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ValuesTimeseriesResponse]:
         """
@@ -537,9 +572,6 @@ class RawAnalyticsClient:
 
         to : typing.Optional[dt.datetime]
             End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
-
-        granularity : typing.Optional[GetTextToSpeechConcurrencyTimeseriesRequestGranularity]
-            Bucket size for the timeseries.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -556,7 +588,6 @@ class RawAnalyticsClient:
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
                 "to": serialize_datetime(to) if to is not None else None,
-                "granularity": granularity,
             },
             request_options=request_options,
         )
@@ -606,7 +637,6 @@ class RawAnalyticsClient:
         *,
         from_: typing.Optional[dt.datetime] = None,
         to: typing.Optional[dt.datetime] = None,
-        granularity: typing.Optional[GetTextToSpeechWebsocketConnectionsTimeseriesRequestGranularity] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ValuesTimeseriesResponse]:
         """
@@ -619,9 +649,6 @@ class RawAnalyticsClient:
 
         to : typing.Optional[dt.datetime]
             End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
-
-        granularity : typing.Optional[GetTextToSpeechWebsocketConnectionsTimeseriesRequestGranularity]
-            Bucket size for the timeseries.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -638,7 +665,6 @@ class RawAnalyticsClient:
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
                 "to": serialize_datetime(to) if to is not None else None,
-                "granularity": granularity,
             },
             request_options=request_options,
         )
@@ -688,6 +714,12 @@ class RawAnalyticsClient:
         *,
         page: typing.Optional[int] = None,
         page_size: typing.Optional[int] = None,
+        timestamp_from: typing.Optional[int] = None,
+        timestamp_to: typing.Optional[int] = None,
+        status: typing.Optional[ListWebhookLogsRequestStatus] = None,
+        webhook_url: typing.Optional[str] = None,
+        event_type: typing.Optional[str] = None,
+        request_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[WebhookLogsResponse]:
         """
@@ -701,7 +733,25 @@ class RawAnalyticsClient:
             1-indexed page number.
 
         page_size : typing.Optional[int]
-            Number of records per page.
+            Number of records per page. Max 50.
+
+        timestamp_from : typing.Optional[int]
+            Lower bound on delivery timestamp, Unix seconds.
+
+        timestamp_to : typing.Optional[int]
+            Upper bound on delivery timestamp, Unix seconds.
+
+        status : typing.Optional[ListWebhookLogsRequestStatus]
+            Delivery-outcome filter.
+
+        webhook_url : typing.Optional[str]
+            Case-insensitive substring match against the destination URL.
+
+        event_type : typing.Optional[str]
+            Exact-match filter on event type (e.g. `asr.completed`).
+
+        request_id : typing.Optional[str]
+            Case-insensitive substring match against the source request id.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -718,6 +768,12 @@ class RawAnalyticsClient:
             params={
                 "page": page,
                 "pageSize": page_size,
+                "timestampFrom": timestamp_from,
+                "timestampTo": timestamp_to,
+                "status": status,
+                "webhookUrl": webhook_url,
+                "eventType": event_type,
+                "requestId": request_id,
             },
             request_options=request_options,
         )
@@ -772,6 +828,13 @@ class AsyncRawAnalyticsClient:
         *,
         page: typing.Optional[int] = None,
         page_size: typing.Optional[int] = None,
+        text: typing.Optional[str] = None,
+        language: typing.Optional[str] = None,
+        model: typing.Optional[str] = None,
+        duration_min: typing.Optional[float] = None,
+        duration_max: typing.Optional[float] = None,
+        timestamp_from: typing.Optional[int] = None,
+        timestamp_to: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[StreamingSpeechToTextLogsResponse]:
         """
@@ -787,7 +850,28 @@ class AsyncRawAnalyticsClient:
             1-indexed page number.
 
         page_size : typing.Optional[int]
-            Number of records per page.
+            Number of records per page. Max 50.
+
+        text : typing.Optional[str]
+            Case-insensitive substring match against the transcription.
+
+        language : typing.Optional[str]
+            Exact-match filter on language code (e.g. `en`, `hi`).
+
+        model : typing.Optional[str]
+            Exact-match filter on STT model (e.g. `pulse`).
+
+        duration_min : typing.Optional[float]
+            Minimum audio duration in seconds.
+
+        duration_max : typing.Optional[float]
+            Maximum audio duration in seconds.
+
+        timestamp_from : typing.Optional[int]
+            Lower bound on request timestamp, Unix seconds.
+
+        timestamp_to : typing.Optional[int]
+            Upper bound on request timestamp, Unix seconds.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -804,6 +888,13 @@ class AsyncRawAnalyticsClient:
             params={
                 "page": page,
                 "pageSize": page_size,
+                "text": text,
+                "language": language,
+                "model": model,
+                "durationMin": duration_min,
+                "durationMax": duration_max,
+                "timestampFrom": timestamp_from,
+                "timestampTo": timestamp_to,
             },
             request_options=request_options,
         )
@@ -859,7 +950,7 @@ class AsyncRawAnalyticsClient:
         Parameters
         ----------
         request_id : str
-            The `request_id` of the STT request to delete.
+            The `request_id` (UUID) of the STT request to delete.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -921,7 +1012,6 @@ class AsyncRawAnalyticsClient:
         *,
         from_: typing.Optional[dt.datetime] = None,
         to: typing.Optional[dt.datetime] = None,
-        granularity: typing.Optional[GetStreamingSpeechToTextUsageTimeseriesRequestGranularity] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CountTimeseriesResponse]:
         """
@@ -935,9 +1025,6 @@ class AsyncRawAnalyticsClient:
 
         to : typing.Optional[dt.datetime]
             End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
-
-        granularity : typing.Optional[GetStreamingSpeechToTextUsageTimeseriesRequestGranularity]
-            Bucket size for the timeseries.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -954,7 +1041,6 @@ class AsyncRawAnalyticsClient:
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
                 "to": serialize_datetime(to) if to is not None else None,
-                "granularity": granularity,
             },
             request_options=request_options,
         )
@@ -1004,6 +1090,12 @@ class AsyncRawAnalyticsClient:
         *,
         page: typing.Optional[int] = None,
         page_size: typing.Optional[int] = None,
+        text: typing.Optional[str] = None,
+        credits_min: typing.Optional[float] = None,
+        credits_max: typing.Optional[float] = None,
+        timestamp_from: typing.Optional[int] = None,
+        timestamp_to: typing.Optional[int] = None,
+        model: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[TextToSpeechLogsResponse]:
         """
@@ -1016,7 +1108,25 @@ class AsyncRawAnalyticsClient:
             1-indexed page number.
 
         page_size : typing.Optional[int]
-            Number of records per page.
+            Number of records per page. Max 50.
+
+        text : typing.Optional[str]
+            Case-insensitive substring match against the input text.
+
+        credits_min : typing.Optional[float]
+            Minimum credits consumed by the request.
+
+        credits_max : typing.Optional[float]
+            Maximum credits consumed by the request.
+
+        timestamp_from : typing.Optional[int]
+            Lower bound on request timestamp, Unix seconds.
+
+        timestamp_to : typing.Optional[int]
+            Upper bound on request timestamp, Unix seconds.
+
+        model : typing.Optional[str]
+            Exact-match filter on TTS model (e.g. `lightning-v3.1-pro`).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1033,6 +1143,12 @@ class AsyncRawAnalyticsClient:
             params={
                 "page": page,
                 "pageSize": page_size,
+                "text": text,
+                "creditsMin": credits_min,
+                "creditsMax": credits_max,
+                "timestampFrom": timestamp_from,
+                "timestampTo": timestamp_to,
+                "model": model,
             },
             request_options=request_options,
         )
@@ -1082,7 +1198,6 @@ class AsyncRawAnalyticsClient:
         *,
         from_: typing.Optional[dt.datetime] = None,
         to: typing.Optional[dt.datetime] = None,
-        granularity: typing.Optional[GetTextToSpeechUsageTimeseriesRequestGranularity] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CountTimeseriesResponse]:
         """
@@ -1095,9 +1210,6 @@ class AsyncRawAnalyticsClient:
 
         to : typing.Optional[dt.datetime]
             End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
-
-        granularity : typing.Optional[GetTextToSpeechUsageTimeseriesRequestGranularity]
-            Bucket size for the timeseries.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1114,7 +1226,6 @@ class AsyncRawAnalyticsClient:
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
                 "to": serialize_datetime(to) if to is not None else None,
-                "granularity": granularity,
             },
             request_options=request_options,
         )
@@ -1164,7 +1275,6 @@ class AsyncRawAnalyticsClient:
         *,
         from_: typing.Optional[dt.datetime] = None,
         to: typing.Optional[dt.datetime] = None,
-        granularity: typing.Optional[GetTextToSpeechCreditsTimeseriesRequestGranularity] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CreditsTimeseriesResponse]:
         """
@@ -1178,9 +1288,6 @@ class AsyncRawAnalyticsClient:
 
         to : typing.Optional[dt.datetime]
             End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
-
-        granularity : typing.Optional[GetTextToSpeechCreditsTimeseriesRequestGranularity]
-            Bucket size for the timeseries.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1197,7 +1304,6 @@ class AsyncRawAnalyticsClient:
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
                 "to": serialize_datetime(to) if to is not None else None,
-                "granularity": granularity,
             },
             request_options=request_options,
         )
@@ -1247,7 +1353,6 @@ class AsyncRawAnalyticsClient:
         *,
         from_: typing.Optional[dt.datetime] = None,
         to: typing.Optional[dt.datetime] = None,
-        granularity: typing.Optional[GetTextToSpeechConcurrencyTimeseriesRequestGranularity] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ValuesTimeseriesResponse]:
         """
@@ -1261,9 +1366,6 @@ class AsyncRawAnalyticsClient:
 
         to : typing.Optional[dt.datetime]
             End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
-
-        granularity : typing.Optional[GetTextToSpeechConcurrencyTimeseriesRequestGranularity]
-            Bucket size for the timeseries.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1280,7 +1382,6 @@ class AsyncRawAnalyticsClient:
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
                 "to": serialize_datetime(to) if to is not None else None,
-                "granularity": granularity,
             },
             request_options=request_options,
         )
@@ -1330,7 +1431,6 @@ class AsyncRawAnalyticsClient:
         *,
         from_: typing.Optional[dt.datetime] = None,
         to: typing.Optional[dt.datetime] = None,
-        granularity: typing.Optional[GetTextToSpeechWebsocketConnectionsTimeseriesRequestGranularity] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ValuesTimeseriesResponse]:
         """
@@ -1343,9 +1443,6 @@ class AsyncRawAnalyticsClient:
 
         to : typing.Optional[dt.datetime]
             End of the range, ISO 8601 datetime (e.g. `2026-08-07T00:00:00Z`).
-
-        granularity : typing.Optional[GetTextToSpeechWebsocketConnectionsTimeseriesRequestGranularity]
-            Bucket size for the timeseries.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1362,7 +1459,6 @@ class AsyncRawAnalyticsClient:
             params={
                 "from": serialize_datetime(from_) if from_ is not None else None,
                 "to": serialize_datetime(to) if to is not None else None,
-                "granularity": granularity,
             },
             request_options=request_options,
         )
@@ -1412,6 +1508,12 @@ class AsyncRawAnalyticsClient:
         *,
         page: typing.Optional[int] = None,
         page_size: typing.Optional[int] = None,
+        timestamp_from: typing.Optional[int] = None,
+        timestamp_to: typing.Optional[int] = None,
+        status: typing.Optional[ListWebhookLogsRequestStatus] = None,
+        webhook_url: typing.Optional[str] = None,
+        event_type: typing.Optional[str] = None,
+        request_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[WebhookLogsResponse]:
         """
@@ -1425,7 +1527,25 @@ class AsyncRawAnalyticsClient:
             1-indexed page number.
 
         page_size : typing.Optional[int]
-            Number of records per page.
+            Number of records per page. Max 50.
+
+        timestamp_from : typing.Optional[int]
+            Lower bound on delivery timestamp, Unix seconds.
+
+        timestamp_to : typing.Optional[int]
+            Upper bound on delivery timestamp, Unix seconds.
+
+        status : typing.Optional[ListWebhookLogsRequestStatus]
+            Delivery-outcome filter.
+
+        webhook_url : typing.Optional[str]
+            Case-insensitive substring match against the destination URL.
+
+        event_type : typing.Optional[str]
+            Exact-match filter on event type (e.g. `asr.completed`).
+
+        request_id : typing.Optional[str]
+            Case-insensitive substring match against the source request id.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1442,6 +1562,12 @@ class AsyncRawAnalyticsClient:
             params={
                 "page": page,
                 "pageSize": page_size,
+                "timestampFrom": timestamp_from,
+                "timestampTo": timestamp_to,
+                "status": status,
+                "webhookUrl": webhook_url,
+                "eventType": event_type,
+                "requestId": request_id,
             },
             request_options=request_options,
         )

@@ -107,6 +107,7 @@ def test_waves_synthesize_tts() -> None:
     test_id = "waves.synthesize_tts.0"
     client = get_client(test_id)
     for _ in client.waves.synthesize_tts(
+        accept="audio/wav",
         text="Hello from Waves TTS.",
         voice_id="magnus",
     ):

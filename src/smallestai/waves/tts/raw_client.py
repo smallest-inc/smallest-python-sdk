@@ -26,7 +26,11 @@ class RawTtsClient:
 
     @contextmanager
     def connect(
-        self, *, authorization: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        authorization: typing.Optional[str] = None,
+        expire_content: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Iterator[TtsSocketClient]:
         """
         # Live TTS WebSocket — `/waves/v1/tts/live`
@@ -83,6 +87,11 @@ class RawTtsClient:
         Supported on English + Hindi base-queue voices. See
         [Word-level timestamps](/models/documentation/text-to-speech-lightning/word-timestamps).
 
+        Send the same `context_id` on a sequence of text fragments to have
+        them buffered, joined at natural sentence boundaries, and spoken as
+        one continuous generation instead of one reset-per-fragment. See
+        [Continuations](/models/documentation/text-to-speech-lightning/continuations).
+
         ## Connection timeout
 
         The server closes idle WebSocket connections to free resources. The
@@ -99,14 +108,31 @@ class RawTtsClient:
         wss://api.smallest.ai/waves/v1/tts/live?timeout=120
         ```
 
-        Pass any positive integer (seconds). Smaller values are honored
-        verbatim (e.g. `?timeout=5` closes after 5 s of silence). Use a larger
+        Pass a positive integer (seconds). Smaller values are honored
+        verbatim (e.g. `?timeout=5` closes after 5 s of silence); larger
+        values are clamped to the maximum of **180 seconds**. Use a larger
         value when your application has known pauses between turns — voice
         agents with long human-thinking windows, agentic pipelines waiting on
         an LLM round-trip, etc.
 
         The timeout is reset on every message you send (binary audio in, JSON
-        control in), so keep-alive traffic restarts the clock.
+        control in).
+
+        ## Keep-alive
+
+        To hold a connection open past the timeout without sending audio,
+        send a JSON keep-alive frame:
+
+        ```json
+        {"type": "ping"}
+        ```
+
+        The server replies `{"type": "pong"}` and resets the inactivity timer.
+        `keepalive`, `keep_alive`, and `keep-alive` are accepted as aliases.
+        The frame is handled at the API edge — it never reaches the model and
+        does not affect synthesis. Prefer this over a raised `timeout`: the
+        `pong` also tells you the connection is still live, and it is the only
+        way to stay open past the 180-second cap.
 
         ## Migrating from `/waves/v1/lightning-v3.1/get_speech/stream`
 
@@ -125,6 +151,11 @@ class RawTtsClient:
         ----------
         authorization : typing.Optional[str]
             Bearer token for authentication. Format: Bearer YOUR_API_KEY
+
+        expire_content : typing.Optional[str]
+            **Enterprise plans only.** Opt in if you want this session's content
+            deleted after 7 days. Omit it to retain content, which is the default.
+            Sent as a header on the WebSocket upgrade request.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -152,6 +183,8 @@ class RawTtsClient:
         headers = self._client_wrapper.get_headers()
         if authorization is not None:
             headers["Authorization"] = str(authorization)
+        if expire_content is not None:
+            headers["x-expire-content"] = str(expire_content)
         if request_options and "additional_headers" in request_options:
             headers.update(request_options["additional_headers"])
         try:
@@ -178,7 +211,11 @@ class AsyncRawTtsClient:
 
     @asynccontextmanager
     async def connect(
-        self, *, authorization: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        authorization: typing.Optional[str] = None,
+        expire_content: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.AsyncIterator[AsyncTtsSocketClient]:
         """
         # Live TTS WebSocket — `/waves/v1/tts/live`
@@ -235,6 +272,11 @@ class AsyncRawTtsClient:
         Supported on English + Hindi base-queue voices. See
         [Word-level timestamps](/models/documentation/text-to-speech-lightning/word-timestamps).
 
+        Send the same `context_id` on a sequence of text fragments to have
+        them buffered, joined at natural sentence boundaries, and spoken as
+        one continuous generation instead of one reset-per-fragment. See
+        [Continuations](/models/documentation/text-to-speech-lightning/continuations).
+
         ## Connection timeout
 
         The server closes idle WebSocket connections to free resources. The
@@ -251,14 +293,31 @@ class AsyncRawTtsClient:
         wss://api.smallest.ai/waves/v1/tts/live?timeout=120
         ```
 
-        Pass any positive integer (seconds). Smaller values are honored
-        verbatim (e.g. `?timeout=5` closes after 5 s of silence). Use a larger
+        Pass a positive integer (seconds). Smaller values are honored
+        verbatim (e.g. `?timeout=5` closes after 5 s of silence); larger
+        values are clamped to the maximum of **180 seconds**. Use a larger
         value when your application has known pauses between turns — voice
         agents with long human-thinking windows, agentic pipelines waiting on
         an LLM round-trip, etc.
 
         The timeout is reset on every message you send (binary audio in, JSON
-        control in), so keep-alive traffic restarts the clock.
+        control in).
+
+        ## Keep-alive
+
+        To hold a connection open past the timeout without sending audio,
+        send a JSON keep-alive frame:
+
+        ```json
+        {"type": "ping"}
+        ```
+
+        The server replies `{"type": "pong"}` and resets the inactivity timer.
+        `keepalive`, `keep_alive`, and `keep-alive` are accepted as aliases.
+        The frame is handled at the API edge — it never reaches the model and
+        does not affect synthesis. Prefer this over a raised `timeout`: the
+        `pong` also tells you the connection is still live, and it is the only
+        way to stay open past the 180-second cap.
 
         ## Migrating from `/waves/v1/lightning-v3.1/get_speech/stream`
 
@@ -277,6 +336,11 @@ class AsyncRawTtsClient:
         ----------
         authorization : typing.Optional[str]
             Bearer token for authentication. Format: Bearer YOUR_API_KEY
+
+        expire_content : typing.Optional[str]
+            **Enterprise plans only.** Opt in if you want this session's content
+            deleted after 7 days. Omit it to retain content, which is the default.
+            Sent as a header on the WebSocket upgrade request.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -304,6 +368,8 @@ class AsyncRawTtsClient:
         headers = self._client_wrapper.get_headers()
         if authorization is not None:
             headers["Authorization"] = str(authorization)
+        if expire_content is not None:
+            headers["x-expire-content"] = str(expire_content)
         if request_options and "additional_headers" in request_options:
             headers.update(request_options["additional_headers"])
         try:

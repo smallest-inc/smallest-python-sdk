@@ -24,6 +24,7 @@ if typing.TYPE_CHECKING:
     from .test_call_v2request_mode import TestCallV2RequestMode
     from .update_branch_draft_request_background_sound import UpdateBranchDraftRequestBackgroundSound
     from .update_branch_draft_request_slm_model import UpdateBranchDraftRequestSlmModel
+    from .update_branch_draft_request_timezone import UpdateBranchDraftRequestTimezone
     from .update_draft_agent_versioning_branches_response import UpdateDraftAgentVersioningBranchesResponse
 _dynamic_imports: typing.Dict[str, str] = {
     "ArchiveAgentVersioningBranchesResponse": ".archive_agent_versioning_branches_response",
@@ -44,6 +45,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "TestCallV2RequestMode": ".test_call_v2request_mode",
     "UpdateBranchDraftRequestBackgroundSound": ".update_branch_draft_request_background_sound",
     "UpdateBranchDraftRequestSlmModel": ".update_branch_draft_request_slm_model",
+    "UpdateBranchDraftRequestTimezone": ".update_branch_draft_request_timezone",
     "UpdateDraftAgentVersioningBranchesResponse": ".update_draft_agent_versioning_branches_response",
 }
 
@@ -88,5 +90,6 @@ __all__ = [
     "TestCallV2RequestMode",
     "UpdateBranchDraftRequestBackgroundSound",
     "UpdateBranchDraftRequestSlmModel",
+    "UpdateBranchDraftRequestTimezone",
     "UpdateDraftAgentVersioningBranchesResponse",
 ]
