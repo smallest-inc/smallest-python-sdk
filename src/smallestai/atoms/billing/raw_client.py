@@ -321,9 +321,9 @@ class RawBillingClient:
         Returns a Stripe-hosted PDF URL for the invoice. The URL is
         short-lived; fetch fresh when you need to hand it to a user.
 
-        Requesting an invoice that does not belong to the caller's
-        organization returns 404 (not 403), so a foreign invoice ID cannot
-        be confirmed to exist.
+        Pass a valid Stripe invoice ID returned by [`GET /payment/v1/invoices`](#operation/listInvoices).
+        Passing an invoice ID that belongs to a different organization
+        returns 404 (not 403), so a foreign ID cannot be confirmed to exist.
 
         Parameters
         ----------
@@ -682,9 +682,9 @@ class AsyncRawBillingClient:
         Returns a Stripe-hosted PDF URL for the invoice. The URL is
         short-lived; fetch fresh when you need to hand it to a user.
 
-        Requesting an invoice that does not belong to the caller's
-        organization returns 404 (not 403), so a foreign invoice ID cannot
-        be confirmed to exist.
+        Pass a valid Stripe invoice ID returned by [`GET /payment/v1/invoices`](#operation/listInvoices).
+        Passing an invoice ID that belongs to a different organization
+        returns 404 (not 403), so a foreign ID cannot be confirmed to exist.
 
         Parameters
         ----------

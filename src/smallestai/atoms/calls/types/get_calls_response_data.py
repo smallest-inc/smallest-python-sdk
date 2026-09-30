@@ -10,9 +10,12 @@ from ....core.unchecked_base_model import UncheckedBaseModel
 from ...types.agent_dto import AgentDto
 from .get_calls_response_data_post_call_analytics import GetCallsResponseDataPostCallAnalytics
 from .get_calls_response_data_status import GetCallsResponseDataStatus
+from .get_calls_response_data_tool_calls_item import GetCallsResponseDataToolCallsItem
 from .get_calls_response_data_transcript_item import GetCallsResponseDataTranscriptItem
 from .get_calls_response_data_turn_latency_metrics import GetCallsResponseDataTurnLatencyMetrics
+from .get_calls_response_data_turns_item import GetCallsResponseDataTurnsItem
 from .get_calls_response_data_type import GetCallsResponseDataType
+from .get_calls_response_data_usage import GetCallsResponseDataUsage
 from .get_calls_response_data_voice_config_used import GetCallsResponseDataVoiceConfigUsed
 
 
@@ -41,12 +44,18 @@ class GetCallsResponseData(UncheckedBaseModel):
     recording_url: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="recordingUrl"),
-        pydantic.Field(alias="recordingUrl", description="The recording URL of the conversation"),
+        pydantic.Field(
+            alias="recordingUrl",
+            description="Still returned on every response. Resolve the audio via `GET /recordings/{callId}?channel=mono` (or `?channel=dual`) to get a short-lived presigned S3 URL. Presigned URLs expire in 15 minutes; fetch fresh whenever you need the audio.",
+        ),
     ] = None
     recording_dual_url: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="recordingDualUrl"),
-        pydantic.Field(alias="recordingDualUrl", description="URL to the dual-channel recording of the conversation"),
+        pydantic.Field(
+            alias="recordingDualUrl",
+            description="Still returned when the call was captured with per-side audio. Resolve the audio via `GET /recordings/{callId}?channel=dual` to get a short-lived presigned S3 URL. Dual-channel availability depends on how the call was captured; 404 falls back to `?channel=mono`.",
+        ),
     ] = None
     from_: typing_extensions.Annotated[
         typing.Optional[str],
@@ -97,7 +106,8 @@ class GetCallsResponseData(UncheckedBaseModel):
         typing.Optional[GetCallsResponseDataPostCallAnalytics],
         FieldMetadata(alias="postCallAnalytics"),
         pydantic.Field(
-            alias="postCallAnalytics", description="Post-call analytics results evaluated against the call transcript"
+            alias="postCallAnalytics",
+            description='Post-call analytics results evaluated against the call transcript.\n\nWhen PCA cannot analyze the call (agent-only call, failed call, or unanswered call), the fields are still populated with a fixed fallback. `dispositionMetrics[].value` is `null` with `confidence: 0` and `reasoning` explaining the skip. `summary` and `reasoning` values (exact strings):\n  - Agent-only call: `summary: "User did not speak."`, `reasoning: "User did not speak — no customer content available for analysis."`\n  - Failed call: `summary: "Call could not be completed."`, `reasoning: "Call could not be completed — no transcript available for analysis."`\n  - Unanswered call: `summary: "Call was not answered."`, `reasoning: "Call was not answered — no transcript available for analysis."`',
         ),
     ] = None
     turn_latency_metrics: typing_extensions.Annotated[
@@ -106,6 +116,24 @@ class GetCallsResponseData(UncheckedBaseModel):
         pydantic.Field(
             alias="turnLatencyMetrics",
             description="Per-turn latency statistics for the call. Replaces the deprecated average_*_latency fields.",
+        ),
+    ] = None
+    usage: typing.Optional[GetCallsResponseDataUsage] = pydantic.Field(default=None)
+    """
+    LLM token usage summed across every LLM call in this call, taken from the runtime's own metrics. Null when the call made no LLM calls.
+    """
+
+    turns: typing.Optional[typing.List[GetCallsResponseDataTurnsItem]] = pydantic.Field(default=None)
+    """
+    Per-turn LLM timings measured by the runtime, in call order. Joins with transcript rows on `turnIndex`. Distinct from `turnLatencyMetrics`, which is the caller-perceived latency measured from the recording. Empty for calls whose runtime did not emit per-turn stats.
+    """
+
+    tool_calls: typing_extensions.Annotated[
+        typing.Optional[typing.List[GetCallsResponseDataToolCallsItem]],
+        FieldMetadata(alias="toolCalls"),
+        pydantic.Field(
+            alias="toolCalls",
+            description="Tool calls the agent made during the call, in order, with execution time and the tokens each exchange added to the context.",
         ),
     ] = None
     voice_config_used: typing_extensions.Annotated[

@@ -12,9 +12,7 @@ from .tool import Tool
 
 class AgentDtoVersionedWorkflow(UncheckedBaseModel):
     """
-    **Deprecated — internal use only.** Legacy field present whenever `_resolvedConfig` is populated.
-    Mirrors a subset of `_resolvedConfig` (`prompt`, `tools`, `workflowGraph`). Kept for backward
-    compatibility with existing frontend code. Ignore in new integrations.
+    Deprecated. Present whenever `_resolvedConfig` is populated. Mirrors a subset of `_resolvedConfig` (`prompt`, `tools`, `workflowGraph`) and is kept for backward compatibility. Ignore in new integrations.
     """
 
     prompt: typing.Optional[str] = None

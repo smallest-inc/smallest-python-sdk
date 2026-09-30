@@ -5,22 +5,64 @@ import typing
 import pydantic
 from ...core.pydantic_utilities import IS_PYDANTIC_V2
 from ...core.unchecked_base_model import UncheckedBaseModel
+from .stt_error_response_errors import SttErrorResponseErrors
+from .stt_error_response_status import SttErrorResponseStatus
 
 
 class SttErrorResponse(UncheckedBaseModel):
-    error: str = pydantic.Field()
     """
-    Error message.
+    Error body returned by `POST /waves/v1/stt/`. The shape depends on where the request fails:
+
+    - A request with no `Authorization` header returns `{ "message": "Unauthorized: No tokens provided" }`.
+    - Other authentication errors, and plan, credit, and rate-limit errors, return `{ "error": "<message>" }`.
+    - Request validation and transcription errors return `{ "status": "error", "message": "<message>" }`, with optional `errors`, `error_code`, `code`, `language`, `region`, and `request_id` fields.
+
+    Read `error` first and fall back to `message`. Branch on the HTTP status and on `error_code` / `code` when present, not on the message text.
+    """
+
+    error: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Human-readable error message on authentication, plan, credit, and rate-limit errors.
+    """
+
+    status: typing.Optional[SttErrorResponseStatus] = pydantic.Field(default=None)
+    """
+    Set to `error` on validation and transcription errors.
+    """
+
+    message: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Human-readable error message on validation and transcription errors, and on a missing `Authorization` header.
+    """
+
+    error_code: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Machine-readable error code. Known values: `LANGUAGE_NOT_ENABLED_IN_REGION`.
+    """
+
+    code: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Machine-readable error code on some transcription failures. Known values: `AudioDecodeError`, `NoAudio`.
+    """
+
+    language: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Language code echoed on `LANGUAGE_NOT_ENABLED_IN_REGION` responses.
+    """
+
+    region: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Region that served the request on `LANGUAGE_NOT_ENABLED_IN_REGION` responses (for example `ap-south-1` or `us-west-2`).
     """
 
     request_id: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Correlation ID for support / logs
+    Correlation ID for support
     """
 
-    details: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = pydantic.Field(default=None)
+    errors: typing.Optional[SttErrorResponseErrors] = pydantic.Field(default=None)
     """
-    Additional error details (validation errors).
+    Validation detail. On query-parameter failures, an array of entries with the parameter `path` and a `message`. On request-body failures, a string.
     """
 
     if IS_PYDANTIC_V2:

@@ -13,7 +13,7 @@ class PostPromptScoringScoreRequestVersionId(UncheckedBaseModel):
     version_id: typing_extensions.Annotated[
         str,
         FieldMetadata(alias="versionId"),
-        pydantic.Field(alias="versionId", description="Published agent version ID (MongoDB ObjectId)."),
+        pydantic.Field(alias="versionId", description="Published agent version id (24-character hex)."),
     ]
 
     if IS_PYDANTIC_V2:

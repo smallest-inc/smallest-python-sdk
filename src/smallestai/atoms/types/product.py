@@ -22,7 +22,7 @@ class Product(UncheckedBaseModel):
         FieldMetadata(alias="_id"),
         pydantic.Field(
             alias="_id",
-            description="24-char MongoDB ObjectId. Use this as `productId` when releasing, or assign to an agent via `PATCH /agent/{agentId}`.",
+            description="24-character hex id. Use this as `productId` when releasing, or assign to an agent via `PATCH /agent/{agentId}`.",
         ),
     ] = None
     product_type: typing_extensions.Annotated[
@@ -48,7 +48,7 @@ class Product(UncheckedBaseModel):
         FieldMetadata(alias="agentId"),
         pydantic.Field(
             alias="agentId",
-            description="24-char MongoDB ObjectId of the agent this number is assigned to, if any. `null` when unassigned.",
+            description="24-character hex id of the agent this number is assigned to, if any. `null` when unassigned.",
         ),
     ] = None
     created_at: typing_extensions.Annotated[

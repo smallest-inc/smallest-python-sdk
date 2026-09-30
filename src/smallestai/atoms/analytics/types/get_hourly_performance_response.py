@@ -9,7 +9,7 @@ from .get_hourly_performance_response_data import GetHourlyPerformanceResponseDa
 
 
 class GetHourlyPerformanceResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetHourlyPerformanceResponseData] = None
 
     if IS_PYDANTIC_V2:

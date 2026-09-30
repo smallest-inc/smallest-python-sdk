@@ -5,6 +5,7 @@ import typing
 import pydantic
 from ...core.pydantic_utilities import IS_PYDANTIC_V2
 from ...core.unchecked_base_model import UncheckedBaseModel
+from .tts_request_content_filter import TtsRequestContentFilter
 from .tts_request_language import TtsRequestLanguage
 from .tts_request_model import TtsRequestModel
 from .tts_request_number_pronunciation_language import TtsRequestNumberPronunciationLanguage
@@ -14,7 +15,7 @@ from .tts_request_output_format import TtsRequestOutputFormat
 class TtsRequest(UncheckedBaseModel):
     text: str = pydantic.Field()
     """
-    The text to convert to speech.
+    The text to convert to speech. Max 8000 characters after trim; whitespace-only strings are rejected.
     """
 
     voice_id: str = pydantic.Field()
@@ -104,6 +105,61 @@ class TtsRequest(UncheckedBaseModel):
     
     Accepts the same language codes as `language` (including `auto`,
     `nl`, `sv`).
+    """
+
+    math_notation: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Opt-in flag that reads digit-flanked math operators (`5 x 3`,
+    `2 ^ 10`, `6 ÷ 2`) as words instead of leaving them for the
+    default number reader. Off by default because in real traffic
+    digit-flanked `NxN` is more often a product dimension, the
+    `24x7` idiom, or a vehicle-registration code than an actual
+    multiplication.
+    
+    When `true`, the normalizer replaces the operator with the
+    spoken word matched to `number_pronunciation_language`:
+    
+    | Glyphs | en (default / fallback) | hi | mr |
+    |---|---|---|---|
+    | `×` `x` `X` `*` | times | गुणा | गुणिले |
+    | `÷` and spaced `/` | divided by | बटा | भागिले |
+    | `+` | plus | प्लस | अधिक |
+    | spaced `-` `–` `−` | minus | माइनस | वजा |
+    | `=` | equals | बराबर | बरोबर |
+    | `^` `**` | to the power of | की घात | ची घात |
+    
+    Localized only for `hi` and `mr`; every other language falls
+    back to the English words. The operator word follows
+    `number_pronunciation_language`, not the synthesis
+    `language`, so `language=en, number_pronunciation_language=hi`
+    reads `6 x 7` as "छः गुणा सात".
+    
+    Matching rules: unambiguous glyphs (`× ÷ * ^ ** = +` and the
+    wrong-glyph `x`/`X`) fire glued or spaced (`5x3`, `5 x 3`).
+    The ambiguous `-` `–` `−` and `/` fire only when
+    space-padded, so `5-3` stays a range and `1/2` stays a
+    fraction. See [Math notation](/models/documentation/text-to-speech-lightning/math-notation)
+    for the full lexicon, known limitations (product dimensions,
+    `24x7` idiom, vehicle-reg codes), and EU-language
+    localizations.
+    """
+
+    content_filter: typing.Optional[TtsRequestContentFilter] = pydantic.Field(default=None)
+    """
+    Opt-in profanity filter for the submitted text. Off by default;
+    passing this object is the only way to turn it on. The filter
+    never rewrites your text — it either lets the request through or
+    rejects it before synthesis.
+    
+    `action: "reject"` returns HTTP 400 with `error_code:
+    "CONTENT_FILTER_BLOCKED"`, the `language` checked and a
+    `match_count`; the matched terms are never returned or logged.
+    `action: "flag"` synthesizes normally and records the match.
+    
+    Matching is whole-word, not substring. If no verdict is returned
+    the request fails open and the audio is synthesized unfiltered.
+    
+    See [Content filter](/models/documentation/text-to-speech-lightning/content-filter).
     """
 
     output_format: typing.Optional[TtsRequestOutputFormat] = pydantic.Field(default=None)

@@ -108,6 +108,7 @@ class CampaignsClient:
         audience_id: str,
         agent_id: str,
         description: typing.Optional[str] = OMIT,
+        from_numbers: typing.Optional[typing.Sequence[str]] = OMIT,
         phone_number_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         scheduled_at: typing.Optional[dt.datetime] = OMIT,
         max_retries: typing.Optional[int] = OMIT,
@@ -131,10 +132,18 @@ class CampaignsClient:
         description : typing.Optional[str]
             The description of the campaign
 
+        from_numbers : typing.Optional[typing.Sequence[str]]
+            The caller IDs this campaign presents, E.164 with the leading `+`, each
+            matched against numbers your organization owns. Several numbers rotate
+            positionally across calls; retries reuse the number the recipient already
+            saw. The list is frozen on the campaign at creation. A campaign cannot be
+            created without at least one resolvable number (`400` "Choose at least one
+            number to call from"); one bad number fails the whole request.
+
         phone_number_ids : typing.Optional[typing.Sequence[str]]
-            Optional list of caller-ID phone number IDs to rotate across
-            when placing outbound calls for this campaign. If omitted,
-            the agent's default phone number is used.
+            Legacy alias for `fromNumbers`: caller-ID phone number IDs, resolved to
+            their numbers at creation. Ignored when `fromNumbers` is present. Prefer
+            `fromNumbers`.
 
         scheduled_at : typing.Optional[dt.datetime]
             Optional ISO-8601 timestamp for when the campaign should
@@ -155,8 +164,8 @@ class CampaignsClient:
         Returns
         -------
         CreateCampaignsResponse
-            Campaign created successfully. Note: the response is the raw Mongoose document — `agentId`
-            and `audienceId` are plain ObjectId strings here, not nested objects as returned by GET endpoints.
+            Campaign created successfully. Note: `agentId` and `audienceId` are plain
+            id strings in this response, not the nested objects the GET endpoints return.
 
         Examples
         --------
@@ -176,6 +185,7 @@ class CampaignsClient:
             audience_id=audience_id,
             agent_id=agent_id,
             description=description,
+            from_numbers=from_numbers,
             phone_number_ids=phone_number_ids,
             scheduled_at=scheduled_at,
             max_retries=max_retries,
@@ -492,6 +502,7 @@ class AsyncCampaignsClient:
         audience_id: str,
         agent_id: str,
         description: typing.Optional[str] = OMIT,
+        from_numbers: typing.Optional[typing.Sequence[str]] = OMIT,
         phone_number_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         scheduled_at: typing.Optional[dt.datetime] = OMIT,
         max_retries: typing.Optional[int] = OMIT,
@@ -515,10 +526,18 @@ class AsyncCampaignsClient:
         description : typing.Optional[str]
             The description of the campaign
 
+        from_numbers : typing.Optional[typing.Sequence[str]]
+            The caller IDs this campaign presents, E.164 with the leading `+`, each
+            matched against numbers your organization owns. Several numbers rotate
+            positionally across calls; retries reuse the number the recipient already
+            saw. The list is frozen on the campaign at creation. A campaign cannot be
+            created without at least one resolvable number (`400` "Choose at least one
+            number to call from"); one bad number fails the whole request.
+
         phone_number_ids : typing.Optional[typing.Sequence[str]]
-            Optional list of caller-ID phone number IDs to rotate across
-            when placing outbound calls for this campaign. If omitted,
-            the agent's default phone number is used.
+            Legacy alias for `fromNumbers`: caller-ID phone number IDs, resolved to
+            their numbers at creation. Ignored when `fromNumbers` is present. Prefer
+            `fromNumbers`.
 
         scheduled_at : typing.Optional[dt.datetime]
             Optional ISO-8601 timestamp for when the campaign should
@@ -539,8 +558,8 @@ class AsyncCampaignsClient:
         Returns
         -------
         CreateCampaignsResponse
-            Campaign created successfully. Note: the response is the raw Mongoose document — `agentId`
-            and `audienceId` are plain ObjectId strings here, not nested objects as returned by GET endpoints.
+            Campaign created successfully. Note: `agentId` and `audienceId` are plain
+            id strings in this response, not the nested objects the GET endpoints return.
 
         Examples
         --------
@@ -568,6 +587,7 @@ class AsyncCampaignsClient:
             audience_id=audience_id,
             agent_id=agent_id,
             description=description,
+            from_numbers=from_numbers,
             phone_number_ids=phone_number_ids,
             scheduled_at=scheduled_at,
             max_retries=max_retries,

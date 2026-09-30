@@ -12,7 +12,7 @@ class InputAudioBufferAppend(UncheckedBaseModel):
     type: InputAudioBufferAppendType
     audio: str = pydantic.Field()
     """
-    Base64-encoded PCM16 audio chunk. Signed little-endian, mono, 16 kHz. Recommended chunk size: 20–40 ms (640–1280 samples).
+    Base64-encoded PCM16 audio chunk. Signed little-endian, mono, 16 kHz.
     """
 
     if IS_PYDANTIC_V2:

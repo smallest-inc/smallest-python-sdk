@@ -10,6 +10,7 @@ if typing.TYPE_CHECKING:
     from .discard_draft_agent_versioning_drafts_response import DiscardDraftAgentVersioningDraftsResponse
     from .draft_config_request_background_sound import DraftConfigRequestBackgroundSound
     from .draft_config_request_slm_model import DraftConfigRequestSlmModel
+    from .draft_config_request_transcriber_type import DraftConfigRequestTranscriberType
     from .get_agent_id_drafts_draft_id_diff_response import GetAgentIdDraftsDraftIdDiffResponse
     from .get_agent_id_drafts_draft_id_diff_response_data import GetAgentIdDraftsDraftIdDiffResponseData
     from .get_agent_id_drafts_draft_id_diff_response_data_sections_value import (
@@ -30,6 +31,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "DiscardDraftAgentVersioningDraftsResponse": ".discard_draft_agent_versioning_drafts_response",
     "DraftConfigRequestBackgroundSound": ".draft_config_request_background_sound",
     "DraftConfigRequestSlmModel": ".draft_config_request_slm_model",
+    "DraftConfigRequestTranscriberType": ".draft_config_request_transcriber_type",
     "GetAgentIdDraftsDraftIdDiffResponse": ".get_agent_id_drafts_draft_id_diff_response",
     "GetAgentIdDraftsDraftIdDiffResponseData": ".get_agent_id_drafts_draft_id_diff_response_data",
     "GetAgentIdDraftsDraftIdDiffResponseDataSectionsValue": ".get_agent_id_drafts_draft_id_diff_response_data_sections_value",
@@ -72,6 +74,7 @@ __all__ = [
     "DiscardDraftAgentVersioningDraftsResponse",
     "DraftConfigRequestBackgroundSound",
     "DraftConfigRequestSlmModel",
+    "DraftConfigRequestTranscriberType",
     "GetAgentIdDraftsDraftIdDiffResponse",
     "GetAgentIdDraftsDraftIdDiffResponseData",
     "GetAgentIdDraftsDraftIdDiffResponseDataSectionsValue",

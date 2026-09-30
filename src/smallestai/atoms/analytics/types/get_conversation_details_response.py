@@ -9,7 +9,7 @@ from .get_conversation_details_response_data import GetConversationDetailsRespon
 
 
 class GetConversationDetailsResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetConversationDetailsResponseData] = None
 
     if IS_PYDANTIC_V2:

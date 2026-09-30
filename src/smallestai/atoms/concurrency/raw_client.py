@@ -13,12 +13,15 @@ from ...core.unchecked_base_model import construct_type
 from ..errors.bad_request_error import BadRequestError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
+from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from .types.get_concurrency_response import GetConcurrencyResponse
+from .types.get_cps_limits_response import GetCpsLimitsResponse
 from .types.update_concurrency_reservations_request_reservations_item import (
     UpdateConcurrencyReservationsRequestReservationsItem,
 )
 from .types.update_concurrency_reservations_response import UpdateConcurrencyReservationsResponse
+from .types.update_custom_trunk_cps_limit_response import UpdateCustomTrunkCpsLimitResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -194,6 +197,183 @@ class RawConcurrencyClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def get_cps_limits(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[GetCpsLimitsResponse]:
+        """
+        Returns the organization's calls-per-second (CPS) settings: the rate per provider for rented numbers, every imported SIP trunk with the numbers on it and its shared rate, and the total across trunks.
+
+        CPS is how fast new outbound calls may **start**; concurrency is how many may run at once. See the [Calls per second guide](/voice-agents/platform/create-agent/cps).
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[GetCpsLimitsResponse]
+            CPS overview
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "product/cps-limits",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GetCpsLimitsResponse,
+                    construct_type(
+                        type_=GetCpsLimitsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def update_custom_trunk_cps_limit(
+        self, *, termination_url: str, cps_limit: int, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[UpdateCustomTrunkCpsLimitResponse]:
+        """
+        Sets the calls-per-second rate for one of your imported SIP trunks. The rate applies to **every number on that trunk** and takes effect within about a second, including for calls already queued. **Admin role required.**
+
+        Set it to what your carrier actually allows: too high and the carrier rejects calls, too low and campaigns run slower than they need to. See the [Calls per second guide](/voice-agents/platform/create-agent/cps).
+
+        Parameters
+        ----------
+        termination_url : str
+            The trunk's address as shown on the Concurrency page. Normalized the same way as at import, so `sip:` prefixes and URI parameters are ignored; a different port is a different trunk.
+
+        cps_limit : int
+            Calls per second for every number on the trunk. Whole number from 1 to 50.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[UpdateCustomTrunkCpsLimitResponse]
+            Rate applied
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "product/custom-trunk/cps-limit",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="PATCH",
+            json={
+                "terminationUrl": termination_url,
+                "cpsLimit": cps_limit,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    UpdateCustomTrunkCpsLimitResponse,
+                    construct_type(
+                        type_=UpdateCustomTrunkCpsLimitResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
 
 class AsyncRawConcurrencyClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -335,6 +515,183 @@ class AsyncRawConcurrencyClient:
                 )
             if _response.status_code == 403:
                 raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_cps_limits(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[GetCpsLimitsResponse]:
+        """
+        Returns the organization's calls-per-second (CPS) settings: the rate per provider for rented numbers, every imported SIP trunk with the numbers on it and its shared rate, and the total across trunks.
+
+        CPS is how fast new outbound calls may **start**; concurrency is how many may run at once. See the [Calls per second guide](/voice-agents/platform/create-agent/cps).
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[GetCpsLimitsResponse]
+            CPS overview
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "product/cps-limits",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GetCpsLimitsResponse,
+                    construct_type(
+                        type_=GetCpsLimitsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def update_custom_trunk_cps_limit(
+        self, *, termination_url: str, cps_limit: int, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[UpdateCustomTrunkCpsLimitResponse]:
+        """
+        Sets the calls-per-second rate for one of your imported SIP trunks. The rate applies to **every number on that trunk** and takes effect within about a second, including for calls already queued. **Admin role required.**
+
+        Set it to what your carrier actually allows: too high and the carrier rejects calls, too low and campaigns run slower than they need to. See the [Calls per second guide](/voice-agents/platform/create-agent/cps).
+
+        Parameters
+        ----------
+        termination_url : str
+            The trunk's address as shown on the Concurrency page. Normalized the same way as at import, so `sip:` prefixes and URI parameters are ignored; a different port is a different trunk.
+
+        cps_limit : int
+            Calls per second for every number on the trunk. Whole number from 1 to 50.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[UpdateCustomTrunkCpsLimitResponse]
+            Rate applied
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "product/custom-trunk/cps-limit",
+            base_url=self._client_wrapper.get_environment().atoms,
+            method="PATCH",
+            json={
+                "terminationUrl": termination_url,
+                "cpsLimit": cps_limit,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    UpdateCustomTrunkCpsLimitResponse,
+                    construct_type(
+                        type_=UpdateCustomTrunkCpsLimitResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        construct_type(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Any,

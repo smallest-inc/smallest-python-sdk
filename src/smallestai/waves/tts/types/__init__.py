@@ -7,6 +7,8 @@ from importlib import import_module
 
 if typing.TYPE_CHECKING:
     from .tts_request_message import TtsRequestMessage
+    from .tts_request_message_content_filter import TtsRequestMessageContentFilter
+    from .tts_request_message_content_filter_action import TtsRequestMessageContentFilterAction
     from .tts_request_message_language import TtsRequestMessageLanguage
     from .tts_request_message_model import TtsRequestMessageModel
     from .tts_request_message_number_pronunciation_language import TtsRequestMessageNumberPronunciationLanguage
@@ -15,6 +17,8 @@ if typing.TYPE_CHECKING:
     from .tts_response_message_status import TtsResponseMessageStatus
 _dynamic_imports: typing.Dict[str, str] = {
     "TtsRequestMessage": ".tts_request_message",
+    "TtsRequestMessageContentFilter": ".tts_request_message_content_filter",
+    "TtsRequestMessageContentFilterAction": ".tts_request_message_content_filter_action",
     "TtsRequestMessageLanguage": ".tts_request_message_language",
     "TtsRequestMessageModel": ".tts_request_message_model",
     "TtsRequestMessageNumberPronunciationLanguage": ".tts_request_message_number_pronunciation_language",
@@ -47,6 +51,8 @@ def __dir__():
 
 __all__ = [
     "TtsRequestMessage",
+    "TtsRequestMessageContentFilter",
+    "TtsRequestMessageContentFilterAction",
     "TtsRequestMessageLanguage",
     "TtsRequestMessageModel",
     "TtsRequestMessageNumberPronunciationLanguage",

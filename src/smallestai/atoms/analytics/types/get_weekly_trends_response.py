@@ -9,7 +9,7 @@ from .get_weekly_trends_response_data import GetWeeklyTrendsResponseData
 
 
 class GetWeeklyTrendsResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetWeeklyTrendsResponseData] = None
 
     if IS_PYDANTIC_V2:

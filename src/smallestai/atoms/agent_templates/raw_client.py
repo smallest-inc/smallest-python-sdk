@@ -134,7 +134,7 @@ class RawAgentTemplatesClient:
         Returns
         -------
         HttpResponse[PostAgentFromTemplateResponse]
-            Successful response
+            Agent created from template. Returns the new agent ID in `data`.
         """
         _response = self._client_wrapper.httpx_client.request(
             "agent/from-template",
@@ -317,7 +317,7 @@ class AsyncRawAgentTemplatesClient:
         Returns
         -------
         AsyncHttpResponse[PostAgentFromTemplateResponse]
-            Successful response
+            Agent created from template. Returns the new agent ID in `data`.
         """
         _response = await self._client_wrapper.httpx_client.request(
             "agent/from-template",

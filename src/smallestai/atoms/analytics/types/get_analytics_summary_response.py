@@ -9,7 +9,7 @@ from .get_analytics_summary_response_data import GetAnalyticsSummaryResponseData
 
 
 class GetAnalyticsSummaryResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetAnalyticsSummaryResponseData] = None
 
     if IS_PYDANTIC_V2:

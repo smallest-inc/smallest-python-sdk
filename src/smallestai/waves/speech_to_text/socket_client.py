@@ -11,6 +11,10 @@ from ...core.events import EventEmitterMixin, EventType
 from ...core.unchecked_base_model import construct_type
 from .types.close_stream import CloseStream
 from .types.finalize_signal import FinalizeSignal
+from .types.keep_alive_signal import KeepAliveSignal
+from .types.pong_event import PongEvent
+from .types.speech_ended_event import SpeechEndedEvent
+from .types.speech_started_event import SpeechStartedEvent
 from .types.transcription_error_event import TranscriptionErrorEvent
 from .types.transcription_event import TranscriptionEvent
 
@@ -20,7 +24,9 @@ except ImportError:
     from websockets import WebSocketClientProtocol  # type: ignore
 
 _logger = logging.getLogger(__name__)
-SpeechToTextSocketClientResponse = typing.Union[TranscriptionEvent, TranscriptionErrorEvent]
+SpeechToTextSocketClientResponse = typing.Union[
+    TranscriptionEvent, TranscriptionErrorEvent, PongEvent, SpeechStartedEvent, SpeechEndedEvent
+]
 
 
 class AsyncSpeechToTextSocketClient(EventEmitterMixin):
@@ -89,6 +95,13 @@ class AsyncSpeechToTextSocketClient(EventEmitterMixin):
         """
         Send a message to the websocket connection.
         The message will be sent as a CloseStream.
+        """
+        await self._send_model(message)
+
+    async def send_keep_alive_signal(self, message: KeepAliveSignal) -> None:
+        """
+        Send a message to the websocket connection.
+        The message will be sent as a KeepAliveSignal.
         """
         await self._send_model(message)
 
@@ -187,6 +200,13 @@ class SpeechToTextSocketClient(EventEmitterMixin):
         """
         Send a message to the websocket connection.
         The message will be sent as a CloseStream.
+        """
+        self._send_model(message)
+
+    def send_keep_alive_signal(self, message: KeepAliveSignal) -> None:
+        """
+        Send a message to the websocket connection.
+        The message will be sent as a KeepAliveSignal.
         """
         self._send_model(message)
 

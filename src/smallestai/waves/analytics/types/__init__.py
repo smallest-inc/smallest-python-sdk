@@ -7,28 +7,10 @@ from importlib import import_module
 
 if typing.TYPE_CHECKING:
     from .delete_streaming_speech_to_text_history_response import DeleteStreamingSpeechToTextHistoryResponse
-    from .get_streaming_speech_to_text_usage_timeseries_request_granularity import (
-        GetStreamingSpeechToTextUsageTimeseriesRequestGranularity,
-    )
-    from .get_text_to_speech_concurrency_timeseries_request_granularity import (
-        GetTextToSpeechConcurrencyTimeseriesRequestGranularity,
-    )
-    from .get_text_to_speech_credits_timeseries_request_granularity import (
-        GetTextToSpeechCreditsTimeseriesRequestGranularity,
-    )
-    from .get_text_to_speech_usage_timeseries_request_granularity import (
-        GetTextToSpeechUsageTimeseriesRequestGranularity,
-    )
-    from .get_text_to_speech_websocket_connections_timeseries_request_granularity import (
-        GetTextToSpeechWebsocketConnectionsTimeseriesRequestGranularity,
-    )
+    from .list_webhook_logs_request_status import ListWebhookLogsRequestStatus
 _dynamic_imports: typing.Dict[str, str] = {
     "DeleteStreamingSpeechToTextHistoryResponse": ".delete_streaming_speech_to_text_history_response",
-    "GetStreamingSpeechToTextUsageTimeseriesRequestGranularity": ".get_streaming_speech_to_text_usage_timeseries_request_granularity",
-    "GetTextToSpeechConcurrencyTimeseriesRequestGranularity": ".get_text_to_speech_concurrency_timeseries_request_granularity",
-    "GetTextToSpeechCreditsTimeseriesRequestGranularity": ".get_text_to_speech_credits_timeseries_request_granularity",
-    "GetTextToSpeechUsageTimeseriesRequestGranularity": ".get_text_to_speech_usage_timeseries_request_granularity",
-    "GetTextToSpeechWebsocketConnectionsTimeseriesRequestGranularity": ".get_text_to_speech_websocket_connections_timeseries_request_granularity",
+    "ListWebhookLogsRequestStatus": ".list_webhook_logs_request_status",
 }
 
 
@@ -53,11 +35,4 @@ def __dir__():
     return sorted(lazy_attrs)
 
 
-__all__ = [
-    "DeleteStreamingSpeechToTextHistoryResponse",
-    "GetStreamingSpeechToTextUsageTimeseriesRequestGranularity",
-    "GetTextToSpeechConcurrencyTimeseriesRequestGranularity",
-    "GetTextToSpeechCreditsTimeseriesRequestGranularity",
-    "GetTextToSpeechUsageTimeseriesRequestGranularity",
-    "GetTextToSpeechWebsocketConnectionsTimeseriesRequestGranularity",
-]
+__all__ = ["DeleteStreamingSpeechToTextHistoryResponse", "ListWebhookLogsRequestStatus"]

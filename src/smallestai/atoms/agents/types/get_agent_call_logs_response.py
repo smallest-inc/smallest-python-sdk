@@ -9,7 +9,7 @@ from .get_agent_call_logs_response_data import GetAgentCallLogsResponseData
 
 
 class GetAgentCallLogsResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetAgentCallLogsResponseData] = None
 
     if IS_PYDANTIC_V2:

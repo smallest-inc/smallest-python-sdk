@@ -9,7 +9,7 @@ from .list_disposition_metric_templates_response_data_item import ListDispositio
 
 
 class ListDispositionMetricTemplatesResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[typing.List[ListDispositionMetricTemplatesResponseDataItem]] = None
 
     if IS_PYDANTIC_V2:

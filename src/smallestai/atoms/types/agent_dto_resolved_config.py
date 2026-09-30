@@ -48,7 +48,10 @@ class AgentDtoResolvedConfig(UncheckedBaseModel):
     transcriber_type: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="transcriberType"),
-        pydantic.Field(alias="transcriberType", description="STT engine in use on the resolved version."),
+        pydantic.Field(
+            alias="transcriberType",
+            description="STT engine in use on the resolved version. Common values are `pulse`, `pulse-legacy`, `gpt-realtime`, and `gpt-realtime-mini`; `others` may also be returned. Typed as an open string so clients do not refuse to deserialize additional values the server may return.",
+        ),
     ] = None
     default_language: typing_extensions.Annotated[
         typing.Optional[AgentDtoResolvedConfigDefaultLanguage],

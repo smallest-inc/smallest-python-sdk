@@ -19,7 +19,7 @@ class Branch(UncheckedBaseModel):
     id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="_id"),
-        pydantic.Field(alias="_id", description="Branch ID (24-character ObjectId)."),
+        pydantic.Field(alias="_id", description="Branch id (24-character hex)."),
     ] = None
     agent: typing.Optional[str] = pydantic.Field(default=None)
     """

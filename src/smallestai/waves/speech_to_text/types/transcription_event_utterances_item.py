@@ -23,9 +23,9 @@ class TranscriptionEventUtterancesItem(UncheckedBaseModel):
     End time in seconds.
     """
 
-    speaker: typing.Optional[str] = pydantic.Field(default=None)
+    speaker: typing.Optional[int] = pydantic.Field(default=None)
     """
-    Speaker label. Present when `diarize=true`.
+    Zero-indexed speaker label. Present when `diarize=true`.
     """
 
     if IS_PYDANTIC_V2:

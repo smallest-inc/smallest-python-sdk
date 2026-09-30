@@ -8,6 +8,8 @@ from importlib import import_module
 if typing.TYPE_CHECKING:
     from .types import (
         TtsRequestMessage,
+        TtsRequestMessageContentFilter,
+        TtsRequestMessageContentFilterAction,
         TtsRequestMessageLanguage,
         TtsRequestMessageModel,
         TtsRequestMessageNumberPronunciationLanguage,
@@ -17,6 +19,8 @@ if typing.TYPE_CHECKING:
     )
 _dynamic_imports: typing.Dict[str, str] = {
     "TtsRequestMessage": ".types",
+    "TtsRequestMessageContentFilter": ".types",
+    "TtsRequestMessageContentFilterAction": ".types",
     "TtsRequestMessageLanguage": ".types",
     "TtsRequestMessageModel": ".types",
     "TtsRequestMessageNumberPronunciationLanguage": ".types",
@@ -49,6 +53,8 @@ def __dir__():
 
 __all__ = [
     "TtsRequestMessage",
+    "TtsRequestMessageContentFilter",
+    "TtsRequestMessageContentFilterAction",
     "TtsRequestMessageLanguage",
     "TtsRequestMessageModel",
     "TtsRequestMessageNumberPronunciationLanguage",

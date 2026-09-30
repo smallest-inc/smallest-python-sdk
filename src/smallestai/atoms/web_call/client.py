@@ -30,9 +30,9 @@ class WebCallClient:
         self, *, agent_id: str, request_options: typing.Optional[RequestOptions] = None
     ) -> WebSessionResponse:
         """
-        Mints a short-lived LiveKit access token and creates a room the browser client can
+        Mints a short-lived session access token and creates a room the browser client can
         join to have a text-first chat with the agent. The response includes the room name,
-        the LiveKit host to connect to, a `conversationId` for correlation, and a `callId`
+        the WebSocket host to connect to, a `conversationId` for correlation, and a `callId`
         that shows up in call logs. Pair with the [Web SDK](/voice-agents/developer-guide/client-libraries)
         to render the session in-browser.
 
@@ -67,7 +67,7 @@ class WebCallClient:
         self, *, agent_id: str, request_options: typing.Optional[RequestOptions] = None
     ) -> WebSessionResponse:
         """
-        Mints a short-lived LiveKit access token and creates a room the browser client can
+        Mints a short-lived session access token and creates a room the browser client can
         join to have a voice-first call with the agent. Same response shape as `/conversation/chat`;
         the difference is the audio track defaults on the client side. Pair with the
         [Web SDK](/voice-agents/developer-guide/client-libraries) to open the room in-browser.
@@ -119,9 +119,9 @@ class AsyncWebCallClient:
         self, *, agent_id: str, request_options: typing.Optional[RequestOptions] = None
     ) -> WebSessionResponse:
         """
-        Mints a short-lived LiveKit access token and creates a room the browser client can
+        Mints a short-lived session access token and creates a room the browser client can
         join to have a text-first chat with the agent. The response includes the room name,
-        the LiveKit host to connect to, a `conversationId` for correlation, and a `callId`
+        the WebSocket host to connect to, a `conversationId` for correlation, and a `callId`
         that shows up in call logs. Pair with the [Web SDK](/voice-agents/developer-guide/client-libraries)
         to render the session in-browser.
 
@@ -166,7 +166,7 @@ class AsyncWebCallClient:
         self, *, agent_id: str, request_options: typing.Optional[RequestOptions] = None
     ) -> WebSessionResponse:
         """
-        Mints a short-lived LiveKit access token and creates a room the browser client can
+        Mints a short-lived session access token and creates a room the browser client can
         join to have a voice-first call with the agent. Same response shape as `/conversation/chat`;
         the difference is the audio track defaults on the client side. Pair with the
         [Web SDK](/voice-agents/developer-guide/client-libraries) to open the room in-browser.

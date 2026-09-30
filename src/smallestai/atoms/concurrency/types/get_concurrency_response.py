@@ -9,7 +9,7 @@ from .get_concurrency_response_data import GetConcurrencyResponseData
 
 
 class GetConcurrencyResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetConcurrencyResponseData] = None
 
     if IS_PYDANTIC_V2:

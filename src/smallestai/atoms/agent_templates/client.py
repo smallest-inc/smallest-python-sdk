@@ -88,7 +88,7 @@ class AgentTemplatesClient:
         Returns
         -------
         PostAgentFromTemplateResponse
-            Successful response
+            Agent created from template. Returns the new agent ID in `data`.
 
         Examples
         --------
@@ -194,7 +194,7 @@ class AsyncAgentTemplatesClient:
         Returns
         -------
         PostAgentFromTemplateResponse
-            Successful response
+            Agent created from template. Returns the new agent ID in `data`.
 
         Examples
         --------

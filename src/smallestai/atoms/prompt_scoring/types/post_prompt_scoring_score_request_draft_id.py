@@ -13,7 +13,7 @@ class PostPromptScoringScoreRequestDraftId(UncheckedBaseModel):
     draft_id: typing_extensions.Annotated[
         str,
         FieldMetadata(alias="draftId"),
-        pydantic.Field(alias="draftId", description="Agent draft ID (MongoDB ObjectId)."),
+        pydantic.Field(alias="draftId", description="Agent draft id (24-character hex)."),
     ]
 
     if IS_PYDANTIC_V2:

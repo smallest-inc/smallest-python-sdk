@@ -9,7 +9,7 @@ from .get_call_counts_by_day_response_data import GetCallCountsByDayResponseData
 
 
 class GetCallCountsByDayResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetCallCountsByDayResponseData] = None
 
     if IS_PYDANTIC_V2:

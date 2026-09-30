@@ -6,6 +6,10 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
+    from .agent_answer_source import AgentAnswerSource
+    from .agent_answer_source_source_kind import AgentAnswerSourceSourceKind
+    from .agent_caller_id_source import AgentCallerIdSource
+    from .agent_caller_id_source_source_kind import AgentCallerIdSourceSourceKind
     from .agent_dto import AgentDto
     from .agent_dto_background_sound import AgentDtoBackgroundSound
     from .agent_dto_config_source import AgentDtoConfigSource
@@ -27,7 +31,6 @@ if typing.TYPE_CHECKING:
     from .agent_dto_synthesizer import AgentDtoSynthesizer
     from .agent_dto_synthesizer_voice_config import AgentDtoSynthesizerVoiceConfig
     from .agent_dto_synthesizer_voice_config_gender import AgentDtoSynthesizerVoiceConfigGender
-    from .agent_dto_synthesizer_voice_config_model import AgentDtoSynthesizerVoiceConfigModel
     from .agent_dto_timezone import AgentDtoTimezone
     from .agent_dto_versioned_workflow import AgentDtoVersionedWorkflow
     from .agent_dto_voice_detection_config import AgentDtoVoiceDetectionConfig
@@ -37,6 +40,8 @@ if typing.TYPE_CHECKING:
     from .agent_dto_widget_config_position import AgentDtoWidgetConfigPosition
     from .agent_dto_widget_config_size import AgentDtoWidgetConfigSize
     from .agent_dto_widget_config_theme import AgentDtoWidgetConfigTheme
+    from .agent_telephony_binding import AgentTelephonyBinding
+    from .agent_telephony_binding_source_kind import AgentTelephonyBindingSourceKind
     from .agent_version import AgentVersion
     from .agent_version_blocks import AgentVersionBlocks
     from .agent_version_diff import AgentVersionDiff
@@ -53,7 +58,6 @@ if typing.TYPE_CHECKING:
     from .analytics_trend_metric import AnalyticsTrendMetric
     from .api_response import ApiResponse
     from .bad_request_error_body import BadRequestErrorBody
-    from .bad_request_error_body_error import BadRequestErrorBodyError
     from .bad_request_error_response import BadRequestErrorResponse
     from .billing_balance_response import BillingBalanceResponse
     from .billing_balance_response_data import BillingBalanceResponseData
@@ -71,12 +75,6 @@ if typing.TYPE_CHECKING:
     from .branch import Branch
     from .branch_status import BranchStatus
     from .branch_summary import BranchSummary
-    from .call_action import CallAction
-    from .call_action_action_type import CallActionActionType
-    from .call_action_category import CallActionCategory
-    from .call_action_condition import CallActionCondition
-    from .call_action_condition_operator import CallActionConditionOperator
-    from .call_action_config import CallActionConfig
     from .compliance_application import ComplianceApplication
     from .compliance_application_number_type import ComplianceApplicationNumberType
     from .compliance_application_status import ComplianceApplicationStatus
@@ -84,6 +82,7 @@ if typing.TYPE_CHECKING:
     from .compliance_requirement import ComplianceRequirement
     from .conflict_error_body import ConflictErrorBody
     from .conflict_error_response import ConflictErrorResponse
+    from .create_tool_request import CreateToolRequest
     from .diff_change import DiffChange
     from .diff_result import DiffResult
     from .diff_section import DiffSection
@@ -106,7 +105,8 @@ if typing.TYPE_CHECKING:
     from .locked_error_response import LockedErrorResponse
     from .locked_error_response_error_type import LockedErrorResponseErrorType
     from .not_found_error_body import NotFoundErrorBody
-    from .not_found_error_body_error import NotFoundErrorBodyError
+    from .payment_error_response import PaymentErrorResponse
+    from .payment_error_response_error import PaymentErrorResponseError
     from .post_call_analytics_config import PostCallAnalyticsConfig
     from .post_call_analytics_config_success_metrics_item import PostCallAnalyticsConfigSuccessMetricsItem
     from .post_call_analytics_config_success_metrics_item_success_metric_type import (
@@ -120,6 +120,17 @@ if typing.TYPE_CHECKING:
     from .prompt_score_dimensions_item import PromptScoreDimensionsItem
     from .publish_result import PublishResult
     from .publish_result_state import PublishResultState
+    from .registry_tool_definition import RegistryToolDefinition
+    from .registry_tool_definition_auth import RegistryToolDefinitionAuth
+    from .registry_tool_definition_auth_location import RegistryToolDefinitionAuthLocation
+    from .registry_tool_definition_auth_type import RegistryToolDefinitionAuthType
+    from .registry_tool_definition_headers_array_item import RegistryToolDefinitionHeadersArrayItem
+    from .registry_tool_definition_llm_parameters_item import RegistryToolDefinitionLlmParametersItem
+    from .registry_tool_definition_llm_parameters_item_type import RegistryToolDefinitionLlmParametersItemType
+    from .registry_tool_definition_method import RegistryToolDefinitionMethod
+    from .registry_tool_definition_query_params_item import RegistryToolDefinitionQueryParamsItem
+    from .registry_tool_definition_response_variables_item import RegistryToolDefinitionResponseVariablesItem
+    from .registry_tool_definition_type import RegistryToolDefinitionType
     from .required_document_type import RequiredDocumentType
     from .required_document_type_required_fields_item import RequiredDocumentTypeRequiredFieldsItem
     from .revision import Revision
@@ -127,20 +138,31 @@ if typing.TYPE_CHECKING:
     from .revision_pending_publish_state import RevisionPendingPublishState
     from .revision_security_check import RevisionSecurityCheck
     from .revision_status import RevisionStatus
+    from .secret import Secret
     from .single_prompt_config import SinglePromptConfig
     from .single_prompt_data import SinglePromptData
+    from .sip_inbound_trunk import SipInboundTrunk
+    from .sip_inbound_trunk_agent import SipInboundTrunkAgent
+    from .sip_inbound_trunk_media_encryption import SipInboundTrunkMediaEncryption
+    from .sip_outbound_trunk import SipOutboundTrunk
+    from .sip_outbound_trunk_media_encryption import SipOutboundTrunkMediaEncryption
+    from .sip_outbound_trunk_transport import SipOutboundTrunkTransport
     from .test_call_request import TestCallRequest
     from .test_call_request_mode import TestCallRequestMode
     from .test_call_result import TestCallResult
     from .too_many_requests_error_body import TooManyRequestsErrorBody
     from .too_many_requests_error_body_rate_limit import TooManyRequestsErrorBodyRateLimit
     from .tool import Tool
+    from .tool_auth import ToolAuth
+    from .tool_auth_location import ToolAuthLocation
+    from .tool_auth_type import ToolAuthType
     from .tool_headers_array_item import ToolHeadersArrayItem
     from .tool_llm_parameters_item import ToolLlmParametersItem
     from .tool_llm_parameters_item_type import ToolLlmParametersItemType
     from .tool_method import ToolMethod
     from .tool_on_hold_music import ToolOnHoldMusic
     from .tool_query_params_item import ToolQueryParamsItem
+    from .tool_resource import ToolResource
     from .tool_response_variables_item import ToolResponseVariablesItem
     from .tool_transfer_option import ToolTransferOption
     from .tool_transfer_option_private_handoff_option import ToolTransferOptionPrivateHandoffOption
@@ -187,17 +209,16 @@ if typing.TYPE_CHECKING:
     from .webhook_subscription_event_type import WebhookSubscriptionEventType
     from .webhook_subscription_populated import WebhookSubscriptionPopulated
     from .webhook_subscription_populated_event_type import WebhookSubscriptionPopulatedEventType
-    from .widget_config import WidgetConfig
-    from .widget_config_mode import WidgetConfigMode
-    from .widget_config_position import WidgetConfigPosition
-    from .widget_config_size import WidgetConfigSize
-    from .widget_config_theme import WidgetConfigTheme
     from .workflow_graph_data import WorkflowGraphData
     from .workflow_graph_data_edges_item import WorkflowGraphDataEdgesItem
     from .workflow_graph_data_nodes_item import WorkflowGraphDataNodesItem
     from .workflow_graph_data_nodes_item_position import WorkflowGraphDataNodesItemPosition
     from .workflow_type import WorkflowType
 _dynamic_imports: typing.Dict[str, str] = {
+    "AgentAnswerSource": ".agent_answer_source",
+    "AgentAnswerSourceSourceKind": ".agent_answer_source_source_kind",
+    "AgentCallerIdSource": ".agent_caller_id_source",
+    "AgentCallerIdSourceSourceKind": ".agent_caller_id_source_source_kind",
     "AgentDto": ".agent_dto",
     "AgentDtoBackgroundSound": ".agent_dto_background_sound",
     "AgentDtoConfigSource": ".agent_dto_config_source",
@@ -219,7 +240,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "AgentDtoSynthesizer": ".agent_dto_synthesizer",
     "AgentDtoSynthesizerVoiceConfig": ".agent_dto_synthesizer_voice_config",
     "AgentDtoSynthesizerVoiceConfigGender": ".agent_dto_synthesizer_voice_config_gender",
-    "AgentDtoSynthesizerVoiceConfigModel": ".agent_dto_synthesizer_voice_config_model",
     "AgentDtoTimezone": ".agent_dto_timezone",
     "AgentDtoVersionedWorkflow": ".agent_dto_versioned_workflow",
     "AgentDtoVoiceDetectionConfig": ".agent_dto_voice_detection_config",
@@ -229,6 +249,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "AgentDtoWidgetConfigPosition": ".agent_dto_widget_config_position",
     "AgentDtoWidgetConfigSize": ".agent_dto_widget_config_size",
     "AgentDtoWidgetConfigTheme": ".agent_dto_widget_config_theme",
+    "AgentTelephonyBinding": ".agent_telephony_binding",
+    "AgentTelephonyBindingSourceKind": ".agent_telephony_binding_source_kind",
     "AgentVersion": ".agent_version",
     "AgentVersionBlocks": ".agent_version_blocks",
     "AgentVersionDiff": ".agent_version_diff",
@@ -245,7 +267,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "AnalyticsTrendMetric": ".analytics_trend_metric",
     "ApiResponse": ".api_response",
     "BadRequestErrorBody": ".bad_request_error_body",
-    "BadRequestErrorBodyError": ".bad_request_error_body_error",
     "BadRequestErrorResponse": ".bad_request_error_response",
     "BillingBalanceResponse": ".billing_balance_response",
     "BillingBalanceResponseData": ".billing_balance_response_data",
@@ -263,12 +284,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "Branch": ".branch",
     "BranchStatus": ".branch_status",
     "BranchSummary": ".branch_summary",
-    "CallAction": ".call_action",
-    "CallActionActionType": ".call_action_action_type",
-    "CallActionCategory": ".call_action_category",
-    "CallActionCondition": ".call_action_condition",
-    "CallActionConditionOperator": ".call_action_condition_operator",
-    "CallActionConfig": ".call_action_config",
     "ComplianceApplication": ".compliance_application",
     "ComplianceApplicationNumberType": ".compliance_application_number_type",
     "ComplianceApplicationStatus": ".compliance_application_status",
@@ -276,6 +291,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ComplianceRequirement": ".compliance_requirement",
     "ConflictErrorBody": ".conflict_error_body",
     "ConflictErrorResponse": ".conflict_error_response",
+    "CreateToolRequest": ".create_tool_request",
     "DiffChange": ".diff_change",
     "DiffResult": ".diff_result",
     "DiffSection": ".diff_section",
@@ -298,7 +314,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "LockedErrorResponse": ".locked_error_response",
     "LockedErrorResponseErrorType": ".locked_error_response_error_type",
     "NotFoundErrorBody": ".not_found_error_body",
-    "NotFoundErrorBodyError": ".not_found_error_body_error",
+    "PaymentErrorResponse": ".payment_error_response",
+    "PaymentErrorResponseError": ".payment_error_response_error",
     "PostCallAnalyticsConfig": ".post_call_analytics_config",
     "PostCallAnalyticsConfigSuccessMetricsItem": ".post_call_analytics_config_success_metrics_item",
     "PostCallAnalyticsConfigSuccessMetricsItemSuccessMetricType": ".post_call_analytics_config_success_metrics_item_success_metric_type",
@@ -310,6 +327,17 @@ _dynamic_imports: typing.Dict[str, str] = {
     "PromptScoreDimensionsItem": ".prompt_score_dimensions_item",
     "PublishResult": ".publish_result",
     "PublishResultState": ".publish_result_state",
+    "RegistryToolDefinition": ".registry_tool_definition",
+    "RegistryToolDefinitionAuth": ".registry_tool_definition_auth",
+    "RegistryToolDefinitionAuthLocation": ".registry_tool_definition_auth_location",
+    "RegistryToolDefinitionAuthType": ".registry_tool_definition_auth_type",
+    "RegistryToolDefinitionHeadersArrayItem": ".registry_tool_definition_headers_array_item",
+    "RegistryToolDefinitionLlmParametersItem": ".registry_tool_definition_llm_parameters_item",
+    "RegistryToolDefinitionLlmParametersItemType": ".registry_tool_definition_llm_parameters_item_type",
+    "RegistryToolDefinitionMethod": ".registry_tool_definition_method",
+    "RegistryToolDefinitionQueryParamsItem": ".registry_tool_definition_query_params_item",
+    "RegistryToolDefinitionResponseVariablesItem": ".registry_tool_definition_response_variables_item",
+    "RegistryToolDefinitionType": ".registry_tool_definition_type",
     "RequiredDocumentType": ".required_document_type",
     "RequiredDocumentTypeRequiredFieldsItem": ".required_document_type_required_fields_item",
     "Revision": ".revision",
@@ -317,20 +345,31 @@ _dynamic_imports: typing.Dict[str, str] = {
     "RevisionPendingPublishState": ".revision_pending_publish_state",
     "RevisionSecurityCheck": ".revision_security_check",
     "RevisionStatus": ".revision_status",
+    "Secret": ".secret",
     "SinglePromptConfig": ".single_prompt_config",
     "SinglePromptData": ".single_prompt_data",
+    "SipInboundTrunk": ".sip_inbound_trunk",
+    "SipInboundTrunkAgent": ".sip_inbound_trunk_agent",
+    "SipInboundTrunkMediaEncryption": ".sip_inbound_trunk_media_encryption",
+    "SipOutboundTrunk": ".sip_outbound_trunk",
+    "SipOutboundTrunkMediaEncryption": ".sip_outbound_trunk_media_encryption",
+    "SipOutboundTrunkTransport": ".sip_outbound_trunk_transport",
     "TestCallRequest": ".test_call_request",
     "TestCallRequestMode": ".test_call_request_mode",
     "TestCallResult": ".test_call_result",
     "TooManyRequestsErrorBody": ".too_many_requests_error_body",
     "TooManyRequestsErrorBodyRateLimit": ".too_many_requests_error_body_rate_limit",
     "Tool": ".tool",
+    "ToolAuth": ".tool_auth",
+    "ToolAuthLocation": ".tool_auth_location",
+    "ToolAuthType": ".tool_auth_type",
     "ToolHeadersArrayItem": ".tool_headers_array_item",
     "ToolLlmParametersItem": ".tool_llm_parameters_item",
     "ToolLlmParametersItemType": ".tool_llm_parameters_item_type",
     "ToolMethod": ".tool_method",
     "ToolOnHoldMusic": ".tool_on_hold_music",
     "ToolQueryParamsItem": ".tool_query_params_item",
+    "ToolResource": ".tool_resource",
     "ToolResponseVariablesItem": ".tool_response_variables_item",
     "ToolTransferOption": ".tool_transfer_option",
     "ToolTransferOptionPrivateHandoffOption": ".tool_transfer_option_private_handoff_option",
@@ -377,11 +416,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "WebhookSubscriptionEventType": ".webhook_subscription_event_type",
     "WebhookSubscriptionPopulated": ".webhook_subscription_populated",
     "WebhookSubscriptionPopulatedEventType": ".webhook_subscription_populated_event_type",
-    "WidgetConfig": ".widget_config",
-    "WidgetConfigMode": ".widget_config_mode",
-    "WidgetConfigPosition": ".widget_config_position",
-    "WidgetConfigSize": ".widget_config_size",
-    "WidgetConfigTheme": ".widget_config_theme",
     "WorkflowGraphData": ".workflow_graph_data",
     "WorkflowGraphDataEdgesItem": ".workflow_graph_data_edges_item",
     "WorkflowGraphDataNodesItem": ".workflow_graph_data_nodes_item",
@@ -412,6 +446,10 @@ def __dir__():
 
 
 __all__ = [
+    "AgentAnswerSource",
+    "AgentAnswerSourceSourceKind",
+    "AgentCallerIdSource",
+    "AgentCallerIdSourceSourceKind",
     "AgentDto",
     "AgentDtoBackgroundSound",
     "AgentDtoConfigSource",
@@ -433,7 +471,6 @@ __all__ = [
     "AgentDtoSynthesizer",
     "AgentDtoSynthesizerVoiceConfig",
     "AgentDtoSynthesizerVoiceConfigGender",
-    "AgentDtoSynthesizerVoiceConfigModel",
     "AgentDtoTimezone",
     "AgentDtoVersionedWorkflow",
     "AgentDtoVoiceDetectionConfig",
@@ -443,6 +480,8 @@ __all__ = [
     "AgentDtoWidgetConfigPosition",
     "AgentDtoWidgetConfigSize",
     "AgentDtoWidgetConfigTheme",
+    "AgentTelephonyBinding",
+    "AgentTelephonyBindingSourceKind",
     "AgentVersion",
     "AgentVersionBlocks",
     "AgentVersionDiff",
@@ -459,7 +498,6 @@ __all__ = [
     "AnalyticsTrendMetric",
     "ApiResponse",
     "BadRequestErrorBody",
-    "BadRequestErrorBodyError",
     "BadRequestErrorResponse",
     "BillingBalanceResponse",
     "BillingBalanceResponseData",
@@ -477,12 +515,6 @@ __all__ = [
     "Branch",
     "BranchStatus",
     "BranchSummary",
-    "CallAction",
-    "CallActionActionType",
-    "CallActionCategory",
-    "CallActionCondition",
-    "CallActionConditionOperator",
-    "CallActionConfig",
     "ComplianceApplication",
     "ComplianceApplicationNumberType",
     "ComplianceApplicationStatus",
@@ -490,6 +522,7 @@ __all__ = [
     "ComplianceRequirement",
     "ConflictErrorBody",
     "ConflictErrorResponse",
+    "CreateToolRequest",
     "DiffChange",
     "DiffResult",
     "DiffSection",
@@ -512,7 +545,8 @@ __all__ = [
     "LockedErrorResponse",
     "LockedErrorResponseErrorType",
     "NotFoundErrorBody",
-    "NotFoundErrorBodyError",
+    "PaymentErrorResponse",
+    "PaymentErrorResponseError",
     "PostCallAnalyticsConfig",
     "PostCallAnalyticsConfigSuccessMetricsItem",
     "PostCallAnalyticsConfigSuccessMetricsItemSuccessMetricType",
@@ -524,6 +558,17 @@ __all__ = [
     "PromptScoreDimensionsItem",
     "PublishResult",
     "PublishResultState",
+    "RegistryToolDefinition",
+    "RegistryToolDefinitionAuth",
+    "RegistryToolDefinitionAuthLocation",
+    "RegistryToolDefinitionAuthType",
+    "RegistryToolDefinitionHeadersArrayItem",
+    "RegistryToolDefinitionLlmParametersItem",
+    "RegistryToolDefinitionLlmParametersItemType",
+    "RegistryToolDefinitionMethod",
+    "RegistryToolDefinitionQueryParamsItem",
+    "RegistryToolDefinitionResponseVariablesItem",
+    "RegistryToolDefinitionType",
     "RequiredDocumentType",
     "RequiredDocumentTypeRequiredFieldsItem",
     "Revision",
@@ -531,20 +576,31 @@ __all__ = [
     "RevisionPendingPublishState",
     "RevisionSecurityCheck",
     "RevisionStatus",
+    "Secret",
     "SinglePromptConfig",
     "SinglePromptData",
+    "SipInboundTrunk",
+    "SipInboundTrunkAgent",
+    "SipInboundTrunkMediaEncryption",
+    "SipOutboundTrunk",
+    "SipOutboundTrunkMediaEncryption",
+    "SipOutboundTrunkTransport",
     "TestCallRequest",
     "TestCallRequestMode",
     "TestCallResult",
     "TooManyRequestsErrorBody",
     "TooManyRequestsErrorBodyRateLimit",
     "Tool",
+    "ToolAuth",
+    "ToolAuthLocation",
+    "ToolAuthType",
     "ToolHeadersArrayItem",
     "ToolLlmParametersItem",
     "ToolLlmParametersItemType",
     "ToolMethod",
     "ToolOnHoldMusic",
     "ToolQueryParamsItem",
+    "ToolResource",
     "ToolResponseVariablesItem",
     "ToolTransferOption",
     "ToolTransferOptionPrivateHandoffOption",
@@ -591,11 +647,6 @@ __all__ = [
     "WebhookSubscriptionEventType",
     "WebhookSubscriptionPopulated",
     "WebhookSubscriptionPopulatedEventType",
-    "WidgetConfig",
-    "WidgetConfigMode",
-    "WidgetConfigPosition",
-    "WidgetConfigSize",
-    "WidgetConfigTheme",
     "WorkflowGraphData",
     "WorkflowGraphDataEdgesItem",
     "WorkflowGraphDataNodesItem",

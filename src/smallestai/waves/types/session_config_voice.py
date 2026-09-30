@@ -2,4 +2,32 @@
 
 import typing
 
-SessionConfigVoice = typing.Union[typing.Literal["wren", "sloane", "marlowe", "reed", "knox", "tate"], typing.Any]
+SessionConfigVoice = typing.Union[
+    typing.Literal[
+        "zoe",
+        "maya",
+        "elena",
+        "ivy",
+        "grace",
+        "alex",
+        "aria",
+        "leo",
+        "sam",
+        "kai",
+        "vaughn",
+        "brooks",
+        "cole",
+        "hayes",
+        "pierce",
+        "sterling",
+        "ellis",
+        "lane",
+        "quinn",
+        "arden",
+        "rowan",
+        "blair",
+        "emery",
+        "sawyer",
+    ],
+    typing.Any,
+]

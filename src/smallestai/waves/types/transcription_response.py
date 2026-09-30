@@ -3,7 +3,9 @@
 import typing
 
 import pydantic
+import typing_extensions
 from ...core.pydantic_utilities import IS_PYDANTIC_V2
+from ...core.serialization import FieldMetadata
 from ...core.unchecked_base_model import UncheckedBaseModel
 from .transcription_response_metadata import TranscriptionResponseMetadata
 from .utterance import Utterance
@@ -13,15 +15,36 @@ from .word import Word
 class TranscriptionResponse(UncheckedBaseModel):
     status: str
     transcription: str
-    words: typing.Optional[typing.List[Word]] = None
-    utterances: typing.Optional[typing.List[Utterance]] = pydantic.Field(default=None)
+    words: typing.Optional[typing.List[Word]] = pydantic.Field(default=None)
     """
-    Sentence-level segments with optional speaker labels. Returned by `?model=pulse` only; Pulse Pro responses omit this field.
+    Per-word timestamps. **Empty unless the request sets `word_timestamps=true`.** Each entry carries `word`, `start`, `end`, and `confidence` (0.0–1.0). Pulse responses with `diarize=true` also include `speaker` and `speaker_confidence`.
     """
 
-    language: typing.Optional[str] = None
-    metadata: typing.Optional[TranscriptionResponseMetadata] = None
-    request_id: typing.Optional[str] = None
+    utterances: typing.Optional[typing.List[Utterance]] = pydantic.Field(default=None)
+    """
+    Sentence-level segments. Returned by `?model=pulse` only; Pulse Pro responses omit this field entirely. **Empty on Pulse unless the request sets `word_timestamps=true`** (the same flag turns on both `words[]` and `utterances[]`).
+    """
+
+    language: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Language of the transcription. Present on Pulse Pro responses; Pulse responses omit this field.
+    """
+
+    metadata: typing.Optional[TranscriptionResponseMetadata] = pydantic.Field(default=None)
+    """
+    Response metadata. Pulse responses carry `duration` and `fileSize`. Pulse Pro responses carry `duration`, `processing_time_ms`, `rtfx`, and `num_chunks`.
+    """
+
+    request_id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Server-assigned request identifier. Present on Pulse Pro responses; Pulse responses omit this field.
+    """
+
+    total_bytes: typing_extensions.Annotated[
+        typing.Optional[float],
+        FieldMetadata(alias="totalBytes"),
+        pydantic.Field(alias="totalBytes", description="Bytes received. Pulse Pro only."),
+    ] = None
     gender: typing.Optional[str] = pydantic.Field(default=None)
     """
     Detected speaker gender label. Present when `gender_detection=true` was set on the request.

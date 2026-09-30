@@ -35,7 +35,7 @@ class TtsResponseMessage(UncheckedBaseModel):
     Frame type discriminator:
     - `chunk` — base64-encoded audio chunk in `data.audio`.
     - `word_timestamp` — per-word timing event in `data.{id,word,start,end}`. Only emitted when the request set `word_timestamps: true` and the voice family supports it.
-    - `complete` — terminal frame; the server closes the WebSocket after this.
+    - `complete` — terminal frame; the server closes the WebSocket after this. **Exception:** inside a `context_id` continuation, `complete` marks one released segment as done, not the end of the connection — the socket stays open and more segments (each with its own `complete`) can follow. See [Continuations](/models/documentation/text-to-speech-lightning/continuations).
     """
 
     data: typing.Optional[TtsResponseMessageData] = pydantic.Field(default=None)

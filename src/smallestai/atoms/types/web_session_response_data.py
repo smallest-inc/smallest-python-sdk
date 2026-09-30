@@ -12,17 +12,17 @@ from ...core.unchecked_base_model import UncheckedBaseModel
 class WebSessionResponseData(UncheckedBaseModel):
     token: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Short-lived LiveKit access token. Pass on the browser client when connecting to `host`.
+    Short-lived session access token. Pass on the browser client when connecting to `host`.
     """
 
     room_name: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="roomName"),
-        pydantic.Field(alias="roomName", description="LiveKit room UUID. Pre-created for this session."),
+        pydantic.Field(alias="roomName", description="Session room ID. Pre-created for this session."),
     ] = None
     host: typing.Optional[str] = pydantic.Field(default=None)
     """
-    LiveKit WebSocket URL to connect to.
+    WebSocket URL to connect to.
     """
 
     conversation_id: typing_extensions.Annotated[

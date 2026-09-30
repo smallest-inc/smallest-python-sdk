@@ -26,7 +26,10 @@ class WebhookEventPostConversationMetadata(UncheckedBaseModel):
     recording_url: typing_extensions.Annotated[
         str,
         FieldMetadata(alias="recordingUrl"),
-        pydantic.Field(alias="recordingUrl", description="URL to the composite call recording (`.wav`)."),
+        pydantic.Field(
+            alias="recordingUrl",
+            description="Composite call recording location. Treat as a stable identifier; call `GET /recordings/{callId}?channel=mono` with your API key to fetch a fresh short-lived presigned S3 URL for the audio.",
+        ),
     ]
     call_data: typing_extensions.Annotated[
         WebhookEventCallData, FieldMetadata(alias="callData"), pydantic.Field(alias="callData")
