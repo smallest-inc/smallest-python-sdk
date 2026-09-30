@@ -156,7 +156,10 @@ class AgentDto(UncheckedBaseModel):
     transcriber_type: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="transcriberType"),
-        pydantic.Field(alias="transcriberType", description="The speech-to-text engine used for transcription"),
+        pydantic.Field(
+            alias="transcriberType",
+            description="The speech-to-text engine used for transcription. Common values are `pulse`, `pulse-legacy`, `gpt-realtime`, and `gpt-realtime-mini`; `others` may also be returned. Typed as an open string so clients do not refuse to deserialize additional values the server may return.",
+        ),
     ] = None
     global_prompt: typing_extensions.Annotated[
         typing.Optional[str],
@@ -188,7 +191,10 @@ class AgentDto(UncheckedBaseModel):
     allow_inbound_call: typing_extensions.Annotated[
         typing.Optional[bool],
         FieldMetadata(alias="allowInboundCall"),
-        pydantic.Field(alias="allowInboundCall", description="Whether the agent accepts inbound calls."),
+        pydantic.Field(
+            alias="allowInboundCall",
+            description="**Deprecated read field.** Present during the migration window; reflects the\nlegacy kill switch only.",
+        ),
     ] = None
     phone_number: typing_extensions.Annotated[
         typing.Optional[typing.List[str]],
@@ -308,7 +314,7 @@ class AgentDto(UncheckedBaseModel):
         FieldMetadata(alias="widgetConfig"),
         pydantic.Field(
             alias="widgetConfig",
-            description="Chat-widget rendering configuration (theme, copy, consent prompt). Only relevant\nwhen the agent is exposed via the embeddable widget; ignored by voice-only agents.",
+            description="Chat-widget configuration. Configure from the dashboard; safe to ignore for API-only integrations.",
         ),
     ] = None
     resolved_config: typing_extensions.Annotated[
@@ -332,7 +338,7 @@ class AgentDto(UncheckedBaseModel):
         FieldMetadata(alias="_versionedWorkflow"),
         pydantic.Field(
             alias="_versionedWorkflow",
-            description="**Deprecated — internal use only.** Legacy field present whenever `_resolvedConfig` is populated.\nMirrors a subset of `_resolvedConfig` (`prompt`, `tools`, `workflowGraph`). Kept for backward\ncompatibility with existing frontend code. Ignore in new integrations.",
+            description="Deprecated. Present whenever `_resolvedConfig` is populated. Mirrors a subset of `_resolvedConfig` (`prompt`, `tools`, `workflowGraph`) and is kept for backward compatibility. Ignore in new integrations.",
         ),
     ] = None
 

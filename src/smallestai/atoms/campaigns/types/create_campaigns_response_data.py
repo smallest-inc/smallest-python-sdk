@@ -35,7 +35,7 @@ class CreateCampaignsResponseData(UncheckedBaseModel):
     agent_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="agentId"),
-        pydantic.Field(alias="agentId", description="Raw ObjectId of the agent (not a nested object)"),
+        pydantic.Field(alias="agentId", description="Raw agent id string (not a nested object)"),
     ] = None
     created_by: typing_extensions.Annotated[
         typing.Optional[str],
@@ -45,7 +45,7 @@ class CreateCampaignsResponseData(UncheckedBaseModel):
     audience_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="audienceId"),
-        pydantic.Field(alias="audienceId", description="Raw ObjectId of the audience (not a nested object)"),
+        pydantic.Field(alias="audienceId", description="Raw audience id string (not a nested object)"),
     ] = None
     participants_count: typing_extensions.Annotated[
         typing.Optional[int],

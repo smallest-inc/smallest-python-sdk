@@ -73,7 +73,15 @@ class RawLiveTranscriptsClient:
         Parameters
         ----------
         call_id : str
-            The call ID to subscribe events for. Missing or invalid values return 400.
+            The call ID of an in-progress call. Behavior on error cases:
+
+            - Missing: `400 {"status": false, "errors": ["CallId is required"]}`.
+            - `callId` belongs to another organization (the common case for a wrong ID): `404 "Agent not found"`.
+            - Organization cannot be resolved from the auth context: `404 "Not authorized"`.
+            - Non-existent call: `404 "Call log not found"`.
+            - Completed call: `400 "Call is already completed"`.
+
+            A client that routes on the message string must handle all three 404 messages. Prefer routing on the HTTP status.
 
         organization_id : typing.Optional[str]
             Required when using session-cookie auth. API-token auth may infer the organization from the token.
@@ -253,7 +261,15 @@ class AsyncRawLiveTranscriptsClient:
         Parameters
         ----------
         call_id : str
-            The call ID to subscribe events for. Missing or invalid values return 400.
+            The call ID of an in-progress call. Behavior on error cases:
+
+            - Missing: `400 {"status": false, "errors": ["CallId is required"]}`.
+            - `callId` belongs to another organization (the common case for a wrong ID): `404 "Agent not found"`.
+            - Organization cannot be resolved from the auth context: `404 "Not authorized"`.
+            - Non-existent call: `404 "Call log not found"`.
+            - Completed call: `400 "Call is already completed"`.
+
+            A client that routes on the message string must handle all three 404 messages. Prefer routing on the HTTP status.
 
         organization_id : typing.Optional[str]
             Required when using session-cookie auth. API-token auth may infer the organization from the token.

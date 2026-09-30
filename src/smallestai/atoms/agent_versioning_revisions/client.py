@@ -211,10 +211,10 @@ class AgentVersioningRevisionsClient:
             The agent ID.
 
         a : str
-            Left-hand side. Either a `revisionId` (24-hex ObjectId) or the token `<branchId>:draft`.
+            Left-hand side. Either a `revisionId` (24-character hex id) or the token `<branchId>:draft`.
 
         b : str
-            Right-hand side. Either a `revisionId` (24-hex ObjectId) or the token `<branchId>:draft`.
+            Right-hand side. Either a `revisionId` (24-character hex id) or the token `<branchId>:draft`.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -472,10 +472,10 @@ class AsyncAgentVersioningRevisionsClient:
             The agent ID.
 
         a : str
-            Left-hand side. Either a `revisionId` (24-hex ObjectId) or the token `<branchId>:draft`.
+            Left-hand side. Either a `revisionId` (24-character hex id) or the token `<branchId>:draft`.
 
         b : str
-            Right-hand side. Either a `revisionId` (24-hex ObjectId) or the token `<branchId>:draft`.
+            Right-hand side. Either a `revisionId` (24-character hex id) or the token `<branchId>:draft`.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

@@ -17,12 +17,13 @@ call additionally needs a phone number attached and the agent runtime running â€
 see the cookbook / `smallestai agent-crew deploy`. This script proves the
 create-configure-publish-activate path that every voice agent starts from.
 """
+
 import os
 import time
 
 from smallestai import SmallestAI
-from smallestai.environment import SmallestAIEnvironment
 from smallestai.atoms.helpers import as_page
+from smallestai.environment import SmallestAIEnvironment
 
 
 def _id_of(obj):
@@ -70,9 +71,7 @@ def main() -> None:
     print("4. (optional) knowledge base for the menu")
     created_kb = None
     try:
-        kb = c.atoms.knowledge_base.create(
-            name="mario-menu", description="Pizza menu + prices"
-        )
+        kb = c.atoms.knowledge_base.create(name="mario-menu", description="Pizza menu + prices")
         created_kb = getattr(kb, "data", None)
         print("    KB created:", created_kb)
     except Exception as e:

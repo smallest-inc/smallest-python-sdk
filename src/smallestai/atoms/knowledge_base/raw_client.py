@@ -302,7 +302,7 @@ class RawKnowledgeBaseClient:
         Parameters
         ----------
         id : str
-            24-char hex ObjectId of the knowledge base.
+            24-character hex id of the knowledge base.
 
         name : str
             Display name. 1–40 characters; trimmed server-side.
@@ -770,7 +770,7 @@ class RawKnowledgeBaseClient:
             MIME type. You must send this EXACT value as `Content-Type` on the subsequent PUT to the presigned URL.
 
         knowledge_base_id : str
-            24-char hex ObjectId of the target knowledge base (from `GET /knowledgebase`).
+            24-character hex id of the target knowledge base (from `GET /knowledgebase`).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1082,7 +1082,7 @@ class RawKnowledgeBaseClient:
         Parameters
         ----------
         id : str
-            24-char hex ObjectId of the target knowledge base.
+            24-character hex id of the target knowledge base.
 
         urls : typing.Sequence[str]
 
@@ -1179,7 +1179,7 @@ class RawKnowledgeBaseClient:
         Parameters
         ----------
         id : str
-            24-char hex ObjectId of the knowledge base.
+            24-character hex id of the knowledge base.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1249,10 +1249,10 @@ class RawKnowledgeBaseClient:
         Parameters
         ----------
         knowledge_base_id : str
-            24-char hex ObjectId of the knowledge base.
+            24-character hex id of the knowledge base.
 
         knowledge_base_scraped_urls_id : str
-            24-char hex ObjectId of the scraped-URL row to delete (from `GET /{id}/scraped-urls`).
+            24-character hex id of the scraped-URL row to delete (from `GET /{id}/scraped-urls`).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1583,7 +1583,7 @@ class AsyncRawKnowledgeBaseClient:
         Parameters
         ----------
         id : str
-            24-char hex ObjectId of the knowledge base.
+            24-character hex id of the knowledge base.
 
         name : str
             Display name. 1–40 characters; trimmed server-side.
@@ -2051,7 +2051,7 @@ class AsyncRawKnowledgeBaseClient:
             MIME type. You must send this EXACT value as `Content-Type` on the subsequent PUT to the presigned URL.
 
         knowledge_base_id : str
-            24-char hex ObjectId of the target knowledge base (from `GET /knowledgebase`).
+            24-character hex id of the target knowledge base (from `GET /knowledgebase`).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2363,7 +2363,7 @@ class AsyncRawKnowledgeBaseClient:
         Parameters
         ----------
         id : str
-            24-char hex ObjectId of the target knowledge base.
+            24-character hex id of the target knowledge base.
 
         urls : typing.Sequence[str]
 
@@ -2460,7 +2460,7 @@ class AsyncRawKnowledgeBaseClient:
         Parameters
         ----------
         id : str
-            24-char hex ObjectId of the knowledge base.
+            24-character hex id of the knowledge base.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2530,10 +2530,10 @@ class AsyncRawKnowledgeBaseClient:
         Parameters
         ----------
         knowledge_base_id : str
-            24-char hex ObjectId of the knowledge base.
+            24-character hex id of the knowledge base.
 
         knowledge_base_scraped_urls_id : str
-            24-char hex ObjectId of the scraped-URL row to delete (from `GET /{id}/scraped-urls`).
+            24-character hex id of the scraped-URL row to delete (from `GET /{id}/scraped-urls`).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

@@ -5,64 +5,57 @@ and the SDK stay in lockstep automatically. Auth resolves from SMALLEST_API_KEY,
 key stored by `smallestai auth login` (~/.smallestai/credentials.json). SMALLEST_BASE_URL
 overrides the endpoint (dev rig).
 """
-import os
+
+import json as _json
 
 import typer
 from rich.console import Console
 from rich.table import Table
 
 from smallestai.cli.lib.auth import AuthClient
+from smallestai.cli.lib.client import make_client as _client
+from smallestai.cli.lib.client import resolve_key as _resolve_key
 
 console = Console()
 
 DASHBOARD = "https://app.smallest.ai/dashboard/agents"
 RENT_NUMBERS = "https://app.smallest.ai/dashboard/phone-numbers/rent-numbers"
 
-
-def _resolve_key(auth_client: AuthClient) -> str:
-    key = os.environ.get("SMALLEST_API_KEY")
-    if not key:
-        creds = auth_client.get_credentials()
-        key = (creds or {}).get("access_token")
-    if not key:
-        console.print("[red]No API key. Set SMALLEST_API_KEY or run `smallestai auth login`.[/red]")
-        raise typer.Exit(1)
-    return key
-
-
-def _client(auth_client: AuthClient):
-    from smallestai import SmallestAI
-
-    key = _resolve_key(auth_client)
-    base = os.environ.get("SMALLEST_BASE_URL")
-    if base:
-        from smallestai.environment import SmallestAIEnvironment
-
-        base = base.rstrip("/")
-        ws = base.replace("https://", "wss://").replace("http://", "ws://")
-        env = SmallestAIEnvironment(atoms=f"{base}/atoms/v1", waves=base, waves_ws=ws)
-        return SmallestAI(api_key=key, environment=env)
-    return SmallestAI(api_key=key)
+__all__ = ["initialise_agents_app", "_client", "_resolve_key"]
 
 
 def initialise_agents_app(auth_client: AuthClient):
     agents_app = typer.Typer(name="agents", help="Create, inspect, and call Atoms agents.")
 
     @agents_app.command("list")
-    def list_agents():
+    def list_agents(as_json: bool = typer.Option(False, "--json", help="Emit raw JSON")):
         """List agents in your org."""
         from smallestai.atoms.helpers import as_page
 
         pg = as_page(_client(auth_client).atoms.agents.list_agents())
+        if as_json:
+            console.print_json(
+                _json.dumps(
+                    [
+                        {"id": getattr(a, "id", None) or getattr(a, "_id", None), "name": getattr(a, "name", None)}
+                        for a in pg.items
+                    ],
+                    default=str,
+                )
+            )
+            return
         table = Table("ID", "Name", title=f"Agents ({len(pg.items)})")
         for a in pg.items:
             table.add_row(getattr(a, "id", None) or getattr(a, "_id", "?"), getattr(a, "name", "—"))
         console.print(table)
 
     @agents_app.command("get")
-    def get_agent(agent_id: str):
+    def get_agent(agent_id: str, as_json: bool = typer.Option(False, "--json", help="Emit raw JSON")):
         """Show one agent's config."""
         a = _client(auth_client).atoms.agents.get_agent(id=agent_id).data
+        if as_json:
+            console.print_json(a.json() if hasattr(a, "json") else _json.dumps(a, default=str))
+            return
         console.print(f"[bold]{getattr(a, 'name', '—')}[/bold]  [dim]{agent_id}[/dim]")
         console.print(f"  first message : {getattr(a, 'first_message', None)!r}")
         console.print(f"  language      : {getattr(a, 'language', None)}")

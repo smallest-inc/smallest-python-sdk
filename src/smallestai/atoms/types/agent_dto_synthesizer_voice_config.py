@@ -8,7 +8,6 @@ from ...core.pydantic_utilities import IS_PYDANTIC_V2
 from ...core.serialization import FieldMetadata
 from ...core.unchecked_base_model import UncheckedBaseModel
 from .agent_dto_synthesizer_voice_config_gender import AgentDtoSynthesizerVoiceConfigGender
-from .agent_dto_synthesizer_voice_config_model import AgentDtoSynthesizerVoiceConfigModel
 
 
 class AgentDtoSynthesizerVoiceConfig(UncheckedBaseModel):
@@ -16,11 +15,13 @@ class AgentDtoSynthesizerVoiceConfig(UncheckedBaseModel):
     The voice configuration of the synthesizer
     """
 
-    model: typing.Optional[AgentDtoSynthesizerVoiceConfigModel] = pydantic.Field(default=None)
+    model: typing.Optional[str] = pydantic.Field(default=None)
     """
-    The TTS model of the synthesizer. Use `waves_lightning_v3_1`
-    for the recommended Waves voice path (default), or
-    `gpt-realtime` / `gpt-realtime-mini` for OpenAI realtime models.
+    The TTS model of the synthesizer. Any value accepted by
+    `POST /agent` (see the `synthesizer.voiceConfig.model` enum
+    on the create request). Older agents may also return
+    `waves_lightning_large_voice_clone`. Treat this field as an
+    open string when reading.
     """
 
     voice_id: typing_extensions.Annotated[

@@ -9,7 +9,7 @@ from .get_agent_performance_response_data import GetAgentPerformanceResponseData
 
 
 class GetAgentPerformanceResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetAgentPerformanceResponseData] = None
 
     if IS_PYDANTIC_V2:

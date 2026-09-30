@@ -8,12 +8,14 @@ from smallestai.atoms.crew.tools.decorator import (
     find_function_tools,
     function_tool,
     is_function_tool,
+    loopback_tool,
 )
 from smallestai.atoms.crew.tools.registry import ToolRegistry
 from smallestai.atoms.crew.tools.schema import FunctionSchema
 
 __all__ = [
     "function_tool",
+    "loopback_tool",
     "is_function_tool",
     "find_function_tools",
     "ToolRegistry",

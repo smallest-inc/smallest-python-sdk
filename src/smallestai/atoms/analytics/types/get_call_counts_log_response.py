@@ -9,7 +9,7 @@ from .get_call_counts_log_response_data import GetCallCountsLogResponseData
 
 
 class GetCallCountsLogResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetCallCountsLogResponseData] = None
 
     if IS_PYDANTIC_V2:

@@ -22,13 +22,14 @@ For new code, prefer the namespaced Fern client:
 
 This shim exists to avoid breaking customers on the 4.3.1 pattern.
 """
-import json
+
 import base64
-import time
-import threading
+import json
 import queue
+import threading
+import time
+from dataclasses import dataclass
 from typing import Generator, Optional, Sequence
-from dataclasses import dataclass, field
 
 from websocket import WebSocketApp  # from `websocket-client` package
 
@@ -40,6 +41,7 @@ class TTSConfig:
     Mirrors the 4.3.1 shape; `consistency` was removed because Lightning
     v3.1 does not accept it (silently dropped if passed via dict).
     """
+
     voice_id: str
     api_key: str
     model: str = "lightning_v3.1"
@@ -61,6 +63,11 @@ class WavesStreamingTTS:
         config = TTSConfig(voice_id="magnus", api_key="...")
         streaming_tts = WavesStreamingTTS(config)
         audio_chunks = list(streaming_tts.synthesize("Hello world"))
+
+    Each generator closes its own socket when it finishes, raises, or is abandoned
+    part way through. ``start_streaming_session`` drives the socket by hand through
+    ``send_text_chunk`` / ``flush_buffer``, so call ``close()`` when that session is
+    over if you never exhaust the generator.
     """
 
     # Unified TTS streaming endpoint. The old per-model URL
@@ -133,11 +140,14 @@ class WavesStreamingTTS:
     def _on_close(self, ws, *args):
         self.is_connected = False
         if not self.is_complete:
-            self.audio_queue.put(None)
+            # The socket closed before a `complete` message arrived (LB idle timeout,
+            # worker restart, network drop). Surface it as an error instead of the
+            # `None` completion sentinel, so a truncated stream does not look finished.
+            # Every consume loop checks error_queue at the top of each iteration.
+            self.error_queue.put(ConnectionError("TTS stream closed before completion; received audio is truncated"))
 
     def _connect(self):
-        if self.ws:
-            self.ws.close()
+        self.close()
 
         self.ws = WebSocketApp(
             self.ws_url,
@@ -159,35 +169,46 @@ class WavesStreamingTTS:
             time.sleep(0.1)
 
         if not self.is_connected:
+            self.close()
             raise Exception(
                 "Failed to connect to WebSocket "
                 f"{self.ws_url} within {timeout}s. "
                 "Check your network and that SMALLEST_API_KEY is valid."
             )
 
+    def close(self):
+        """Close the socket if one is open. Safe to call more than once."""
+        ws, self.ws = self.ws, None
+        self.is_connected = False
+        if ws is not None:
+            ws.close()
+
     def synthesize(self, text: str) -> Generator[bytes, None, None]:
         """Synthesize a single text string and stream back PCM audio chunks."""
         self._reset_state()
         self._connect()
+        ws = self.ws
+        assert ws is not None  # _connect() raises unless the socket opened
 
         payload = self._create_payload(text)
-        self.ws.send(json.dumps(payload))
+        ws.send(json.dumps(payload))
 
-        while True:
-            if not self.error_queue.empty():
-                raise self.error_queue.get()
+        try:
+            while True:
+                if not self.error_queue.empty():
+                    raise self.error_queue.get()
 
-            try:
-                chunk = self.audio_queue.get(timeout=1.0)
-                if chunk is None:
-                    break
-                yield chunk
-            except queue.Empty:
-                if self.is_complete:
-                    break
-                continue
-
-        self.ws.close()
+                try:
+                    chunk = self.audio_queue.get(timeout=1.0)
+                    if chunk is None:
+                        break
+                    yield chunk
+                except queue.Empty:
+                    if self.is_complete:
+                        break
+                    continue
+        finally:
+            self.close()
 
     def synthesize_streaming(
         self,
@@ -198,17 +219,19 @@ class WavesStreamingTTS:
         """Synthesize a stream of text chunks. Useful when piping LLM output."""
         self._reset_state()
         self._connect()
+        ws = self.ws
+        assert ws is not None  # _connect() raises unless the socket opened
 
         def send_text():
             try:
                 for text_chunk in text_stream:
                     if text_chunk.strip():
                         payload = self._create_payload(text_chunk, continue_stream=continue_stream)
-                        self.ws.send(json.dumps(payload))
+                        ws.send(json.dumps(payload))
 
                 if auto_flush:
                     flush_payload = self._create_payload("", flush=True)
-                    self.ws.send(json.dumps(flush_payload))
+                    ws.send(json.dumps(flush_payload))
             except Exception as e:
                 self.error_queue.put(e)
 
@@ -216,31 +239,34 @@ class WavesStreamingTTS:
         sender_thread.daemon = True
         sender_thread.start()
 
-        while True:
-            if not self.error_queue.empty():
-                raise self.error_queue.get()
+        try:
+            while True:
+                if not self.error_queue.empty():
+                    raise self.error_queue.get()
 
-            try:
-                chunk = self.audio_queue.get(timeout=1.0)
-                if chunk is None:
-                    break
-                yield chunk
-            except queue.Empty:
-                if self.is_complete:
-                    break
-                continue
-
-        self.ws.close()
+                try:
+                    chunk = self.audio_queue.get(timeout=1.0)
+                    if chunk is None:
+                        break
+                    yield chunk
+                except queue.Empty:
+                    if self.is_complete:
+                        break
+                    continue
+        finally:
+            self.close()
 
     def send_text_chunk(self, text: str, continue_stream: bool = True, flush: bool = False):
         if not self.is_connected:
             raise Exception("WebSocket not connected")
+        assert self.ws is not None  # is_connected implies the socket is set
         payload = self._create_payload(text, continue_stream=continue_stream, flush=flush)
         self.ws.send(json.dumps(payload))
 
     def flush_buffer(self):
         if not self.is_connected:
             raise Exception("WebSocket not connected")
+        assert self.ws is not None  # is_connected implies the socket is set
         payload = self._create_payload("", flush=True)
         self.ws.send(json.dumps(payload))
 
@@ -248,19 +274,22 @@ class WavesStreamingTTS:
         self._reset_state()
         self._connect()
 
-        while True:
-            if not self.error_queue.empty():
-                raise self.error_queue.get()
+        try:
+            while True:
+                if not self.error_queue.empty():
+                    raise self.error_queue.get()
 
-            try:
-                chunk = self.audio_queue.get(timeout=0.1)
-                if chunk is None:
-                    break
-                yield chunk
-            except queue.Empty:
-                if self.is_complete:
-                    break
-                continue
+                try:
+                    chunk = self.audio_queue.get(timeout=0.1)
+                    if chunk is None:
+                        break
+                    yield chunk
+                except queue.Empty:
+                    if self.is_complete:
+                        break
+                    continue
+        finally:
+            self.close()
 
     def _reset_state(self):
         self.audio_queue = queue.Queue()
@@ -268,4 +297,3 @@ class WavesStreamingTTS:
         self.is_complete = False
         self.is_connected = False
         self.request_id = None
-

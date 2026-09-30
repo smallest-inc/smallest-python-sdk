@@ -15,8 +15,7 @@ from .agent_dto_widget_config_theme import AgentDtoWidgetConfigTheme
 
 class AgentDtoWidgetConfig(UncheckedBaseModel):
     """
-    Chat-widget rendering configuration (theme, copy, consent prompt). Only relevant
-    when the agent is exposed via the embeddable widget; ignored by voice-only agents.
+    Chat-widget configuration. Configure from the dashboard; safe to ignore for API-only integrations.
     """
 
     position: typing.Optional[AgentDtoWidgetConfigPosition] = None

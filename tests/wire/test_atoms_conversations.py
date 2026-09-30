@@ -1,11 +1,11 @@
 from .conftest import get_client, verify_request_count
 
 
-def test_atoms_conversations_get_a_time_limited_recording_download_url() -> None:
-    """Test getATimeLimitedRecordingDownloadUrl endpoint with WireMock"""
-    test_id = "atoms.conversations.get_a_time_limited_recording_download_url.0"
+def test_atoms_conversations_get_a_time_limited_recording_download_url_legacy() -> None:
+    """Test getATimeLimitedRecordingDownloadUrlLegacy endpoint with WireMock"""
+    test_id = "atoms.conversations.get_a_time_limited_recording_download_url_legacy.0"
     client = get_client(test_id)
-    client.atoms.conversations.get_a_time_limited_recording_download_url(
+    client.atoms.conversations.get_a_time_limited_recording_download_url_legacy(
         call_id="CALL-1781127346211-e765f7",
     )
     verify_request_count(test_id, "GET", "/conversation/CALL-1781127346211-e765f7/recording/download-url", None, 1)

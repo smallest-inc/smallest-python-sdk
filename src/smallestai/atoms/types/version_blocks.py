@@ -9,7 +9,7 @@ from ...core.unchecked_base_model import UncheckedBaseModel
 
 class VersionBlocks(UncheckedBaseModel):
     """
-    ObjectId references to the `AgentConfigBlock` docs that make up a revision, one per config section.
+    24-character hex id references, one per config section, that together make up a revision.
     """
 
     workflow_prompt: typing.Optional[str] = None

@@ -20,7 +20,7 @@ class TestCallResult(UncheckedBaseModel):
     call_id: typing_extensions.Annotated[str, FieldMetadata(alias="callId"), pydantic.Field(alias="callId")]
     token: typing.Optional[str] = pydantic.Field(default=None)
     """
-    LiveKit access token. Returned for `webcall` and `chat` modes only.
+    Session access token. Returned for `webcall` and `chat` modes only.
     """
 
     room_name: typing_extensions.Annotated[

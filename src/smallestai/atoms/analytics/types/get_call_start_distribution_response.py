@@ -9,7 +9,7 @@ from .get_call_start_distribution_response_data import GetCallStartDistributionR
 
 
 class GetCallStartDistributionResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetCallStartDistributionResponseData] = None
 
     if IS_PYDANTIC_V2:

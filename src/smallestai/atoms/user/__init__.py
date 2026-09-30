@@ -6,8 +6,20 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from .types import GetUserResponse, GetUserResponseData
-_dynamic_imports: typing.Dict[str, str] = {"GetUserResponse": ".types", "GetUserResponseData": ".types"}
+    from .types import (
+        GetSubscriptionUserResponse,
+        GetSubscriptionUserResponseData,
+        GetSubscriptionUserResponseDataLimits,
+        GetUserResponse,
+        GetUserResponseData,
+    )
+_dynamic_imports: typing.Dict[str, str] = {
+    "GetSubscriptionUserResponse": ".types",
+    "GetSubscriptionUserResponseData": ".types",
+    "GetSubscriptionUserResponseDataLimits": ".types",
+    "GetUserResponse": ".types",
+    "GetUserResponseData": ".types",
+}
 
 
 def __getattr__(attr_name: str) -> typing.Any:
@@ -31,4 +43,10 @@ def __dir__():
     return sorted(lazy_attrs)
 
 
-__all__ = ["GetUserResponse", "GetUserResponseData"]
+__all__ = [
+    "GetSubscriptionUserResponse",
+    "GetSubscriptionUserResponseData",
+    "GetSubscriptionUserResponseDataLimits",
+    "GetUserResponse",
+    "GetUserResponseData",
+]

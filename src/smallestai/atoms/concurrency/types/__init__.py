@@ -9,18 +9,32 @@ if typing.TYPE_CHECKING:
     from .get_concurrency_response import GetConcurrencyResponse
     from .get_concurrency_response_data import GetConcurrencyResponseData
     from .get_concurrency_response_data_agents_item import GetConcurrencyResponseDataAgentsItem
+    from .get_cps_limits_response import GetCpsLimitsResponse
+    from .get_cps_limits_response_data import GetCpsLimitsResponseData
+    from .get_cps_limits_response_data_providers_value import GetCpsLimitsResponseDataProvidersValue
+    from .get_cps_limits_response_data_trunks_item import GetCpsLimitsResponseDataTrunksItem
+    from .get_cps_limits_response_data_trunks_item_numbers_item import GetCpsLimitsResponseDataTrunksItemNumbersItem
     from .update_concurrency_reservations_request_reservations_item import (
         UpdateConcurrencyReservationsRequestReservationsItem,
     )
     from .update_concurrency_reservations_response import UpdateConcurrencyReservationsResponse
     from .update_concurrency_reservations_response_data import UpdateConcurrencyReservationsResponseData
+    from .update_custom_trunk_cps_limit_response import UpdateCustomTrunkCpsLimitResponse
+    from .update_custom_trunk_cps_limit_response_data import UpdateCustomTrunkCpsLimitResponseData
 _dynamic_imports: typing.Dict[str, str] = {
     "GetConcurrencyResponse": ".get_concurrency_response",
     "GetConcurrencyResponseData": ".get_concurrency_response_data",
     "GetConcurrencyResponseDataAgentsItem": ".get_concurrency_response_data_agents_item",
+    "GetCpsLimitsResponse": ".get_cps_limits_response",
+    "GetCpsLimitsResponseData": ".get_cps_limits_response_data",
+    "GetCpsLimitsResponseDataProvidersValue": ".get_cps_limits_response_data_providers_value",
+    "GetCpsLimitsResponseDataTrunksItem": ".get_cps_limits_response_data_trunks_item",
+    "GetCpsLimitsResponseDataTrunksItemNumbersItem": ".get_cps_limits_response_data_trunks_item_numbers_item",
     "UpdateConcurrencyReservationsRequestReservationsItem": ".update_concurrency_reservations_request_reservations_item",
     "UpdateConcurrencyReservationsResponse": ".update_concurrency_reservations_response",
     "UpdateConcurrencyReservationsResponseData": ".update_concurrency_reservations_response_data",
+    "UpdateCustomTrunkCpsLimitResponse": ".update_custom_trunk_cps_limit_response",
+    "UpdateCustomTrunkCpsLimitResponseData": ".update_custom_trunk_cps_limit_response_data",
 }
 
 
@@ -49,7 +63,14 @@ __all__ = [
     "GetConcurrencyResponse",
     "GetConcurrencyResponseData",
     "GetConcurrencyResponseDataAgentsItem",
+    "GetCpsLimitsResponse",
+    "GetCpsLimitsResponseData",
+    "GetCpsLimitsResponseDataProvidersValue",
+    "GetCpsLimitsResponseDataTrunksItem",
+    "GetCpsLimitsResponseDataTrunksItemNumbersItem",
     "UpdateConcurrencyReservationsRequestReservationsItem",
     "UpdateConcurrencyReservationsResponse",
     "UpdateConcurrencyReservationsResponseData",
+    "UpdateCustomTrunkCpsLimitResponse",
+    "UpdateCustomTrunkCpsLimitResponseData",
 ]

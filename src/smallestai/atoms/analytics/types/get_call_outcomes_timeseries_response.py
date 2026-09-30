@@ -9,7 +9,7 @@ from .get_call_outcomes_timeseries_response_data import GetCallOutcomesTimeserie
 
 
 class GetCallOutcomesTimeseriesResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetCallOutcomesTimeseriesResponseData] = None
 
     if IS_PYDANTIC_V2:

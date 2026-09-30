@@ -9,7 +9,7 @@ from .get_attempt_cohort_response_data import GetAttemptCohortResponseData
 
 
 class GetAttemptCohortResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetAttemptCohortResponseData] = None
 
     if IS_PYDANTIC_V2:

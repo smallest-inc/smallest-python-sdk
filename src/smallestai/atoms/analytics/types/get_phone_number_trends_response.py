@@ -9,7 +9,7 @@ from .get_phone_number_trends_response_data import GetPhoneNumberTrendsResponseD
 
 
 class GetPhoneNumberTrendsResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetPhoneNumberTrendsResponseData] = None
 
     if IS_PYDANTIC_V2:

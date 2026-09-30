@@ -2,4 +2,4 @@
 
 import typing
 
-SearchRentablePhoneNumbersResponseDataItemProvider = typing.Union[typing.Literal["plivo", "twilio"], typing.Any]
+SearchRentablePhoneNumbersResponseDataItemProvider = typing.Union[typing.Literal["twilio", "plivo"], typing.Any]

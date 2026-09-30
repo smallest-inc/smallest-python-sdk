@@ -16,6 +16,7 @@ import requests
 
 # Default API base URL
 DEFAULT_BASE_URL = "https://api.smallest.ai/atoms/v1"
+DEFAULT_REQUEST_TIMEOUT = 30.0
 
 
 class KB:
@@ -31,6 +32,8 @@ class KB:
         self,
         base_url: Optional[str] = None,
         api_key: Optional[str] = None,
+        *,
+        request_timeout: float = DEFAULT_REQUEST_TIMEOUT,
     ):
         """
         Initialize KB manager.
@@ -38,9 +41,11 @@ class KB:
         Args:
             base_url: API base URL (default: api.smallest.ai/atoms/v1)
             api_key: API key (default: SMALLEST_API_KEY env var)
+            request_timeout: Per-request timeout in seconds
         """
         self.base_url = base_url or os.environ.get("SMALLEST_BASE_URL", DEFAULT_BASE_URL)
         self.api_key = api_key or os.environ.get("SMALLEST_API_KEY", "")
+        self.request_timeout = request_timeout
 
     def _get_headers(self) -> Dict[str, str]:
         return {"Authorization": f"Bearer {self.api_key}"}
@@ -81,7 +86,7 @@ class KB:
         if description:
             payload["description"] = description
 
-        response = requests.post(url, headers=headers, json=payload)
+        response = requests.post(url, headers=headers, json=payload, timeout=self.request_timeout)
         response.raise_for_status()
         kb_data = response.json()
 
@@ -109,35 +114,35 @@ class KB:
     def get(self, kb_id: str) -> Dict[str, Any]:
         """Get knowledge base details."""
         url = f"{self.base_url}/knowledgebase/{kb_id}"
-        response = requests.get(url, headers=self._get_headers())
+        response = requests.get(url, headers=self._get_headers(), timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
     def list(self) -> Dict[str, Any]:
         """List all knowledge bases."""
         url = f"{self.base_url}/knowledgebase"
-        response = requests.get(url, headers=self._get_headers())
+        response = requests.get(url, headers=self._get_headers(), timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
     def delete(self, kb_id: str) -> Dict[str, Any]:
         """Delete a knowledge base."""
         url = f"{self.base_url}/knowledgebase/{kb_id}"
-        response = requests.delete(url, headers=self._get_headers())
+        response = requests.delete(url, headers=self._get_headers(), timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
     def get_items(self, kb_id: str) -> Dict[str, Any]:
         """Get all items in a knowledge base."""
         url = f"{self.base_url}/knowledgebase/{kb_id}/items"
-        response = requests.get(url, headers=self._get_headers())
+        response = requests.get(url, headers=self._get_headers(), timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
     def delete_item(self, kb_id: str, item_id: str) -> Dict[str, Any]:
         """Delete an item from a knowledge base."""
         url = f"{self.base_url}/knowledgebase/{kb_id}/items/{item_id}"
-        response = requests.delete(url, headers=self._get_headers())
+        response = requests.delete(url, headers=self._get_headers(), timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
@@ -163,7 +168,7 @@ class KB:
 
         with open(file_path, "rb") as f:
             files = {"media": (os.path.basename(file_path), f, "application/pdf")}
-            response = requests.post(url, headers=self._get_headers(), files=files)
+            response = requests.post(url, headers=self._get_headers(), files=files, timeout=self.request_timeout)
 
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
@@ -183,14 +188,14 @@ class KB:
         headers = self._get_headers()
         headers["Content-Type"] = "application/json"
 
-        response = requests.post(url, headers=headers, json={"urls": urls})
+        response = requests.post(url, headers=headers, json={"urls": urls}, timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
     def get_scraped_urls(self, kb_id: str) -> Dict[str, Any]:
         """Get all scraped URLs for a knowledge base."""
         url = f"{self.base_url}/knowledgebase/{kb_id}/scraped-urls"
-        response = requests.get(url, headers=self._get_headers())
+        response = requests.get(url, headers=self._get_headers(), timeout=self.request_timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 
@@ -212,7 +217,7 @@ class KB:
         headers = self._get_headers()
         headers["Content-Type"] = "application/json"
 
-        response = requests.post(url, headers=headers, json={"text": text})
+        response = requests.post(url, headers=headers, json={"text": text}, timeout=self.request_timeout)
         if response.status_code == 404:
             print("Warning: Text upload API not available. Use dashboard instead.")
             return {"status": False, "error": "Text upload not available via API"}

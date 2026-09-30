@@ -17,12 +17,11 @@ from ...core.request_options import RequestOptions
 from ...core.unchecked_base_model import construct_type
 from ...core.websocket_compat import InvalidWebSocketStatus, get_status_code
 from ..errors.bad_request_error import BadRequestError
-from ..errors.content_too_large_error import ContentTooLargeError
 from ..errors.forbidden_error import ForbiddenError
+from ..errors.internal_server_error import InternalServerError
 from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..errors.too_many_requests_error import TooManyRequestsError
 from ..errors.unauthorized_error import UnauthorizedError
-from ..types.stt_error_response import SttErrorResponse
 from .socket_client import AsyncSpeechToTextSocketClient, SpeechToTextSocketClient
 from .types.transcribe_request_emotion_detection import TranscribeRequestEmotionDetection
 from .types.transcribe_request_gender_detection import TranscribeRequestGenderDetection
@@ -55,6 +54,7 @@ class RawSpeechToTextClient:
         request: typing.Union[bytes, typing.Iterator[bytes], typing.AsyncIterator[bytes]],
         word_timestamps: typing.Optional[bool] = None,
         diarize: typing.Optional[bool] = None,
+        keywords: typing.Optional[str] = None,
         webhook_url: typing.Optional[str] = None,
         webhook_method: typing.Optional[TranscribeRequestWebhookMethod] = None,
         webhook_extra: typing.Optional[str] = None,
@@ -143,10 +143,8 @@ class RawSpeechToTextClient:
         ## Common gotchas
         
         - **`model` is required.** Missing or invalid values return `400` with an enum-validation error.
-        - **Pulse Pro is English only.** Pass `language=en`. Other language codes are accepted at the wire level but produce unpredictable output.
+        - **Pulse Pro is English only.** Pass `language=en`. Any other value returns `400 invalid_enum_value` (`Expected 'en', received '<x>'`).
         - **Pulse Pro does not support audio-by-URL.** Send raw bytes or use `?model=pulse` for the URL flow.
-        - **Async (webhook) mode is Pulse Pro only.** Pulse runs sync only on this endpoint.
-        - **Max payload 250 MB.** Larger requests return `413`. Compress to mono 16 kHz PCM if you are close to the limit; quality is unaffected.
         
         Parameters
         ----------
@@ -177,14 +175,40 @@ class RawSpeechToTextClient:
         diarize : typing.Optional[bool]
             Multi-speaker identification; adds per-word and per-utterance speaker labels.
         
+        keywords : typing.Optional[str]
+            Pulse only. Boost recognition of specific words or phrases for
+            this request. The same parameter works on the realtime WebSocket
+            endpoint.
+            
+            **Entry format:** `KEYWORD` or `KEYWORD:INTENSIFIER`, where
+            `INTENSIFIER` is a number that defaults to `1`. Example:
+            `Blackwell:2,Jensen Huang:2`. Matching is case-sensitive.
+            Duplicates: last-wins (`NVIDIA:1,NVIDIA:5` is equivalent to
+            `NVIDIA:5`). Max 100 keywords per request; sending more returns
+            `400` with `keywords too large (max 100)` in `errors[]`.
+            
+            **Encodings.** Comma-string (recommended), repeated key
+            (`keywords=a&keywords=b`), and bracketed array (`keywords[]=a`)
+            are all accepted. A JSON-array literal (`["a","b"]`) does not
+            boost. Pass the raw string.
+            
+            **Intensifier.** Default `1`, recommended `1` to `3`. Above
+            `10` is not recommended: higher values increase the chance
+            of hallucinating the keyword when it was not spoken. Reuse
+            the same keyword list across requests when the vocabulary
+            is stable.
+            
+            See [Keyword Boosting](/models/documentation/speech-to-text-pulse/features/keyword-boosting)
+            for the full contract and worked examples.
+        
         webhook_url : typing.Optional[str]
-            Pulse Pro only. If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
+            If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
         
         webhook_method : typing.Optional[TranscribeRequestWebhookMethod]
-            HTTP method to use when calling the webhook. Pulse Pro only.
+            HTTP method to use when calling the webhook.
         
         webhook_extra : typing.Optional[str]
-            Arbitrary metadata returned to the webhook in addition to the transcription payload. Pulse Pro only.
+            Arbitrary metadata returned to the webhook in addition to the transcription payload.
         
         redact_pii : typing.Optional[TranscribeRequestRedactPii]
             Redact personally identifiable information from the transcript.
@@ -236,6 +260,7 @@ class RawSpeechToTextClient:
                 "language": language,
                 "word_timestamps": word_timestamps,
                 "diarize": diarize,
+                "keywords": keywords,
                 "webhook_url": webhook_url,
                 "webhook_method": webhook_method,
                 "webhook_extra": webhook_extra,
@@ -294,19 +319,19 @@ class RawSpeechToTextClient:
                         ),
                     ),
                 )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        SttErrorResponse,
+                        typing.Any,
                         construct_type(
-                            type_=SttErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
                 )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
+            if _response.status_code == 500:
+                raise InternalServerError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Any,
@@ -372,7 +397,7 @@ class RawSpeechToTextClient:
         ```python
         import asyncio, json, websockets
 
-        URL = "wss://api.smallest.ai/waves/v1/stt/live?model=pulse&language=en&sample_rate=16000&encoding=linear16&itn_normalize=true&finalize_on_words=false&eou_timeout_ms=1000"
+        URL = "wss://api.smallest.ai/waves/v1/stt/live?model=pulse&language=en&sample_rate=16000&encoding=linear16&itn_normalize=true&eou_timeout_ms=1000"
         HEADERS = {"Authorization": f"Bearer {API_KEY}"}
 
         async def run_voice_agent(audio_source, llm_reply, stop_event):
@@ -491,6 +516,7 @@ class AsyncRawSpeechToTextClient:
         request: typing.Union[bytes, typing.Iterator[bytes], typing.AsyncIterator[bytes]],
         word_timestamps: typing.Optional[bool] = None,
         diarize: typing.Optional[bool] = None,
+        keywords: typing.Optional[str] = None,
         webhook_url: typing.Optional[str] = None,
         webhook_method: typing.Optional[TranscribeRequestWebhookMethod] = None,
         webhook_extra: typing.Optional[str] = None,
@@ -579,10 +605,8 @@ class AsyncRawSpeechToTextClient:
         ## Common gotchas
         
         - **`model` is required.** Missing or invalid values return `400` with an enum-validation error.
-        - **Pulse Pro is English only.** Pass `language=en`. Other language codes are accepted at the wire level but produce unpredictable output.
+        - **Pulse Pro is English only.** Pass `language=en`. Any other value returns `400 invalid_enum_value` (`Expected 'en', received '<x>'`).
         - **Pulse Pro does not support audio-by-URL.** Send raw bytes or use `?model=pulse` for the URL flow.
-        - **Async (webhook) mode is Pulse Pro only.** Pulse runs sync only on this endpoint.
-        - **Max payload 250 MB.** Larger requests return `413`. Compress to mono 16 kHz PCM if you are close to the limit; quality is unaffected.
         
         Parameters
         ----------
@@ -613,14 +637,40 @@ class AsyncRawSpeechToTextClient:
         diarize : typing.Optional[bool]
             Multi-speaker identification; adds per-word and per-utterance speaker labels.
         
+        keywords : typing.Optional[str]
+            Pulse only. Boost recognition of specific words or phrases for
+            this request. The same parameter works on the realtime WebSocket
+            endpoint.
+            
+            **Entry format:** `KEYWORD` or `KEYWORD:INTENSIFIER`, where
+            `INTENSIFIER` is a number that defaults to `1`. Example:
+            `Blackwell:2,Jensen Huang:2`. Matching is case-sensitive.
+            Duplicates: last-wins (`NVIDIA:1,NVIDIA:5` is equivalent to
+            `NVIDIA:5`). Max 100 keywords per request; sending more returns
+            `400` with `keywords too large (max 100)` in `errors[]`.
+            
+            **Encodings.** Comma-string (recommended), repeated key
+            (`keywords=a&keywords=b`), and bracketed array (`keywords[]=a`)
+            are all accepted. A JSON-array literal (`["a","b"]`) does not
+            boost. Pass the raw string.
+            
+            **Intensifier.** Default `1`, recommended `1` to `3`. Above
+            `10` is not recommended: higher values increase the chance
+            of hallucinating the keyword when it was not spoken. Reuse
+            the same keyword list across requests when the vocabulary
+            is stable.
+            
+            See [Keyword Boosting](/models/documentation/speech-to-text-pulse/features/keyword-boosting)
+            for the full contract and worked examples.
+        
         webhook_url : typing.Optional[str]
-            Pulse Pro only. If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
+            If set, the response is `200` with `{"status": "processing", "request_id": "..."}` immediately, and the full transcription is delivered to this URL when ready. Use for long files where you do not want to hold an HTTP connection open.
         
         webhook_method : typing.Optional[TranscribeRequestWebhookMethod]
-            HTTP method to use when calling the webhook. Pulse Pro only.
+            HTTP method to use when calling the webhook.
         
         webhook_extra : typing.Optional[str]
-            Arbitrary metadata returned to the webhook in addition to the transcription payload. Pulse Pro only.
+            Arbitrary metadata returned to the webhook in addition to the transcription payload.
         
         redact_pii : typing.Optional[TranscribeRequestRedactPii]
             Redact personally identifiable information from the transcript.
@@ -672,6 +722,7 @@ class AsyncRawSpeechToTextClient:
                 "language": language,
                 "word_timestamps": word_timestamps,
                 "diarize": diarize,
+                "keywords": keywords,
                 "webhook_url": webhook_url,
                 "webhook_method": webhook_method,
                 "webhook_extra": webhook_extra,
@@ -730,19 +781,19 @@ class AsyncRawSpeechToTextClient:
                         ),
                     ),
                 )
-            if _response.status_code == 413:
-                raise ContentTooLargeError(
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        SttErrorResponse,
+                        typing.Any,
                         construct_type(
-                            type_=SttErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
                 )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
+            if _response.status_code == 500:
+                raise InternalServerError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Any,
@@ -808,7 +859,7 @@ class AsyncRawSpeechToTextClient:
         ```python
         import asyncio, json, websockets
 
-        URL = "wss://api.smallest.ai/waves/v1/stt/live?model=pulse&language=en&sample_rate=16000&encoding=linear16&itn_normalize=true&finalize_on_words=false&eou_timeout_ms=1000"
+        URL = "wss://api.smallest.ai/waves/v1/stt/live?model=pulse&language=en&sample_rate=16000&encoding=linear16&itn_normalize=true&eou_timeout_ms=1000"
         HEADERS = {"Authorization": f"Bearer {API_KEY}"}
 
         async def run_voice_agent(audio_source, llm_reply, stop_event):

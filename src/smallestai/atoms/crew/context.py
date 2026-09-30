@@ -14,3 +14,8 @@ class ContextManager:
 
     def add_messages(self, messages: List[Dict[str, Any]]):
         self._messages.extend(messages)
+
+    def set_messages(self, messages: List[Dict[str, Any]]):
+        """Replace the whole message list (e.g. sync to the platform's
+        authoritative conversation carried on an LLM-request event)."""
+        self._messages = list(messages)

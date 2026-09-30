@@ -4,7 +4,7 @@ Type definitions for LLM clients.
 Common types used across different LLM providers.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 

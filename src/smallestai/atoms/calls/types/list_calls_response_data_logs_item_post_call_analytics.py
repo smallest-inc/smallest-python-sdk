@@ -16,6 +16,11 @@ class ListCallsResponseDataLogsItemPostCallAnalytics(UncheckedBaseModel):
     """
     Post-call analytics results evaluated against the call transcript.
     Contains disposition metric values with confidence scores.
+
+    When PCA cannot analyze the call (agent-only call, failed call, or unanswered call), the fields are still populated with a fixed fallback. `dispositionMetrics[].value` is `null` with `confidence: 0` and `reasoning` explaining the skip. `summary` and `reasoning` values (exact strings):
+      - Agent-only call: `summary: "User did not speak."`, `reasoning: "User did not speak — no customer content available for analysis."`
+      - Failed call: `summary: "Call could not be completed."`, `reasoning: "Call could not be completed — no transcript available for analysis."`
+      - Unanswered call: `summary: "Call was not answered."`, `reasoning: "Call was not answered — no transcript available for analysis."`
     """
 
     summary: typing.Optional[str] = pydantic.Field(default=None)

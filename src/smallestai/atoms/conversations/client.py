@@ -31,18 +31,20 @@ class ConversationsClient:
         """
         return self._raw_client
 
-    def get_a_time_limited_recording_download_url(
+    def get_a_time_limited_recording_download_url_legacy(
         self, call_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> GetConversationCallIdRecordingDownloadUrlResponse:
         """
-        Returns a presigned S3 URL for the call's recording. Hand the URL straight to the customer or pull bytes server-side. The presigned URL is **time-limited** — typically usable for a few minutes — so don't cache it; request a fresh one each time you need the recording.
+        **Legacy.** Prefer [`GET /recordings/{callId}`](#get-a-presigned-recording-download-url) for new integrations. It supports both mono and dual channels via `?channel=mono|dual` and uses the same authenticated flow.
 
-        Returns `404` if the call has no recording (call hasn't started, was cancelled before audio captured, or was deleted by the platform's retention policy). Returns `400 Invalid call ID format` if you pass a Mongo `_id` instead of the `callId` string.
+        Returns a presigned S3 URL for the call's mono composite recording. Hand the URL straight to the customer or pull bytes server-side. The presigned URL is time-limited to 15 minutes (same TTL as the new endpoint); do not cache it, request a fresh one each time you need the recording.
+
+        Returns `404` if the call has no recording (call hasn't started, was cancelled before audio captured, or was deleted by the platform's retention policy). Returns `400 Invalid call ID format` if `callId` does not match the expected pattern.
 
         Parameters
         ----------
         call_id : str
-            The `callId` string for the conversation (e.g. `CALL-1778226705739-7e4c17`). This is the `callId` field returned by `GET /conversation`, **not** the Mongo `_id` — passing `_id` returns `400 Invalid call ID format`.
+            The `callId` string for the conversation (e.g. `CALL-1778226705739-7e4c17`). This is the `callId` field returned by `GET /conversation`.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -59,11 +61,13 @@ class ConversationsClient:
         client = SmallestAI(
             api_key="YOUR_API_KEY",
         )
-        client.atoms.conversations.get_a_time_limited_recording_download_url(
+        client.atoms.conversations.get_a_time_limited_recording_download_url_legacy(
             call_id="CALL-1781127346211-e765f7",
         )
         """
-        _response = self._raw_client.get_a_time_limited_recording_download_url(call_id, request_options=request_options)
+        _response = self._raw_client.get_a_time_limited_recording_download_url_legacy(
+            call_id, request_options=request_options
+        )
         return _response.data
 
     def list_retry_attempts(
@@ -154,7 +158,7 @@ class ConversationsClient:
 
         **Behavior differs from the body form.** This path-param endpoint only cancels calls that are still in the `IN_QUEUE` state — calls that have already started dialing or are in progress return `400 Bad Request` with `errors: ["Conversation with ID ... is not in queue and cannot be cancelled"]`. Use the body form (`POST /conversation/cancel`) if you need to cancel an in-progress call.
 
-        The path param is the `callId` string (e.g. `CALL-1778226705739-7e4c17`), **not** the Mongo `_id`. Passing `_id` returns `404 No conversation found`.
+        The path param is the `callId` string (e.g. `CALL-1778226705739-7e4c17`) from `GET /conversation`. Any other value returns `404 No conversation found`.
 
         Parameters
         ----------
@@ -199,18 +203,20 @@ class AsyncConversationsClient:
         """
         return self._raw_client
 
-    async def get_a_time_limited_recording_download_url(
+    async def get_a_time_limited_recording_download_url_legacy(
         self, call_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> GetConversationCallIdRecordingDownloadUrlResponse:
         """
-        Returns a presigned S3 URL for the call's recording. Hand the URL straight to the customer or pull bytes server-side. The presigned URL is **time-limited** — typically usable for a few minutes — so don't cache it; request a fresh one each time you need the recording.
+        **Legacy.** Prefer [`GET /recordings/{callId}`](#get-a-presigned-recording-download-url) for new integrations. It supports both mono and dual channels via `?channel=mono|dual` and uses the same authenticated flow.
 
-        Returns `404` if the call has no recording (call hasn't started, was cancelled before audio captured, or was deleted by the platform's retention policy). Returns `400 Invalid call ID format` if you pass a Mongo `_id` instead of the `callId` string.
+        Returns a presigned S3 URL for the call's mono composite recording. Hand the URL straight to the customer or pull bytes server-side. The presigned URL is time-limited to 15 minutes (same TTL as the new endpoint); do not cache it, request a fresh one each time you need the recording.
+
+        Returns `404` if the call has no recording (call hasn't started, was cancelled before audio captured, or was deleted by the platform's retention policy). Returns `400 Invalid call ID format` if `callId` does not match the expected pattern.
 
         Parameters
         ----------
         call_id : str
-            The `callId` string for the conversation (e.g. `CALL-1778226705739-7e4c17`). This is the `callId` field returned by `GET /conversation`, **not** the Mongo `_id` — passing `_id` returns `400 Invalid call ID format`.
+            The `callId` string for the conversation (e.g. `CALL-1778226705739-7e4c17`). This is the `callId` field returned by `GET /conversation`.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -232,14 +238,14 @@ class AsyncConversationsClient:
 
 
         async def main() -> None:
-            await client.atoms.conversations.get_a_time_limited_recording_download_url(
+            await client.atoms.conversations.get_a_time_limited_recording_download_url_legacy(
                 call_id="CALL-1781127346211-e765f7",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_a_time_limited_recording_download_url(
+        _response = await self._raw_client.get_a_time_limited_recording_download_url_legacy(
             call_id, request_options=request_options
         )
         return _response.data
@@ -348,7 +354,7 @@ class AsyncConversationsClient:
 
         **Behavior differs from the body form.** This path-param endpoint only cancels calls that are still in the `IN_QUEUE` state — calls that have already started dialing or are in progress return `400 Bad Request` with `errors: ["Conversation with ID ... is not in queue and cannot be cancelled"]`. Use the body form (`POST /conversation/cancel`) if you need to cancel an in-progress call.
 
-        The path param is the `callId` string (e.g. `CALL-1778226705739-7e4c17`), **not** the Mongo `_id`. Passing `_id` returns `404 No conversation found`.
+        The path param is the `callId` string (e.g. `CALL-1778226705739-7e4c17`) from `GET /conversation`. Any other value returns `404 No conversation found`.
 
         Parameters
         ----------

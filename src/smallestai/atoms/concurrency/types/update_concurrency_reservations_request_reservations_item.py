@@ -11,7 +11,7 @@ from ....core.unchecked_base_model import UncheckedBaseModel
 
 class UpdateConcurrencyReservationsRequestReservationsItem(UncheckedBaseModel):
     agent_id: typing_extensions.Annotated[
-        str, FieldMetadata(alias="agentId"), pydantic.Field(alias="agentId", description="Agent ObjectId")
+        str, FieldMetadata(alias="agentId"), pydantic.Field(alias="agentId", description="Agent id (24-character hex).")
     ]
     webcall: int = pydantic.Field()
     """

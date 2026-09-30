@@ -1,0 +1,17 @@
+# gitleaks config (used by the pre-commit hook and the CI security job).
+# Extends the built-in ruleset and allowlists the PostHog project key, which is a
+# write-only client key that is meant to ship in client code.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "PostHog public write-only project key, and generated wire-test fixtures"
+regexes = [
+  '''phc_[A-Za-z0-9]{40,}''',
+]
+# wiremock/wiremock-mappings.json is a generated wire-test fixture. Its stub
+# responses contain example (non-real) LiveKit JWT tokens for the web-call
+# endpoints, which gitleaks flags as JWTs. It is test data, not source secrets.
+paths = [
+  '''wiremock/wiremock-mappings\.json''',
+]

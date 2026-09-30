@@ -13,7 +13,7 @@ class GetConcurrencyResponseDataAgentsItem(UncheckedBaseModel):
     agent_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="agentId"),
-        pydantic.Field(alias="agentId", description="Agent ObjectId"),
+        pydantic.Field(alias="agentId", description="Agent id (24-character hex)."),
     ] = None
     agent_name: typing_extensions.Annotated[
         typing.Optional[str], FieldMetadata(alias="agentName"), pydantic.Field(alias="agentName")

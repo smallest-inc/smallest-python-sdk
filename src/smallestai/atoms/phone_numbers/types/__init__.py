@@ -16,8 +16,6 @@ if typing.TYPE_CHECKING:
     from .get_product_unpaid_invoices_response_data import GetProductUnpaidInvoicesResponseData
     from .import_sip_phone_numbers_response import ImportSipPhoneNumbersResponse
     from .import_sip_phone_numbers_response_data import ImportSipPhoneNumbersResponseData
-    from .import_sip_phone_numbers_response_data_attributes import ImportSipPhoneNumbersResponseDataAttributes
-    from .import_sip_phone_numbers_response_data_product_type import ImportSipPhoneNumbersResponseDataProductType
     from .list_phone_numbers_response import ListPhoneNumbersResponse
     from .list_phone_numbers_response_data_item import ListPhoneNumbersResponseDataItem
     from .list_phone_numbers_response_data_item_attributes import ListPhoneNumbersResponseDataItemAttributes
@@ -47,8 +45,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GetProductUnpaidInvoicesResponseData": ".get_product_unpaid_invoices_response_data",
     "ImportSipPhoneNumbersResponse": ".import_sip_phone_numbers_response",
     "ImportSipPhoneNumbersResponseData": ".import_sip_phone_numbers_response_data",
-    "ImportSipPhoneNumbersResponseDataAttributes": ".import_sip_phone_numbers_response_data_attributes",
-    "ImportSipPhoneNumbersResponseDataProductType": ".import_sip_phone_numbers_response_data_product_type",
     "ListPhoneNumbersResponse": ".list_phone_numbers_response",
     "ListPhoneNumbersResponseDataItem": ".list_phone_numbers_response_data_item",
     "ListPhoneNumbersResponseDataItemAttributes": ".list_phone_numbers_response_data_item_attributes",
@@ -98,8 +94,6 @@ __all__ = [
     "GetProductUnpaidInvoicesResponseData",
     "ImportSipPhoneNumbersResponse",
     "ImportSipPhoneNumbersResponseData",
-    "ImportSipPhoneNumbersResponseDataAttributes",
-    "ImportSipPhoneNumbersResponseDataProductType",
     "ListPhoneNumbersResponse",
     "ListPhoneNumbersResponseDataItem",
     "ListPhoneNumbersResponseDataItemAttributes",

@@ -9,7 +9,7 @@ from .get_duration_stats_response_data import GetDurationStatsResponseData
 
 
 class GetDurationStatsResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetDurationStatsResponseData] = None
 
     if IS_PYDANTIC_V2:

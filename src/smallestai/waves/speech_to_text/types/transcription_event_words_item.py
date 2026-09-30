@@ -16,9 +16,9 @@ class TranscriptionEventWordsItem(UncheckedBaseModel):
     Per-word confidence score, from 0.0 to 1.0.
     """
 
-    speaker: typing.Optional[str] = pydantic.Field(default=None)
+    speaker: typing.Optional[int] = pydantic.Field(default=None)
     """
-    Present when `diarize=true`.
+    Zero-indexed speaker label (0, 1, 2, ...). Present when `diarize=true`.
     """
 
     speaker_confidence: typing.Optional[float] = pydantic.Field(default=None)

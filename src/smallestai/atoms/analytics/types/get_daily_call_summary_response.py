@@ -9,7 +9,7 @@ from .get_daily_call_summary_response_data import GetDailyCallSummaryResponseDat
 
 
 class GetDailyCallSummaryResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetDailyCallSummaryResponseData] = None
 
     if IS_PYDANTIC_V2:

@@ -3,7 +3,9 @@
 import typing
 
 import pydantic
+import typing_extensions
 from ...core.pydantic_utilities import IS_PYDANTIC_V2
+from ...core.serialization import FieldMetadata
 from ...core.unchecked_base_model import UncheckedBaseModel
 from .tool import Tool
 
@@ -25,6 +27,15 @@ class SinglePromptConfig(UncheckedBaseModel):
     `extract_dynamic_variables`, and `knowledge_base_search`. Each type has its
     own required fields — see `Tool` schema.
     """
+
+    tool_refs: typing_extensions.Annotated[
+        typing.Optional[typing.List[str]],
+        FieldMetadata(alias="toolRefs"),
+        pydantic.Field(
+            alias="toolRefs",
+            description="Optional. References to reusable tools in the org Tools library (see\n`POST /tool`), by their `toolId`. At serve time the referenced tools are\nexpanded inline and merged with `tools[]` (inline wins on a name conflict),\nthen `toolRefs` is stripped, so the runtime sees a normal `tools[]`.\nAttach a tool by adding its id here; detach by removing it. Additive and\noptional — omit for unchanged behavior.",
+        ),
+    ] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

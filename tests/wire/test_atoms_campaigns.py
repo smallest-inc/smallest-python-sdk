@@ -59,3 +59,24 @@ def test_atoms_campaigns_pause() -> None:
         id="id",
     )
     verify_request_count(test_id, "POST", "/campaign/id/pause", None, 1)
+
+
+def test_atoms_campaigns_export_campaign_results_by_audience_member() -> None:
+    """Test exportCampaignResultsByAudienceMember endpoint with WireMock"""
+    test_id = "atoms.campaigns.export_campaign_results_by_audience_member.0"
+    client = get_client(test_id)
+    client.atoms.campaigns.export_campaign_results_by_audience_member(
+        id="6a75935452c6e5eceaa16edf",
+    )
+    verify_request_count(test_id, "GET", "/campaign/6a75935452c6e5eceaa16edf/export/by-audience-member", None, 1)
+
+
+def test_atoms_campaigns_export_campaign_logs() -> None:
+    """Test exportCampaignLogs endpoint with WireMock"""
+    test_id = "atoms.campaigns.export_campaign_logs.0"
+    client = get_client(test_id)
+    for _ in client.atoms.campaigns.export_campaign_logs(
+        id="id",
+    ):
+        pass
+    verify_request_count(test_id, "GET", "/campaign/id/logs/export", None, 1)

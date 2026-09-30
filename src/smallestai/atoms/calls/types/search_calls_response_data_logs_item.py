@@ -58,12 +58,18 @@ class SearchCallsResponseDataLogsItem(UncheckedBaseModel):
     recording_url: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="recordingUrl"),
-        pydantic.Field(alias="recordingUrl", description="URL to the call recording (if available)"),
+        pydantic.Field(
+            alias="recordingUrl",
+            description="Still returned on every response. Resolve the audio via `GET /recordings/{callId}?channel=mono` (or `?channel=dual`) to get a short-lived presigned S3 URL. Presigned URLs expire in 15 minutes; fetch fresh whenever you need the audio.",
+        ),
     ] = None
     recording_dual_url: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="recordingDualUrl"),
-        pydantic.Field(alias="recordingDualUrl", description="URL to the dual-channel call recording (if available)"),
+        pydantic.Field(
+            alias="recordingDualUrl",
+            description="Still returned when the call was captured with per-side audio. Resolve the audio via `GET /recordings/{callId}?channel=dual` to get a short-lived presigned S3 URL. Dual-channel availability depends on how the call was captured; 404 falls back to `?channel=mono`.",
+        ),
     ] = None
     disconnection_reason: typing_extensions.Annotated[
         typing.Optional[str],
@@ -114,7 +120,8 @@ class SearchCallsResponseDataLogsItem(UncheckedBaseModel):
         typing.Optional[SearchCallsResponseDataLogsItemPostCallAnalytics],
         FieldMetadata(alias="postCallAnalytics"),
         pydantic.Field(
-            alias="postCallAnalytics", description="Post-call analytics results evaluated against the call transcript"
+            alias="postCallAnalytics",
+            description='Post-call analytics results evaluated against the call transcript.\n\nWhen PCA cannot analyze the call (agent-only call, failed call, or unanswered call), the fields are still populated with a fixed fallback. `dispositionMetrics[].value` is `null` with `confidence: 0` and `reasoning` explaining the skip. `summary` and `reasoning` values (exact strings):\n  - Agent-only call: `summary: "User did not speak."`, `reasoning: "User did not speak — no customer content available for analysis."`\n  - Failed call: `summary: "Call could not be completed."`, `reasoning: "Call could not be completed — no transcript available for analysis."`\n  - Unanswered call: `summary: "Call was not answered."`, `reasoning: "Call was not answered — no transcript available for analysis."`',
         ),
     ] = None
     turn_latency_metrics: typing_extensions.Annotated[

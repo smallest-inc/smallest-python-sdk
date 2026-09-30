@@ -9,7 +9,7 @@ from .get_pickup_rate_by_number_response_data import GetPickupRateByNumberRespon
 
 
 class GetPickupRateByNumberResponse(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    status: typing.Optional[bool] = None
     data: typing.Optional[GetPickupRateByNumberResponseData] = None
 
     if IS_PYDANTIC_V2:

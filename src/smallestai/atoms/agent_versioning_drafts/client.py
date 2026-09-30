@@ -13,6 +13,7 @@ from .types.create_draft_agent_versioning_drafts_response import CreateDraftAgen
 from .types.discard_draft_agent_versioning_drafts_response import DiscardDraftAgentVersioningDraftsResponse
 from .types.draft_config_request_background_sound import DraftConfigRequestBackgroundSound
 from .types.draft_config_request_slm_model import DraftConfigRequestSlmModel
+from .types.draft_config_request_transcriber_type import DraftConfigRequestTranscriberType
 from .types.get_agent_id_drafts_draft_id_diff_response import GetAgentIdDraftsDraftIdDiffResponse
 from .types.get_agent_id_drafts_draft_id_response import GetAgentIdDraftsDraftIdResponse
 from .types.get_agent_id_drafts_response import GetAgentIdDraftsResponse
@@ -95,8 +96,8 @@ class AgentVersioningDraftsClient:
             The agent ID.
 
         source_version_id : typing.Optional[str]
-            ID of a published version to branch from. Must be a valid MongoDB ObjectId (24-char hex).
-            Sending a non-ObjectId format returns 400.
+            ID of a published version to branch from. Must be a 24-character hex id.
+            Any other format returns 400.
 
         source_draft_id : typing.Optional[str]
             ID of an existing draft to branch from
@@ -431,7 +432,7 @@ class AgentVersioningDraftsClient:
         language: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         synthesizer: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         slm_model: typing.Optional[DraftConfigRequestSlmModel] = OMIT,
-        transcriber_type: typing.Optional[str] = OMIT,
+        transcriber_type: typing.Optional[DraftConfigRequestTranscriberType] = OMIT,
         custom_llm_web_socket_url: typing.Optional[str] = OMIT,
         widget_config: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         default_variables: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
@@ -514,14 +515,14 @@ class AgentVersioningDraftsClient:
         slm_model : typing.Optional[DraftConfigRequestSlmModel]
             LLM model for this draft
 
-        transcriber_type : typing.Optional[str]
-            STT engine to use for this draft
+        transcriber_type : typing.Optional[DraftConfigRequestTranscriberType]
+            STT engine to use for this draft. `pulse` is the current default. `pulse-legacy` is a legacy path retained for older integrations.
 
         custom_llm_web_socket_url : typing.Optional[str]
             Custom LLM WebSocket URL (overrides slmModel)
 
         widget_config : typing.Optional[typing.Dict[str, typing.Any]]
-            Widget configuration for chat-mode agents
+            Chat-widget configuration. Configure from the dashboard; safe to ignore for API-only integrations.
 
         default_variables : typing.Optional[typing.Dict[str, typing.Any]]
             Default prompt variables
@@ -711,8 +712,8 @@ class AsyncAgentVersioningDraftsClient:
             The agent ID.
 
         source_version_id : typing.Optional[str]
-            ID of a published version to branch from. Must be a valid MongoDB ObjectId (24-char hex).
-            Sending a non-ObjectId format returns 400.
+            ID of a published version to branch from. Must be a 24-character hex id.
+            Any other format returns 400.
 
         source_draft_id : typing.Optional[str]
             ID of an existing draft to branch from
@@ -1105,7 +1106,7 @@ class AsyncAgentVersioningDraftsClient:
         language: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         synthesizer: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         slm_model: typing.Optional[DraftConfigRequestSlmModel] = OMIT,
-        transcriber_type: typing.Optional[str] = OMIT,
+        transcriber_type: typing.Optional[DraftConfigRequestTranscriberType] = OMIT,
         custom_llm_web_socket_url: typing.Optional[str] = OMIT,
         widget_config: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         default_variables: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
@@ -1188,14 +1189,14 @@ class AsyncAgentVersioningDraftsClient:
         slm_model : typing.Optional[DraftConfigRequestSlmModel]
             LLM model for this draft
 
-        transcriber_type : typing.Optional[str]
-            STT engine to use for this draft
+        transcriber_type : typing.Optional[DraftConfigRequestTranscriberType]
+            STT engine to use for this draft. `pulse` is the current default. `pulse-legacy` is a legacy path retained for older integrations.
 
         custom_llm_web_socket_url : typing.Optional[str]
             Custom LLM WebSocket URL (overrides slmModel)
 
         widget_config : typing.Optional[typing.Dict[str, typing.Any]]
-            Widget configuration for chat-mode agents
+            Chat-widget configuration. Configure from the dashboard; safe to ignore for API-only integrations.
 
         default_variables : typing.Optional[typing.Dict[str, typing.Any]]
             Default prompt variables

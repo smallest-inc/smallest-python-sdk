@@ -46,7 +46,7 @@ class RawWebhooksClient:
         Parameters
         ----------
         webhook_id : typing.Optional[str]
-            Optional MongoDB ObjectId (24-char hex) of a specific webhook to retrieve. If omitted, returns all webhooks for the organization.
+            Optional 24-character hex id of a specific webhook to retrieve. If omitted, returns all webhooks for the organization.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -775,7 +775,7 @@ class AsyncRawWebhooksClient:
         Parameters
         ----------
         webhook_id : typing.Optional[str]
-            Optional MongoDB ObjectId (24-char hex) of a specific webhook to retrieve. If omitted, returns all webhooks for the organization.
+            Optional 24-character hex id of a specific webhook to retrieve. If omitted, returns all webhooks for the organization.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

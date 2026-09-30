@@ -7,13 +7,17 @@ from importlib import import_module
 
 if typing.TYPE_CHECKING:
     from .types import (
+        RegisterCallRealtimeRequestInputAudioFormat,
         RegisterCallRealtimeRequestMode,
+        RegisterCallRealtimeRequestOutputAudioFormat,
         RegisterCallRealtimeRequestVariablesValue,
         RegisterCallRealtimeResponse,
         RegisterCallRealtimeResponseData,
     )
 _dynamic_imports: typing.Dict[str, str] = {
+    "RegisterCallRealtimeRequestInputAudioFormat": ".types",
     "RegisterCallRealtimeRequestMode": ".types",
+    "RegisterCallRealtimeRequestOutputAudioFormat": ".types",
     "RegisterCallRealtimeRequestVariablesValue": ".types",
     "RegisterCallRealtimeResponse": ".types",
     "RegisterCallRealtimeResponseData": ".types",
@@ -42,7 +46,9 @@ def __dir__():
 
 
 __all__ = [
+    "RegisterCallRealtimeRequestInputAudioFormat",
     "RegisterCallRealtimeRequestMode",
+    "RegisterCallRealtimeRequestOutputAudioFormat",
     "RegisterCallRealtimeRequestVariablesValue",
     "RegisterCallRealtimeResponse",
     "RegisterCallRealtimeResponseData",

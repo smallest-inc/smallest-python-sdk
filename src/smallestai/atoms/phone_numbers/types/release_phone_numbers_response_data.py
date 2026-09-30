@@ -8,7 +8,17 @@ from ....core.unchecked_base_model import UncheckedBaseModel
 
 
 class ReleasePhoneNumbersResponseData(UncheckedBaseModel):
-    success: typing.Optional[bool] = None
+    success: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Always `true` on a 200 response. Failure cases return 400.
+    """
+
+    product: typing.Optional[typing.Dict[str, typing.Any]] = pydantic.Field(default=None)
+    """
+    The updated product document (release outcome), returned verbatim from the handler.
+    """
+
+    message: typing.Optional[str] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

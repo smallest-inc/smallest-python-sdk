@@ -25,9 +25,7 @@ def initialise_auth_app(auth_client: AuthClient, atoms_client: AtomsAPIClient):
         if not api_key:
             if sys.stdin.isatty():
                 console.print("[bold cyan]Smallest API Key[/bold cyan]")
-                console.print(
-                    "[dim]Enter your Smallest API key from https://app.smallest.ai/dashboard/api-keys[/dim]"
-                )
+                console.print("[dim]Enter your Smallest API key from https://app.smallest.ai/dashboard/api-keys[/dim]")
                 api_key = Prompt.ask("> ", password=True)
             else:
                 # Piped stdin (e.g. `echo $KEY | smallestai auth login`): read directly
@@ -35,9 +33,7 @@ def initialise_auth_app(auth_client: AuthClient, atoms_client: AtomsAPIClient):
                 api_key = sys.stdin.readline().strip()
 
         if not api_key:
-            console.print(
-                "[red]No API key provided. Set SMALLEST_API_KEY or run in an interactive terminal.[/red]"
-            )
+            console.print("[red]No API key provided. Set SMALLEST_API_KEY or run in an interactive terminal.[/red]")
             raise typer.Exit(1)
 
         try:
@@ -47,9 +43,7 @@ def initialise_auth_app(auth_client: AuthClient, atoms_client: AtomsAPIClient):
             return
 
         auth_client.login(api_key)
-        console.print(
-            f"[bold green]Login successful [bold green]{account_details.userEmail}[/bold green]"
-        )
+        console.print(f"[bold green]Login successful [bold green]{account_details.userEmail}[/bold green]")
 
     @auth_app.command()
     def logout():
