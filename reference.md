@@ -22,7 +22,6 @@ client = SmallestAI(
 )
 
 client.atoms.user.get_user_details()
-
 ```
 </dd>
 </dl>
@@ -139,7 +138,6 @@ client = SmallestAI(
 )
 
 client.atoms.agent_templates.list_agent_templates()
-
 ```
 </dd>
 </dl>
@@ -213,7 +211,6 @@ client.atoms.agent_templates.create_agent_from_template(
     agent_name="agentName",
     template_id="templateId",
 )
-
 ```
 </dd>
 </dl>
@@ -301,7 +298,6 @@ client = SmallestAI(
 )
 
 client.atoms.agents.list_agents()
-
 ```
 </dd>
 </dl>
@@ -467,7 +463,6 @@ client = SmallestAI(
 client.atoms.agents.create_agent(
     name="name",
 )
-
 ```
 </dd>
 </dl>
@@ -811,7 +806,6 @@ client.atoms.agents.duplicate_agent(
     id="id",
     target_organization_id="60d0fe4f5311236168a109ca",
 )
-
 ```
 </dd>
 </dl>
@@ -922,7 +916,6 @@ client = SmallestAI(
 client.atoms.agents.get_agent(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -1025,7 +1018,6 @@ client = SmallestAI(
 client.atoms.agents.update_agent(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -1162,7 +1154,6 @@ client = SmallestAI(
 client.atoms.agents.get_agent_call_logs(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -1258,7 +1249,6 @@ client = SmallestAI(
 client.atoms.agents.archive_agent(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -1360,7 +1350,6 @@ client = SmallestAI(
 client.atoms.realtime.register_call(
     agent_id="69da0b4c20c0e03cfa4ee258",
 )
-
 ```
 </dd>
 </dl>
@@ -1535,7 +1524,6 @@ client.atoms.calls.list(
     date_from=datetime.datetime.fromisoformat("2025-01-01T00:00:00+00:00"),
     date_to=datetime.datetime.fromisoformat("2025-01-31T23:59:59+00:00"),
 )
-
 ```
 </dd>
 </dl>
@@ -1738,12 +1726,8 @@ client = SmallestAI(
 )
 
 client.atoms.calls.search(
-    call_ids=[
-        "CALL-1737000000000-abc123",
-        "CALL-1737000000001-def456"
-    ],
+    call_ids=["CALL-1737000000000-abc123", "CALL-1737000000001-def456"],
 )
-
 ```
 </dd>
 </dl>
@@ -1819,7 +1803,6 @@ client = SmallestAI(
 client.atoms.calls.get(
     id="CALL-1737000000000-abc123",
 )
-
 ```
 </dd>
 </dl>
@@ -1945,7 +1928,6 @@ client.atoms.calls.start_outbound_call(
     agent_id="60d0fe4f5311236168a109ca",
     phone_number="+1234567890",
 )
-
 ```
 </dd>
 </dl>
@@ -2194,7 +2176,6 @@ client = SmallestAI(
 client.atoms.conversations.get_a_time_limited_recording_download_url_legacy(
     call_id="CALL-1781127346211-e765f7",
 )
-
 ```
 </dd>
 </dl>
@@ -2272,7 +2253,6 @@ client = SmallestAI(
 client.atoms.conversations.list_retry_attempts(
     call_id="callId",
 )
-
 ```
 </dd>
 </dl>
@@ -2347,7 +2327,6 @@ client = SmallestAI(
 client.atoms.conversations.cancel(
     call_id="CALL-1778226705739-7e4c17",
 )
-
 ```
 </dd>
 </dl>
@@ -2432,7 +2411,6 @@ client = SmallestAI(
 client.atoms.conversations.cancel_queued(
     call_id="CALL-1781127346211-e765f7",
 )
-
 ```
 </dd>
 </dl>
@@ -2539,7 +2517,6 @@ client = SmallestAI(
 client.atoms.live_transcripts.subscribe_to_live_events(
     call_id="CALL-1758124225863-80752e",
 )
-
 ```
 </dd>
 </dl>
@@ -2629,7 +2606,6 @@ client = SmallestAI(
 )
 
 client.atoms.campaigns.list()
-
 ```
 </dd>
 </dl>
@@ -2744,7 +2720,6 @@ client.atoms.campaigns.create(
     audience_id="60d0fe4f5311236168a109ca",
     agent_id="60d0fe4f5311236168a109ca",
 )
-
 ```
 </dd>
 </dl>
@@ -2900,7 +2875,6 @@ client = SmallestAI(
 client.atoms.campaigns.get(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -2973,7 +2947,6 @@ client = SmallestAI(
 client.atoms.campaigns.delete(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -3050,7 +3023,6 @@ client = SmallestAI(
 client.atoms.campaigns.start_or_resume(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -3124,7 +3096,6 @@ client = SmallestAI(
 client.atoms.campaigns.pause(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -3355,7 +3326,6 @@ client = SmallestAI(
 )
 
 client.atoms.knowledge_base.list()
-
 ```
 </dd>
 </dl>
@@ -3420,7 +3390,6 @@ client = SmallestAI(
 client.atoms.knowledge_base.create(
     name="name",
 )
-
 ```
 </dd>
 </dl>
@@ -3501,7 +3470,6 @@ client = SmallestAI(
 client.atoms.knowledge_base.get(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -3577,7 +3545,6 @@ client.atoms.knowledge_base.update_a_knowledge_base_name_description(
     id="id",
     name="Q4 Pricing Updates",
 )
-
 ```
 </dd>
 </dl>
@@ -3670,7 +3637,6 @@ client = SmallestAI(
 client.atoms.knowledge_base.delete(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -3743,7 +3709,6 @@ client = SmallestAI(
 client.atoms.knowledge_base.get_all_knowledge_base_items(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -3817,7 +3782,6 @@ client.atoms.knowledge_base.delete_a_knowledge_base_item(
     knowledge_base_id="knowledgeBaseId",
     knowledge_base_item_id="knowledgeBaseItemId",
 )
-
 ```
 </dd>
 </dl>
@@ -3905,7 +3869,6 @@ client.atoms.knowledge_base.upload_a_pdf_file_to_a_knowledge_base(
     id="id",
     media="example_media",
 )
-
 ```
 </dd>
 </dl>
@@ -3995,7 +3958,6 @@ client.atoms.knowledge_base.get_a_presigned_s3url_for_direct_file_upload(
     content_type="application/pdf",
     knowledge_base_id="6867ca76d0f8f2e0f4201281",
 )
-
 ```
 </dd>
 </dl>
@@ -4098,7 +4060,6 @@ client.atoms.knowledge_base.complete_a_presigned_url_upload_and_start_processing
     key="key",
     file_size=1,
 )
-
 ```
 </dd>
 </dl>
@@ -4206,7 +4167,6 @@ client.atoms.knowledge_base.extract_sitemap_urls(
     site_url="https://example.com/sitemap.xml",
     knowledge_base_id="6867ca76d0f8f2e0f4201281",
 )
-
 ```
 </dd>
 </dl>
@@ -4292,12 +4252,8 @@ client = SmallestAI(
 
 client.atoms.knowledge_base.scrape_urls(
     id="id",
-    urls=[
-        "https://example.com/pricing",
-        "https://example.com/faq"
-    ],
+    urls=["https://example.com/pricing", "https://example.com/faq"],
 )
-
 ```
 </dd>
 </dl>
@@ -4378,7 +4334,6 @@ client = SmallestAI(
 client.atoms.knowledge_base.list_scraped_ur_ls_in_a_knowledge_base_their_status(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -4452,7 +4407,6 @@ client.atoms.knowledge_base.delete_a_scraped_url_from_a_knowledge_base(
     knowledge_base_id="knowledgeBaseId",
     knowledge_base_scraped_urls_id="knowledgeBaseScrapedUrlsId",
 )
-
 ```
 </dd>
 </dl>
@@ -4535,7 +4489,6 @@ client = SmallestAI(
 )
 
 client.atoms.phone_numbers.list()
-
 ```
 </dd>
 </dl>
@@ -4603,7 +4556,6 @@ client = SmallestAI(
 )
 
 client.atoms.phone_numbers.list_all_phone_numbers_platform_sip()
-
 ```
 </dd>
 </dl>
@@ -4671,7 +4623,6 @@ client.atoms.phone_numbers.search_rentable(
     country_code="US",
     provider="twilio",
 )
-
 ```
 </dd>
 </dl>
@@ -4760,7 +4711,6 @@ client = SmallestAI(
 )
 
 client.atoms.phone_numbers.preview_prorated_rental_cost_for_renting_a_phone_number_today()
-
 ```
 </dd>
 </dl>
@@ -4830,7 +4780,6 @@ client.atoms.phone_numbers.rent(
     phone_number="13183747513",
     provider="twilio",
 )
-
 ```
 </dd>
 </dl>
@@ -4918,7 +4867,6 @@ client = SmallestAI(
 client.atoms.phone_numbers.release(
     product_id="6969109c84c74bed175f02a7",
 )
-
 ```
 </dd>
 </dl>
@@ -4989,7 +4937,6 @@ client = SmallestAI(
 )
 
 client.atoms.phone_numbers.get_stripe_customer_portal_url()
-
 ```
 </dd>
 </dl>
@@ -5052,7 +4999,6 @@ client = SmallestAI(
 )
 
 client.atoms.phone_numbers.check_whether_the_organization_has_unpaid_invoices()
-
 ```
 </dd>
 </dl>
@@ -5132,7 +5078,6 @@ client.atoms.phone_numbers.import_sip(
     sip_username="",
     sip_password="",
 )
-
 ```
 </dd>
 </dl>
@@ -6737,7 +6682,6 @@ client.atoms.compliance.get_compliance_status(
     number_type="local",
     user_type="individual",
 )
-
 ```
 </dd>
 </dl>
@@ -6830,7 +6774,6 @@ client.atoms.compliance.get_compliance_requirements(
     number_type="local",
     user_type="individual",
 )
-
 ```
 </dd>
 </dl>
@@ -6928,7 +6871,6 @@ client.atoms.compliance.submit(
     end_user="endUser",
     documents="documents",
 )
-
 ```
 </dd>
 </dl>
@@ -7071,7 +7013,6 @@ client.atoms.compliance.resubmit(
     files=["example_files"],
     documents="documents",
 )
-
 ```
 </dd>
 </dl>
@@ -7168,7 +7109,6 @@ client = SmallestAI(
 client.atoms.compliance.refresh_compliance_application_status(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -7240,7 +7180,6 @@ client = SmallestAI(
 )
 
 client.atoms.webhooks.get_webhooks()
-
 ```
 </dd>
 </dl>
@@ -7324,7 +7263,6 @@ client.atoms.webhooks.create(
         )
     ],
 )
-
 ```
 </dd>
 </dl>
@@ -7420,7 +7358,6 @@ client = SmallestAI(
 client.atoms.webhooks.delete(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -7508,7 +7445,6 @@ client = SmallestAI(
 client.atoms.webhooks.update(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -7608,7 +7544,6 @@ client = SmallestAI(
 client.atoms.webhooks.get_webhook_subscriptions_for_an_agent(
     agent_id="agentId",
 )
-
 ```
 </dd>
 </dl>
@@ -7682,12 +7617,9 @@ client = SmallestAI(
 
 client.atoms.webhooks.replace_webhook_subscriptions_for_an_agent(
     agent_id="agentId",
-    event_types=[
-        "pre-conversation"
-    ],
+    event_types=["pre-conversation"],
     webhook_id="60d0fe4f5311236168a109ca",
 )
-
 ```
 </dd>
 </dl>
@@ -7777,7 +7709,6 @@ client = SmallestAI(
 client.atoms.webhooks.delete_webhook_subscriptions_for_an_agent(
     agent_id="agentId",
 )
-
 ```
 </dd>
 </dl>
@@ -7849,7 +7780,6 @@ client = SmallestAI(
 )
 
 client.atoms.audience.list()
-
 ```
 </dd>
 </dl>
@@ -7921,7 +7851,6 @@ client.atoms.audience.create_audience_with_csv_upload(
     name="name",
     phone_number_column_name="phoneNumberColumnName",
 )
-
 ```
 </dd>
 </dl>
@@ -8027,7 +7956,6 @@ client = SmallestAI(
 client.atoms.audience.get(
     id="60d0fe4f5311236168a109ca",
 )
-
 ```
 </dd>
 </dl>
@@ -8106,7 +8034,6 @@ client = SmallestAI(
 client.atoms.audience.delete_audience(
     id="60d0fe4f5311236168a109ca",
 )
-
 ```
 </dd>
 </dl>
@@ -8181,7 +8108,6 @@ client.atoms.audience.get_audience_members(
     page=1,
     offset=10,
 )
-
 ```
 </dd>
 </dl>
@@ -8278,15 +8204,8 @@ client = SmallestAI(
 
 client.atoms.audience.add_audience_members(
     id="60d0fe4f5311236168a109ca",
-    members=[
-        {
-            "phoneNumber": "+1234567890",
-            "name": "John Doe",
-            "email": "john@example.com"
-        }
-    ],
+    members=[{"phoneNumber": "+1234567890", "name": "John Doe", "email": "john@example.com"}],
 )
-
 ```
 </dd>
 </dl>
@@ -8366,11 +8285,8 @@ client = SmallestAI(
 
 client.atoms.audience.delete_audience_members(
     id="60d0fe4f5311236168a109ca",
-    member_ids=[
-        "60d0fe4f5311236168a109cd"
-    ],
+    member_ids=["60d0fe4f5311236168a109cd"],
 )
-
 ```
 </dd>
 </dl>
@@ -8464,7 +8380,6 @@ client.atoms.audience.search_audience_members(
     id="60d0fe4f5311236168a109ca",
     query="john",
 )
-
 ```
 </dd>
 </dl>
@@ -8548,7 +8463,6 @@ client = SmallestAI(
 client.atoms.agent_versioning_drafts.list_active_drafts(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -8623,7 +8537,6 @@ client = SmallestAI(
 client.atoms.agent_versioning_drafts.create_draft(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -8726,7 +8639,6 @@ client.atoms.agent_versioning_drafts.get_draft_detail(
     id="id",
     draft_id="draftId",
 )
-
 ```
 </dd>
 </dl>
@@ -8818,7 +8730,6 @@ client.atoms.agent_versioning_drafts.discard_draft(
     id="id",
     draft_id="draftId",
 )
-
 ```
 </dd>
 </dl>
@@ -8904,7 +8815,6 @@ client.atoms.agent_versioning_drafts.rename_draft(
     draft_id="draftId",
     draft_name="draftName",
 )
-
 ```
 </dd>
 </dl>
@@ -8996,7 +8906,6 @@ client.atoms.agent_versioning_drafts.get_draft_diff(
     id="id",
     draft_id="draftId",
 )
-
 ```
 </dd>
 </dl>
@@ -9088,7 +8997,6 @@ client.atoms.agent_versioning_drafts.publish_draft(
     id="id",
     draft_id="draftId",
 )
-
 ```
 </dd>
 </dl>
@@ -9196,7 +9104,6 @@ client.atoms.agent_versioning_drafts.test_call_with_draft_config(
     id="id",
     draft_id="draftId",
 )
-
 ```
 </dd>
 </dl>
@@ -9317,7 +9224,6 @@ client.atoms.agent_versioning_drafts.update_draft_config(
     id="id",
     draft_id="draftId",
 )
-
 ```
 </dd>
 </dl>
@@ -9652,7 +9558,6 @@ client = SmallestAI(
 client.atoms.agent_versioning_versions.list_published_versions(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -9753,7 +9658,6 @@ client.atoms.agent_versioning_versions.diff_two_versions(
     version_a="versionA",
     version_b="versionB",
 )
-
 ```
 </dd>
 </dl>
@@ -9848,7 +9752,6 @@ client.atoms.agent_versioning_versions.get_version_detail(
     id="id",
     version_id="versionId",
 )
-
 ```
 </dd>
 </dl>
@@ -9936,7 +9839,6 @@ client.atoms.agent_versioning_versions.update_version_metadata(
     id="id",
     version_id="versionId",
 )
-
 ```
 </dd>
 </dl>
@@ -10049,7 +9951,6 @@ client.atoms.agent_versioning_versions.activate_version(
     id="id",
     version_id="versionId",
 )
-
 ```
 </dd>
 </dl>
@@ -10137,7 +10038,6 @@ client.atoms.agent_versioning_versions.test_call_with_version_config(
     id="id",
     version_id="versionId",
 )
-
 ```
 </dd>
 </dl>
@@ -10227,7 +10127,6 @@ client = SmallestAI(
 client.atoms.agent_versioning_branches.list(
     id="id",
 )
-
 ```
 </dd>
 </dl>
@@ -10302,7 +10201,6 @@ client.atoms.agent_versioning_branches.create_branch(
     source_branch_id="sourceBranchId",
     name="name",
 )
-
 ```
 </dd>
 </dl>
@@ -10392,7 +10290,6 @@ client.atoms.agent_versioning_branches.get(
     id="id",
     branch_id="branchId",
 )
-
 ```
 </dd>
 </dl>
@@ -10475,7 +10372,6 @@ client.atoms.agent_versioning_branches.rename(
     branch_id="branchId",
     name="name",
 )
-
 ```
 </dd>
 </dl>
@@ -10565,7 +10461,6 @@ client.atoms.agent_versioning_branches.archive(
     id="id",
     branch_id="branchId",
 )
-
 ```
 </dd>
 </dl>
@@ -10647,7 +10542,6 @@ client.atoms.agent_versioning_branches.make_live(
     id="id",
     branch_id="branchId",
 )
-
 ```
 </dd>
 </dl>
@@ -10729,7 +10623,6 @@ client.atoms.agent_versioning_branches.get_draft(
     id="id",
     branch_id="branchId",
 )
-
 ```
 </dd>
 </dl>
@@ -10822,7 +10715,6 @@ client.atoms.agent_versioning_branches.update_draft(
     id="id",
     branch_id="branchId",
 )
-
 ```
 </dd>
 </dl>
@@ -11112,7 +11004,6 @@ client.atoms.agent_versioning_branches.discard_draft(
     id="id",
     branch_id="branchId",
 )
-
 ```
 </dd>
 </dl>
@@ -11198,7 +11089,6 @@ client.atoms.agent_versioning_branches.publish_draft(
     id="id",
     branch_id="branchId",
 )
-
 ```
 </dd>
 </dl>
@@ -11288,7 +11178,6 @@ client.atoms.agent_versioning_branches.cancel_publish(
     id="id",
     branch_id="branchId",
 )
-
 ```
 </dd>
 </dl>
@@ -11372,7 +11261,6 @@ client.atoms.agent_versioning_branches.test_call(
     id="id",
     branch_id="branchId",
 )
-
 ```
 </dd>
 </dl>
@@ -11487,7 +11375,6 @@ client.atoms.agent_versioning_revisions.list(
     id="id",
     branch_id="branchId",
 )
-
 ```
 </dd>
 </dl>
@@ -11586,7 +11473,6 @@ client.atoms.agent_versioning_revisions.get(
     branch_id="branchId",
     revision_id="revisionId",
 )
-
 ```
 </dd>
 </dl>
@@ -11677,7 +11563,6 @@ client.atoms.agent_versioning_revisions.get_history(
     branch_id="branchId",
     revision_id="revisionId",
 )
-
 ```
 </dd>
 </dl>
@@ -11770,7 +11655,6 @@ client.atoms.agent_versioning_revisions.restore(
     branch_id="branchId",
     revision_id="revisionId",
 )
-
 ```
 </dd>
 </dl>
@@ -11861,7 +11745,6 @@ client.atoms.agent_versioning_revisions.diff(
     a="a",
     b="b",
 )
-
 ```
 </dd>
 </dl>
@@ -11980,7 +11863,6 @@ client.atoms.prompt_scoring.score_a_prompt(
         version_id="6a1589b75e048394eb37bc47",
     ),
 )
-
 ```
 </dd>
 </dl>
@@ -12052,7 +11934,6 @@ client = SmallestAI(
 )
 
 client.atoms.analytics.get_call_counts_log()
-
 ```
 </dd>
 </dl>
@@ -12171,7 +12052,6 @@ client = SmallestAI(
 )
 
 client.atoms.analytics.get_call_counts_by_day()
-
 ```
 </dd>
 </dl>
@@ -12276,7 +12156,6 @@ client = SmallestAI(
 client.atoms.analytics.get_conversation_details(
     call_id="callId",
 )
-
 ```
 </dd>
 </dl>
@@ -12347,7 +12226,6 @@ client = SmallestAI(
 )
 
 client.atoms.analytics.get_usage_timeseries()
-
 ```
 </dd>
 </dl>
@@ -12426,7 +12304,6 @@ client = SmallestAI(
 )
 
 client.atoms.analytics.get_dashboard()
-
 ```
 </dd>
 </dl>
@@ -12529,7 +12406,6 @@ client = SmallestAI(
 )
 
 client.atoms.analytics.get_analytics_summary()
-
 ```
 </dd>
 </dl>
@@ -12632,7 +12508,6 @@ client = SmallestAI(
 )
 
 client.atoms.analytics.get_call_volume_timeseries()
-
 ```
 </dd>
 </dl>
@@ -12735,7 +12610,6 @@ client = SmallestAI(
 )
 
 client.atoms.analytics.get_pickup_rate_by_number()
-
 ```
 </dd>
 </dl>
@@ -12838,7 +12712,6 @@ client = SmallestAI(
 )
 
 client.atoms.analytics.get_phone_number_trends()
-
 ```
 </dd>
 </dl>
@@ -12941,7 +12814,6 @@ client = SmallestAI(
 )
 
 client.atoms.analytics.get_hourly_performance()
-
 ```
 </dd>
 </dl>
@@ -13044,7 +12916,6 @@ client = SmallestAI(
 )
 
 client.atoms.analytics.get_call_outcomes_timeseries()
-
 ```
 </dd>
 </dl>
@@ -13147,7 +13018,6 @@ client = SmallestAI(
 )
 
 client.atoms.analytics.get_duration_stats()
-
 ```
 </dd>
 </dl>
@@ -13250,7 +13120,6 @@ client = SmallestAI(
 )
 
 client.atoms.analytics.get_weekly_trends()
-
 ```
 </dd>
 </dl>
@@ -13353,7 +13222,6 @@ client = SmallestAI(
 )
 
 client.atoms.analytics.get_agent_performance()
-
 ```
 </dd>
 </dl>
@@ -13483,7 +13351,6 @@ client = SmallestAI(
 client.atoms.analytics.get_analytics_concurrency(
     date=datetime.date.fromisoformat("2023-01-15"),
 )
-
 ```
 </dd>
 </dl>
@@ -13573,7 +13440,6 @@ client = SmallestAI(
 client.atoms.analytics.get_call_start_distribution(
     date=datetime.date.fromisoformat("2023-01-15"),
 )
-
 ```
 </dd>
 </dl>
@@ -13655,7 +13521,6 @@ client = SmallestAI(
 client.atoms.analytics.get_daily_call_summary(
     date=datetime.date.fromisoformat("2023-01-15"),
 )
-
 ```
 </dd>
 </dl>
@@ -13734,7 +13599,6 @@ client = SmallestAI(
 )
 
 client.atoms.analytics.get_attempt_cohort()
-
 ```
 </dd>
 </dl>
@@ -13849,7 +13713,6 @@ client.atoms.integrations.modify_web_engage_integration(
         )
     ],
 )
-
 ```
 </dd>
 </dl>
@@ -13986,7 +13849,6 @@ client = SmallestAI(
 )
 
 client.atoms.concurrency.get_concurrency()
-
 ```
 </dd>
 </dl>
@@ -14201,7 +14063,6 @@ client.atoms.concurrency.update_custom_trunk_cps_limit(
     termination_url="43.205.53.11:5091",
     cps_limit=2,
 )
-
 ```
 </dd>
 </dl>
@@ -14467,7 +14328,6 @@ client = SmallestAI(
 )
 
 client.atoms.billing.get_balance()
-
 ```
 </dd>
 </dl>
@@ -14554,7 +14414,6 @@ client.atoms.billing.get_ledger(
     from_=datetime.datetime.fromisoformat("2026-07-01T00:00:00+00:00"),
     to=datetime.datetime.fromisoformat("2026-07-28T00:00:00+00:00"),
 )
-
 ```
 </dd>
 </dl>
@@ -14668,7 +14527,6 @@ client = SmallestAI(
 )
 
 client.atoms.billing.get_usage_breakdown()
-
 ```
 </dd>
 </dl>
@@ -14738,7 +14596,6 @@ client = SmallestAI(
 )
 
 client.atoms.billing.list_invoices()
-
 ```
 </dd>
 </dl>
@@ -14808,7 +14665,6 @@ client = SmallestAI(
 client.atoms.billing.get_invoice_pdf(
     invoice_id="invoiceId",
 )
-
 ```
 </dd>
 </dl>
@@ -14882,7 +14738,6 @@ client = SmallestAI(
 )
 
 client.atoms.account.get_account_details()
-
 ```
 </dd>
 </dl>
@@ -14948,7 +14803,6 @@ client = SmallestAI(
 client.atoms.account.update_organization_name(
     name="Acme Inc.",
 )
-
 ```
 </dd>
 </dl>
@@ -15174,7 +15028,6 @@ client = SmallestAI(
 )
 
 client.atoms.tools.list_tools()
-
 ```
 </dd>
 </dl>
@@ -15325,7 +15178,6 @@ client = SmallestAI(
 client.atoms.tools.delete_tool(
     tool_id="toolId",
 )
-
 ```
 </dd>
 </dl>
@@ -15559,7 +15411,6 @@ client = SmallestAI(
 )
 
 client.atoms.secrets.list_secrets()
-
 ```
 </dd>
 </dl>
@@ -15626,7 +15477,6 @@ client.atoms.secrets.create_secret(
     name="ORDER_API_TOKEN",
     value="sk_live_xxxxxxxxxxxx",
 )
-
 ```
 </dd>
 </dl>
@@ -15707,7 +15557,6 @@ client = SmallestAI(
 client.atoms.secrets.delete_secret(
     secret_id="secretId",
 )
-
 ```
 </dd>
 </dl>
@@ -15779,7 +15628,6 @@ client = SmallestAI(
 )
 
 client.waves.get_pronunciation_dicts()
-
 ```
 </dd>
 </dl>
@@ -15850,7 +15698,6 @@ client.waves.create_pronunciation_dict(
         )
     ],
 )
-
 ```
 </dd>
 </dl>
@@ -15930,7 +15777,6 @@ client.waves.update_pronunciation_dict(
         )
     ],
 )
-
 ```
 </dd>
 </dl>
@@ -16011,7 +15857,6 @@ client = SmallestAI(
 client.waves.delete_pronunciation_dict(
     id="64f1234567890abcdef12345",
 )
-
 ```
 </dd>
 </dl>
@@ -16082,7 +15927,6 @@ client = SmallestAI(
 )
 
 client.waves.synthesize_lightning()
-
 ```
 </dd>
 </dl>
@@ -16153,7 +15997,6 @@ client = SmallestAI(
 )
 
 client.waves.synthesize_lightning_large()
-
 ```
 </dd>
 </dl>
@@ -16238,7 +16081,6 @@ client = SmallestAI(
 )
 
 client.waves.synthesize_sse_lightning_large()
-
 ```
 </dd>
 </dl>
@@ -16309,7 +16151,6 @@ client = SmallestAI(
 )
 
 client.waves.synthesize_lightning_v2()
-
 ```
 </dd>
 </dl>
@@ -16395,7 +16236,6 @@ client = SmallestAI(
 )
 
 client.waves.synthesize_sse_lightning_v2()
-
 ```
 </dd>
 </dl>
@@ -16477,7 +16317,6 @@ client = SmallestAI(
 client.waves.get_voices(
     model="lightning-v3.1",
 )
-
 ```
 </dd>
 </dl>
@@ -16643,7 +16482,6 @@ client.waves.synthesize_tts(
     text="Hello from Waves TTS.",
     voice_id="magnus",
 )
-
 ```
 </dd>
 </dl>
@@ -16776,7 +16614,6 @@ client.waves.synthesize_sse_tts(
     text="text",
     voice_id="voice_id",
 )
-
 ```
 </dd>
 </dl>
@@ -16858,7 +16695,6 @@ client = SmallestAI(
 )
 
 client.waves.list_voice_clones()
-
 ```
 </dd>
 </dl>
@@ -16924,7 +16760,6 @@ client.waves.create_voice_clone(
     file="example_file",
     display_name="displayName",
 )
-
 ```
 </dd>
 </dl>
@@ -17391,9 +17226,7 @@ client = OpenAI(
 
 response = client.chat.completions.create(
     model="electron",
-    messages=[
-        {"role": "user", "content": "Write one sentence about why the sky is blue."}
-    ],
+    messages=[{"role": "user", "content": "Write one sentence about why the sky is blue."}],
 )
 
 print(response.choices[0].message.content)
@@ -17471,7 +17304,6 @@ client.waves.electron.complete(
         )
     ],
 )
-
 ```
 </dd>
 </dl>
