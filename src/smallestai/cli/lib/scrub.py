@@ -4,15 +4,16 @@ Build logs, deploy errors, and build-detail panels can carry our internal K8s
 topology: the cluster-internal service URL
 (``ws://agent-<agent>-<build>-svc.agents.svc.cluster.local/ws``), pod names,
 pod IPs, and raw internal stack traces. That is useless to customers and leaks
-our infra, so by default we mask it. The raw text is still available with
-``--verbose``.
+our infra, so we always mask it. There is no raw/unscrubbed mode: ``--verbose``
+on the log stream controls volume (every line vs. status + tail), not masking,
+so no CLI invocation ever prints raw topology.
 
 Design note: this is a leak *filter*, not a parser. It errs toward masking.
 A false positive (masking something harmless) is acceptable; a false negative
 (leaking a pod name or internal host) is not. The patterns below are
 deliberately broad for that reason. Scrubbing is applied at the output boundary
-(see ``emit_error``), so it does not matter which exception type produced the
-string: anything printed through the crew error path is scrubbed the same way.
+(``_print_error`` and the log-stream printers), so it does not matter which
+exception type produced the string: everything the crew CLI prints is scrubbed.
 """
 
 from __future__ import annotations
@@ -80,9 +81,3 @@ def scrub_internal(text: str) -> str:
     for pattern in _PATTERNS:
         text = pattern.sub(_MASK, text)
     return text
-
-
-def safe(text: str, verbose: bool = False) -> str:
-    """Return ``text`` as-is when ``verbose`` (support wants raw infra detail),
-    otherwise scrubbed. Single place that encodes the verbose escape hatch."""
-    return text if verbose else scrub_internal(text)

@@ -21,7 +21,6 @@ from smallestai.cli.lib.chat import ChatClient, chat_loop
 from smallestai.cli.lib.ownership import SUMMARY as OWNERSHIP_SUMMARY
 from smallestai.cli.lib.ownership import render_ownership
 from smallestai.cli.lib.project_config import ProjectConfig
-from smallestai.cli.lib.scrub import safe as _safe
 from smallestai.cli.lib.scrub import scrub_internal
 from smallestai.cli.utils import create_zip_from_directory, find_required_env_vars
 
@@ -37,12 +36,12 @@ AGENT_BUILD_STATUS_COLORS = {
 console = Console()
 
 
-def _print_error(prefix: str, err: object, *, verbose: bool = False) -> None:
-    """Single choke-point for crew error output. Scrubs cluster-internal
-    topology out of the message regardless of the exception type that produced
+def _print_error(prefix: str, err: object) -> None:
+    """Single choke-point for crew error output. Always scrubs cluster-internal
+    topology out of the message, regardless of the exception type that produced
     it (httpx errors, orchestrator 5xx bodies, raw tracebacks all flow through
-    here), so a non-OSError failure can't leak infra. ``--verbose`` shows raw."""
-    console.print(f"[red]{prefix}: {_safe(str(err), verbose)}[/red]")
+    here), so no error path can leak infra."""
+    console.print(f"[red]{prefix}: {scrub_internal(str(err))}[/red]")
 
 
 def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthClient, atoms_client: AtomsAPIClient):
@@ -558,7 +557,7 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
             None, "--agent-id", help="Agent id (defaults to the linked project agent)."
         ),
         verbose: bool = typer.Option(
-            False, "--verbose", "-v", help="Show raw logs including internal infra detail (for support)."
+            False, "--verbose", "-v", help="Stream every log line (full build log), not just status."
         ),
     ):
         """Stream a build's status (compile + deploy) in real time.
@@ -566,8 +565,9 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
         With no build ID, streams the most recent build for the current agent.
         By default this shows the status progression (queued -> building ->
         deploying -> succeeded/failed) and, if the build fails, the last few log
-        lines so you can see why. Pass --verbose for the full raw log stream
-        including internal infra detail (for support).
+        lines so you can see why. Pass --verbose to stream every log line as it
+        arrives. Cluster-internal infra (pod names, service URLs, IPs) is masked
+        either way; the CLI never prints raw topology.
         """
         asyncio.run(async_build_logs(build_id, agent_id, verbose))
 
@@ -592,9 +592,10 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
 
         terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED"}
         failed = {"BUILD_FAILED", "DEPLOY_FAILED"}
-        # Default mode shows status only; keep a bounded, pre-scrubbed tail of
-        # the raw log so a failure can be explained without dumping the whole
-        # firehose (volume is unbounded) or leaking infra topology.
+        # Every log line is scrubbed before it is ever printed, in both modes, so
+        # no CLI invocation can leak cluster-internal topology. --verbose only
+        # controls volume: stream every (scrubbed) line vs. status + a bounded
+        # tail shown on failure.
         TAIL_LINES = 25
         tail: deque[str] = deque(maxlen=TAIL_LINES)
 
@@ -608,7 +609,7 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
         if not verbose:
             console.print(
                 "[dim]Showing build status. The full build log is shown on failure "
-                "(last 25 lines) or with --verbose.[/dim]\n"
+                "(last 25 lines) or with --verbose. Internal infra is always masked.[/dim]\n"
             )
 
         try:
@@ -617,12 +618,11 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
             ):
                 etype = event.get("type")
                 if etype == "log":
-                    msg = event.get("message", "")
+                    msg = scrub_internal(event.get("message", ""))
                     if verbose:
                         console.print(msg, highlight=False)
                     else:
-                        # Scrub as we buffer, so a later flush can never leak.
-                        tail.append(scrub_internal(msg))
+                        tail.append(msg)
                 elif etype == "status":
                     status = str(event.get("status", ""))
                     color = {"SUCCEEDED": "green", "BUILD_FAILED": "red", "DEPLOY_FAILED": "red"}.get(status, "yellow")
@@ -633,13 +633,13 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
                         break
                 elif etype == "error":
                     msg = event.get("message", "")
-                    console.print(f"[red]error:[/red] {_safe(msg, verbose)}")
+                    console.print(f"[red]error:[/red] {scrub_internal(msg)}")
                     _flush_tail()
                     break
         except KeyboardInterrupt:
             console.print("\n[yellow]Stopped.[/yellow]")
         except Exception as e:
-            _print_error("Error streaming build logs", e, verbose=verbose)
+            _print_error("Error streaming build logs", e)
             raise typer.Exit(1)
 
     @app.command()
