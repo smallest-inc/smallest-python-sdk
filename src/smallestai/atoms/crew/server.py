@@ -6,6 +6,7 @@ import uvicorn
 from fastapi import FastAPI, WebSocket
 from loguru import logger
 
+from smallestai.atoms.crew._logging import configure_crew_logging
 from smallestai.atoms.crew.session import CrewSession, _StartupProbeComplete
 
 
@@ -143,6 +144,11 @@ class AtomsCrewApp:
             host: Host to bind to
             port: Port to listen on
         """
+        # Configure logging first, before anything can trigger a loguru file
+        # sink against the (read-only in prod) pod rootfs. Keeps the pod from
+        # booting dead on `OSError: Read-only file system: 'logs'`.
+        configure_crew_logging()
+
         self._host = "0.0.0.0"
         self._port = 8080
         self.setup_handler = setup_handler
@@ -249,6 +255,18 @@ class AtomsCrewApp:
         """
         try:
             await _dry_run_setup_handler(self.setup_handler)
+        except OSError as e:
+            # A read-only rootfs (e.g. a stray `logs/` file sink) must never
+            # make the pod boot dead. This is an environment/logging problem,
+            # not a broken build, so we log it and still accept sessions.
+            logger.error(
+                "Startup hit a filesystem error ({}). This is usually a read-only "
+                "rootfs with a file-logging sink; logging falls back to stderr. "
+                "Pod will still accept sessions.",
+                e,
+            )
+            self._ready = True
+            return
         except Exception as e:
             self._ready = False
             self._not_ready_reason = f"{type(e).__name__}: {e}"

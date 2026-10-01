@@ -61,6 +61,17 @@ class StartupValidationTest(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(app._ready)
         self.assertIn("MISSING_API_KEY", app._not_ready_reason or "")
 
+    async def test_readonly_rootfs_oserror_does_not_boot_pod_dead(self):
+        # A read-only rootfs during startup (e.g. a stray `logs/` file sink)
+        # raises OSError. That is an environment problem, not a broken build,
+        # so the pod must still flip ready and accept sessions.
+        async def setup(session: CrewSession):
+            raise OSError(30, "Read-only file system: 'logs'")
+
+        app = AtomsCrewApp(setup_handler=setup)
+        await app._validate_startup()
+        self.assertTrue(app._ready)
+
     async def test_dry_run_start_raises_probe_complete_and_builds_graph(self):
         session = CrewSession(websocket=None, session_id="t", setup_handler=None)  # type: ignore[arg-type]
         session._dry_run = True

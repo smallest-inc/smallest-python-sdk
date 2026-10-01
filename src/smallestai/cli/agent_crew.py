@@ -20,6 +20,7 @@ from smallestai.cli.lib.chat import ChatClient, chat_loop
 from smallestai.cli.lib.ownership import SUMMARY as OWNERSHIP_SUMMARY
 from smallestai.cli.lib.ownership import render_ownership
 from smallestai.cli.lib.project_config import ProjectConfig
+from smallestai.cli.lib.scrub import scrub_internal
 from smallestai.cli.utils import create_zip_from_directory, find_required_env_vars
 
 AGENT_BUILD_STATUS_COLORS = {
@@ -276,7 +277,7 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
                 )
             elif status in terminal:
                 console.print(
-                    f"[red]Build ended with status: {status}. Check `smallestai agent-crew builds` for details.[/red]"
+                    f"[red]Build ended with status: {status}. Check `smallestai agent-crew logs` for details.[/red]"
                 )
             else:
                 console.print(
@@ -284,7 +285,8 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
                 )
 
         except Exception as e:
-            console.print(f"[red]Error deploying agent {e}[/red]")
+            # Scrub cluster-internal topology out of transport/API errors.
+            console.print(f"[red]Error deploying agent: {scrub_internal(str(e))}[/red]")
 
     @app.command()
     def chat(
@@ -465,13 +467,26 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
         is_live = getattr(build, "is_live", None)
         live_text = "[green]✓ LIVE[/green]" if is_live else "-"
 
+        # Mask cluster-internal topology (svc URLs, pod names) out of the raw
+        # error message. If the failure is purely internal infra (nothing left
+        # after scrubbing), show a clean support line instead of a bare mask.
+        raw_err = getattr(build, "error_message", None)
+        if raw_err:
+            scrubbed = scrub_internal(raw_err).strip()
+            if scrubbed in ("", "[internal]"):
+                err_text = f"build failed to start (id {build.id}); contact support"
+            else:
+                err_text = scrubbed
+        else:
+            err_text = "-"
+
         console.print(
             Panel(
                 f"[bold]Build ID:[/bold] {build.id}\n"
                 f"[bold]Agent ID:[/bold] {build.agent_id}\n"
                 f"[bold]Status:[/bold] {status_text}\n"
                 f"[bold]Live:[/bold] {live_text}\n"
-                f"[bold]Error Message:[/bold] {getattr(build, 'error_message', None) or '-'}\n"
+                f"[bold]Error Message:[/bold] {err_text}\n"
                 f"[bold]Created At:[/bold] {build.created_at}\n"
                 f"[bold]Updated At:[/bold] {build.updated_at}",
                 title="Build Details",
@@ -532,15 +547,19 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
         agent_id: Optional[str] = typer.Option(
             None, "--agent-id", help="Agent id (defaults to the linked project agent)."
         ),
+        verbose: bool = typer.Option(
+            False, "--verbose", "-v", help="Show raw logs including internal infra detail (for support)."
+        ),
     ):
         """Stream a build's logs (compile + deploy) in real time.
 
         With no build ID, streams the most recent build for the current agent.
         Use this to debug a deploy that failed or to watch one in progress.
+        Internal infra detail is masked by default; pass --verbose to see it.
         """
-        asyncio.run(async_build_logs(build_id, agent_id))
+        asyncio.run(async_build_logs(build_id, agent_id, verbose))
 
-    async def async_build_logs(build_id: str | None, agent_id_arg: Optional[str] = None):
+    async def async_build_logs(build_id: str | None, agent_id_arg: Optional[str] = None, verbose: bool = False):
         agent_id = _resolve_agent_id(agent_id_arg)
 
         credentials = auth_client.get_credentials()
@@ -568,7 +587,8 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
             ):
                 etype = event.get("type")
                 if etype == "log":
-                    console.print(event.get("message", ""), highlight=False)
+                    msg = event.get("message", "")
+                    console.print(msg if verbose else scrub_internal(msg), highlight=False)
                 elif etype == "status":
                     status = str(event.get("status", ""))
                     color = {"SUCCEEDED": "green", "BUILD_FAILED": "red", "DEPLOY_FAILED": "red"}.get(status, "yellow")
@@ -576,12 +596,14 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
                     if status in terminal:
                         break
                 elif etype == "error":
-                    console.print(f"[red]error:[/red] {event.get('message', '')}")
+                    msg = event.get("message", "")
+                    console.print(f"[red]error:[/red] {msg if verbose else scrub_internal(msg)}")
                     break
         except KeyboardInterrupt:
             console.print("\n[yellow]Stopped.[/yellow]")
         except Exception as e:
-            console.print(f"[red]Error streaming build logs: {e}[/red]")
+            detail = str(e) if verbose else scrub_internal(str(e))
+            console.print(f"[red]Error streaming build logs: {detail}[/red]")
             raise typer.Exit(1)
 
     @app.command()
