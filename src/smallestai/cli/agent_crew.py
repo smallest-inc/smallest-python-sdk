@@ -588,9 +588,7 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
             build_id = result.builds[0].id
             console.print(f"[dim]Latest build: {build_id}[/dim]")
 
-        console.print(
-            f"[bold cyan]Streaming build {build_id[:12]}...[/bold cyan]  [dim](Ctrl+C to stop)[/dim]\n"
-        )
+        console.print(f"[bold cyan]Streaming build {build_id[:12]}...[/bold cyan]  [dim](Ctrl+C to stop)[/dim]\n")
 
         terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED"}
         failed = {"BUILD_FAILED", "DEPLOY_FAILED"}

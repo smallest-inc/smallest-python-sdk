@@ -49,7 +49,7 @@ _INTERNAL_SVC_RE = re.compile(
 # beyond the id, which a bare id never has.
 _POD_NAME_RE = re.compile(
     r"\bagent-[a-z0-9\-]+-[a-z0-9]{8,10}-[a-z0-9]{5}\b"  # replicaset pod
-    r"|\bagent-[a-z0-9\-]+-\d{1,3}\b",                    # statefulset pod
+    r"|\bagent-[a-z0-9\-]+-\d{1,3}\b",  # statefulset pod
     re.IGNORECASE,
 )
 # Private / cluster pod IPs (RFC-1918), optional port:
