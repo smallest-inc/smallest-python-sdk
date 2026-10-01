@@ -1,3 +1,20 @@
+## 5.12.3 - 2026-10-01
+
+* **crew**: never boot a pod dead on a read-only rootfs. Logging is configured to
+  stderr (and an optional writable log dir) before any file sink can touch the pod
+  rootfs, and a read-only-filesystem error during startup validation is tolerated
+  (scoped to `EROFS`) while any other startup failure still keeps the pod not-ready.
+* **cli**: mask cluster-internal infra in `agent-crew` output. Build logs, deploy
+  errors, and build details no longer print internal service URLs, pod names, pod
+  IPs, region-coded API hosts (`api.<region>.smallest.ai`), or cloud-region tokens
+  (e.g. `ap-south-1`), and scrubbing is applied on every error path regardless of
+  exception type.
+* **cli**: `agent-crew logs` shows build status by default (the full log is shown on
+  failure or with `--verbose`); `--verbose` is scrubbed too, so the CLI never prints
+  raw cluster topology.
+* **cli**: `agent-crew doctor` fetches the agent via the API-key client (same path as
+  `agents get`) instead of a hand-rolled request that returned a 400.
+
 ## 5.12.2 - 2026-09-17
 
 * **waves**: `WavesStreamingTTS` now raises when the socket closes before a `complete`
