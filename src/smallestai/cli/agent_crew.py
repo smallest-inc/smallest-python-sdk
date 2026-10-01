@@ -4,6 +4,7 @@ import asyncio
 import base64
 import json as _json
 import sys
+from collections import deque
 from io import BytesIO
 from pathlib import Path
 from typing import Optional
@@ -20,6 +21,7 @@ from smallestai.cli.lib.chat import ChatClient, chat_loop
 from smallestai.cli.lib.ownership import SUMMARY as OWNERSHIP_SUMMARY
 from smallestai.cli.lib.ownership import render_ownership
 from smallestai.cli.lib.project_config import ProjectConfig
+from smallestai.cli.lib.scrub import scrub_internal
 from smallestai.cli.utils import create_zip_from_directory, find_required_env_vars
 
 AGENT_BUILD_STATUS_COLORS = {
@@ -32,6 +34,14 @@ AGENT_BUILD_STATUS_COLORS = {
 }
 
 console = Console()
+
+
+def _print_error(prefix: str, err: object) -> None:
+    """Single choke-point for crew error output. Always scrubs cluster-internal
+    topology out of the message, regardless of the exception type that produced
+    it (httpx errors, orchestrator 5xx bodies, raw tracebacks all flow through
+    here), so no error path can leak infra."""
+    console.print(f"[red]{prefix}: {scrub_internal(str(err))}[/red]")
 
 
 def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthClient, atoms_client: AtomsAPIClient):
@@ -91,7 +101,7 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
         try:
             agent_data = await atoms_client.get_agents(access_token)
         except Exception as e:
-            console.print(f"[red]Error fetching agents: {e}[/red]")
+            _print_error("Error fetching agents", e)
             return
 
         if not agent_data.agents:
@@ -276,7 +286,7 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
                 )
             elif status in terminal:
                 console.print(
-                    f"[red]Build ended with status: {status}. Check `smallestai agent-crew builds` for details.[/red]"
+                    f"[red]Build ended with status: {status}. Check `smallestai agent-crew logs` for details.[/red]"
                 )
             else:
                 console.print(
@@ -284,7 +294,8 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
                 )
 
         except Exception as e:
-            console.print(f"[red]Error deploying agent {e}[/red]")
+            # Scrub cluster-internal topology out of transport/API errors.
+            _print_error("Error deploying agent", e)
 
     @app.command()
     def chat(
@@ -456,7 +467,7 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
             await _manage_build(agent_id, selected_build, access_token)
 
         except Exception as e:
-            console.print(f"[red]Error: {e}[/red]")
+            _print_error("Error", e)
 
     async def _manage_build(agent_id: str, build, access_token: str):
         """Show action menu and manage a specific build."""
@@ -465,13 +476,26 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
         is_live = getattr(build, "is_live", None)
         live_text = "[green]✓ LIVE[/green]" if is_live else "-"
 
+        # Mask cluster-internal topology (svc URLs, pod names) out of the raw
+        # error message. If the failure is purely internal infra (nothing left
+        # after scrubbing), show a clean support line instead of a bare mask.
+        raw_err = getattr(build, "error_message", None)
+        if raw_err:
+            scrubbed = scrub_internal(raw_err).strip()
+            if scrubbed in ("", "[internal]"):
+                err_text = f"build failed to start (id {build.id}); contact support"
+            else:
+                err_text = scrubbed
+        else:
+            err_text = "-"
+
         console.print(
             Panel(
                 f"[bold]Build ID:[/bold] {build.id}\n"
                 f"[bold]Agent ID:[/bold] {build.agent_id}\n"
                 f"[bold]Status:[/bold] {status_text}\n"
                 f"[bold]Live:[/bold] {live_text}\n"
-                f"[bold]Error Message:[/bold] {getattr(build, 'error_message', None) or '-'}\n"
+                f"[bold]Error Message:[/bold] {err_text}\n"
                 f"[bold]Created At:[/bold] {build.created_at}\n"
                 f"[bold]Updated At:[/bold] {build.updated_at}",
                 title="Build Details",
@@ -532,15 +556,22 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
         agent_id: Optional[str] = typer.Option(
             None, "--agent-id", help="Agent id (defaults to the linked project agent)."
         ),
+        verbose: bool = typer.Option(
+            False, "--verbose", "-v", help="Stream every log line (full build log), not just status."
+        ),
     ):
-        """Stream a build's logs (compile + deploy) in real time.
+        """Stream a build's status (compile + deploy) in real time.
 
         With no build ID, streams the most recent build for the current agent.
-        Use this to debug a deploy that failed or to watch one in progress.
+        By default this shows the status progression (queued -> building ->
+        deploying -> succeeded/failed) and, if the build fails, the last few log
+        lines so you can see why. Pass --verbose to stream every log line as it
+        arrives. Cluster-internal infra (pod names, service URLs, IPs) is masked
+        either way; the CLI never prints raw topology.
         """
-        asyncio.run(async_build_logs(build_id, agent_id))
+        asyncio.run(async_build_logs(build_id, agent_id, verbose))
 
-    async def async_build_logs(build_id: str | None, agent_id_arg: Optional[str] = None):
+    async def async_build_logs(build_id: str | None, agent_id_arg: Optional[str] = None, verbose: bool = False):
         agent_id = _resolve_agent_id(agent_id_arg)
 
         credentials = auth_client.get_credentials()
@@ -557,31 +588,58 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
             build_id = result.builds[0].id
             console.print(f"[dim]Latest build: {build_id}[/dim]")
 
-        console.print(
-            f"[bold cyan]Streaming logs for build {build_id[:12]}...[/bold cyan]  [dim](Ctrl+C to stop)[/dim]\n"
-        )
+        console.print(f"[bold cyan]Streaming build {build_id[:12]}...[/bold cyan]  [dim](Ctrl+C to stop)[/dim]\n")
 
         terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED"}
+        failed = {"BUILD_FAILED", "DEPLOY_FAILED"}
+        # Every log line is scrubbed before it is ever printed, in both modes, so
+        # no CLI invocation can leak cluster-internal topology. --verbose only
+        # controls volume: stream every (scrubbed) line vs. status + a bounded
+        # tail shown on failure.
+        TAIL_LINES = 25
+        tail: deque[str] = deque(maxlen=TAIL_LINES)
+
+        def _flush_tail() -> None:
+            if verbose or not tail:
+                return
+            console.print(f"\n[dim]── last {len(tail)} log lines ──[/dim]")
+            for line in tail:
+                console.print(line, highlight=False)
+
+        if not verbose:
+            console.print(
+                "[dim]Showing build status. The full build log is shown on failure "
+                "(last 25 lines) or with --verbose. Internal infra is always masked.[/dim]\n"
+            )
+
         try:
             async for event in atoms_client.stream_agent_build(
                 agent_id=agent_id, build_id=build_id, access_token=access_token
             ):
                 etype = event.get("type")
                 if etype == "log":
-                    console.print(event.get("message", ""), highlight=False)
+                    msg = scrub_internal(event.get("message", ""))
+                    if verbose:
+                        console.print(msg, highlight=False)
+                    else:
+                        tail.append(msg)
                 elif etype == "status":
                     status = str(event.get("status", ""))
                     color = {"SUCCEEDED": "green", "BUILD_FAILED": "red", "DEPLOY_FAILED": "red"}.get(status, "yellow")
                     console.print(f"[bold {color}]● {status}[/bold {color}]")
+                    if status in failed:
+                        _flush_tail()
                     if status in terminal:
                         break
                 elif etype == "error":
-                    console.print(f"[red]error:[/red] {event.get('message', '')}")
+                    msg = event.get("message", "")
+                    console.print(f"[red]error:[/red] {scrub_internal(msg)}")
+                    _flush_tail()
                     break
         except KeyboardInterrupt:
             console.print("\n[yellow]Stopped.[/yellow]")
         except Exception as e:
-            console.print(f"[red]Error streaming build logs: {e}[/red]")
+            _print_error("Error streaming build logs", e)
             raise typer.Exit(1)
 
     @app.command()
@@ -611,7 +669,7 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
         try:
             agent = await atoms_client.get_agent_raw(token, agent_id)
         except Exception as e:
-            console.print(f"[red]Could not fetch agent: {e}[/red]")
+            _print_error("Could not fetch agent", e)
             raise typer.Exit(1)
         try:
             builds = await atoms_client.list_agent_builds(agent_id, token)

@@ -1,4 +1,5 @@
 import asyncio
+import errno
 import uuid
 from typing import Awaitable, Callable, Dict, Optional
 
@@ -6,6 +7,7 @@ import uvicorn
 from fastapi import FastAPI, WebSocket
 from loguru import logger
 
+from smallestai.atoms.crew._logging import configure_crew_logging
 from smallestai.atoms.crew.session import CrewSession, _StartupProbeComplete
 
 
@@ -143,6 +145,11 @@ class AtomsCrewApp:
             host: Host to bind to
             port: Port to listen on
         """
+        # Configure logging first, before anything can trigger a loguru file
+        # sink against the (read-only in prod) pod rootfs. Keeps the pod from
+        # booting dead on `OSError: Read-only file system: 'logs'`.
+        configure_crew_logging()
+
         self._host = "0.0.0.0"
         self._port = 8080
         self.setup_handler = setup_handler
@@ -250,6 +257,19 @@ class AtomsCrewApp:
         try:
             await _dry_run_setup_handler(self.setup_handler)
         except Exception as e:
+            # A read-only rootfs (errno EROFS, e.g. a stray `logs/` file sink) must
+            # never make the pod boot dead. Logging already falls back to stderr via
+            # configure_crew_logging(); accept sessions anyway. Scope this narrowly to
+            # EROFS so a real failure (missing file, permissions, network — all OSError
+            # subclasses too) still correctly keeps the pod not-ready.
+            if isinstance(e, OSError) and e.errno == errno.EROFS:
+                logger.error(
+                    "Startup hit a read-only filesystem ({}). Logging falls back to "
+                    "stderr; pod will still accept sessions.",
+                    e,
+                )
+                self._ready = True
+                return
             self._ready = False
             self._not_ready_reason = f"{type(e).__name__}: {e}"
             logger.error(f"Startup validation failed — pod will not accept sessions. {type(e).__name__}: {e}")
