@@ -18,6 +18,7 @@ from rich.table import Table
 from smallestai.cli.lib.atoms import AgentBuildStatus, AtomsAPIClient
 from smallestai.cli.lib.auth import AuthClient
 from smallestai.cli.lib.chat import ChatClient, chat_loop
+from smallestai.cli.lib.client import make_client
 from smallestai.cli.lib.ownership import SUMMARY as OWNERSHIP_SUMMARY
 from smallestai.cli.lib.ownership import render_ownership
 from smallestai.cli.lib.project_config import ProjectConfig
@@ -667,7 +668,12 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
 
         console.print(f"[dim]Inspecting agent {agent_id}...[/dim]")
         try:
-            agent = await atoms_client.get_agent_raw(token, agent_id)
+            # Use the published SDK client (API-key auth), the same path as
+            # `smallestai agents get`. The single-agent endpoint rejects the
+            # session bearer token with a 400, so the hand-rolled fetch failed.
+            dto = make_client(auth_client).atoms.agents.get_agent(id=agent_id).data
+            # .json() serializes by alias -> the camelCase shape used below.
+            agent = _json.loads(dto.json()) if dto is not None else {}
         except Exception as e:
             _print_error("Could not fetch agent", e)
             raise typer.Exit(1)
