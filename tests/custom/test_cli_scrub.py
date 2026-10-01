@@ -54,6 +54,24 @@ class ScrubInternalTest(unittest.TestCase):
         text = "POST https://api.smallest.ai/atoms/v1/sdk failed with 502"
         self.assertEqual(scrub_internal(text), text)
 
+    def test_keeps_dashboard_host(self):
+        text = "open https://app.smallest.ai/dashboard"
+        self.assertEqual(scrub_internal(text), text)
+
+    def test_masks_region_coded_api_host(self):
+        # Region-coded hosts reveal account->region placement; mask them.
+        for host in ("api.in.smallest.ai", "api.us.smallest.ai"):
+            out = scrub_internal(f"POST https://{host}/atoms/v1 failed")
+            self.assertNotIn(host, out)
+            self.assertNotIn(".smallest.ai", out)
+            self.assertIn("[internal]", out)
+
+    def test_masks_cloud_region_token(self):
+        for region in ("ap-south-1", "us-west-2", "eu-central-1", "ap-south-1a"):
+            out = scrub_internal(f"cluster in {region} degraded")
+            self.assertNotIn(region, out)
+            self.assertIn("[internal]", out)
+
     def test_keeps_customer_env_var_error(self):
         text = "openai.OpenAIError: Missing credentials; set OPENAI_API_KEY"
         self.assertEqual(scrub_internal(text), text)

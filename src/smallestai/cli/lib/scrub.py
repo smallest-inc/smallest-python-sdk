@@ -61,6 +61,23 @@ _INTERNAL_IP_RE = re.compile(
     r"|192\.168\.\d{1,3}\.\d{1,3})(?::\d+)?\b",
 )
 
+# Region-coded public API hosts, e.g. api.in.smallest.ai / api.us.smallest.ai.
+# These reveal which region an account is pinned to. Account-to-region is not
+# auto geo-assigned, so exposing an org's region is a placement/security risk,
+# mask it. The bare public host ``api.smallest.ai`` (no region segment) and the
+# dashboard ``app.smallest.ai`` carry no region and are intentionally kept.
+_REGION_HOST_RE = re.compile(
+    r"\bapi\.[a-z]{2}\.smallest\.ai\b",
+    re.IGNORECASE,
+)
+# Cloud region / availability-zone tokens, e.g. ap-south-1, us-west-2,
+# eu-central-1, ap-south-1a. Reveals where the infra runs.
+_CLOUD_REGION_RE = re.compile(
+    r"\b(?:af|ap|ca|cn|eu|il|me|sa|us)-"
+    r"(?:north|south|east|west|central|northeast|northwest|southeast|southwest)-\d[a-z]?\b",
+    re.IGNORECASE,
+)
+
 _MASK = "[internal]"
 
 _PATTERNS = (
@@ -69,13 +86,16 @@ _PATTERNS = (
     _INTERNAL_SVC_RE,
     _POD_NAME_RE,
     _INTERNAL_IP_RE,
+    _REGION_HOST_RE,
+    _CLOUD_REGION_RE,
 )
 
 
 def scrub_internal(text: str) -> str:
-    """Replace cluster-internal URLs, hostnames, service names, pod names, and
-    pod IPs with a mask. Order matters: URL/host before the bare-service pattern
-    so a full FQDN is masked as one unit."""
+    """Replace cluster-internal URLs, hostnames, service names, pod names, pod
+    IPs, region-coded API hosts (api.<region>.smallest.ai), and cloud-region
+    tokens (ap-south-1, ...) with a mask. Order matters: URL/host before the
+    bare-service pattern so a full FQDN is masked as one unit."""
     if not text:
         return text
     for pattern in _PATTERNS:
