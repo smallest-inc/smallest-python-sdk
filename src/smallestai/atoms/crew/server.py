@@ -1,4 +1,5 @@
 import asyncio
+import errno
 import uuid
 from typing import Awaitable, Callable, Dict, Optional
 
@@ -255,19 +256,20 @@ class AtomsCrewApp:
         """
         try:
             await _dry_run_setup_handler(self.setup_handler)
-        except OSError as e:
-            # A read-only rootfs (e.g. a stray `logs/` file sink) must never
-            # make the pod boot dead. This is an environment/logging problem,
-            # not a broken build, so we log it and still accept sessions.
-            logger.error(
-                "Startup hit a filesystem error ({}). This is usually a read-only "
-                "rootfs with a file-logging sink; logging falls back to stderr. "
-                "Pod will still accept sessions.",
-                e,
-            )
-            self._ready = True
-            return
         except Exception as e:
+            # A read-only rootfs (errno EROFS, e.g. a stray `logs/` file sink) must
+            # never make the pod boot dead. Logging already falls back to stderr via
+            # configure_crew_logging(); accept sessions anyway. Scope this narrowly to
+            # EROFS so a real failure (missing file, permissions, network — all OSError
+            # subclasses too) still correctly keeps the pod not-ready.
+            if isinstance(e, OSError) and e.errno == errno.EROFS:
+                logger.error(
+                    "Startup hit a read-only filesystem ({}). Logging falls back to "
+                    "stderr; pod will still accept sessions.",
+                    e,
+                )
+                self._ready = True
+                return
             self._ready = False
             self._not_ready_reason = f"{type(e).__name__}: {e}"
             logger.error(f"Startup validation failed — pod will not accept sessions. {type(e).__name__}: {e}")

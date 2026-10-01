@@ -72,6 +72,18 @@ class StartupValidationTest(unittest.IsolatedAsyncioTestCase):
         await app._validate_startup()
         self.assertTrue(app._ready)
 
+    async def test_non_erofs_oserror_keeps_pod_not_ready(self):
+        # A non-read-only OSError (e.g. a missing file, a refused connection) is a
+        # real startup failure, not an environment/logging quirk. It must leave the
+        # pod not-ready, otherwise a genuinely broken build would serve calls.
+        async def setup(session: CrewSession):
+            raise FileNotFoundError(2, "No such file or directory: 'config.json'")
+
+        app = AtomsCrewApp(setup_handler=setup)
+        await app._validate_startup()
+        self.assertFalse(app._ready)
+        self.assertIn("FileNotFoundError", app._not_ready_reason or "")
+
     async def test_dry_run_start_raises_probe_complete_and_builds_graph(self):
         session = CrewSession(websocket=None, session_id="t", setup_handler=None)  # type: ignore[arg-type]
         session._dry_run = True
