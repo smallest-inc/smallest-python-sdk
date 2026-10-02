@@ -133,11 +133,11 @@ class UpdateAgentBuildAPIResponse(BaseModel):
 
 
 class AtomsAPIClient:
-    def __init__(self):
-        # Same override as lib/client.make_client, so `agent-crew deploy` / `builds`
-        # reach the org's region host (e.g. https://api.us.smallest.ai) instead of
-        # always api.smallest.ai.
-        self.base_url = os.environ.get("SMALLEST_BASE_URL", "https://api.smallest.ai").rstrip("/")
+    def __init__(self, base_url: Optional[str] = None):
+        # An explicit base_url wins (callers resolve env > login-pinned > default);
+        # otherwise fall back to SMALLEST_BASE_URL then the default, so a bare
+        # AtomsAPIClient() still reaches the org's region host.
+        self.base_url = (base_url or os.environ.get("SMALLEST_BASE_URL") or "https://api.smallest.ai").rstrip("/")
 
     async def get_agents(
         self,
