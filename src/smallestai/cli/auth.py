@@ -1,6 +1,7 @@
 import asyncio
 import os
 import sys
+from typing import Optional
 
 import typer
 from rich.console import Console
@@ -16,10 +17,23 @@ def initialise_auth_app(auth_client: AuthClient, atoms_client: AtomsAPIClient):
     auth_app = typer.Typer(name="auth")
 
     @auth_app.command()
-    def login():
-        asyncio.run(async_login())
+    def login(
+        base_url: Optional[str] = typer.Option(
+            None,
+            "--base-url",
+            help=(
+                "Regional API host to pin, e.g. https://api.india.smallest.ai. "
+                "Persisted so you don't need to set SMALLEST_BASE_URL on every command."
+            ),
+        ),
+    ):
+        asyncio.run(async_login(base_url))
 
-    async def async_login():
+    async def async_login(base_url: Optional[str] = None):
+        # Validate the key against the chosen regional host (if any), and reuse it below.
+        if base_url:
+            atoms_client.base_url = base_url.rstrip("/")
+
         # Prefer the env var so `SMALLEST_API_KEY=... smallestai auth login` is non-interactive.
         api_key = os.environ.get("SMALLEST_API_KEY")
         if not api_key:
@@ -42,8 +56,10 @@ def initialise_auth_app(auth_client: AuthClient, atoms_client: AtomsAPIClient):
             console.print("[red]Invalid API key[/red]")
             return
 
-        auth_client.login(api_key)
+        auth_client.login(api_key, base_url=base_url)
         console.print(f"[bold green]Login successful [bold green]{account_details.userEmail}[/bold green]")
+        if base_url:
+            console.print(f"[dim]Region host pinned: {base_url.rstrip('/')}[/dim]")
 
     @auth_app.command()
     def logout():
