@@ -14,6 +14,17 @@ from smallestai.cli.lib.auth import AuthClient
 
 console = Console()
 
+DEFAULT_BASE_URL = "https://api.smallest.ai"
+
+
+def resolve_base_url(auth_client: AuthClient) -> str:
+    """Resolve the regional API host: SMALLEST_BASE_URL env first, then the host
+    pinned at `smallestai auth login --base-url`, else the default."""
+    base = os.environ.get("SMALLEST_BASE_URL")
+    if not base:
+        base = auth_client.get_base_url()
+    return (base or DEFAULT_BASE_URL).rstrip("/")
+
 
 def resolve_key(auth_client: AuthClient) -> str:
     key = os.environ.get("SMALLEST_API_KEY")
@@ -30,11 +41,10 @@ def make_client(auth_client: AuthClient):
     from smallestai import SmallestAI
 
     key = resolve_key(auth_client)
-    base = os.environ.get("SMALLEST_BASE_URL")
-    if base:
+    base = resolve_base_url(auth_client)
+    if base != DEFAULT_BASE_URL:
         from smallestai.environment import SmallestAIEnvironment
 
-        base = base.rstrip("/")
         ws = base.replace("https://", "wss://").replace("http://", "ws://")
         env = SmallestAIEnvironment(atoms=f"{base}/atoms/v1", waves=base, waves_ws=ws, payment=base)
         return SmallestAI(api_key=key, environment=env)
