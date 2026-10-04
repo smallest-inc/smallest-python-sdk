@@ -6,6 +6,17 @@ from smallestai.atoms.helpers.audience import Audience
 from smallestai.atoms.helpers.call import Call, CallAnalytics
 from smallestai.atoms.helpers.campaign import Campaign
 from smallestai.atoms.helpers.kb import KB
+from smallestai.atoms.helpers.multi_agent import (
+    IntentRouter,
+    MultiAgent,
+    MultiAgentError,
+    MultiAgentNotEntitledError,
+    Playbook,
+    PlaybookAuth,
+    PlaybooksConfig,
+    Verification,
+    config_from_api,
+)
 from smallestai.atoms.helpers.secrets import Secrets
 from smallestai.atoms.helpers.tools import Tools
 from smallestai.atoms.helpers.versioning import (
@@ -31,6 +42,15 @@ __all__ = [
     "Call",
     "Campaign",
     "KB",
+    "MultiAgent",
+    "MultiAgentError",
+    "MultiAgentNotEntitledError",
+    "PlaybooksConfig",
+    "IntentRouter",
+    "Playbook",
+    "PlaybookAuth",
+    "Verification",
+    "config_from_api",
     "Secrets",
     "Tools",
     "Page",
