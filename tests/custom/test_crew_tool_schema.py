@@ -115,3 +115,19 @@ def test_existing_simple_signature_is_unchanged():
         "location": {"type": "string", "description": "City and state"},
         "format": {"type": "string", "description": "Temperature format"},
     }
+
+
+def test_special_form_params_do_not_crash():
+    """Literal / Any params must not trip the Annotated check — ``get_origin`` returns a
+    ``_SpecialForm`` for them, which has no ``__name__`` on Python 3.9 and used to crash."""
+    from typing import Any
+
+    from smallestai.atoms.crew.tools.schema import extract_function_schema
+
+    def pick(mode: Literal["fast", "slow"], payload: Any):
+        pass
+
+    props = extract_function_schema(pick).parameters["properties"]
+    assert props["mode"]["enum"] == ["fast", "slow"]
+    assert props["mode"]["type"] == "string"
+    assert props["payload"]["type"] == "string"  # Any -> string fallback

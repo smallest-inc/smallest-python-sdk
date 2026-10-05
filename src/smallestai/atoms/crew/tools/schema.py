@@ -225,7 +225,7 @@ def extract_function_schema(
         type_hint = type_hints.get(param_name, Any)
         param_desc = docstring_info["params"].get(param_name, "")
 
-        if get_origin(type_hint).__name__ == "Annotated" if get_origin(type_hint) else False:
+        if get_origin(type_hint) is Annotated:
             args = get_args(type_hint)
             if args:
                 base_type = args[0]
