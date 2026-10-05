@@ -102,7 +102,8 @@ class _RecordingClient:
 
         class _Revisions:
             def list(self, *, id, branch_id, limit):
-                return NS(data=NS(revisions=[NS(id="rev_pub")]))
+                # read_config_dict resolves the newest *published* revision.
+                return NS(data=NS(revisions=[NS(id="rev_pub", status="published")]))
 
             def get(self, *, id, branch_id, revision_id):
                 cfg = _representative_config().to_api()
