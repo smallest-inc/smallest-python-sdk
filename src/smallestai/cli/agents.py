@@ -154,9 +154,9 @@ def initialise_agents_app(auth_client: AuthClient):
     ):
         """Create an agent with the common config fields.
 
-        New agents are created with all config inline. The platform accepts the
-        versioned fields (prompt/voice/model/…) on create. Use `agents update` to
-        change them later (that path goes through a branch draft).
+        Config is sent inline on create. Most fields apply immediately; if a
+        versioned field (prompt/voice/model/…) does not take effect on create,
+        set it afterward with `agents update`, which goes through a branch draft.
         """
         kw = {"name": name}
         if description:

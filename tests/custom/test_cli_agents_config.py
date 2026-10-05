@@ -61,7 +61,7 @@ class FakeClient:
 class FakeVersioning:
     """Captures edit_and_publish calls instead of hitting draft/publish endpoints."""
 
-    calls = []
+    calls: list[tuple[str, str, dict[str, object]]] = []
 
     def __init__(self, client):
         self.client = client
