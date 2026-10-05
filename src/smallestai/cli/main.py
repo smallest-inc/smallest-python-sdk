@@ -15,7 +15,7 @@ from smallestai.cli.calls import initialise_calls_app
 from smallestai.cli.campaigns import initialise_campaigns_app
 from smallestai.cli.lib.atoms import AtomsAPIClient
 from smallestai.cli.lib.auth import AuthClient
-from smallestai.cli.lib.client import make_client
+from smallestai.cli.lib.client import make_client, resolve_base_url
 from smallestai.cli.lib.project_config import ProjectConfig
 from smallestai.cli.mcp import initialise_mcp_app
 from smallestai.cli.phone_numbers import initialise_phone_numbers_app
@@ -118,7 +118,7 @@ def _root(
 
 
 auth_client = AuthClient()
-atoms_client = AtomsAPIClient()
+atoms_client = AtomsAPIClient(base_url=resolve_base_url(auth_client))
 project_config = ProjectConfig()
 
 agent_crew_app = initialise_agent_crew_app(project_config, auth_client, atoms_client)

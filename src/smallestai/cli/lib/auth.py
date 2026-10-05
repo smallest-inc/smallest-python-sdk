@@ -14,17 +14,32 @@ class AuthClient:
 
         self.config_dir.mkdir(parents=True, exist_ok=True)
 
-    def login(self, auth_token: str) -> bool:
+    def login(self, auth_token: str, base_url: Optional[str] = None) -> bool:
         """
-        Authenticate user and store credentials
+        Authenticate user and store credentials.
+
+        ``base_url`` optionally pins the regional API host (e.g.
+        ``https://api.india.smallest.ai``) so it is reused on every command
+        without setting ``SMALLEST_BASE_URL`` each time.
         """
-        self._store_credentials(
-            {
-                "access_token": auth_token,
-            }
-        )
+        credentials: Dict = {"access_token": auth_token}
+        if base_url:
+            credentials["base_url"] = base_url.rstrip("/")
+        else:
+            # Preserve a region host pinned by an earlier login, so re-logging in
+            # (e.g. to rotate the key) without --base-url doesn't silently reset it.
+            existing = self.get_base_url()
+            if existing:
+                credentials["base_url"] = existing
+
+        self._store_credentials(credentials)
 
         return True
+
+    def get_base_url(self) -> Optional[str]:
+        """The regional API host pinned at login, if any."""
+        creds = self.get_credentials()
+        return (creds or {}).get("base_url")
 
     def _store_credentials(self, credentials: Dict) -> None:
         with open(self.credentials_file, "w") as f:
