@@ -45,6 +45,13 @@ def _resolve_write_branch_id(client, agent_id: str) -> str:
     if not bid:
         console.print("[red]No writable branch found for this agent.[/red]")
         raise typer.Exit(1)
+    # Publishing merges into the branch's single open draft, so any unpublished
+    # edits already on it would go live too. Warn before we publish on the live branch.
+    if getattr(chosen, "has_open_draft", False):
+        console.print(
+            "[yellow]Warning: this branch already has an open draft; publishing will also "
+            "include any unpublished edits already on it.[/yellow]"
+        )
     return bid
 
 
