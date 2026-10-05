@@ -1,6 +1,22 @@
+import enum
 import inspect
 import re
-from typing import Any, Callable, Dict, List, Optional, get_args, get_origin, get_type_hints
+import sys
+import types
+from typing import (
+    Annotated,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Union,
+    get_args,
+    get_origin,
+    get_type_hints,
+)
 
 from pydantic import BaseModel
 from pydantic.fields import FieldInfo
@@ -22,9 +38,86 @@ class FunctionSchema(BaseModel):
         }
 
 
+_UNION_TYPES: Tuple[Any, ...] = (Union,)
+if sys.version_info >= (3, 10):
+    _UNION_TYPES += (types.UnionType,)
+
+_PRIMITIVES: Dict[Any, str] = {str: "string", bool: "boolean", int: "integer", float: "number"}
+
+
+def python_type_to_json_schema(type_hint: Any) -> Dict[str, Any]:
+    """
+    Convert a Python type hint to a JSON schema fragment.
+
+    Handles primitives, list/tuple/set (with ``items``), dict, Optional/Union,
+    Literal and Enum. Unknown types fall back to ``{"type": "string"}``.
+
+    Args:
+        type_hint: Python type hint
+
+    Returns:
+        JSON schema dict
+    """
+    if type_hint is None or type_hint is type(None):
+        return {"type": "null"}
+
+    origin = get_origin(type_hint)
+    args = get_args(type_hint)
+
+    if origin is Annotated:
+        return python_type_to_json_schema(args[0])
+
+    if origin in _UNION_TYPES:
+        non_null = [a for a in args if a is not type(None)]
+        if len(non_null) == 1:
+            # Optional[X]: whether the argument may be omitted is expressed by
+            # "required", so advertise X itself.
+            return python_type_to_json_schema(non_null[0])
+        return {"anyOf": [python_type_to_json_schema(a) for a in non_null]}
+
+    if origin is Literal:
+        schema: Dict[str, Any] = {"enum": list(args)}
+        literal_types = {type(a) for a in args}
+        if len(literal_types) == 1 and literal_types.pop() in _PRIMITIVES:
+            schema["type"] = _PRIMITIVES[type(args[0])]
+        return schema
+
+    if type_hint in (list, tuple, set, frozenset) or origin in (list, tuple, set, frozenset):
+        schema = {"type": "array"}
+        # Array schemas must declare "items" (OpenAI rejects them otherwise).
+        item_args = [a for a in args if a is not Ellipsis]
+        if len(set(item_args)) == 1:
+            schema["items"] = python_type_to_json_schema(item_args[0])
+        elif item_args:
+            schema["items"] = {"anyOf": [python_type_to_json_schema(a) for a in item_args]}
+        else:
+            schema["items"] = {}
+        return schema
+
+    if type_hint is dict or origin is dict:
+        return {"type": "object"}
+
+    if inspect.isclass(type_hint) and issubclass(type_hint, enum.Enum):
+        values = [member.value for member in type_hint]
+        schema = {"enum": values}
+        value_types = {type(v) for v in values}
+        if len(value_types) == 1 and next(iter(value_types)) in _PRIMITIVES:
+            schema["type"] = _PRIMITIVES[type(values[0])]
+        return schema
+
+    if type_hint in _PRIMITIVES:
+        return {"type": _PRIMITIVES[type_hint]}
+
+    # Default to string
+    return {"type": "string"}
+
+
 def python_type_to_json_type(type_hint: Any) -> str:
     """
     Convert Python type hint to JSON schema type.
+
+    Kept for backward compatibility; prefer ``python_type_to_json_schema``,
+    which also carries ``items``/``enum``/``anyOf``.
 
     Args:
         type_hint: Python type hint
@@ -32,29 +125,7 @@ def python_type_to_json_type(type_hint: Any) -> str:
     Returns:
         JSON schema type string
     """
-    # Handle None/NoneType
-    if type_hint is None or type_hint is type(None):
-        return "null"
-
-    origin = get_origin(type_hint)
-
-    if origin in (list, List):
-        return "array"
-
-    # Handle Dict, dict
-    if origin in (dict, Dict):
-        return "object"
-
-    # Handle basic types
-    if type_hint == str:
-        return "string"
-    if type_hint in (int, float):
-        return "number"
-    if type_hint == bool:
-        return "boolean"
-
-    # Default to string
-    return "string"
+    return python_type_to_json_schema(type_hint).get("type", "string")
 
 
 def parse_docstring(docstring: str) -> Dict[str, Any]:
@@ -164,8 +235,7 @@ def extract_function_schema(
                         break
                 type_hint = base_type
 
-        json_type = python_type_to_json_type(type_hint)
-        properties[param_name] = {"type": json_type, "description": param_desc}
+        properties[param_name] = {**python_type_to_json_schema(type_hint), "description": param_desc}
 
         if param.default == inspect.Parameter.empty:
             required.append(param_name)

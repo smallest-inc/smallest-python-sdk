@@ -7,6 +7,11 @@
   `write_draft` emit a `UserWarning`. Best-effort (queries `GET /tool` on the client's
   host) and never blocks a publish — if the lookup can't run, nothing is flagged.
 
+* **crew**: `@function_tool` now generates correct JSON Schema for parameter types.
+  `List[str]` becomes `{"type": "array", "items": {"type": "string"}}` (was a bare
+  `{"type": "array"}` with no `items`), and bare `list` / `dict` map correctly, so the
+  tool schema sent to the LLM matches the signature.
+
 ## 5.13.0 - 2026-10-05
 
 * **helpers**: added `MultiAgent`, a typed writer for the platform multi-agent
