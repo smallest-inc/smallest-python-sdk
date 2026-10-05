@@ -1,3 +1,12 @@
+## Unreleased
+
+* **helpers**: `MultiAgent` now warns at author time when a playbook / verification /
+  global `tool_ref` doesn't match any tool in your org Tools library — otherwise the
+  ref is silently dropped by the platform and shows as empty in the dashboard. New
+  `MultiAgent.check_tool_refs(config)` returns the unresolved refs; `publish_config` /
+  `write_draft` emit a `UserWarning`. Best-effort (queries `GET /tool` on the client's
+  host) and never blocks a publish — if the lookup can't run, nothing is flagged.
+
 ## 5.13.0 - 2026-10-05
 
 * **helpers**: added `MultiAgent`, a typed writer for the platform multi-agent
