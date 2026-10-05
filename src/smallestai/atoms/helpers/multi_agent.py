@@ -506,12 +506,12 @@ class MultiAgent:
         """
         config.validate()
         branch_id = branch_id or self._default_branch_id(agent_id)
-        return self._versioning.update_draft(
-            agent_id,
-            branch_id,
-            expected_revision=expected_revision,
-            request_options=self._playbooks_body(config),
-        )
+        # Omit expected_revision when None so we don't send a stray null — matches
+        # edit_and_publish (publish_config), which only forwards it when set.
+        kwargs: typing.Dict[str, typing.Any] = {"request_options": self._playbooks_body(config)}
+        if expected_revision is not None:
+            kwargs["expected_revision"] = expected_revision
+        return self._versioning.update_draft(agent_id, branch_id, **kwargs)
 
     def publish_config(
         self,
