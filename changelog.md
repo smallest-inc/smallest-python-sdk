@@ -1,3 +1,17 @@
+## Unreleased
+
+* **helpers**: added `MultiAgent`, a typed writer for the platform multi-agent
+  **Playbooks** config. Define a `PlaybooksConfig` (intent router + specialist
+  `Playbook`s, shared `Verification`s, auth tools) in Python and
+  `create_agent`/`publish_config`/`write_draft` it onto an agent; the SDK flips the
+  agent's workflow type to `multi_agents` and writes the versioned `playbooks` config
+  section through the same draft → publish pipeline the dashboard uses, so the
+  dashboard renders it. `read_config` round-trips it back to a typed model.
+  Client-side validation mirrors the platform publish rules (fallback must reference
+  an enabled playbook, unique ids/names/intents, auth-tool presence); the `structured`
+  playbook type is rejected while the runtime stubs it. The allowlist 403 surfaces as
+  `MultiAgentNotEntitledError`.
+
 ## 5.12.3 - 2026-10-01
 
 * **crew**: never boot a pod dead on a read-only rootfs. Logging is configured to
