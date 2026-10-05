@@ -25,6 +25,12 @@ class AuthClient:
         credentials: Dict = {"access_token": auth_token}
         if base_url:
             credentials["base_url"] = base_url.rstrip("/")
+        else:
+            # Preserve a region host pinned by an earlier login, so re-logging in
+            # (e.g. to rotate the key) without --base-url doesn't silently reset it.
+            existing = self.get_base_url()
+            if existing:
+                credentials["base_url"] = existing
 
         self._store_credentials(credentials)
 
