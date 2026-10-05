@@ -64,9 +64,7 @@ def _render_transcript_event(ev: dict) -> None:
         console.print(f"[green]agent[/green]: {ev['tts_text']}")
 
 
-async def _stream_call_events(
-    call_id: str, token: str, as_json: bool, transcript_only: bool, base_url: str
-) -> None:
+async def _stream_call_events(call_id: str, token: str, as_json: bool, transcript_only: bool, base_url: str) -> None:
     # Region-correct host: honour SMALLEST_BASE_URL > the host pinned at login >
     # default, so a region-pinned user streams from their own region (not the default).
     client = AtomsAPIClient(base_url=base_url)
@@ -193,9 +191,7 @@ def initialise_calls_app(auth_client: AuthClient):
         """
         token = _session_token(auth_client)
         asyncio.run(
-            _stream_call_events(
-                call_id, token, as_json, transcript_only=False, base_url=resolve_base_url(auth_client)
-            )
+            _stream_call_events(call_id, token, as_json, transcript_only=False, base_url=resolve_base_url(auth_client))
         )
 
     @calls_app.command("transcript")
