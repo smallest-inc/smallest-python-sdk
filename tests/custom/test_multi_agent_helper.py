@@ -390,3 +390,44 @@ def test_live_round_trip_create_write_read_archive():
     finally:
         if agent_id:
             client.atoms.agents.archive_agent(id=agent_id)
+
+
+# ── tool_ref validation ──────────────────────────────────────────────────────────
+
+
+def test_check_tool_refs_flags_unknown(monkeypatch):
+    """Refs (global / playbook / verification) that match no org tool are returned, sorted."""
+    cfg = PlaybooksConfig(
+        router=IntentRouter(fallback_playbook_id="g"),
+        global_tool_refs=["tool_known", "tool_missing_global"],
+        verifications=[Verification(id="v", tool_refs=["tool_missing_verify"])],
+        playbooks=[
+            Playbook(
+                id="g",
+                name="G",
+                intent_name="general",
+                intent_description="x",
+                prompt="p",
+                tool_refs=["tool_known", "tool_missing_pb"],
+                verification_ids=["v"],
+            ),
+        ],
+    )
+    ma = MultiAgent(_RecordingClient())
+    monkeypatch.setattr(ma, "_known_tool_ids", lambda: {"tool_known"})
+    assert ma.check_tool_refs(cfg) == ["tool_missing_global", "tool_missing_pb", "tool_missing_verify"]
+
+
+def test_check_tool_refs_skips_when_lookup_unavailable(monkeypatch):
+    """If the tools lookup can't run, nothing is flagged (never blocks publishing)."""
+    ma = MultiAgent(_RecordingClient())
+    monkeypatch.setattr(ma, "_known_tool_ids", lambda: None)
+    assert ma.check_tool_refs(_representative_config()) == []
+
+
+def test_publish_warns_on_unknown_tool_ref(monkeypatch):
+    """publish_config emits a warning (not an error) for an unresolved tool_ref."""
+    ma = MultiAgent(_RecordingClient())
+    monkeypatch.setattr(ma, "_known_tool_ids", lambda: set())  # org has no tools
+    with pytest.warns(UserWarning, match="do not match any tool"):
+        ma.publish_config("agent_x", _representative_config(), label="v1")

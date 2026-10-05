@@ -62,10 +62,10 @@ class Tools:
             "Content-Type": "application/json",
         }
 
-    def list(self) -> Dict[str, Any]:
-        """List the org's tools."""
+    def list(self, timeout: Optional[float] = 10) -> Dict[str, Any]:
+        """List the org's tools. ``timeout`` bounds the request (seconds)."""
         url = f"{self.base_url}/tool"
-        response = requests.get(url, headers=self._get_headers())
+        response = requests.get(url, headers=self._get_headers(), timeout=timeout)
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
 

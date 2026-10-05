@@ -63,6 +63,7 @@ from __future__ import annotations
 import dataclasses
 import re
 import typing
+import warnings
 
 from ..errors.forbidden_error import ForbiddenError
 from .versioning import Versioning
@@ -505,6 +506,7 @@ class MultiAgent:
         updated draft revision. Use ``publish_config`` for the common write+publish path.
         """
         config.validate()
+        self._warn_unknown_tool_refs(config)
         branch_id = branch_id or self._default_branch_id(agent_id)
         # Omit expected_revision when None so we don't send a stray null — matches
         # edit_and_publish (publish_config), which only forwards it when set.
@@ -531,6 +533,7 @@ class MultiAgent:
         published revision. Raises ``DraftConflictError`` if ``expected_revision`` is stale.
         """
         config.validate()
+        self._warn_unknown_tool_refs(config)
         branch_id = branch_id or self._default_branch_id(agent_id)
         return self._versioning.edit_and_publish(
             agent_id,
@@ -609,6 +612,83 @@ class MultiAgent:
         the request body by the core http client). See module docstring.
         """
         return {"additional_body_parameters": {"playbooks": config.to_api()}}
+
+    def _known_tool_ids(self) -> typing.Optional[typing.Set[str]]:
+        """Best-effort set of the org's tool ids/names, or ``None`` if the lookup can't run.
+
+        Queries the Tools library (``GET /tool``) on the same host/key as this client.
+        Returns ``None`` on any error so a tools-lookup hiccup never blocks a publish.
+        """
+        try:
+            from .tools import Tools
+
+            wrapper = getattr(self._client, "_client_wrapper", None)
+            api_key = wrapper._get_api_key() if wrapper is not None and hasattr(wrapper, "_get_api_key") else None
+            env = wrapper.get_environment() if wrapper is not None and hasattr(wrapper, "get_environment") else None
+            base_url = getattr(env, "atoms", None)
+            if not api_key or not base_url:
+                return None
+            resp = Tools(base_url=base_url, api_key=api_key).list(timeout=5)
+            if isinstance(resp, dict):
+                items = resp.get("data") or resp.get("tools") or []
+                # If the catalog is paginated and we only have one page, skip the check
+                # rather than risk false "unknown tool_ref" warnings for valid tools beyond it.
+                total = resp.get("totalCount") or resp.get("total")
+                if (
+                    resp.get("hasMore")
+                    or resp.get("nextPage")
+                    or resp.get("next")
+                    or (isinstance(total, int) and total > len(items))
+                ):
+                    return None
+            elif isinstance(resp, list):
+                items = resp
+            else:
+                items = []
+            known: typing.Set[str] = set()
+            for item in items:
+                if isinstance(item, dict):
+                    for key in ("toolId", "tool_id", "id", "_id", "name", "key"):
+                        val = item.get(key)
+                        if isinstance(val, str) and val:
+                            known.add(val)
+            return known
+        except Exception:
+            return None
+
+    def check_tool_refs(self, config: PlaybooksConfig) -> typing.List[str]:
+        """Return the config's ``tool_refs`` that match no tool in the org Tools library.
+
+        Playbook / verification / global ``tool_refs`` are *references* to tools that must
+        already exist in the library (matched by id or name). A ref to a tool that does not
+        exist is dropped by the platform and shows as empty in the dashboard. This surfaces
+        those at author time. Returns ``[]`` if everything resolves or if the lookup can't
+        run (offline, no key) — it never raises.
+        """
+        known = self._known_tool_ids()
+        if known is None:
+            return []
+        refs: typing.Set[str] = set(config.global_tool_refs)
+        for pb in config.playbooks:
+            refs.update(pb.tool_refs)
+        for ver in config.verifications:
+            refs.update(ver.tool_refs)
+            refs.update(ver.trigger_tool_refs)
+        for ref in (config.entity_list_tool, config.entity_detail_tool):
+            if ref:
+                refs.add(ref)
+        return sorted(r for r in refs if r not in known)
+
+    def _warn_unknown_tool_refs(self, config: PlaybooksConfig) -> None:
+        """Emit a warning (never raise) for tool_refs that don't resolve to a real tool."""
+        unknown = self.check_tool_refs(config)
+        if unknown:
+            warnings.warn(
+                "These tool_refs do not match any tool in your org Tools library and will "
+                f"show as empty in the dashboard: {unknown}. Create the tools first "
+                "(e.g. Tools().create(...)) and reference their id/name, or remove the refs.",
+                stacklevel=3,
+            )
 
     @staticmethod
     def _extract_agent_id(created: typing.Any) -> str:
