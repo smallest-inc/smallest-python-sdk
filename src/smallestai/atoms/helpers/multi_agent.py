@@ -327,6 +327,12 @@ def _require(condition: bool, message: str) -> None:
 
 def _validate_config(cfg: PlaybooksConfig) -> None:
     _require(len(cfg.playbooks) >= 1, "At least one playbook is required")
+    _require(
+        len(cfg.playbooks) <= MAX_PLAYBOOKS,
+        f"Too many playbooks: {len(cfg.playbooks)} (max {MAX_PLAYBOOKS})",
+    )
+
+    defined_verification_ids = {v.id for v in cfg.verifications}
 
     for pb in cfg.playbooks:
         _require(bool(pb.id.strip()), "Every playbook needs a non-empty id")
@@ -354,6 +360,11 @@ def _validate_config(cfg: PlaybooksConfig) -> None:
             pb.auth_level in ("none", "weak", "strong"),
             f"Playbook '{pb.id}': auth_level must be none/weak/strong",
         )
+        for vid in pb.verification_ids:
+            _require(
+                vid in defined_verification_ids,
+                f"Playbook '{pb.id}': verification_id '{vid}' does not match any defined verification",
+            )
 
     # Unique ids / names / intent names (case-insensitive for name + intent_name).
     ids = [p.id for p in cfg.playbooks]
@@ -559,15 +570,21 @@ class MultiAgent:
     ) -> typing.Optional[typing.Dict[str, typing.Any]]:
         """Read the raw ``playbooks`` config section (camelCase dict), or ``None``.
 
-        The escape hatch when you want the exact stored shape rather than the typed
-        model (e.g. to inspect fields this SDK version does not model yet).
+        Resolves the newest *published* revision on the branch (or ``revision_id`` if
+        given); in-flight draft / scanning / archived revisions are skipped. The
+        escape hatch when you want the exact stored shape rather than the typed model
+        (e.g. to inspect fields this SDK version does not model yet).
         """
         branch_id = branch_id or self._default_branch_id(agent_id)
         if revision_id is None:
-            revisions = self._revisions.list(id=agent_id, branch_id=branch_id, limit=1).data.revisions
-            if not revisions:
+            revisions = self._revisions.list(id=agent_id, branch_id=branch_id, limit=20).data.revisions or []
+            # Only committed (published) revisions carry a resolved config; skip any
+            # in-flight draft / archived rows so we return the newest *published* one
+            # (a publish still scanning would otherwise read back as None).
+            published = [r for r in revisions if getattr(r, "status", None) == "published"]
+            if not published:
                 return None
-            revision_id = revisions[0].id
+            revision_id = published[0].id
         got = self._revisions.get(id=agent_id, branch_id=branch_id, revision_id=revision_id)
         resolved = getattr(got.data, "resolved_config", None) or {}
         # The section is stored double-wrapped: resolved_config["playbooks"]["playbooks"]

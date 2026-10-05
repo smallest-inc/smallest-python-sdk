@@ -73,8 +73,8 @@ class _RecordingClient:
 
     def __init__(self, *, default_branch_id: str = "branch_main", publish_fails: bool = False, create_raises=None):
         self.created_kwargs = None
-        self.update_draft_calls = []
-        self.publish_calls = []
+        self.update_draft_calls: list[dict[str, object]] = []
+        self.publish_calls: list[dict[str, object]] = []
         self._create_raises = create_raises
 
         parent = self
