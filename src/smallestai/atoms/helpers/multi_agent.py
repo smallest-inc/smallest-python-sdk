@@ -628,9 +628,19 @@ class MultiAgent:
             base_url = getattr(env, "atoms", None)
             if not api_key or not base_url:
                 return None
-            resp = Tools(base_url=base_url, api_key=api_key).list()
+            resp = Tools(base_url=base_url, api_key=api_key).list(timeout=5)
             if isinstance(resp, dict):
                 items = resp.get("data") or resp.get("tools") or []
+                # If the catalog is paginated and we only have one page, skip the check
+                # rather than risk false "unknown tool_ref" warnings for valid tools beyond it.
+                total = resp.get("totalCount") or resp.get("total")
+                if (
+                    resp.get("hasMore")
+                    or resp.get("nextPage")
+                    or resp.get("next")
+                    or (isinstance(total, int) and total > len(items))
+                ):
+                    return None
             elif isinstance(resp, list):
                 items = resp
             else:
