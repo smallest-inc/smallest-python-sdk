@@ -1,4 +1,4 @@
-## Unreleased
+## 5.13.0 - 2026-10-05
 
 * **helpers**: added `MultiAgent`, a typed writer for the platform multi-agent
   **Playbooks** config. Define a `PlaybooksConfig` (intent router + specialist
@@ -11,6 +11,17 @@
   an enabled playbook, unique ids/names/intents, auth-tool presence); the `structured`
   playbook type is rejected while the runtime stubs it. The allowlist 403 surfaces as
   `MultiAgentNotEntitledError`.
+
+* **cli**: `agents update` command, plus broadened `agents create` with config flags
+  (first message, prompt, language, voice, model, redaction, interruptions, background
+  sound). Metadata routes through `update_agent`; versioned config goes through the
+  branch draft → publish flow. (PRO-3554)
+
+* **cli**: region-aware `auth login --base-url` pins a regional API host (e.g.
+  `https://api.india.smallest.ai`) in your credentials, so you don't set
+  `SMALLEST_BASE_URL` on every command. Precedence: `SMALLEST_BASE_URL` env >
+  login-pinned host > default; honored across the atoms client, `make_client`, and
+  live call-event streaming. Re-login without `--base-url` keeps the pinned host.
 
 ## 5.12.3 - 2026-10-01
 
