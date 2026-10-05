@@ -14,7 +14,7 @@ from rich.table import Table
 
 from smallestai.cli.lib.atoms import AtomsAPIClient
 from smallestai.cli.lib.auth import AuthClient
-from smallestai.cli.lib.client import make_client
+from smallestai.cli.lib.client import make_client, resolve_base_url
 
 console = Console()
 
@@ -64,8 +64,12 @@ def _render_transcript_event(ev: dict) -> None:
         console.print(f"[green]agent[/green]: {ev['tts_text']}")
 
 
-async def _stream_call_events(call_id: str, token: str, as_json: bool, transcript_only: bool) -> None:
-    client = AtomsAPIClient()
+async def _stream_call_events(
+    call_id: str, token: str, as_json: bool, transcript_only: bool, base_url: str
+) -> None:
+    # Region-correct host: honour SMALLEST_BASE_URL > the host pinned at login >
+    # default, so a region-pinned user streams from their own region (not the default).
+    client = AtomsAPIClient(base_url=base_url)
     try:
         async for ev in client.stream_call_events(call_id, token):
             et = ev.get("event_type")
@@ -188,7 +192,11 @@ def initialise_calls_app(auth_client: AuthClient):
         `smallestai calls transcript`.
         """
         token = _session_token(auth_client)
-        asyncio.run(_stream_call_events(call_id, token, as_json, transcript_only=False))
+        asyncio.run(
+            _stream_call_events(
+                call_id, token, as_json, transcript_only=False, base_url=resolve_base_url(auth_client)
+            )
+        )
 
     @calls_app.command("transcript")
     def transcript(
@@ -204,7 +212,11 @@ def initialise_calls_app(auth_client: AuthClient):
         """
         if follow:
             token = _session_token(auth_client)
-            asyncio.run(_stream_call_events(call_id, token, as_json, transcript_only=True))
+            asyncio.run(
+                _stream_call_events(
+                    call_id, token, as_json, transcript_only=True, base_url=resolve_base_url(auth_client)
+                )
+            )
             return
         d = _data(make_client(auth_client).atoms.calls.get(id=call_id))
         turns = getattr(d, "transcript", None) or []
