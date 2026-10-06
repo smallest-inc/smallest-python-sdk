@@ -332,7 +332,21 @@ class SDKAgentLLMResponseStartEvent(SDKAgentEvent, type=EventType.AGENT_LLM_RESP
 
 
 class SDKAgentLLMResponseChunkEvent(SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_CHUNK.value):
+    """A piece of the streamed reply.
+
+    ``text`` is spoken as it arrives. ``pause_ms``, when set, tells the
+    orchestrator to insert that much silence *after* this chunk's speech, before
+    whatever is spoken next. It is a lightweight stand-in for SSML ``<break>``,
+    which Smallest Waves/Lightning TTS does not support (a literal ``<break>`` is
+    read aloud). Use it to keep a filler from running into the real reply, e.g.
+    stream ``"Let me check..."`` with ``pause_ms=600`` so a beat lands before the
+    answer. Omit it (``None``) for no pause; this is fully backward compatible, so
+    older orchestrators that do not read the field simply ignore it.
+    """
+
     text: str
+    # Milliseconds of silence to play after this chunk. None (default) = no pause.
+    pause_ms: Optional[int] = None
 
 
 class SDKAgentLLMResponseEndEvent(SDKAgentEvent, type=EventType.AGENT_LLM_RESPONSE_END.value):
