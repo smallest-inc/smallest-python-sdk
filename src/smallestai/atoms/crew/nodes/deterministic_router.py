@@ -39,10 +39,7 @@ import typing
 
 from loguru import logger
 
-from smallestai.atoms.crew.events import (
-    SDKAgentLogEvent,
-    SDKSystemUpdateOutputAgentSettingsEvent,
-)
+from smallestai.atoms.crew.events import SDKAgentLogEvent
 from smallestai.atoms.crew.nodes.output_crew import OutputCrewNode
 from smallestai.atoms.crew.tools.registry import ToolRegistry
 
@@ -55,15 +52,11 @@ class SubAgent:
         id: unique id, referenced by transitions.
         prompt: the system prompt used while this sub-agent is active.
         tools: ``@function_tool`` callables available only while this sub-agent is active.
-        voice_id: optional voice to swap to on entering this sub-agent (mid-call).
-        language: optional language to swap to on entering this sub-agent.
     """
 
     id: str
     prompt: str
     tools: typing.List[typing.Callable] = dataclasses.field(default_factory=list)
-    voice_id: typing.Optional[str] = None
-    language: typing.Optional[str] = None
 
 
 @dataclasses.dataclass
@@ -155,7 +148,12 @@ class DeterministicRouter(OutputCrewNode):
         return default.target if default else None
 
     async def _enter(self, sub_id: str, *, previous: typing.Optional[str]) -> None:
-        """Make ``sub_id`` active: log the move and optionally swap voice/language."""
+        """Make ``sub_id`` active and log the move to the Events tab.
+
+        Mid-call voice/language swap is intentionally not attempted here: the platform
+        ignores crew-sent output-agent settings (a crew owns only the LLM turn), so a
+        runtime voice swap is a platform gap tracked separately — not an SDK no-op.
+        """
         self._active = sub_id
         await self.send_event(
             SDKAgentLogEvent(
@@ -163,14 +161,6 @@ class DeterministicRouter(OutputCrewNode):
                 payload={"from": previous, "to": sub_id, "state": dict(self.state)},
             )
         )
-        sub = self._sub_agents[sub_id]
-        settings: typing.Dict[str, typing.Any] = {}
-        if sub.voice_id:
-            settings["voice_id"] = sub.voice_id
-        if sub.language:
-            settings["language"] = sub.language
-        if settings:
-            await self.send_event(SDKSystemUpdateOutputAgentSettingsEvent(settings=settings))
 
     async def generate_response(self) -> typing.AsyncIterator[str]:
         self.validate()

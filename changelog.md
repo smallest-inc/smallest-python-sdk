@@ -13,7 +13,7 @@
   explicit skip and in-session agent-to-agent handoff). The active sub-agent owns the
   turn; after it, the router advances deterministically off accumulated state (set
   from real tool results via `set_state`), not an LLM classifier. Each move emits an
-  `SDKAgentLogEvent` for the Events tab; sub-agents can swap voice/language on entry.
+  `SDKAgentLogEvent` for the Events tab.
 
 ## 5.13.0 - 2026-10-05
 
