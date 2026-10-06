@@ -56,9 +56,30 @@ class ConversationType(str, Enum):
     SUPERVISOR_AGENT = "supervisor_agent"
 
 
+class CallerContext(BaseModel):
+    """Inbound caller identity surfaced to a crew on connect (PRO-3560).
+
+    Populated by the orchestrator from the call record on telephony/WhatsApp calls so
+    crew code can do ANI-based lookups (`user_number` = caller/ANI, `agent_number` =
+    the number dialed/DNIS). ``None`` on channels that carry no caller identity (e.g.
+    webcall), and individual fields may be ``None`` where the channel doesn't provide
+    them. ``extra="allow"`` so new fields added server-side don't break parsing.
+    """
+
+    user_number: Optional[str] = None
+    agent_number: Optional[str] = None
+    direction: Optional[str] = None
+    call_id: Optional[str] = None
+
+    model_config = ConfigDict(extra="allow")
+
+
 class SessionContext(BaseModel):
     initial_variables: Dict[str, Any]
     conversation_type: ConversationType
+    # PRO-3560: inbound caller identity. None until the orchestrator sends it (older
+    # orchestrators / webcall), so reading it is always safe.
+    caller: Optional[CallerContext] = None
 
 
 class OutputAgentSettings(BaseModel):

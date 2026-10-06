@@ -1,12 +1,5 @@
 ## Unreleased
 
-* **helpers**: `MultiAgent` now warns at author time when a playbook / verification /
-  global `tool_ref` doesn't match any tool in your org Tools library — otherwise the
-  ref is silently dropped by the platform and shows as empty in the dashboard. New
-  `MultiAgent.check_tool_refs(config)` returns the unresolved refs; `publish_config` /
-  `write_draft` emit a `UserWarning`. Best-effort (queries `GET /tool` on the client's
-  host) and never blocks a publish — if the lookup can't run, nothing is flagged.
-
 * **crew**: `DeterministicRouter` + `SubAgent` — a first-class primitive for
   deterministic multi-agent workflows (PRO-3271). Define N sub-agents (each a prompt
   + tool subset) and **code-defined, data-dependent transitions** between them (with
@@ -14,6 +7,27 @@
   turn; after it, the router advances deterministically off accumulated state (set
   from real tool results via `set_state`), not an LLM classifier. Each move emits an
   `SDKAgentLogEvent` for the Events tab.
+
+## 5.13.1 - 2026-10-06
+
+* **helpers**: `MultiAgent` now warns at author time when a playbook / verification /
+  global `tool_ref` doesn't match any tool in your org Tools library — otherwise the
+  ref is silently dropped by the platform and shows as empty in the dashboard. New
+  `MultiAgent.check_tool_refs(config)` returns the unresolved refs; `publish_config` /
+  `write_draft` emit a `UserWarning`. Best-effort (queries `GET /tool` on the client's
+  host) and never blocks a publish — if the lookup can't run, nothing is flagged.
+
+* **crew**: `@function_tool` now generates correct JSON Schema for parameter types.
+  `List[str]` becomes `{"type": "array", "items": {"type": "string"}}` (was a bare
+  `{"type": "array"}` with no `items`), and bare `list` / `dict` map correctly, so the
+  tool schema sent to the LLM matches the signature.
+
+* **crew**: `SessionContext.caller` (`CallerContext`) — inbound caller identity
+  (`user_number`/ANI, `agent_number`/DNIS, `direction`, `call_id`) surfaced to a crew
+  on connect, so crew code can do ANI-based lookups (PRO-3560). `None` on channels
+  without caller identity (webcall) and on older orchestrators, so reading it is always
+  safe; forward-compatible (`extra="allow"`). Pairs with the orchestrator change that
+  populates it.
 
 ## 5.13.0 - 2026-10-05
 
