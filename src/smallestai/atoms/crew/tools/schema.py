@@ -4,7 +4,6 @@ import re
 import sys
 import types
 from typing import (
-    Annotated,
     Any,
     Callable,
     Dict,
@@ -64,7 +63,9 @@ def python_type_to_json_schema(type_hint: Any) -> Dict[str, Any]:
     origin = get_origin(type_hint)
     args = get_args(type_hint)
 
-    if origin is Annotated:
+    # Annotated[...] — detect via __metadata__ (stable across 3.9–3.12; get_origin(...)
+    # is Annotated is not reliable on 3.9). Unwrap to the underlying type.
+    if hasattr(type_hint, "__metadata__"):
         return python_type_to_json_schema(args[0])
 
     if origin in _UNION_TYPES:
@@ -225,7 +226,7 @@ def extract_function_schema(
         type_hint = type_hints.get(param_name, Any)
         param_desc = docstring_info["params"].get(param_name, "")
 
-        if get_origin(type_hint) is Annotated:
+        if hasattr(type_hint, "__metadata__"):
             args = get_args(type_hint)
             if args:
                 base_type = args[0]
