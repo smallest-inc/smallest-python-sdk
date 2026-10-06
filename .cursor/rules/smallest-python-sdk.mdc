@@ -1,0 +1,6 @@
+---
+description: Smallest Python SDK defaults
+alwaysApply: true
+---
+Read and follow `.claude/skills/smallest-python-sdk/SKILL.md` before changing this repo.
+Prefer Fern regen from the docs repo over inventing client surface. Flag missing `python-sdk.yml` dispatch after OpenAPI bumps.
