@@ -226,15 +226,18 @@ def extract_function_schema(
         type_hint = type_hints.get(param_name, Any)
         param_desc = docstring_info["params"].get(param_name, "")
 
-        if hasattr(type_hint, "__metadata__"):
-            args = get_args(type_hint)
-            if args:
-                base_type = args[0]
-                for metadata in args[1:]:
-                    if isinstance(metadata, FieldInfo) and metadata.description:
-                        param_desc = metadata.description
-                        break
-                type_hint = base_type
+        # Pull a FieldInfo description from Annotated metadata via the RAW annotation.
+        # get_type_hints can bury the Annotated under an outer Optional when the param
+        # has a None default (Python 3.9: Annotated[Optional[str], ...] = None resolves
+        # to Optional[Annotated[...]]), hiding __metadata__; the raw annotation keeps it.
+        # The resolved type_hint still renders the type correctly (it unwraps Optional +
+        # Annotated), so we only mine the raw annotation for the description here.
+        raw_annotation = param.annotation
+        if hasattr(raw_annotation, "__metadata__"):
+            for metadata in get_args(raw_annotation)[1:]:
+                if isinstance(metadata, FieldInfo) and metadata.description:
+                    param_desc = metadata.description
+                    break
 
         properties[param_name] = {**python_type_to_json_schema(type_hint), "description": param_desc}
 
