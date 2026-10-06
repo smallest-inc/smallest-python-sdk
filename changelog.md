@@ -1,4 +1,4 @@
-## Unreleased
+## 5.13.1 - 2026-10-06
 
 * **helpers**: `MultiAgent` now warns at author time when a playbook / verification /
   global `tool_ref` doesn't match any tool in your org Tools library — otherwise the
