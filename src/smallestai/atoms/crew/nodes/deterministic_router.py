@@ -180,9 +180,14 @@ class DeterministicRouter(OutputCrewNode):
         resp = await self.llm.chat(self.context.messages, tools=registry.get_schemas())
         tool_calls = getattr(resp, "tool_calls", None)
         if tool_calls:
+            # The assistant turn that requested the tools must precede the tool results,
+            # or the follow-up request 400s ("tool_call_id not found in tool_calls").
+            self.context.add_message(
+                {"role": "assistant", "content": resp.content or None, "tool_calls": [tc.to_dict() for tc in tool_calls]}
+            )
             for result in await registry.execute(tool_calls, context=self):
                 self.context.add_message(result.to_message())
-            async for chunk in self.llm.chat(self.context.messages, stream=True):
+            async for chunk in await self.llm.chat(self.context.messages, stream=True):
                 if getattr(chunk, "content", None):
                     yield chunk.content
         else:

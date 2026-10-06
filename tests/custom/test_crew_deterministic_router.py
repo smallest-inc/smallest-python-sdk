@@ -94,3 +94,50 @@ def test_per_sub_agent_tools_are_isolated():
     # a has its tool; b has none
     assert len(r._registries["a"].get_schemas()) == 1
     assert r._registries["b"].get_schemas() == []
+
+
+@pytest.mark.asyncio
+async def test_generate_response_tool_loop_and_transition():
+    """The per-turn loop (caught two live bugs): the stream chat is awaited, and the
+    tool-result message is preceded by the assistant-with-tool_calls turn (else the
+    provider 400s). After the tool sets state, the router transitions."""
+    from smallestai.atoms.crew import function_tool
+    from smallestai.atoms.crew.clients.types import ChatChunk, ChatResponse, ToolCall
+
+    class _FakeLLM:
+        async def chat(self, messages, stream=False, tools=None, **kw):
+            if stream:  # must be awaited by the node, then async-iterated
+
+                async def _gen():
+                    yield ChatChunk(content="all set.")
+
+                return _gen()
+            if any(m.get("role") == "tool" for m in messages):
+                return ChatResponse(content="all set.")
+            return ChatResponse(content=None, tool_calls=[ToolCall(id="call_1", name="mark", arguments="{}")])
+
+    class Flow(DeterministicRouter):
+        def __init__(self):
+            super().__init__(name="flow", llm=_FakeLLM(), start="a")
+            self.add_sub_agent(SubAgent("a", "intake", tools=[self.mark]))
+            self.add_sub_agent(SubAgent("b", "resolve"))
+            self.add_transition("a", "b", when=lambda s: s.get("done"))
+
+        @function_tool
+        async def mark(self):
+            """mark done."""
+            self.set_state(done=True)
+            return {"ok": True}
+
+    r = Flow()
+    r.context.add_message({"role": "user", "content": "hi"})
+    reply = "".join([chunk async for chunk in r.generate_response()])
+
+    assert reply == "all set."
+    roles = [m["role"] for m in r.context.messages]
+    # assistant(tool_calls) must come before the tool result
+    assert "assistant" in roles and "tool" in roles
+    assert roles.index("assistant") < roles.index("tool")
+    assert any(m["role"] == "assistant" and m.get("tool_calls") for m in r.context.messages)
+    assert r.state.get("done") is True
+    assert r._active == "b"  # transitioned after the tool set state
