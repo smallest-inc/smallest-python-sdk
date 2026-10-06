@@ -12,6 +12,13 @@
   `{"type": "array"}` with no `items`), and bare `list` / `dict` map correctly, so the
   tool schema sent to the LLM matches the signature.
 
+* **crew**: `SessionContext.caller` (`CallerContext`) — inbound caller identity
+  (`user_number`/ANI, `agent_number`/DNIS, `direction`, `call_id`) surfaced to a crew
+  on connect, so crew code can do ANI-based lookups (PRO-3560). `None` on channels
+  without caller identity (webcall) and on older orchestrators, so reading it is always
+  safe; forward-compatible (`extra="allow"`). Pairs with the orchestrator change that
+  populates it.
+
 ## 5.13.0 - 2026-10-05
 
 * **helpers**: added `MultiAgent`, a typed writer for the platform multi-agent
