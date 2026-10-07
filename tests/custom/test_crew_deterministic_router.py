@@ -122,8 +122,7 @@ def test_per_sub_agent_tools_are_isolated():
 async def test_tool_less_sub_agent_streams_directly():
     """A sub-agent with no tools must stream straight to TTS (no non-streaming
     detection turn first), so the voice path gets incremental first tokens."""
-    from smallestai.atoms.crew import function_tool
-    from smallestai.atoms.crew.clients.types import ChatChunk, ChatResponse, ToolCall
+    from smallestai.atoms.crew.clients.types import ChatChunk, ChatResponse
 
     calls = {"stream": 0, "non_stream": 0}
 
