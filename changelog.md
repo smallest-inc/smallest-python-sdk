@@ -1,4 +1,4 @@
-## Unreleased
+## 5.14.0 - 2026-10-08
 
 * **crew**: `DeterministicRouter` + `SubAgent` — a first-class primitive for
   deterministic multi-agent workflows (PRO-3271). Define N sub-agents (each a prompt
@@ -7,6 +7,14 @@
   turn; after it, the router advances deterministically off accumulated state (set
   from real tool results via `set_state`), not an LLM classifier. Each move emits an
   `SDKAgentLogEvent` for the Events tab.
+
+* **crew**: read the inbound caller on a crew's connect handshake via `session.caller`
+  (`user_number` = the ANI, `agent_number` = the number dialed, `direction`, `call_id`),
+  plus `session.session_context` and `session.initial_variables` (PRO-3560). Populated
+  before your `setup_handler` runs, so a crew can do an ANI lookup at join with
+  `session.caller.user_number`. `CallerContext` and `SessionContext` are now exported
+  from `smallestai.atoms.crew`. Pairs with the orchestrator forwarding the caller block
+  into `system.init`.
 
 ## 5.13.1 - 2026-10-06
 
