@@ -30,12 +30,16 @@ _LAZY_EXPORTS = {
     "function_tool": "smallestai.atoms.crew.tools",
     "loopback_tool": "smallestai.atoms.crew.tools",
     "ToolRegistry": "smallestai.atoms.crew.tools",
+    "CallerContext": "smallestai.atoms.crew.events",
+    "SessionContext": "smallestai.atoms.crew.events",
 }
 
 __all__ = list(_LAZY_EXPORTS.keys())
 
 if TYPE_CHECKING:
     from smallestai.atoms.crew.clients.openai import OpenAIClient as OpenAIClient
+    from smallestai.atoms.crew.events import CallerContext as CallerContext
+    from smallestai.atoms.crew.events import SessionContext as SessionContext
     from smallestai.atoms.crew.nodes import BackgroundCrewNode as BackgroundCrewNode
     from smallestai.atoms.crew.nodes import OutputCrewNode as OutputCrewNode
     from smallestai.atoms.crew.server import AtomsCrewApp as AtomsCrewApp

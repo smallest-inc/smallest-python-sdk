@@ -18,10 +18,12 @@ from loguru import logger
 from pydantic import BaseModel
 
 from smallestai.atoms.crew.events import (
+    CallerContext,
     SDKAgentErrorEvent,
     SDKAgentReadyEvent,
     SDKEvent,
     SDKSystemInitEvent,
+    SessionContext,
 )
 from smallestai.atoms.crew.nodes import CrewNode
 from smallestai.atoms.crew.task_manager import TaskManager, TaskManagerParams
@@ -160,6 +162,32 @@ class CrewSession:
         self._event_handlers: Dict[str, EventHandler] = {}
 
         self._register_event_handler("on_event_received")
+
+    @property
+    def session_context(self) -> Optional[SessionContext]:
+        """The connect handshake's session context (``conversation_type``,
+        ``caller``, ``initial_variables``), or ``None`` before the handshake
+        completes. Populated before your ``setup_handler`` runs, so it is safe to
+        read there and in node code."""
+        return self._init_event.session_context if self._init_event else None
+
+    @property
+    def caller(self) -> Optional[CallerContext]:
+        """The inbound caller identity for an ANI lookup — ``user_number`` (caller),
+        ``agent_number`` (number dialed), ``direction`` and ``call_id`` (PRO-3560).
+        ``None`` on a channel with no caller identity (a webcall or chat) or before
+        connect. Branch on ``caller.user_number`` rather than ``caller is not None``
+        if you only care about telephony."""
+        ctx = self.session_context
+        return ctx.caller if ctx else None
+
+    @property
+    def initial_variables(self) -> Dict[str, Any]:
+        """The call's variables surfaced on the handshake (the same per-call
+        variables the agent prompt is rendered from); ``{}`` before connect or on a
+        call with none."""
+        ctx = self.session_context
+        return dict(ctx.initial_variables) if ctx and ctx.initial_variables else {}
 
     async def initialize(self):
         """Initialize the session"""
