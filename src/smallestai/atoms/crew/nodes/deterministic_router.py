@@ -96,6 +96,7 @@ class DeterministicRouter(OutputCrewNode):
             raise ValueError(f"duplicate sub-agent id: {sub.id!r}")
         self._sub_agents[sub.id] = sub
         registry = ToolRegistry()
+        registry.set_owner(self)  # emit this sub-agent's tool_call events to the Events tab
         for tool in sub.tools:
             registry.register(tool)
         self._registries[sub.id] = registry
@@ -187,6 +188,8 @@ class DeterministicRouter(OutputCrewNode):
             )
             for result in await registry.execute(tool_calls, context=self):
                 self.context.add_message(result.to_message())
+            # Single round: tools run once, then we stream the reply. Chained multi-round
+            # tool calls within one turn are intentionally out of scope for this version.
             async for chunk in await self.llm.chat(self.context.messages, stream=True):
                 if getattr(chunk, "content", None):
                     yield chunk.content
