@@ -4,9 +4,31 @@ Covers the transition engine (the deterministic part) without the LLM turn: defa
 edges, data-dependent predicates, skip, terminal, and graph validation.
 """
 
+import asyncio
+
 import pytest
 
 from smallestai.atoms.crew import DeterministicRouter, SubAgent
+
+
+@pytest.fixture(autouse=True)
+def _ensure_event_loop():
+    """Guarantee a current event loop for the sync construction tests.
+
+    A ``DeterministicRouter`` (via ``CrewNode.__init__``) builds an ``asyncio.Queue``,
+    which binds to the current loop on py3.9. These sync tests construct the router off
+    any running loop, so with ``asyncio_mode=auto`` a prior test may leave no current
+    loop and construction raises ``RuntimeError: no current event loop``. In production
+    nodes are always built under the crew's running loop, so this is a test-only concern.
+    """
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_closed():
+            raise RuntimeError
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    yield
 
 
 def _collections() -> DeterministicRouter:

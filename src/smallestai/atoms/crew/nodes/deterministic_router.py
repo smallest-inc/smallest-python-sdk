@@ -184,7 +184,11 @@ class DeterministicRouter(OutputCrewNode):
             # The assistant turn that requested the tools must precede the tool results,
             # or the follow-up request 400s ("tool_call_id not found in tool_calls").
             self.context.add_message(
-                {"role": "assistant", "content": resp.content or None, "tool_calls": [tc.to_dict() for tc in tool_calls]}
+                {
+                    "role": "assistant",
+                    "content": resp.content or None,
+                    "tool_calls": [tc.to_dict() for tc in tool_calls],
+                }
             )
             for result in await registry.execute(tool_calls, context=self):
                 self.context.add_message(result.to_message())
