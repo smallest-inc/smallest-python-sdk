@@ -24,6 +24,8 @@ _LAZY_EXPORTS = {
     "CrewSession": "smallestai.atoms.crew.session",
     "OutputCrewNode": "smallestai.atoms.crew.nodes",
     "BackgroundCrewNode": "smallestai.atoms.crew.nodes",
+    "DeterministicRouter": "smallestai.atoms.crew.nodes",
+    "SubAgent": "smallestai.atoms.crew.nodes",
     "OpenAIClient": "smallestai.atoms.crew.clients.openai",
     "function_tool": "smallestai.atoms.crew.tools",
     "loopback_tool": "smallestai.atoms.crew.tools",

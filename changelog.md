@@ -1,3 +1,13 @@
+## Unreleased
+
+* **crew**: `DeterministicRouter` + `SubAgent` — a first-class primitive for
+  deterministic multi-agent workflows (PRO-3271). Define N sub-agents (each a prompt
+  + tool subset) and **code-defined, data-dependent transitions** between them (with
+  explicit skip and in-session agent-to-agent handoff). The active sub-agent owns the
+  turn; after it, the router advances deterministically off accumulated state (set
+  from real tool results via `set_state`), not an LLM classifier. Each move emits an
+  `SDKAgentLogEvent` for the Events tab.
+
 ## 5.13.1 - 2026-10-06
 
 * **helpers**: `MultiAgent` now warns at author time when a playbook / verification /

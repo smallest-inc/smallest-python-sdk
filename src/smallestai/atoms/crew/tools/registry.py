@@ -48,6 +48,15 @@ class ToolRegistry:
         # (the same tool-call events single-prompt agents already show).
         self._owner: Any = None
 
+    def set_owner(self, owner: Any) -> None:
+        """Set the owning crew node so tool-call events reach the Events tab.
+
+        ``discover()`` sets this automatically; call it explicitly when you build a
+        registry with bare ``register()`` (e.g. a per-sub-agent tool subset) and still
+        want tool_call_start/end/error events emitted over the owner's websocket.
+        """
+        self._owner = owner
+
     def register(self, func_or_info: Union[Callable, FunctionToolInfo]):
         """
         Register a @function_tool decorated function.
