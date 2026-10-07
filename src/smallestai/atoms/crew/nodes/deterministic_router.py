@@ -176,9 +176,23 @@ class DeterministicRouter(OutputCrewNode):
         conversation = [m for m in self.context.messages if m.get("role") != "system"]
         self.context.set_messages([{"role": "system", "content": sub.prompt}] + conversation)
 
+        # A tool-less sub-agent can't make a tool call, so skip the non-streaming
+        # detection turn and stream straight to TTS — lower first-token latency on
+        # the voice path. (The tool path below must stay non-streaming first so we
+        # can see the tool calls before the spoken reply.)
+        schemas = registry.get_schemas()
+        if not schemas:
+            async for chunk in await self.llm.chat(self.context.messages, stream=True):
+                if getattr(chunk, "content", None):
+                    yield chunk.content
+            nxt = self._next_active()
+            if nxt and nxt != self._active:
+                await self._enter(nxt, previous=self._active)
+            return
+
         # One LLM turn with this sub-agent's tools. Tools run first (they update
         # state via set_state), then we stream the spoken reply.
-        resp = await self.llm.chat(self.context.messages, tools=registry.get_schemas())
+        resp = await self.llm.chat(self.context.messages, tools=schemas)
         tool_calls = getattr(resp, "tool_calls", None)
         if tool_calls:
             # The assistant turn that requested the tools must precede the tool results,

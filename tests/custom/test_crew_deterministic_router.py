@@ -119,6 +119,38 @@ def test_per_sub_agent_tools_are_isolated():
 
 
 @pytest.mark.asyncio
+async def test_tool_less_sub_agent_streams_directly():
+    """A sub-agent with no tools must stream straight to TTS (no non-streaming
+    detection turn first), so the voice path gets incremental first tokens."""
+    from smallestai.atoms.crew import function_tool
+    from smallestai.atoms.crew.clients.types import ChatChunk, ChatResponse, ToolCall
+
+    calls = {"stream": 0, "non_stream": 0}
+
+    class _FakeLLM:
+        async def chat(self, messages, stream=False, tools=None, **kw):
+            if stream:
+                calls["stream"] += 1
+
+                async def _gen():
+                    yield ChatChunk(content="hel")
+                    yield ChatChunk(content="lo.")
+
+                return _gen()
+            calls["non_stream"] += 1
+            return ChatResponse(content="should-not-be-used")
+
+    r = DeterministicRouter(name="flow", llm=_FakeLLM(), start="a")
+    r.add_sub_agent(SubAgent("a", "greeter"))  # no tools
+    r.context.add_message({"role": "user", "content": "hi"})
+
+    reply = "".join([chunk async for chunk in r.generate_response()])
+    assert reply == "hello."
+    assert calls["stream"] == 1  # streamed directly
+    assert calls["non_stream"] == 0  # no detection turn for a tool-less sub-agent
+
+
+@pytest.mark.asyncio
 async def test_generate_response_tool_loop_and_transition():
     """The per-turn loop (caught two live bugs): the stream chat is awaited, and the
     tool-result message is preceded by the assistant-with-tool_calls turn (else the
