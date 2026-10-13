@@ -8,3 +8,11 @@ poetry.toml
 .env
 .venv*/
 site/
+
+# Claude local junk; track committed skills
+.claude/*
+!.claude/skills/
+!.claude/skills/**
+.claude/settings*
+.claude/**/auth-session.json
+.claude/**/playwright-auth.json
