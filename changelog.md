@@ -1,3 +1,10 @@
+## Unreleased
+
+* **helpers**: `Campaign.create` accepts `from_numbers` and sends `fromNumbers`.
+  Legacy `phone_ids` remains supported with a `DeprecationWarning`; when both are
+  supplied, the API gives `fromNumbers` precedence. Caller-ID entries must be
+  non-empty strings starting with `+`; full E.164 validation remains server-side.
+
 ## 5.14.0 - 2026-10-08
 
 * **crew**: `DeterministicRouter` + `SubAgent` — a first-class primitive for
