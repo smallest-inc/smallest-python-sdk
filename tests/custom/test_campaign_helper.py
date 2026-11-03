@@ -29,8 +29,13 @@ def test_from_numbers_payload(post):
         "https://api.example/atoms/v1/campaign",
         headers={"Authorization": "Bearer sk_test", "Content-Type": "application/json"},
         json={
-            "name": "Campaign", "agentId": "agent", "audienceId": "audience",
-            "description": "", "maxRetries": 3, "retryDelay": 15, "fromNumbers": numbers,
+            "name": "Campaign",
+            "agentId": "agent",
+            "audienceId": "audience",
+            "description": "",
+            "maxRetries": 3,
+            "retryDelay": 15,
+            "fromNumbers": numbers,
         },
         timeout=2,
     )
