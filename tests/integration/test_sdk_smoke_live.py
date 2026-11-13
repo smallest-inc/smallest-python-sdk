@@ -12,8 +12,6 @@ import time
 
 import pytest
 
-pytestmark = pytest.mark.integration
-
 API_KEY = os.environ.get("SMALLEST_API_KEY")
 BASE = os.environ.get("SMALLEST_BASE", "https://api.smallest.ai").rstrip("/")
 
@@ -32,7 +30,8 @@ def _client():
 
 def _data(resp):
     d = getattr(resp, "data", resp)
-    return d.model_dump() if hasattr(d, "model_dump") else d
+    # by_alias so camelCase wire keys (_id, etc.) survive the model dump.
+    return d.model_dump(by_alias=True) if hasattr(d, "model_dump") else d
 
 
 pytestmark = [pytest.mark.integration, pytest.mark.skipif(not API_KEY, reason="set SMALLEST_API_KEY")]

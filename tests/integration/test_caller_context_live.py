@@ -96,7 +96,9 @@ def _data(resp):
     """Unwrap a {status, data} SDK response into the data dict."""
     d = getattr(resp, "data", resp)
     if hasattr(d, "model_dump"):
-        d = d.model_dump()
+        # by_alias so camelCase wire keys (conversationId, callId, _id) survive —
+        # the SDK models alias them, and the assertions below key on the wire names.
+        d = d.model_dump(by_alias=True)
     return d
 
 
@@ -122,7 +124,7 @@ def _deploy_probe_crew(agent_id: str) -> str:
         f.write(PROBE_SERVER)
     with open(os.path.join(workdir, "requirements.txt"), "w") as f:
         f.write("smallestai>=5.14.0\nloguru>=0.7.0\n")
-    env = {**os.environ, "SMALLEST_API_KEY": API_KEY}
+    env: dict[str, str] = {**os.environ, "SMALLEST_API_KEY": API_KEY or ""}
     if "dev" in BASE:
         env["SMALLEST_BASE_URL"] = BASE
     run = lambda *a: subprocess.run(
