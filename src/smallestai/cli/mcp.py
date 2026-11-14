@@ -70,8 +70,11 @@ def initialise_mcp_app() -> typer.Typer:
             console.print("[red]npx not found. Install Node.js 18+ from https://nodejs.org.[/red]")
             raise typer.Exit(1)
         # The MCP server reads ATOMS_API_KEY; bridge from the SDK's SMALLEST_API_KEY if set.
-        env = dict(os.environ)
-        api_key = env.get(_ENV_VAR) or env.get("SMALLEST_API_KEY")
+        # Only pass through the env vars npx/node need to run, plus the API key, so the
+        # child process does not inherit unrelated secrets from the parent environment.
+        _PASSTHROUGH_VARS = ("PATH", "HOME", "APPDATA", "TEMP", "TMP", "SystemRoot", "ProgramFiles")
+        env = {k: os.environ[k] for k in _PASSTHROUGH_VARS if k in os.environ}
+        api_key = os.environ.get(_ENV_VAR) or os.environ.get("SMALLEST_API_KEY")
         if not api_key:
             console.print(f"[yellow]{_ENV_VAR} is not set; the MCP server needs it.[/yellow]")
         else:
