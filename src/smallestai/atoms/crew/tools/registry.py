@@ -282,7 +282,10 @@ class ToolRegistry:
                 result = func(*args, **kwargs)
 
             if isinstance(result, (dict, list, str, int, float, bool, type(None))):
-                content = json.dumps(result)
+                # default=str: the tool has already run, so a value json can't encode
+                # (datetime, Decimal, UUID...) must not turn its result into an error
+                # and prompt the LLM to call it again.
+                content = json.dumps(result, default=str)
             else:
                 content = str(result)
 
