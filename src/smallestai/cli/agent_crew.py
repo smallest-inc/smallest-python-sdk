@@ -677,7 +677,7 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
         try:
             message = await atoms_client.cancel_agent_build(agent_id=agent_id, build_id=build_id, api_key=access_token)
         except Exception as e:
-            console.print(f"[red]Could not cancel build {build_id[:12]}...: {e}[/red]")
+            _print_error(f"Could not cancel build {build_id[:12]}...", e)
             raise typer.Exit(1)
 
         console.print(f"[bold green]✓ {message}[/bold green] [dim]({build_id[:12]}...)[/dim]")

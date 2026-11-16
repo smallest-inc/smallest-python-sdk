@@ -108,3 +108,20 @@ def test_deploy_stops_polling_and_reports_terminal_result(status, tmp_path, monk
     assert result.exit_code == (0 if status == "SUCCEEDED" else 1), result.stdout
     api.get_agent_build.assert_awaited_once()
     assert ("Build succeeded" if status == "SUCCEEDED" else status) in result.stdout
+
+
+def test_cancel_errors_preserve_log_scrubbing():
+    app = initialise_agent_crew_app(
+        SimpleNamespace(get_agent_id=lambda: "agent"),
+        SimpleNamespace(get_credentials=lambda: {"access_token": "test-key"}),
+        SimpleNamespace(
+            cancel_agent_build=AsyncMock(
+                side_effect=RuntimeError("dial agent-x-svc.agents.svc.cluster.local:8080: connection refused")
+            )
+        ),
+    )
+    result = CliRunner().invoke(app, ["cancel", "build", "--yes"])
+    assert result.exit_code == 1
+    assert "connection refused" in result.stdout
+    assert "cluster.local" not in result.stdout
+    assert "agent-x-svc" not in result.stdout
