@@ -1,0 +1,127 @@
+"""Cancellation must never report success for an unperformed request."""
+
+from types import SimpleNamespace
+from unittest.mock import AsyncMock
+
+import httpx
+import pytest
+from typer.testing import CliRunner
+
+from smallestai.cli.agent_crew import initialise_agent_crew_app
+from smallestai.cli.lib.atoms import AtomsAPIClient
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "status,body,error",
+    [
+        (200, {"data": {"message": "Build cancelled"}}, None),
+        (409, {"errors": ["Build already terminal"]}, "Build already terminal"),
+        (500, None, "HTTP 500"),
+        (307, None, "HTTP 307"),
+        (302, {"data": {"message": "Build cancelled"}}, "HTTP 302"),
+        (200, None, "invalid success response"),
+        (200, {"data": {}}, "invalid success response"),
+        (200, {"data": {"message": 42}}, "invalid success response"),
+    ],
+)
+async def test_cancel_response(monkeypatch, status, body, error):
+    seen = []
+
+    def respond(request):
+        seen.append(request)
+        return httpx.Response(status, json=body, headers={"Location": "https://other.example/cancel"})
+
+    real_client = httpx.AsyncClient
+    monkeypatch.setattr(httpx, "AsyncClient", lambda: real_client(transport=httpx.MockTransport(respond)))
+    api = AtomsAPIClient()
+    api.base_url = "https://api.example"
+    if error:
+        with pytest.raises(Exception, match=error):
+            await api.cancel_agent_build("agent", "build", "test-key")
+    else:
+        assert await api.cancel_agent_build("agent", "build", "test-key") == "Build cancelled"
+    assert len(seen) == 1
+    assert seen[0].method == "POST"
+    assert str(seen[0].url) == "https://api.example/atoms/v1/sdk/agents/agent/builds/build/cancel"
+    assert seen[0].headers["Authorization"] == "Bearer test-key"
+
+
+@pytest.mark.parametrize("error", [None, "Build already terminal", "cancel failed (HTTP 307)."])
+def test_cancel_cli_exit_status(error):
+    cancel = AsyncMock(return_value="Build cancelled", side_effect=RuntimeError(error) if error else None)
+    app = initialise_agent_crew_app(
+        SimpleNamespace(get_agent_id=lambda: "agent"),
+        SimpleNamespace(get_credentials=lambda: {"access_token": "test-key"}),
+        SimpleNamespace(cancel_agent_build=cancel),
+    )
+    result = CliRunner().invoke(app, ["cancel", "build", "--yes"])
+    assert result.exit_code == (1 if error else 0)
+    assert ("Could not cancel" if error else "Build cancelled") in result.stdout
+    cancel.assert_awaited_once_with(agent_id="agent", build_id="build", api_key="test-key")
+
+
+@pytest.mark.parametrize("status", ["CANCELLED", "TIMED_OUT"])
+def test_terminal_build_models_and_log_stream(status):
+    from smallestai.cli.lib.atoms import AgentBuildDetail
+
+    build = AgentBuildDetail.model_validate(
+        {
+            "id": "build",
+            "agentId": "agent",
+            "status": status,
+            "createdAt": "2026-11-16",
+            "updatedAt": "2026-11-16",
+        }
+    )
+    assert build.status.value == status
+
+    async def stream(*args, **kwargs):
+        yield {"type": "status", "status": status}
+        raise AssertionError("CLI must stop consuming a terminal build stream")
+
+    app = initialise_agent_crew_app(
+        SimpleNamespace(get_agent_id=lambda: "agent"),
+        SimpleNamespace(get_credentials=lambda: {"access_token": "test-key"}),
+        SimpleNamespace(stream_agent_build=stream),
+    )
+    result = CliRunner().invoke(app, ["logs", "build"])
+    assert result.exit_code == 0, result.stdout
+    assert status in result.stdout
+
+
+@pytest.mark.parametrize("status", ["CANCELLED", "TIMED_OUT", "BUILD_FAILED", "SUCCEEDED"])
+def test_deploy_stops_polling_and_reports_terminal_result(status, tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "server.py").write_text("# test crew")
+    (tmp_path / "requirements.txt").write_text("")
+    api = SimpleNamespace(
+        create_agent_build=AsyncMock(return_value=SimpleNamespace(build_id="build")),
+        get_agent_build=AsyncMock(return_value=SimpleNamespace(status=status)),
+    )
+    app = initialise_agent_crew_app(
+        SimpleNamespace(get_agent_id=lambda: "agent"),
+        SimpleNamespace(get_credentials=lambda: {"access_token": "test-key"}),
+        api,
+    )
+    result = CliRunner().invoke(app, ["deploy", "--entry-point", "server.py"])
+    assert result.exit_code == (0 if status == "SUCCEEDED" else 1), result.stdout
+    api.get_agent_build.assert_awaited_once()
+    assert ("Build succeeded" if status == "SUCCEEDED" else status) in result.stdout
+
+
+def test_cancel_errors_preserve_log_scrubbing():
+    app = initialise_agent_crew_app(
+        SimpleNamespace(get_agent_id=lambda: "agent"),
+        SimpleNamespace(get_credentials=lambda: {"access_token": "test-key"}),
+        SimpleNamespace(
+            cancel_agent_build=AsyncMock(
+                side_effect=RuntimeError("dial agent-x-svc.agents.svc.cluster.local:8080: connection refused")
+            )
+        ),
+    )
+    result = CliRunner().invoke(app, ["cancel", "build", "--yes"])
+    assert result.exit_code == 1
+    assert "connection refused" in result.stdout
+    assert "cluster.local" not in result.stdout
+    assert "agent-x-svc" not in result.stdout

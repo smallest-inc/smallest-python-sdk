@@ -28,6 +28,8 @@ AGENT_BUILD_STATUS_COLORS = {
     AgentBuildStatus.SUCCEEDED: "green",
     AgentBuildStatus.BUILD_FAILED: "red",
     AgentBuildStatus.DEPLOY_FAILED: "red",
+    AgentBuildStatus.CANCELLED: "yellow",
+    AgentBuildStatus.TIMED_OUT: "red",
     AgentBuildStatus.QUEUED: "yellow",
     AgentBuildStatus.BUILDING: "yellow",
     AgentBuildStatus.DEPLOYING: "yellow",
@@ -258,7 +260,7 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
             # The build has to reach SUCCEEDED before you can Make Live, so
             # surfacing the real status here saves guessing.
             console.print("[yellow]Building (this usually takes 1-2 min)...[/yellow]")
-            terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED", "FAILED"}
+            terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED", "FAILED", "CANCELLED", "TIMED_OUT"}
             last = None
             status = None
             for _ in range(60):  # ~5 min cap at 5s intervals
@@ -288,14 +290,18 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
                 console.print(
                     f"[red]Build ended with status: {status}. Check `smallestai agent-crew logs` for details.[/red]"
                 )
+                raise typer.Exit(1)
             else:
                 console.print(
                     "[yellow]Still building. Check `smallestai agent-crew builds` for the final status.[/yellow]"
                 )
 
+        except typer.Exit:
+            raise
         except Exception as e:
             # Scrub cluster-internal topology out of transport/API errors.
             _print_error("Error deploying agent", e)
+            raise typer.Exit(1)
 
     @app.command()
     def chat(
@@ -590,8 +596,8 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
 
         console.print(f"[bold cyan]Streaming build {build_id[:12]}...[/bold cyan]  [dim](Ctrl+C to stop)[/dim]\n")
 
-        terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED"}
-        failed = {"BUILD_FAILED", "DEPLOY_FAILED"}
+        terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED", "CANCELLED", "TIMED_OUT"}
+        failed = {"BUILD_FAILED", "DEPLOY_FAILED", "CANCELLED", "TIMED_OUT"}
         # Every log line is scrubbed before it is ever printed, in both modes, so
         # no CLI invocation can leak cluster-internal topology. --verbose only
         # controls volume: stream every (scrubbed) line vs. status + a bounded
@@ -641,6 +647,40 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
         except Exception as e:
             _print_error("Error streaming build logs", e)
             raise typer.Exit(1)
+
+    @app.command("cancel")
+    def cancel_build(
+        build_id: str = typer.Argument(..., help="Build ID to cancel."),
+        agent_id: Optional[str] = typer.Option(
+            None, "--agent-id", help="Agent id (defaults to the linked project agent)."
+        ),
+        yes: bool = typer.Option(False, "--yes", "-y", help="Skip the confirmation prompt."),
+    ):
+        """Cancel a build that is stuck in QUEUED or BUILDING.
+
+        Frees the agent's build queue when a build hangs. A build that has already
+        finished, failed, or is deploying can't be cancelled.
+        """
+        if not yes and sys.stdin.isatty():
+            typer.confirm(f"Cancel build {build_id}?", abort=True)
+        asyncio.run(async_cancel_build(build_id, agent_id))
+
+    async def async_cancel_build(build_id: str, agent_id_arg: Optional[str] = None):
+        agent_id = _resolve_agent_id(agent_id_arg)
+
+        credentials = auth_client.get_credentials()
+        if not credentials or not credentials.get("access_token"):
+            console.print("[red]Error: You must be logged in first. Run 'smallestai auth login'[/red]")
+            raise typer.Exit(1)
+        access_token = credentials["access_token"]
+
+        try:
+            message = await atoms_client.cancel_agent_build(agent_id=agent_id, build_id=build_id, api_key=access_token)
+        except Exception as e:
+            _print_error(f"Could not cancel build {build_id[:12]}...", e)
+            raise typer.Exit(1)
+
+        console.print(f"[bold green]✓ {message}[/bold green] [dim]({build_id[:12]}...)[/dim]")
 
     @app.command()
     def doctor(
