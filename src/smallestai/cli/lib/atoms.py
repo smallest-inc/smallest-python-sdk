@@ -335,7 +335,7 @@ class AtomsAPIClient:
             except Exception:
                 pass
 
-            if response.status_code >= 400:
+            if not response.is_success:
                 errors = body.get("errors") if isinstance(body, dict) else None
                 if isinstance(errors, list):
                     errors = "; ".join(str(e) for e in errors)
@@ -343,7 +343,9 @@ class AtomsAPIClient:
 
             data = body.get("data") if isinstance(body, dict) else None
             message = data.get("message") if isinstance(data, dict) else None
-            return message or "Build cancelled"
+            if not isinstance(message, str) or not message.strip():
+                raise Exception("cancel failed: invalid success response from the API.")
+            return message
 
     async def _stream_sse(self, url: str, access_token: str):
         """Open an SSE stream and yield each `data:` frame as a parsed dict.
