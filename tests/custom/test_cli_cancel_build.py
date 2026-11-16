@@ -59,3 +59,32 @@ def test_cancel_cli_exit_status(error):
     assert result.exit_code == (1 if error else 0)
     assert ("Could not cancel" if error else "Build cancelled") in result.stdout
     cancel.assert_awaited_once_with(agent_id="agent", build_id="build", api_key="test-key")
+
+
+@pytest.mark.parametrize("status", ["CANCELLED", "TIMED_OUT"])
+def test_terminal_build_models_and_log_stream(status):
+    from smallestai.cli.lib.atoms import AgentBuildDetail
+
+    build = AgentBuildDetail.model_validate(
+        {
+            "id": "build",
+            "agentId": "agent",
+            "status": status,
+            "createdAt": "2026-11-16",
+            "updatedAt": "2026-11-16",
+        }
+    )
+    assert build.status.value == status
+
+    async def stream(*args, **kwargs):
+        yield {"type": "status", "status": status}
+        raise AssertionError("CLI must stop consuming a terminal build stream")
+
+    app = initialise_agent_crew_app(
+        SimpleNamespace(get_agent_id=lambda: "agent"),
+        SimpleNamespace(get_credentials=lambda: {"access_token": "test-key"}),
+        SimpleNamespace(stream_agent_build=stream),
+    )
+    result = CliRunner().invoke(app, ["logs", "build"])
+    assert result.exit_code == 0, result.stdout
+    assert status in result.stdout

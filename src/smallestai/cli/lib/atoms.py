@@ -17,6 +17,8 @@ class AgentBuildStatus(str, Enum):
     DEPLOYING = "DEPLOYING"
     DEPLOY_FAILED = "DEPLOY_FAILED"
     SUCCEEDED = "SUCCEEDED"
+    CANCELLED = "CANCELLED"
+    TIMED_OUT = "TIMED_OUT"
 
 
 class AccountDetailsData(BaseModel):

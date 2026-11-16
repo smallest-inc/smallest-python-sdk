@@ -28,6 +28,8 @@ AGENT_BUILD_STATUS_COLORS = {
     AgentBuildStatus.SUCCEEDED: "green",
     AgentBuildStatus.BUILD_FAILED: "red",
     AgentBuildStatus.DEPLOY_FAILED: "red",
+    AgentBuildStatus.CANCELLED: "yellow",
+    AgentBuildStatus.TIMED_OUT: "red",
     AgentBuildStatus.QUEUED: "yellow",
     AgentBuildStatus.BUILDING: "yellow",
     AgentBuildStatus.DEPLOYING: "yellow",
@@ -258,7 +260,7 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
             # The build has to reach SUCCEEDED before you can Make Live, so
             # surfacing the real status here saves guessing.
             console.print("[yellow]Building (this usually takes 1-2 min)...[/yellow]")
-            terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED", "FAILED"}
+            terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED", "FAILED", "CANCELLED", "TIMED_OUT"}
             last = None
             status = None
             for _ in range(60):  # ~5 min cap at 5s intervals
@@ -590,8 +592,8 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
 
         console.print(f"[bold cyan]Streaming build {build_id[:12]}...[/bold cyan]  [dim](Ctrl+C to stop)[/dim]\n")
 
-        terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED"}
-        failed = {"BUILD_FAILED", "DEPLOY_FAILED"}
+        terminal = {"SUCCEEDED", "BUILD_FAILED", "DEPLOY_FAILED", "CANCELLED", "TIMED_OUT"}
+        failed = {"BUILD_FAILED", "DEPLOY_FAILED", "CANCELLED", "TIMED_OUT"}
         # Every log line is scrubbed before it is ever printed, in both modes, so
         # no CLI invocation can leak cluster-internal topology. --verbose only
         # controls volume: stream every (scrubbed) line vs. status + a bounded
