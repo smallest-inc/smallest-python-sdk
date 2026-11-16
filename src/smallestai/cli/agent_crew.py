@@ -290,14 +290,18 @@ def initialise_agent_crew_app(project_config: ProjectConfig, auth_client: AuthCl
                 console.print(
                     f"[red]Build ended with status: {status}. Check `smallestai agent-crew logs` for details.[/red]"
                 )
+                raise typer.Exit(1)
             else:
                 console.print(
                     "[yellow]Still building. Check `smallestai agent-crew builds` for the final status.[/yellow]"
                 )
 
+        except typer.Exit:
+            raise
         except Exception as e:
             # Scrub cluster-internal topology out of transport/API errors.
             _print_error("Error deploying agent", e)
+            raise typer.Exit(1)
 
     @app.command()
     def chat(

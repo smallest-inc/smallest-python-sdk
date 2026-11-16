@@ -88,3 +88,23 @@ def test_terminal_build_models_and_log_stream(status):
     result = CliRunner().invoke(app, ["logs", "build"])
     assert result.exit_code == 0, result.stdout
     assert status in result.stdout
+
+
+@pytest.mark.parametrize("status", ["CANCELLED", "TIMED_OUT", "BUILD_FAILED", "SUCCEEDED"])
+def test_deploy_stops_polling_and_reports_terminal_result(status, tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "server.py").write_text("# test crew")
+    (tmp_path / "requirements.txt").write_text("")
+    api = SimpleNamespace(
+        create_agent_build=AsyncMock(return_value=SimpleNamespace(build_id="build")),
+        get_agent_build=AsyncMock(return_value=SimpleNamespace(status=status)),
+    )
+    app = initialise_agent_crew_app(
+        SimpleNamespace(get_agent_id=lambda: "agent"),
+        SimpleNamespace(get_credentials=lambda: {"access_token": "test-key"}),
+        api,
+    )
+    result = CliRunner().invoke(app, ["deploy", "--entry-point", "server.py"])
+    assert result.exit_code == (0 if status == "SUCCEEDED" else 1), result.stdout
+    api.get_agent_build.assert_awaited_once()
+    assert ("Build succeeded" if status == "SUCCEEDED" else status) in result.stdout
