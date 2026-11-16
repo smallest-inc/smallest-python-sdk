@@ -48,7 +48,8 @@ class RawRealtimeClient:
         1. Call this endpoint with your API key and the `agent_id` (plus optional
            `mode` and per-call `variables`). All session configuration is fixed
            here — it is baked into the returned token.
-        2. Open a WebSocket to `wss://api.smallest.ai/atoms/v1/agent/connect?token=<access_token>`.
+        2. Open the returned `websocket_url`, appending `?token=<access_token>`.
+           If an older server omits it, use the WebSocket endpoint for the same API region.
            No `agent_id`, `mode`, or `variables` query params are needed on the
            WebSocket — they come from the token.
 
@@ -190,7 +191,8 @@ class AsyncRawRealtimeClient:
         1. Call this endpoint with your API key and the `agent_id` (plus optional
            `mode` and per-call `variables`). All session configuration is fixed
            here — it is baked into the returned token.
-        2. Open a WebSocket to `wss://api.smallest.ai/atoms/v1/agent/connect?token=<access_token>`.
+        2. Open the returned `websocket_url`, appending `?token=<access_token>`.
+           If an older server omits it, use the WebSocket endpoint for the same API region.
            No `agent_id`, `mode`, or `variables` query params are needed on the
            WebSocket — they come from the token.
 

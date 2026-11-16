@@ -15,6 +15,12 @@ class RegisterCallRealtimeResponseData(UncheckedBaseModel):
     WebSocket.
     """
 
+    websocket_url: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Region-correct WebSocket endpoint for this token, without query parameters.
+    Append the access_token as the token query parameter. Older servers may omit it.
+    """
+
     expires_in: typing.Optional[int] = pydantic.Field(default=None)
     """
     Token lifetime in seconds.
