@@ -22,10 +22,10 @@ export SMALLEST_TEST_NUMBER=+91XXXXXXXXXX   # a phone YOU can answer (caller-con
 
 ```bash
 # Fast, fully automated — "nothing is broken" baseline (no telephony, no human):
-poetry run pytest tests/integration/test_sdk_smoke_live.py -m integration -s
+poetry run pytest --noconftest tests/integration/test_sdk_smoke_live.py -m integration -s
 
 # Caller context end-to-end (PRO-3560) — you must ANSWER the call it places:
-poetry run pytest tests/integration/test_caller_context_live.py -m integration -s
+poetry run pytest --noconftest tests/integration/test_caller_context_live.py -m integration -s
 # or just run it and watch the payload print:
 poetry run python tests/integration/test_caller_context_live.py
 ```
@@ -47,3 +47,19 @@ poetry run python tests/integration/test_caller_context_live.py
 1. Smoke stays green (nothing broke).
 2. Add a focused live test for the new feature next to it (mirror the pattern:
    gate on env, use the SDK, assert the observable behavior, clean up after).
+
+## Reproducible caller probe
+
+The caller probe builds a wheel from the current checkout and includes it in the
+uploaded crew bundle. A pyproject with a local wheel dependency selects the
+backend build path that copies the whole bundle before installing dependencies.
+The remote build installs that wheel and its declared
+runtime dependencies, rather than a separately published SDK release. Before
+running it, install the local build tools with `poetry run python -m pip install
+pip poetry-core`. The test uses the same interpreter and checkout for crew CLI
+commands, passes credentials in the environment, and never reads or updates your
+saved CLI login. Temporary build files are removed on success and failure.
+
+`SMALLEST_BASE` is used consistently for SDK, crew CLI, and raw HTTP calls,
+including regional and localhost hosts. `--noconftest` avoids the global wire-test
+Docker fixture; these live tests do not use WireMock.

@@ -20,7 +20,7 @@ Run it (you must answer the call):
 or under pytest:
 
     SMALLEST_API_KEY=sk_... SMALLEST_TEST_NUMBER=+91XXXXXXXXXX \
-        poetry run pytest tests/integration/test_caller_context_live.py -m integration -s
+        poetry run pytest --noconftest tests/integration/test_caller_context_live.py -m integration -s
 """
 
 import json
@@ -30,6 +30,7 @@ import sys
 import tempfile
 import time
 import urllib.request
+from pathlib import Path
 
 import pytest
 
@@ -84,12 +85,13 @@ def _client():
     from smallestai import SmallestAI
     from smallestai.environment import SmallestAIEnvironment
 
-    if "dev" in BASE:
-        env = SmallestAIEnvironment(
-            atoms=f"{BASE}/atoms/v1", waves=BASE, waves_ws=BASE.replace("http", "ws"), payment=BASE
-        )
-        return SmallestAI(api_key=API_KEY, environment=env)
-    return SmallestAI(api_key=API_KEY)  # Production
+    env = SmallestAIEnvironment(
+        atoms=f"{BASE}/atoms/v1",
+        waves=BASE,
+        waves_ws=BASE.replace("https://", "wss://", 1).replace("http://", "ws://", 1),
+        payment=BASE,
+    )
+    return SmallestAI(api_key=API_KEY, environment=env)
 
 
 def _data(resp):
@@ -116,28 +118,76 @@ def _set_build_live(agent_id: str, build_id: str) -> None:
         assert r.status == 200, f"make-live failed: {r.status}"
 
 
-def _deploy_probe_crew(agent_id: str) -> str:
-    """Deploy the probe crew to `agent_id`. SDK GAP: crew code deploy only exists as
-    the `smallestai agent-crew` CLI, so we shell out to it. Returns the build id."""
-    workdir = tempfile.mkdtemp(prefix="caller-probe-")
-    with open(os.path.join(workdir, "server.py"), "w") as f:
-        f.write(PROBE_SERVER)
-    with open(os.path.join(workdir, "requirements.txt"), "w") as f:
-        f.write("smallestai>=5.14.0\nloguru>=0.7.0\n")
-    env: dict[str, str] = {**os.environ, "SMALLEST_API_KEY": API_KEY or ""}
-    if "dev" in BASE:
-        env["SMALLEST_BASE_URL"] = BASE
-    run = lambda *a: subprocess.run(
-        ["smallestai", *a], cwd=workdir, env=env, capture_output=True, text=True, timeout=600
+def _build_probe_package(workdir: Path) -> None:
+    """Ship a wheel of this checkout, including its declared runtime dependencies."""
+    repo = Path(__file__).resolve().parents[2]
+    subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "wheel",
+            "--no-deps",
+            "--no-build-isolation",
+            "--wheel-dir",
+            str(workdir),
+            str(repo),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=120,
     )
-    assert run("auth", "login").returncode == 0 or True  # login is idempotent
-    subprocess.run(["sh", "-c", f'echo "{API_KEY}" | smallestai auth login'], cwd=workdir, env=env, timeout=60)
-    init = run("agent-crew", "init", "--agent-id", agent_id)
-    assert init.returncode == 0, f"init failed: {init.stderr or init.stdout}"
-    dep = run("agent-crew", "deploy", "--entry-point", "server.py")
-    assert dep.returncode == 0 and "SUCCEEDED" in dep.stdout, f"deploy failed: {dep.stderr or dep.stdout}"
-    build_id = next(ln.split("Build ID:")[1].strip() for ln in dep.stdout.splitlines() if "Build ID:" in ln)
-    return build_id
+    wheels = list(workdir.glob("smallestai-*.whl"))
+    if len(wheels) != 1:
+        raise AssertionError("expected exactly one wheel built from the SDK checkout")
+    # The backend copies the whole bundle before `pip install .` for pyproject
+    # builds. Its requirements-only path copies just requirements.txt first,
+    # which would leave a bundled wheel unavailable during installation.
+    (workdir / "pyproject.toml").write_text(
+        f'''[tool.poetry]
+name = "smallestai-caller-probe"
+version = "0.0.0"
+description = "Live caller-context probe"
+authors = []
+packages = [{{include = "server.py"}}]
+
+[tool.poetry.dependencies]
+python = ">=3.9"
+smallestai = {{path = "{wheels[0].name}"}}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+''',
+        encoding="utf-8",
+    )
+    (workdir / "server.py").write_text(PROBE_SERVER, encoding="utf-8")
+
+
+def _deploy_probe_crew(agent_id: str) -> str:
+    """Run the checkout's crew CLI with in-memory auth and a local SDK wheel."""
+    repo = Path(__file__).resolve().parents[2]
+    env = {**os.environ, "SMALLEST_API_KEY": API_KEY or "", "SMALLEST_BASE_URL": BASE, "PYTHONPATH": str(repo / "src")}
+    with tempfile.TemporaryDirectory(prefix="caller-probe-") as directory:
+        workdir = Path(directory)
+        _build_probe_package(workdir)
+
+        def run(*args):
+            return subprocess.run(
+                [sys.executable, str(Path(__file__).with_name("_crew_cli.py")), *args],
+                cwd=workdir,
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=600,
+            )
+
+        init = run("init", "--agent-id", agent_id)
+        assert init.returncode == 0, f"init failed: {init.stderr or init.stdout}"
+        dep = run("deploy", "--entry-point", "server.py")
+        assert dep.returncode == 0 and "SUCCEEDED" in dep.stdout, f"deploy failed: {dep.stderr or dep.stdout}"
+        return next(ln.split("Build ID:")[1].strip() for ln in dep.stdout.splitlines() if "Build ID:" in ln)
 
 
 def _unattached_from_product(client) -> str:

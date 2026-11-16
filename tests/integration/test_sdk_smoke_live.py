@@ -4,7 +4,7 @@ Runs real SDK calls against a real environment (no telephony, no human), so ever
 SDK change can prove the core surface still works before layering a new feature on
 top. All through the SDK, no raw HTTP.
 
-    SMALLEST_API_KEY=sk_... poetry run pytest tests/integration/test_sdk_smoke_live.py -m integration -s
+    SMALLEST_API_KEY=sk_... poetry run pytest --noconftest tests/integration/test_sdk_smoke_live.py -m integration -s
 """
 
 import os
@@ -20,12 +20,13 @@ def _client():
     from smallestai import SmallestAI
     from smallestai.environment import SmallestAIEnvironment
 
-    if "dev" in BASE:
-        env = SmallestAIEnvironment(
-            atoms=f"{BASE}/atoms/v1", waves=BASE, waves_ws=BASE.replace("http", "ws"), payment=BASE
-        )
-        return SmallestAI(api_key=API_KEY, environment=env)
-    return SmallestAI(api_key=API_KEY)
+    env = SmallestAIEnvironment(
+        atoms=f"{BASE}/atoms/v1",
+        waves=BASE,
+        waves_ws=BASE.replace("https://", "wss://", 1).replace("http://", "ws://", 1),
+        payment=BASE,
+    )
+    return SmallestAI(api_key=API_KEY, environment=env)
 
 
 def _data(resp):
