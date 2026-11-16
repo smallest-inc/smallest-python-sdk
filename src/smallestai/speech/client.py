@@ -39,6 +39,7 @@ if typing.TYPE_CHECKING:
     from .electron.client import AsyncElectronClient, ElectronClient
     from .speech_to_speech.client import AsyncSpeechToSpeechClient, SpeechToSpeechClient
     from .speech_to_text.client import AsyncSpeechToTextClient, SpeechToTextClient
+    from .streaming_tts.client import AsyncStreamingTtsClient, StreamingTtsClient
     from .tts.client import AsyncTtsClient, TtsClient
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -51,6 +52,7 @@ class SpeechClient:
         self._speech_to_text: typing.Optional[SpeechToTextClient] = None
         self._electron: typing.Optional[ElectronClient] = None
         self._tts: typing.Optional[TtsClient] = None
+        self._streaming_tts: typing.Optional[StreamingTtsClient] = None
         self._speech_to_speech: typing.Optional[SpeechToSpeechClient] = None
 
     @property
@@ -1036,6 +1038,14 @@ class SpeechClient:
         return self._tts
 
     @property
+    def streaming_tts(self):
+        if self._streaming_tts is None:
+            from .streaming_tts.client import StreamingTtsClient
+
+            self._streaming_tts = StreamingTtsClient(client_wrapper=self._client_wrapper)
+        return self._streaming_tts
+
+    @property
     def speech_to_speech(self):
         if self._speech_to_speech is None:
             from .speech_to_speech.client import SpeechToSpeechClient  # noqa: E402
@@ -1051,6 +1061,7 @@ class AsyncSpeechClient:
         self._speech_to_text: typing.Optional[AsyncSpeechToTextClient] = None
         self._electron: typing.Optional[AsyncElectronClient] = None
         self._tts: typing.Optional[AsyncTtsClient] = None
+        self._streaming_tts: typing.Optional[AsyncStreamingTtsClient] = None
         self._speech_to_speech: typing.Optional[AsyncSpeechToSpeechClient] = None
 
     @property
@@ -2154,9 +2165,22 @@ class AsyncSpeechClient:
         return self._tts
 
     @property
+    def streaming_tts(self):
+        if self._streaming_tts is None:
+            from .streaming_tts.client import AsyncStreamingTtsClient
+
+            self._streaming_tts = AsyncStreamingTtsClient(client_wrapper=self._client_wrapper)
+        return self._streaming_tts
+
+    @property
     def speech_to_speech(self):
         if self._speech_to_speech is None:
             from .speech_to_speech.client import AsyncSpeechToSpeechClient  # noqa: E402
 
             self._speech_to_speech = AsyncSpeechToSpeechClient(client_wrapper=self._client_wrapper)
         return self._speech_to_speech
+
+
+# Deprecated 6.0 class aliases; retain identity for legacy deep imports.
+WavesClient = SpeechClient
+AsyncWavesClient = AsyncSpeechClient

@@ -542,3 +542,8 @@ class AsyncAgentsClient:
 
             self._billing = AsyncBillingClient(client_wrapper=self._client_wrapper)
         return self._billing
+
+
+# Deprecated 6.0 class aliases; retain identity for legacy deep imports.
+AtomsClient = AgentsClient
+AsyncAtomsClient = AsyncAgentsClient

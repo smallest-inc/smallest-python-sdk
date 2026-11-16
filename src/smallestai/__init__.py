@@ -12,11 +12,11 @@ from importlib import import_module
 if typing.TYPE_CHECKING:
     from . import agents, errors, speech
     from ._default_clients import DefaultAioHttpClient, DefaultAsyncHttpxClient
-    from .agents.client import AgentsClient, AsyncAgentsClient
+    from .agents.client import AgentsClient, AsyncAgentsClient, AtomsClient, AsyncAtomsClient
     from .agents.errors.bad_request_error import PlanNotEntitledError
     from .client import AsyncSmallestAI, SmallestAI
     from .environment import SmallestAIEnvironment
-    from .speech.client import AsyncSpeechClient, SpeechClient
+    from .speech.client import AsyncSpeechClient, SpeechClient, WavesClient, AsyncWavesClient
     from .version import __version__
 
 _dynamic_imports: typing.Dict[str, str] = {
@@ -40,6 +40,12 @@ _dynamic_imports: typing.Dict[str, str] = {
 # (smallestai.atoms) is handled here; deep imports (import smallestai.atoms.crew)
 # are handled by the import hook installed at the bottom of this file.
 _DEPRECATED_ALIASES = {"atoms": "agents", "waves": "speech"}
+_DEPRECATED_CLIENTS = {
+    "AtomsClient": "AgentsClient",
+    "AsyncAtomsClient": "AsyncAgentsClient",
+    "WavesClient": "SpeechClient",
+    "AsyncWavesClient": "AsyncSpeechClient",
+}
 
 
 def __getattr__(attr_name: str) -> typing.Any:
@@ -53,6 +59,11 @@ def __getattr__(attr_name: str) -> typing.Any:
         )
         return import_module(f".{new}", __package__)
 
+    if attr_name in _DEPRECATED_CLIENTS:
+        new = _DEPRECATED_CLIENTS[attr_name]
+        warnings.warn(f"{attr_name} is deprecated; use {new} instead.", DeprecationWarning, stacklevel=2)
+        return __getattr__(new)
+
     module_name = _dynamic_imports.get(attr_name)
     if module_name is None:
         raise AttributeError(f"No {attr_name} found in _dynamic_imports for module name -> {__name__}")
@@ -61,9 +72,6 @@ def __getattr__(attr_name: str) -> typing.Any:
         if module_name == f".{attr_name}":
             return module
         obj = getattr(module, attr_name)
-        if attr_name in ("SmallestAI", "AsyncSmallestAI"):
-            from ._compat import add_deprecated_client_aliases
-            add_deprecated_client_aliases(obj)
         return obj
     except ImportError as e:
         raise ImportError(f"Failed to import {attr_name} from {module_name}: {e}") from e
@@ -72,10 +80,14 @@ def __getattr__(attr_name: str) -> typing.Any:
 
 
 def __dir__():
-    return sorted(list(_dynamic_imports.keys()) + list(_DEPRECATED_ALIASES.keys()))
+    return sorted(list(_dynamic_imports.keys()) + list(_DEPRECATED_ALIASES.keys()) + list(_DEPRECATED_CLIENTS))
 
 
 __all__ = [
+    "AtomsClient",
+    "AsyncAtomsClient",
+    "WavesClient",
+    "AsyncWavesClient",
     "AgentsClient",
     "AsyncAgentsClient",
     "AsyncSmallestAI",

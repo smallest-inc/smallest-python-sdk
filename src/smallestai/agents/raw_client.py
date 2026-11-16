@@ -11,3 +11,8 @@ class RawAgentsClient:
 class AsyncRawAgentsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
+
+
+# Deprecated 6.0 class aliases; retain identity for legacy deep imports.
+RawAtomsClient = RawAgentsClient
+AsyncRawAtomsClient = AsyncRawAgentsClient

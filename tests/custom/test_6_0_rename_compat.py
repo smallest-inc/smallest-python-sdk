@@ -2,6 +2,7 @@
 work as deprecated aliases (client attribute + deep imports), and the observability
 header is intact.
 """
+
 import sys
 import warnings
 
@@ -67,10 +68,62 @@ def test_observability_header_survives_rename():
     from smallestai.core.client_wrapper import BaseClientWrapper
     from smallestai.environment import SmallestAIEnvironment
 
-    headers = BaseClientWrapper(
-        api_key="k", environment=SmallestAIEnvironment.PRODUCTION
-    ).get_headers()
+    headers = BaseClientWrapper(api_key="k", environment=SmallestAIEnvironment.PRODUCTION).get_headers()
     assert headers["X-Source"] == "smallest-python-sdk"
+
+
+@pytest.mark.parametrize("entry", ["smallestai.client", "smallestai"])
+def test_fresh_process_client_imports(entry):
+    # Root imports used to patch the classes globally and hide direct-import bugs.
+    import subprocess
+
+    code = f"""
+from {entry} import SmallestAI, AsyncSmallestAI
+for cls in (SmallestAI, AsyncSmallestAI):
+    client = cls(api_key="test-key")
+    assert client.atoms is client.agents
+    assert client.waves is client.speech
+    streaming = client.waves.streaming_tts
+    assert streaming is client.speech.streaming_tts
+    assert streaming._raw_client._client_wrapper is client.speech._client_wrapper
+"""
+    subprocess.run([sys.executable, "-W", "ignore::DeprecationWarning", "-c", code], check=True)
+
+
+@pytest.mark.parametrize("old,new", [("Atoms", "Agents"), ("Waves", "Speech")])
+def test_legacy_class_imports(old, new):
+    import importlib
+
+    import smallestai
+
+    for prefix in ("", "Async"):
+        with pytest.warns(DeprecationWarning):
+            legacy = getattr(smallestai, prefix + old + "Client")
+        assert legacy is getattr(smallestai, prefix + new + "Client")
+        legacy_module = importlib.import_module(f"smallestai.{old.lower()}.client")
+        assert getattr(legacy_module, prefix + old + "Client") is legacy
+        raw_module = importlib.import_module(f"smallestai.{old.lower()}.raw_client")
+        assert getattr(raw_module, prefix + "Raw" + old + "Client") is getattr(
+            raw_module, prefix + "Raw" + new + "Client"
+        )
+
+
+def test_verification_script_uses_renamed_paths(monkeypatch):
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[2] / "scripts/verify.py"
+    spec = importlib.util.spec_from_file_location("sdk_verify", path)
+    verify = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(verify)
+    verify.check_wire_coverage()
+    verify.check_helper_coverage()
+    assert not verify.failures
+    monkeypatch.setenv("SMALLEST_API_KEY", "test-key")
+    monkeypatch.setenv("SMALLEST_BASE_URL", "http://localhost:9999")
+    client = verify.live_client()
+    assert client._client_wrapper.get_environment().atoms == "http://localhost:9999/atoms/v1"
+    assert list(verify.read_methods(client))
 
 
 if __name__ == "__main__":

@@ -55,7 +55,7 @@ def check_wire_coverage():
         return 0
 
     tot_m = tot_w = 0
-    for ns_dir in sorted((SRC / "atoms").glob("*/")):
+    for ns_dir in sorted((SRC / "agents").glob("*/")):
         cf = ns_dir / "client.py"
         if not cf.exists():
             continue
@@ -114,7 +114,7 @@ def live_client():
         from smallestai.environment import SmallestAIEnvironment
         base = base.rstrip("/")
         ws = base.replace("https://", "wss://").replace("http://", "ws://")
-        env = SmallestAIEnvironment(atoms=f"{base}/atoms/v1", waves=base, waves_ws=ws)
+        env = SmallestAIEnvironment(atoms=f"{base}/atoms/v1", waves=base, waves_ws=ws, payment=base)
         return SmallestAI(api_key=key, environment=env)
     return SmallestAI(api_key=key)
 
@@ -123,10 +123,10 @@ def read_methods(client):
     """Yield (label, bound_method) for every no-required-arg read endpoint."""
     READ = re.compile(r"^(list|get_all|retrieve_all|search|get_acquired)")
     EXTRA = {"get_user_details", "get_account_details"}
-    for ns_name in dir(client.atoms):
+    for ns_name in dir(client.agents):
         if ns_name.startswith("_"):
             continue
-        ns = getattr(client.atoms, ns_name)
+        ns = getattr(client.agents, ns_name)
         if "Client" not in type(ns).__name__:
             continue
         for m_name in dir(ns):
@@ -213,7 +213,7 @@ def check_field_drop(items_by_label):
 # ---------------------------------------------------------------- layer 4
 def check_helper_coverage():
     hdr("4. HELPER COVERAGE — every hand-written helper has a test")
-    init = (SRC / "atoms" / "helpers" / "__init__.py").read_text()
+    init = (SRC / "agents" / "helpers" / "__init__.py").read_text()
     names = re.findall(r"\"([A-Za-z_]+)\"", init.split("__all__")[-1]) if "__all__" in init else []
     test_blob = "\n".join(p.read_text() for p in CUSTOM.glob("test_*.py"))
     for name in names:

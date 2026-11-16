@@ -27,7 +27,8 @@ src/smallestai/speech/types/sample_rate.py
 # (shim block in waves/__init__.py lazy-loads the WavesStreamingTTS compat shim).
 # client.py/raw_client.py are now regen-owned: the unified `tts` client streams bytes
 # natively (verified 282KB audio on prod), so the old SampleRate/streaming override is
-# obsolete. Dropped from .fernignore in 5.2.0 so future regens keep them current.
+# obsolete. These files were regen-owned from 5.2.0; the 6.0 compatibility
+# entries below temporarily protect the new aliases and restored streaming client.
 src/smallestai/speech/__init__.py
 
 # (Sub-package __init__ stopgaps removed in 5.2.0: exclude_types_from_init_exports
@@ -62,3 +63,12 @@ src/smallestai/speech/helpers/**
 
 # Hand-written README (do not regenerate)
 README.md
+
+# 6.0 compatibility customizations: retain these until the next major version.
+src/smallestai/__init__.py
+src/smallestai/_compat.py
+src/smallestai/client.py
+src/smallestai/agents/client.py
+src/smallestai/agents/raw_client.py
+src/smallestai/speech/client.py
+src/smallestai/speech/raw_client.py

@@ -28,7 +28,7 @@ _warned: set = set()
 def _resolve(fullname: str) -> Optional[str]:
     for old, new in _ALIASES.items():
         if fullname == old or fullname.startswith(old + "."):
-            return new + fullname[len(old):]
+            return new + fullname[len(old) :]
     return None
 
 
@@ -76,9 +76,7 @@ def install_import_aliases() -> None:
 
 
 # --- Deprecated client attribute aliases (client.atoms -> client.agents, etc.) ---
-# Applied lazily to the SmallestAI / AsyncSmallestAI classes when they are first
-# imported (see the root __init__), so we don't eagerly import the client and
-# defeat lazy loading.
+# Installed when the defining client module loads, including direct imports.
 
 _CLIENT_ALIASES = {"atoms": "agents", "waves": "speech"}
 

@@ -2942,3 +2942,8 @@ class AsyncRawSpeechClient:
                 status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+
+# Deprecated 6.0 class aliases; retain identity for legacy deep imports.
+RawWavesClient = RawSpeechClient
+AsyncRawWavesClient = AsyncRawSpeechClient

@@ -227,3 +227,11 @@ class AsyncSmallestAI:
 
             self._speech = AsyncSpeechClient(client_wrapper=self._client_wrapper)
         return self._speech
+
+
+# Install on the defining classes so direct imports have the same compatibility
+# properties as root-package imports. This does not eagerly load either surface.
+from ._compat import add_deprecated_client_aliases
+
+add_deprecated_client_aliases(SmallestAI)
+add_deprecated_client_aliases(AsyncSmallestAI)
