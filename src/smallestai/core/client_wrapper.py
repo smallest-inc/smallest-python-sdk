@@ -5,13 +5,18 @@
 #      (e.g. pipecat sends X-Source: pipecat).
 #   2. X-Fern-SDK-Version: sourced from the installed package version instead of
 #      the generator's hardcoded "0.0.0", so version adoption is trackable.
-# When re-syncing after a regen, re-apply both edits below.
+#   3. telemetry: Sync/AsyncClientWrapper take a `telemetry` flag (default True) and,
+#      when it is on, build the request client from core/_telemetry_http_client.py,
+#      which records one anonymous sdk_method_called event per SDK call
+#      (see smallestai/telemetry.py). False keeps the plain generated client.
+# When re-syncing after a regen, re-apply all three edits below.
 
 import typing
 
 import httpx
 from ..environment import SmallestAIEnvironment
 from ..version import __version__
+from ._telemetry_http_client import TelemetryAsyncHttpClient, TelemetryHttpClient
 from .http_client import AsyncHttpClient, HttpClient
 from .logging import LogConfig, Logger
 
@@ -83,6 +88,7 @@ class SyncClientWrapper(BaseClientWrapper):
         max_retries: int = 2,
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
         httpx_client: httpx.Client,
+        telemetry: bool = True,
     ):
         super().__init__(
             api_key=api_key,
@@ -92,7 +98,8 @@ class SyncClientWrapper(BaseClientWrapper):
             max_retries=max_retries,
             logging=logging,
         )
-        self.httpx_client = HttpClient(
+        http_client_cls = TelemetryHttpClient if telemetry else HttpClient
+        self.httpx_client = http_client_cls(
             httpx_client=httpx_client,
             base_headers=self.get_headers,
             base_timeout=self.get_timeout,
@@ -113,6 +120,7 @@ class AsyncClientWrapper(BaseClientWrapper):
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
         async_token: typing.Optional[typing.Callable[[], typing.Awaitable[str]]] = None,
         httpx_client: httpx.AsyncClient,
+        telemetry: bool = True,
     ):
         super().__init__(
             api_key=api_key,
@@ -123,7 +131,8 @@ class AsyncClientWrapper(BaseClientWrapper):
             logging=logging,
         )
         self._async_token = async_token
-        self.httpx_client = AsyncHttpClient(
+        async_http_client_cls = TelemetryAsyncHttpClient if telemetry else AsyncHttpClient
+        self.httpx_client = async_http_client_cls(
             httpx_client=httpx_client,
             base_headers=self.get_headers,
             base_timeout=self.get_timeout,

@@ -5,11 +5,15 @@ import smallestai.telemetry as telemetry
 
 def test_opt_out_env_vars(monkeypatch):
     monkeypatch.delenv("DO_NOT_TRACK", raising=False)
+    monkeypatch.delenv("SMALLEST_TELEMETRY_DISABLED", raising=False)
     monkeypatch.setenv("SMALLESTAI_TELEMETRY", "0")
     assert telemetry.is_enabled() is False
     monkeypatch.setenv("SMALLESTAI_TELEMETRY", "1")
     assert telemetry.is_enabled() is True
     monkeypatch.setenv("DO_NOT_TRACK", "1")
+    assert telemetry.is_enabled() is False
+    monkeypatch.delenv("DO_NOT_TRACK")
+    monkeypatch.setenv("SMALLEST_TELEMETRY_DISABLED", "1")
     assert telemetry.is_enabled() is False
 
 

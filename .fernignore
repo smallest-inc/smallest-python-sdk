@@ -67,8 +67,13 @@ README.md
 # Prebuilt tools framework (hand-written)
 src/smallestai/tools/**
 
-# Anonymous opt-out telemetry (hand-written)
+# Anonymous opt-out telemetry (hand-written). The per-call hook is the HttpClient
+# subclass in core/_telemetry_http_client.py, swapped in by client_wrapper.py (above).
+# client.py stays regen-owned: its `telemetry=` constructor kwarg is a 3-line edit that
+# tests/custom/test_telemetry_runtime.py::test_constructor_accepts_telemetry_flag
+# guards, so a regen that drops it fails CI instead of silently losing the opt-out.
 src/smallestai/telemetry.py
+src/smallestai/core/_telemetry_http_client.py
 
 # Dev quality/security tooling (hand-written)
 .pre-commit-config.yaml
