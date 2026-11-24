@@ -7,6 +7,8 @@
   Opt out with `SMALLEST_TELEMETRY_DISABLED=1`, `DO_NOT_TRACK=1`, or
   `SmallestAI(telemetry=False)`; also off under pytest and when `CI` is set.
   `SMALLEST_TELEMETRY_KEY` / `SMALLEST_TELEMETRY_HOST` override the PostHog project.
+  Per-call events are sampled at 10% by default (`SMALLEST_TELEMETRY_SAMPLE_RATE`, 0 to 1;
+  invalid values fall back to 0.1) and carry `$sample_rate`. `cli_invoked` is not sampled.
 
 ## 5.15.0 - 2026-11-11
 

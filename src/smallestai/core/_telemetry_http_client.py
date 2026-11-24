@@ -6,12 +6,12 @@
 # below when telemetry is on, so no generated file needs to know about telemetry.
 #
 # Each subclass passes every argument straight through to the generated client and
-# returns its response or re-raises its exception untouched. The only addition is one
-# smallestai.telemetry.record_method() call per SDK method call, which queues a tiny
-# event and returns immediately. Retries (retries > 0) are recursive calls into the
-# same request() and are not counted again. When telemetry is off (env opt-out, pytest,
-# CI) each call checks runtime_enabled() first and goes straight to the generated
-# client, without walking frames.
+# returns its response or re-raises its exception untouched. Each SDK method call first
+# asks smallestai.telemetry.sampled_rate() whether to record it (telemetry on, and kept
+# by the per-event sample, default 10%). If not, the call goes straight to the generated
+# client without walking frames. If so, the method name is resolved and one tiny event
+# is queued via telemetry.record_sampled(), which returns immediately. Retries
+# (retries > 0) are recursive calls into the same request() and are not counted again.
 
 import contextlib
 import sys
@@ -45,29 +45,30 @@ def _caller_method_name() -> str:
     return "unknown"
 
 
-def _record_response(method: str, response: httpx.Response) -> None:
+def _record_response(method: str, rate: float, response: httpx.Response) -> None:
     try:
         status = response.status_code
         if status < 400:
-            telemetry.record_method(method, success=True)
+            telemetry.record_sampled(method, sample_rate=rate, success=True)
         else:
-            telemetry.record_method(method, success=False, error_type="ApiError", http_status=status)
+            telemetry.record_sampled(method, sample_rate=rate, success=False, error_type="ApiError", http_status=status)
     except Exception:
         pass
 
 
-def _record_exception(method: str, exc: BaseException) -> None:
+def _record_exception(method: str, rate: float, exc: BaseException) -> None:
     try:
-        telemetry.record_method(method, success=False, error_type=type(exc).__name__)
+        telemetry.record_sampled(method, sample_rate=rate, success=False, error_type=type(exc).__name__)
     except Exception:
         pass
 
 
-def _enabled() -> bool:
+def _sample() -> typing.Optional[float]:
+    """The sample rate if this call should be recorded, else None (off or sampled out)."""
     try:
-        return telemetry.runtime_enabled()
+        return telemetry.sampled_rate()
     except Exception:
-        return False
+        return None
 
 
 def _is_retry(kwargs: typing.Dict[str, typing.Any]) -> bool:
@@ -79,20 +80,22 @@ def _is_retry(kwargs: typing.Dict[str, typing.Any]) -> bool:
 
 class TelemetryHttpClient(HttpClient):
     def request(self, *args: typing.Any, **kwargs: typing.Any) -> httpx.Response:
-        if _is_retry(kwargs) or not _enabled():
+        rate = None if _is_retry(kwargs) else _sample()
+        if rate is None:
             return super().request(*args, **kwargs)
         method = _caller_method_name()
         try:
             response = super().request(*args, **kwargs)
         except Exception as exc:
-            _record_exception(method, exc)
+            _record_exception(method, rate, exc)
             raise
-        _record_response(method, response)
+        _record_response(method, rate, response)
         return response
 
     @contextlib.contextmanager
     def stream(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Iterator[httpx.Response]:
-        if not _enabled():
+        rate = _sample()
+        if rate is None:
             with super().stream(*args, **kwargs) as response:
                 yield response
             return
@@ -101,30 +104,32 @@ class TelemetryHttpClient(HttpClient):
         try:
             with super().stream(*args, **kwargs) as response:
                 entered = True
-                _record_response(method, response)
+                _record_response(method, rate, response)
                 yield response
         except Exception as exc:
             if not entered:
-                _record_exception(method, exc)
+                _record_exception(method, rate, exc)
             raise
 
 
 class TelemetryAsyncHttpClient(AsyncHttpClient):
     async def request(self, *args: typing.Any, **kwargs: typing.Any) -> httpx.Response:
-        if _is_retry(kwargs) or not _enabled():
+        rate = None if _is_retry(kwargs) else _sample()
+        if rate is None:
             return await super().request(*args, **kwargs)
         method = _caller_method_name()
         try:
             response = await super().request(*args, **kwargs)
         except Exception as exc:
-            _record_exception(method, exc)
+            _record_exception(method, rate, exc)
             raise
-        _record_response(method, response)
+        _record_response(method, rate, response)
         return response
 
     @contextlib.asynccontextmanager
     async def stream(self, *args: typing.Any, **kwargs: typing.Any) -> typing.AsyncIterator[httpx.Response]:
-        if not _enabled():
+        rate = _sample()
+        if rate is None:
             async with super().stream(*args, **kwargs) as response:
                 yield response
             return
@@ -133,9 +138,9 @@ class TelemetryAsyncHttpClient(AsyncHttpClient):
         try:
             async with super().stream(*args, **kwargs) as response:
                 entered = True
-                _record_response(method, response)
+                _record_response(method, rate, response)
                 yield response
         except Exception as exc:
             if not entered:
-                _record_exception(method, exc)
+                _record_exception(method, rate, exc)
             raise

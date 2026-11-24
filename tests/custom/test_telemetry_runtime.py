@@ -30,6 +30,7 @@ def events(monkeypatch, tmp_path) -> "queue.Queue[typing.Dict[str, typing.Any]]"
         monkeypatch.delenv(var, raising=False)
     monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
     monkeypatch.setattr(telemetry, "_in_test_or_ci", lambda: False)
+    monkeypatch.setenv("SMALLEST_TELEMETRY_SAMPLE_RATE", "1")  # keep every event in these tests
     q: "queue.Queue[typing.Dict[str, typing.Any]]" = queue.Queue()
     monkeypatch.setattr(telemetry, "_get_queue", lambda: q)
     return q
@@ -65,13 +66,14 @@ def test_method_properties_are_exactly_the_allowlist():
     transport = telemetry.method_properties(
         "waves.voices.get_all_voice_models", success=False, error_type="ReadTimeout"
     )
-    assert set(transport) == set(telemetry.ALLOWED_METHOD_PROPERTIES - {"http_status"})
+    assert set(transport) == set(telemetry.ALLOWED_METHOD_PROPERTIES - {"http_status", "$sample_rate"})
     assert transport["success"] is False and transport["error_type"] == "ReadTimeout"
     http = telemetry.method_properties(
-        "waves.voices.get_all_voice_models", success=False, error_type="ApiError", http_status=401
+        "waves.voices.get_all_voice_models", success=False, error_type="ApiError", http_status=401, sample_rate=0.1
     )
     assert set(http) == set(telemetry.ALLOWED_METHOD_PROPERTIES)
     assert http["http_status"] == 401
+    assert http["$sample_rate"] == 0.1
 
 
 def test_http_status_only_on_failures_and_only_as_a_valid_int():
@@ -110,9 +112,9 @@ def test_wire_payload_has_only_allowlist_plus_posthog_directives(monkeypatch, tm
     monkeypatch.setattr(telemetry.urllib.request, "urlopen", fake_urlopen)
     telemetry._send_batch(
         [
-            telemetry.method_properties("waves.voices.get_all_voice_models", success=True),
+            telemetry.method_properties("waves.voices.get_all_voice_models", success=True, sample_rate=0.1),
             telemetry.method_properties(
-                "atoms.user.get_user_details", success=False, error_type="ApiError", http_status=403
+                "atoms.user.get_user_details", success=False, error_type="ApiError", http_status=403, sample_rate=0.1
             ),
         ]
     )
@@ -353,6 +355,7 @@ def test_slow_or_failing_network_never_blocks_the_caller(monkeypatch, tmp_path):
         monkeypatch.delenv(var, raising=False)
     monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
     monkeypatch.setattr(telemetry, "_in_test_or_ci", lambda: False)
+    monkeypatch.setenv("SMALLEST_TELEMETRY_SAMPLE_RATE", "1")
     monkeypatch.setattr(telemetry, "_queue", None)
     monkeypatch.setattr(telemetry, "_queue_pid", None)
     sending = threading.Event()
@@ -393,6 +396,114 @@ def test_telemetry_bugs_never_break_the_api_call(events, monkeypatch):
     assert response.data.voices == []
     monkeypatch.setattr(telemetry, "_get_queue", broken)
     telemetry.record_method("m", success=True)  # must not raise
+
+
+# --- sampling -----------------------------------------------------------------------------
+
+
+def test_rate_0_sends_nothing(events, monkeypatch):
+    monkeypatch.setenv("SMALLEST_TELEMETRY_SAMPLE_RATE", "0")
+    monkeypatch.setattr(telemetry.random, "random", lambda: 0.0)  # the luckiest possible draw
+    _exercise_all_hook_paths(_ok_or_sse)
+    for _ in range(50):
+        telemetry.record_method("m", success=True)
+    assert _drain(events) == []
+
+
+def test_rate_1_sends_everything_with_sample_rate(events, monkeypatch):
+    monkeypatch.setenv("SMALLEST_TELEMETRY_SAMPLE_RATE", "1")
+    monkeypatch.setattr(telemetry.random, "random", lambda: 0.999999)  # the unluckiest draw
+    _exercise_all_hook_paths(_ok_or_sse)
+    for _ in range(10):
+        telemetry.record_method("m", success=True)
+    sent = _drain(events)
+    assert len(sent) == 14
+    assert all(e["$sample_rate"] == 1.0 for e in sent)
+
+
+def test_default_rate_is_10_percent_on_both_sides_of_the_draw(events, monkeypatch):
+    monkeypatch.delenv("SMALLEST_TELEMETRY_SAMPLE_RATE")
+    assert telemetry.sample_rate() == telemetry.DEFAULT_SAMPLE_RATE == 0.1
+    walks = {"n": 0}
+    real_walk = hook._caller_method_name
+
+    def counting_walk():
+        walks["n"] += 1
+        return real_walk()
+
+    monkeypatch.setattr(hook, "_caller_method_name", counting_walk)
+
+    monkeypatch.setattr(telemetry.random, "random", lambda: 0.1)  # not < 0.1: dropped
+    _client(_ok).waves.voices.get_all_voice_models()
+    telemetry.record_method("m", success=True)
+    assert _drain(events) == []
+    assert walks["n"] == 0  # a sampled-out call never walks frames
+
+    monkeypatch.setattr(telemetry.random, "random", lambda: 0.0999)  # < 0.1: kept
+    _client(_ok).waves.voices.get_all_voice_models()
+    telemetry.record_method("m", success=True)
+    hooked, direct = _drain(events)
+    assert hooked["method"] == "waves.voices.get_all_voice_models"
+    assert hooked["$sample_rate"] == direct["$sample_rate"] == 0.1
+    assert walks["n"] == 1
+
+
+def test_sampling_decision_happens_before_the_event_is_built(events, monkeypatch):
+    monkeypatch.setenv("SMALLEST_TELEMETRY_SAMPLE_RATE", "0")
+
+    def must_not_build(*a, **k):
+        raise AssertionError("dropped event was built")
+
+    monkeypatch.setattr(telemetry, "method_properties", must_not_build)
+    monkeypatch.setattr(telemetry, "_get_queue", must_not_build)
+    telemetry.record_method("m", success=True)
+    _client(_ok).waves.voices.get_all_voice_models()
+
+
+@pytest.mark.parametrize("value", ["abc", "", "  ", "nan", "inf", "-inf", "-0.5", "1.5", "10", "0,5"])
+def test_invalid_or_out_of_range_rate_falls_back_to_default(monkeypatch, value):
+    monkeypatch.setenv("SMALLEST_TELEMETRY_SAMPLE_RATE", value)
+    assert telemetry.sample_rate() == 0.1
+
+
+@pytest.mark.parametrize("value,expected", [("0", 0.0), ("1", 1.0), ("0.25", 0.25), (" 0.5 ", 0.5), ("1e-3", 0.001)])
+def test_valid_rate_overrides_default(monkeypatch, value, expected):
+    monkeypatch.setenv("SMALLEST_TELEMETRY_SAMPLE_RATE", value)
+    assert telemetry.sample_rate() == expected
+
+
+def test_sampled_rate_never_raises(events, monkeypatch):
+    def boom():
+        raise RuntimeError("rng broke")
+
+    monkeypatch.setattr(telemetry.random, "random", boom)
+    assert telemetry.sampled_rate() is None
+    telemetry.record_method("m", success=True)
+    assert _client(_ok).waves.voices.with_raw_response.get_all_voice_models().data.voices == []
+    assert _drain(events) == []
+
+
+def test_cli_invoked_is_never_sampled(monkeypatch, tmp_path):
+    for var in _OPT_OUT_VARS:
+        monkeypatch.delenv(var, raising=False)
+    monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
+    monkeypatch.setenv("SMALLEST_TELEMETRY_SAMPLE_RATE", "0")
+    monkeypatch.setattr(telemetry.random, "random", lambda: 0.999999)
+    posted = []
+
+    class _ImmediateThread:
+        def __init__(self, target, args=(), daemon=None):
+            self._target, self._args = target, args
+
+        def start(self):
+            self._target(*self._args)
+
+    monkeypatch.setattr(telemetry, "_post", lambda event, props: posted.append((event, props)))
+    monkeypatch.setattr(telemetry.threading, "Thread", _ImmediateThread)
+    for _ in range(5):
+        telemetry.capture("cli_invoked", {"command": "agent-crew"})
+    assert len(posted) == 5
+    assert all(event == "cli_invoked" and "$sample_rate" not in props for event, props in posted)
 
 
 # --- fork safety --------------------------------------------------------------------------

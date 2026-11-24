@@ -15,12 +15,21 @@ It is deliberately minimal and privacy-first:
 - ``sdk_method_called`` carries exactly: SDK version, Python version, OS name
   (``platform.system()``), the SDK method name, success (bool) and, on failure, the
   error class name plus ``http_status`` (int) when the failure was an HTTP error
-  response. Plus a random anonymous install id as PostHog's ``distinct_id``
+  response, and ``$sample_rate`` (see Sampling below). Plus a random anonymous install id as PostHog's ``distinct_id``
   (a uuid4 kept in a local config file, never derived from the API key, host or user).
   It asks PostHog to skip GeoIP enrichment and person profiles. (``cli_invoked`` keeps
   PostHog's default server-side country lookup, as since 5.10.0.)
 - Fire-and-forget on a background daemon thread with a short timeout. It never
   blocks the API call, never changes its result or its errors, and never raises.
+
+Sampling: ``sdk_method_called`` is sampled per event (default 10%, override with
+``SMALLEST_TELEMETRY_SAMPLE_RATE``, a float from 0 to 1). The keep/drop decision is
+``random.random() < rate``, made before the event is built or queued (and, in the HTTP
+hook, before the frame walk), so a dropped event costs one env read and one random
+draw. Kept events carry ``$sample_rate`` so PostHog can scale counts back up. A value
+that isn't a finite number from 0 to 1 falls back to the 0.1 default (no clamping, so a
+typo like ``10`` doesn't silently mean "send everything"). ``cli_invoked`` is never
+sampled.
 
 Opt out any time:
 
@@ -33,9 +42,11 @@ automatically while a pytest test runs (``PYTEST_CURRENT_TEST``) and when ``CI``
 from __future__ import annotations
 
 import json
+import math
 import os
 import platform
 import queue
+import random
 import re
 import threading
 import urllib.request
@@ -53,6 +64,8 @@ _PROJECT_KEY = "phc_vqBpz5cQHFjsmfFix6KuCjf8iwtH2hJaeReHPSq46PyH"
 _KEY_ENV = "SMALLEST_TELEMETRY_KEY"
 _HOST_ENV = "SMALLEST_TELEMETRY_HOST"
 _DISABLE_ENV = "SMALLEST_TELEMETRY_DISABLED"
+_SAMPLE_RATE_ENV = "SMALLEST_TELEMETRY_SAMPLE_RATE"
+DEFAULT_SAMPLE_RATE = 0.1
 
 _OFF_VALUES = {"0", "false", "no", "off"}
 _ON_VALUES = {"1", "true", "yes", "on"}
@@ -61,7 +74,7 @@ METHOD_EVENT = "sdk_method_called"
 # The only properties an sdk_method_called event may carry. Enforced in
 # method_properties() and asserted in tests/custom/test_telemetry_runtime.py.
 ALLOWED_METHOD_PROPERTIES = frozenset(
-    {"sdk_version", "python_version", "os", "method", "success", "error_type", "http_status"}
+    {"sdk_version", "python_version", "os", "method", "success", "error_type", "http_status", "$sample_rate"}
 )
 # PostHog processing directives (not data): skip IP-based GeoIP lookup and do not
 # create a person profile for the anonymous id.
@@ -96,6 +109,36 @@ def _in_test_or_ci() -> bool:
 def runtime_enabled() -> bool:
     """Whether sdk_method_called events may be sent from this process."""
     return is_enabled() and not _in_test_or_ci()
+
+
+def sample_rate() -> float:
+    """Per-call sampling rate: SMALLEST_TELEMETRY_SAMPLE_RATE if it is a finite float in
+    [0, 1], else DEFAULT_SAMPLE_RATE (0.1). Never raises."""
+    raw = os.getenv(_SAMPLE_RATE_ENV, "").strip()
+    if not raw:
+        return DEFAULT_SAMPLE_RATE
+    try:
+        rate = float(raw)
+    except (TypeError, ValueError):
+        return DEFAULT_SAMPLE_RATE
+    if not math.isfinite(rate) or rate < 0.0 or rate > 1.0:
+        return DEFAULT_SAMPLE_RATE
+    return rate
+
+
+def sampled_rate() -> Optional[float]:
+    """Decide whether to keep the next sdk_method_called event.
+
+    Returns the sample rate when the event should be sent (to stamp as ``$sample_rate``),
+    or None when telemetry is off or the event is sampled out. Never raises.
+    """
+    try:
+        if not runtime_enabled():
+            return None
+        rate = sample_rate()
+        return rate if random.random() < rate else None
+    except Exception:
+        return None
 
 
 def _project_key() -> str:
@@ -216,12 +259,18 @@ def _valid_http_status(value: Any) -> bool:
 
 
 def method_properties(
-    method: str, *, success: bool, error_type: Optional[str] = None, http_status: Optional[int] = None
+    method: str,
+    *,
+    success: bool,
+    error_type: Optional[str] = None,
+    http_status: Optional[int] = None,
+    sample_rate: Optional[float] = None,
 ) -> Dict[str, Any]:
     """Build the full property set for one sdk_method_called event. Nothing else is ever added.
 
     ``http_status`` is kept only on failures, and only when it is a valid HTTP status int
     (i.e. the failure was an HTTP error response, not a transport or client error).
+    ``sample_rate`` becomes ``$sample_rate`` when it is a number in (0, 1].
     """
     props: Dict[str, Any] = {
         **_base_properties(),
@@ -232,6 +281,8 @@ def method_properties(
         props["error_type"] = _safe_name(error_type, "Error")
         if _valid_http_status(http_status):
             props["http_status"] = http_status
+    if isinstance(sample_rate, (int, float)) and not isinstance(sample_rate, bool) and 0.0 < sample_rate <= 1.0:
+        props["$sample_rate"] = float(sample_rate)
     return {k: v for k, v in props.items() if k in ALLOWED_METHOD_PROPERTIES}
 
 
@@ -319,18 +370,39 @@ def _get_queue() -> "queue.Queue[Dict[str, Any]]":
     return _queue
 
 
-def record_method(
-    method: str, *, success: bool, error_type: Optional[str] = None, http_status: Optional[int] = None
+def record_sampled(
+    method: str,
+    *,
+    sample_rate: float,
+    success: bool,
+    error_type: Optional[str] = None,
+    http_status: Optional[int] = None,
 ) -> None:
-    """Queue one sdk_method_called event. O(1) on the caller's thread; never blocks or raises.
+    """Queue an event whose sampling decision was already made with sampled_rate().
 
-    Events are dropped (not queued) when telemetry is off, and when the queue is full.
+    Used by the HTTP hook, which samples before walking frames. Never blocks or raises;
+    drops the event if the queue is full.
     """
     try:
-        if not runtime_enabled():
-            return
         _get_queue().put_nowait(
-            method_properties(method, success=success, error_type=error_type, http_status=http_status)
+            method_properties(
+                method, success=success, error_type=error_type, http_status=http_status, sample_rate=sample_rate
+            )
         )
     except Exception:
         pass
+
+
+def record_method(
+    method: str, *, success: bool, error_type: Optional[str] = None, http_status: Optional[int] = None
+) -> None:
+    """Sample and queue one sdk_method_called event. O(1) on the caller's thread; never blocks or raises.
+
+    The entry point for anything outside the HTTP hook (e.g. WebSocket clients, helpers).
+    Events are dropped (not built or queued) when telemetry is off, when sampled out, and
+    when the queue is full.
+    """
+    rate = sampled_rate()
+    if rate is None:
+        return
+    record_sampled(method, sample_rate=rate, success=success, error_type=error_type, http_status=http_status)
