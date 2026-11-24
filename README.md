@@ -288,7 +288,8 @@ where they fail. It is on by default and easy to turn off.
 
 - SDK version, Python version, and OS name (`platform.system()`, e.g. `Linux`)
 - the SDK method name (e.g. `waves.voices.get_all_voice_models`)
-- whether it succeeded, and on failure only the error class name (e.g. `ApiError`)
+- whether it succeeded, and on failure only the error class name (e.g. `ApiError`) plus,
+  when the API returned an HTTP error, its integer status code (`http_status`, e.g. `401`)
 - a random anonymous install id (a uuid4 stored in `~/.config/smallestai/telemetry.json`),
   never derived from your API key, hostname, or user
 
@@ -298,9 +299,10 @@ The CLI also sends which command group ran (`cli_invoked`, e.g. `agent-crew`).
 bodies, text, audio, transcripts, prompts, agent ids, phone numbers, file paths, or error
 messages. Runtime events ask PostHog to skip IP-based geolocation and person profiles.
 
-Events go out in the background on a daemon thread with a 2 second timeout. They never
-block, slow down, or change an API call or its errors, and a telemetry failure is
-silently dropped.
+Events go to Smallest's main product-analytics PostHog project (US cloud), not a
+separate SDK-only project. They are sent in the background on a daemon thread with a
+2 second timeout. They never block, slow down, or change an API call or its errors, and
+a telemetry failure is silently dropped.
 
 **Turn it off** with any of these:
 
@@ -312,7 +314,7 @@ export SMALLEST_TELEMETRY_DISABLED=1   # or DO_NOT_TRACK=1, or SMALLESTAI_TELEME
 client = SmallestAI(telemetry=False)  # same for AsyncSmallestAI
 ```
 
-Per-call events are also off automatically under pytest and when `CI` is set.
+Per-call events are also off automatically while pytest runs a test and when `CI` is set.
 
 ## Contributing
 

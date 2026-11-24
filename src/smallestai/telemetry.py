@@ -2,7 +2,7 @@
 
 Hand-written and listed in .fernignore, so an SDK regeneration never touches it.
 
-Two kinds of events go to the SDK's PostHog project:
+Two kinds of events go to Smallest's platform PostHog project ("New Smallest Inc"):
 
 - ``cli_invoked``: which CLI command group ran (see ``smallestai.cli.main``).
 - ``sdk_method_called``: which SDK method ran and whether it succeeded. Recorded by
@@ -14,7 +14,8 @@ It is deliberately minimal and privacy-first:
   response body, text, audio, agent id, phone number, file path, or error message.
 - ``sdk_method_called`` carries exactly: SDK version, Python version, OS name
   (``platform.system()``), the SDK method name, success (bool) and, on failure, the
-  error class name. Plus a random anonymous install id as PostHog's ``distinct_id``
+  error class name plus ``http_status`` (int) when the failure was an HTTP error
+  response. Plus a random anonymous install id as PostHog's ``distinct_id``
   (a uuid4 kept in a local config file, never derived from the API key, host or user).
   It asks PostHog to skip GeoIP enrichment and person profiles. (``cli_invoked`` keeps
   PostHog's default server-side country lookup, as since 5.10.0.)
@@ -26,7 +27,7 @@ Opt out any time:
     export SMALLEST_TELEMETRY_DISABLED=1   # or DO_NOT_TRACK=1, or SMALLESTAI_TELEMETRY=0
 
 or per client: ``SmallestAI(telemetry=False)``. ``sdk_method_called`` is also off
-automatically under pytest and when ``CI`` is set.
+automatically while a pytest test runs (``PYTEST_CURRENT_TEST``) and when ``CI`` is set.
 """
 
 from __future__ import annotations
@@ -36,15 +37,15 @@ import os
 import platform
 import queue
 import re
-import sys
 import threading
 import urllib.request
 import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-# PostHog project (US cloud) added for SDK telemetry in 5.10.0 (#93/#95). The phc_ key
-# is write-only and meant to ship in client code (allowlisted in .gitleaks.toml).
+# Smallest's platform PostHog project ("New Smallest Inc", US cloud), shared with other
+# product analytics; first used by the SDK in 5.10.0 (#93/#95). The phc_ key is
+# write-only and meant to ship in client code (allowlisted in .gitleaks.toml).
 # SMALLEST_TELEMETRY_KEY / SMALLEST_TELEMETRY_HOST override both, e.g. for a self-hosted
 # PostHog or a staging project.
 _POSTHOG_HOST = "https://us.i.posthog.com"
@@ -59,7 +60,9 @@ _ON_VALUES = {"1", "true", "yes", "on"}
 METHOD_EVENT = "sdk_method_called"
 # The only properties an sdk_method_called event may carry. Enforced in
 # method_properties() and asserted in tests/custom/test_telemetry_runtime.py.
-ALLOWED_METHOD_PROPERTIES = frozenset({"sdk_version", "python_version", "os", "method", "success", "error_type"})
+ALLOWED_METHOD_PROPERTIES = frozenset(
+    {"sdk_version", "python_version", "os", "method", "success", "error_type", "http_status"}
+)
 # PostHog processing directives (not data): skip IP-based GeoIP lookup and do not
 # create a person profile for the anonymous id.
 _POSTHOG_DIRECTIVES = {"$geoip_disable": True, "$process_person_profile": False}
@@ -86,8 +89,8 @@ def is_enabled() -> bool:
 
 
 def _in_test_or_ci() -> bool:
-    """True under pytest or a CI runner (CI=true is set by GitHub Actions, GitLab, CircleCI, ...)."""
-    return bool(os.getenv("PYTEST_CURRENT_TEST")) or "pytest" in sys.modules or _env_on("CI")
+    """True while a pytest test runs, or on a CI runner (CI=true: GitHub Actions, GitLab, CircleCI, ...)."""
+    return bool(os.getenv("PYTEST_CURRENT_TEST")) or _env_on("CI")
 
 
 def runtime_enabled() -> bool:
@@ -208,8 +211,18 @@ def _safe_name(value: Optional[str], fallback: str) -> str:
     return fallback
 
 
-def method_properties(method: str, *, success: bool, error_type: Optional[str] = None) -> Dict[str, Any]:
-    """Build the full property set for one sdk_method_called event. Nothing else is ever added."""
+def _valid_http_status(value: Any) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool) and 100 <= value <= 599
+
+
+def method_properties(
+    method: str, *, success: bool, error_type: Optional[str] = None, http_status: Optional[int] = None
+) -> Dict[str, Any]:
+    """Build the full property set for one sdk_method_called event. Nothing else is ever added.
+
+    ``http_status`` is kept only on failures, and only when it is a valid HTTP status int
+    (i.e. the failure was an HTTP error response, not a transport or client error).
+    """
     props: Dict[str, Any] = {
         **_base_properties(),
         "method": _safe_name(method, "unknown"),
@@ -217,6 +230,8 @@ def method_properties(method: str, *, success: bool, error_type: Optional[str] =
     }
     if not success:
         props["error_type"] = _safe_name(error_type, "Error")
+        if _valid_http_status(http_status):
+            props["http_status"] = http_status
     return {k: v for k, v in props.items() if k in ALLOWED_METHOD_PROPERTIES}
 
 
@@ -265,6 +280,29 @@ def _worker(q: "queue.Queue[Dict[str, Any]]") -> None:
 _queue: "Optional[queue.Queue[Dict[str, Any]]]" = None
 _queue_pid: Optional[int] = None
 _queue_lock = threading.Lock()
+_fork_hook_registered = False
+
+
+def _reset_after_fork() -> None:
+    """Child side of a fork: drop the parent's queue, worker and lock.
+
+    The worker thread does not survive a fork, and the lock may have been held by
+    another parent thread at fork time (e.g. gunicorn --preload), so the child gets
+    fresh state and starts its own worker on first use.
+    """
+    global _queue, _queue_pid, _queue_lock
+    _queue = None
+    _queue_pid = None
+    _queue_lock = threading.Lock()
+
+
+def _register_fork_hook() -> None:
+    global _fork_hook_registered
+    if _fork_hook_registered:
+        return
+    _fork_hook_registered = True
+    if hasattr(os, "register_at_fork"):  # POSIX only
+        os.register_at_fork(after_in_child=_reset_after_fork)
 
 
 def _get_queue() -> "queue.Queue[Dict[str, Any]]":
@@ -273,6 +311,7 @@ def _get_queue() -> "queue.Queue[Dict[str, Any]]":
     pid = os.getpid()
     if _queue is None or _queue_pid != pid:
         with _queue_lock:
+            _register_fork_hook()
             if _queue is None or _queue_pid != pid:
                 q: "queue.Queue[Dict[str, Any]]" = queue.Queue(maxsize=_QUEUE_MAX)
                 threading.Thread(target=_worker, args=(q,), name="smallestai-telemetry", daemon=True).start()
@@ -280,7 +319,9 @@ def _get_queue() -> "queue.Queue[Dict[str, Any]]":
     return _queue
 
 
-def record_method(method: str, *, success: bool, error_type: Optional[str] = None) -> None:
+def record_method(
+    method: str, *, success: bool, error_type: Optional[str] = None, http_status: Optional[int] = None
+) -> None:
     """Queue one sdk_method_called event. O(1) on the caller's thread; never blocks or raises.
 
     Events are dropped (not queued) when telemetry is off, and when the queue is full.
@@ -288,6 +329,8 @@ def record_method(method: str, *, success: bool, error_type: Optional[str] = Non
     try:
         if not runtime_enabled():
             return
-        _get_queue().put_nowait(method_properties(method, success=success, error_type=error_type))
+        _get_queue().put_nowait(
+            method_properties(method, success=success, error_type=error_type, http_status=http_status)
+        )
     except Exception:
         pass

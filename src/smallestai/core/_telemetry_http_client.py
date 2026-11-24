@@ -9,7 +9,9 @@
 # returns its response or re-raises its exception untouched. The only addition is one
 # smallestai.telemetry.record_method() call per SDK method call, which queues a tiny
 # event and returns immediately. Retries (retries > 0) are recursive calls into the
-# same request() and are not counted again.
+# same request() and are not counted again. When telemetry is off (env opt-out, pytest,
+# CI) each call checks runtime_enabled() first and goes straight to the generated
+# client, without walking frames.
 
 import contextlib
 import sys
@@ -45,8 +47,11 @@ def _caller_method_name() -> str:
 
 def _record_response(method: str, response: httpx.Response) -> None:
     try:
-        ok = response.status_code < 400
-        telemetry.record_method(method, success=ok, error_type=None if ok else "ApiError")
+        status = response.status_code
+        if status < 400:
+            telemetry.record_method(method, success=True)
+        else:
+            telemetry.record_method(method, success=False, error_type="ApiError", http_status=status)
     except Exception:
         pass
 
@@ -58,6 +63,13 @@ def _record_exception(method: str, exc: BaseException) -> None:
         pass
 
 
+def _enabled() -> bool:
+    try:
+        return telemetry.runtime_enabled()
+    except Exception:
+        return False
+
+
 def _is_retry(kwargs: typing.Dict[str, typing.Any]) -> bool:
     try:
         return int(kwargs.get("retries") or 0) > 0
@@ -67,7 +79,7 @@ def _is_retry(kwargs: typing.Dict[str, typing.Any]) -> bool:
 
 class TelemetryHttpClient(HttpClient):
     def request(self, *args: typing.Any, **kwargs: typing.Any) -> httpx.Response:
-        if _is_retry(kwargs):
+        if _is_retry(kwargs) or not _enabled():
             return super().request(*args, **kwargs)
         method = _caller_method_name()
         try:
@@ -80,6 +92,10 @@ class TelemetryHttpClient(HttpClient):
 
     @contextlib.contextmanager
     def stream(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Iterator[httpx.Response]:
+        if not _enabled():
+            with super().stream(*args, **kwargs) as response:
+                yield response
+            return
         method = _caller_method_name()
         entered = False
         try:
@@ -95,7 +111,7 @@ class TelemetryHttpClient(HttpClient):
 
 class TelemetryAsyncHttpClient(AsyncHttpClient):
     async def request(self, *args: typing.Any, **kwargs: typing.Any) -> httpx.Response:
-        if _is_retry(kwargs):
+        if _is_retry(kwargs) or not _enabled():
             return await super().request(*args, **kwargs)
         method = _caller_method_name()
         try:
@@ -108,6 +124,10 @@ class TelemetryAsyncHttpClient(AsyncHttpClient):
 
     @contextlib.asynccontextmanager
     async def stream(self, *args: typing.Any, **kwargs: typing.Any) -> typing.AsyncIterator[httpx.Response]:
+        if not _enabled():
+            async with super().stream(*args, **kwargs) as response:
+                yield response
+            return
         method = _caller_method_name()
         entered = False
         try:

@@ -1,8 +1,8 @@
 ## Unreleased
 
 * **telemetry**: anonymous, opt-out per-call runtime events (`sdk_method_called`): SDK
-  version, Python version, OS name, SDK method name, and success or the error class name.
-  Never payloads, keys, headers, URLs, or error messages. Sent fire-and-forget in batches
+  version, Python version, OS name, SDK method name, and success or the error class name
+  (plus the integer `http_status` on HTTP error responses). Never payloads, keys, headers, URLs, or error messages. Sent fire-and-forget in batches
   on one background thread with stdlib `urllib` (2s timeout); never blocks or raises.
   Opt out with `SMALLEST_TELEMETRY_DISABLED=1`, `DO_NOT_TRACK=1`, or
   `SmallestAI(telemetry=False)`; also off under pytest and when `CI` is set.
