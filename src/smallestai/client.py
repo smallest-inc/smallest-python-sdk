@@ -50,6 +50,9 @@ class SmallestAI:
     logging : typing.Optional[typing.Union[LogConfig, Logger]]
         Configure logging for the SDK. Accepts a LogConfig dict with 'level' (debug/info/warn/error), 'logger' (custom logger implementation), and 'silent' (boolean, defaults to True) fields. You can also pass a pre-configured Logger instance.
 
+    telemetry : bool
+        Send anonymous SDK usage events (SDK/Python/OS version, method name, success). Defaults to True. Set False, or set SMALLEST_TELEMETRY_DISABLED=1, to turn it off. See the Telemetry section of the README.
+
     Examples
     --------
     from smallestai import SmallestAI
@@ -70,6 +73,7 @@ class SmallestAI:
         follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.Client] = None,
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
+        telemetry: bool = True,
     ):
         _defaulted_timeout = (
             timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
@@ -91,6 +95,7 @@ class SmallestAI:
             timeout=_defaulted_timeout,
             max_retries=_defaulted_max_retries,
             logging=logging,
+            telemetry=telemetry,
         )
         self._atoms: typing.Optional[AtomsClient] = None
         self._waves: typing.Optional[WavesClient] = None
@@ -167,6 +172,9 @@ class AsyncSmallestAI:
     logging : typing.Optional[typing.Union[LogConfig, Logger]]
         Configure logging for the SDK. Accepts a LogConfig dict with 'level' (debug/info/warn/error), 'logger' (custom logger implementation), and 'silent' (boolean, defaults to True) fields. You can also pass a pre-configured Logger instance.
 
+    telemetry : bool
+        Send anonymous SDK usage events (SDK/Python/OS version, method name, success). Defaults to True. Set False, or set SMALLEST_TELEMETRY_DISABLED=1, to turn it off. See the Telemetry section of the README.
+
     Examples
     --------
     from smallestai import AsyncSmallestAI
@@ -188,6 +196,7 @@ class AsyncSmallestAI:
         follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.AsyncClient] = None,
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
+        telemetry: bool = True,
     ):
         _defaulted_timeout = (
             timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
@@ -208,6 +217,7 @@ class AsyncSmallestAI:
             timeout=_defaulted_timeout,
             max_retries=_defaulted_max_retries,
             logging=logging,
+            telemetry=telemetry,
         )
         self._atoms: typing.Optional[AsyncAtomsClient] = None
         self._waves: typing.Optional[AsyncWavesClient] = None

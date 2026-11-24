@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **telemetry**: anonymous, opt-out per-call runtime events (`sdk_method_called`): SDK
+  version, Python version, OS name, SDK method name, and success or the error class name
+  (plus the integer `http_status` on HTTP error responses). Never payloads, keys, headers, URLs, or error messages. Sent fire-and-forget in batches
+  on one background thread with stdlib `urllib` (2s timeout); never blocks or raises.
+  Opt out with `SMALLEST_TELEMETRY_DISABLED=1`, `DO_NOT_TRACK=1`, or
+  `SmallestAI(telemetry=False)`; also off under pytest and when `CI` is set.
+  `SMALLEST_TELEMETRY_KEY` / `SMALLEST_TELEMETRY_HOST` override the PostHog project.
+  Per-call events are sampled at 10% by default (`SMALLEST_TELEMETRY_SAMPLE_RATE`, 0 to 1;
+  invalid values fall back to 0.1) and carry `$sample_rate`. `cli_invoked` is not sampled.
+
 ## 5.15.0 - 2026-11-11
 
 * **helpers**: `Campaign.create` accepts `from_numbers` and sends `fromNumbers`.

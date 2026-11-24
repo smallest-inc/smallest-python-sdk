@@ -281,17 +281,47 @@ client = SmallestAI(
 
 ## Telemetry
 
-The SDK sends anonymous, aggregated usage telemetry (which CLI commands run, deploy
-outcomes) so we can see what to improve. It never includes personal data or secrets:
-no API keys, agent ids, prompts, transcripts, phone numbers, file paths, or error
-messages. Only the event name, SDK / Python / OS version, and a random anonymous
-install id. It is fire-and-forget and never blocks your program.
+The SDK sends anonymous usage telemetry so we can see which methods people use and
+where they fail. It is on by default and easy to turn off.
 
-Opt out any time:
+**What's collected**, for a 10% sample of SDK method calls (event `sdk_method_called`):
+
+- SDK version, Python version, and OS name (`platform.system()`, e.g. `Linux`)
+- the SDK method name (e.g. `waves.voices.get_all_voice_models`)
+- whether it succeeded, and on failure only the error class name (e.g. `ApiError`) plus,
+  when the API returned an HTTP error, its integer status code (`http_status`, e.g. `401`)
+- the sample rate in effect (`$sample_rate`, e.g. `0.1`), so totals can be scaled back up
+- a random anonymous install id (a uuid4 stored in `~/.config/smallestai/telemetry.json`),
+  never derived from your API key, hostname, or user
+
+Each call is kept or dropped on its own (`random.random() < rate`) before anything is
+built or queued, so a dropped call costs almost nothing. Set
+`SMALLEST_TELEMETRY_SAMPLE_RATE` to a number from `0` (send none) to `1` (send all) to
+change the rate. Anything else (not a number, or outside 0 to 1) falls back to `0.1`.
+
+The CLI also sends which command group ran (`cli_invoked`, e.g. `agent-crew`). CLI events
+are not sampled.
+
+**What's never collected:** API keys, headers, URLs or query strings, request or response
+bodies, text, audio, transcripts, prompts, agent ids, phone numbers, file paths, or error
+messages. Runtime events ask PostHog to skip IP-based geolocation and person profiles.
+
+Events go to Smallest's main product-analytics PostHog project (US cloud), not a
+separate SDK-only project. They are sent in the background on a daemon thread with a
+2 second timeout. They never block, slow down, or change an API call or its errors, and
+a telemetry failure is silently dropped.
+
+**Turn it off** with any of these:
 
 ```bash
-export SMALLESTAI_TELEMETRY=0    # or DO_NOT_TRACK=1
+export SMALLEST_TELEMETRY_DISABLED=1   # or DO_NOT_TRACK=1, or SMALLESTAI_TELEMETRY=0
 ```
+
+```python
+client = SmallestAI(telemetry=False)  # same for AsyncSmallestAI
+```
+
+Per-call events are also off automatically while pytest runs a test and when `CI` is set.
 
 ## Contributing
 
