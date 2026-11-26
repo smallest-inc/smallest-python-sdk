@@ -263,7 +263,10 @@ class ToolRegistry:
             if not tool_info:
                 raise ValueError(f"Unknown tool: {call.name}")
 
-            arguments = json.loads(call.arguments)
+            # A call to a no-argument tool can stream no argument deltas at all
+            # (several OpenAI-compatible providers do this), leaving "" — which
+            # means "no arguments", not invalid JSON.
+            arguments = json.loads(call.arguments) if call.arguments and call.arguments.strip() else {}
 
             await self._emit_tool_event("tool_call_start", call, arguments)
 
