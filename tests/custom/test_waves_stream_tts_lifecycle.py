@@ -174,3 +174,18 @@ def test_a_connect_that_times_out_closes_the_half_open_socket():
                 tts._connect()
 
     assert _only_socket().close_calls == 1
+
+
+@pytest.mark.parametrize("failure", [ConnectionResetError("send reset"), RuntimeError("send failed")])
+def test_synthesize_closes_the_socket_when_initial_send_raises(monkeypatch, failure):
+    def fail_send(self, payload):
+        raise failure
+
+    monkeypatch.setattr(_FakeWebSocketApp, "send", fail_send)
+    tts = _tts()
+    with pytest.raises(type(failure)) as raised:
+        next(tts.synthesize("hello"))
+    assert raised.value is failure
+    assert _only_socket().close_calls == 1
+    assert tts.ws is None
+    assert not tts.is_connected

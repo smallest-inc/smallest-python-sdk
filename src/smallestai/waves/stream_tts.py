@@ -190,10 +190,10 @@ class WavesStreamingTTS:
         ws = self.ws
         assert ws is not None  # _connect() raises unless the socket opened
 
-        payload = self._create_payload(text)
-        ws.send(json.dumps(payload))
-
         try:
+            payload = self._create_payload(text)
+            ws.send(json.dumps(payload))
+
             while True:
                 if not self.error_queue.empty():
                     raise self.error_queue.get()
