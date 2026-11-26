@@ -10,7 +10,8 @@ concurrency:
 
 jobs:
   compile:
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest (26.04) dropped the python 3.9 x64 image; this job sets up 3.9.
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -30,7 +31,8 @@ jobs:
         # Fails the build if a new endpoint has no wire test, or a helper has no test.
         run: poetry run python scripts/verify.py
   test:
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest (26.04) dropped the python 3.9 x64 image; this job sets up 3.9.
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -105,7 +107,8 @@ jobs:
   publish:
     needs: [compile, test, lint, security]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest (26.04) dropped the python 3.9 x64 image; this job sets up 3.9.
+    runs-on: ubuntu-22.04
     permissions:
       contents: write   # to push the tag
     steps:
