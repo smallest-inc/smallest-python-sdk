@@ -211,15 +211,11 @@ class Versioning:
         """
         # Capture the newest revision *before* publishing so wait_for_commit does not
         # match the previous (already-published) revision during the window before the
-        # new one surfaces in the listing.
-        baseline_id: typing.Optional[str] = None
-        try:
-            pre = self.revisions.list(id=agent_id, branch_id=branch_id, limit=1)
-            pre_revs = getattr(pre.data, "revisions", None) or []
-            if pre_revs:
-                baseline_id = pre_revs[0].id
-        except Exception:
-            baseline_id = None
+        # new one surfaces in the listing. A failed lookup must stop the publish:
+        # without a baseline, the later poll cannot identify the new revision.
+        pre = self.revisions.list(id=agent_id, branch_id=branch_id, limit=1)
+        pre_revs = getattr(pre.data, "revisions", None) or []
+        baseline_id = pre_revs[0].id if pre_revs else None
 
         res = self.branches.publish_draft(id=agent_id, branch_id=branch_id, label=label)
         data = res.data
