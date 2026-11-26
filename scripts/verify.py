@@ -49,9 +49,9 @@ def check_wire_coverage():
     wire_files = list(WIRE.glob("test_*.py"))
 
     def wire_count_for(ns):
-        key = ns.replace("_", "")
+        key = "testatoms" + ns.replace("_", "")
         for wf in wire_files:
-            if key in wf.stem.lower().replace("_", ""):
+            if key == wf.stem.lower().replace("_", ""):
                 return len(re.findall(r"def test_", wf.read_text()))
         return 0
 

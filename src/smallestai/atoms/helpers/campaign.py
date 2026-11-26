@@ -5,11 +5,12 @@ Usage:
     from smallestai.atoms.helpers import Campaign
 
     campaign = Campaign()
-    campaign.create(name="My Campaign", agent_id="...", audience_id="...", phone_ids=["..."])
+    campaign.create(name="My Campaign", agent_id="...", audience_id="...", from_numbers=["+14155552671"])
     campaign.start(campaign_id)
 """
 
 import os
+import warnings
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -62,22 +63,52 @@ class Campaign:
         name: str,
         agent_id: str,
         audience_id: str,
-        phone_ids: List[str],
+        phone_ids: Optional[List[str]] = None,
         description: str = "",
         max_retries: int = 3,
         retry_delay: int = 15,
+        *,
+        from_numbers: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
-        """Create a new campaign."""
+        """Create a new campaign.
+
+        Args:
+            from_numbers: Caller-ID numbers starting with ``+``. The API rotates
+                these across calls and freezes the list at creation. Full E.164
+                validation is performed by the server.
+            phone_ids: Deprecated phone-number product IDs. Use ``from_numbers``;
+                see https://docs.smallest.ai/voice-agents/deprecations/telephony-migration.
+                Both fields may be sent; ``from_numbers`` takes precedence.
+
+        At least one of ``from_numbers`` or ``phone_ids`` must be supplied.
+        """
+        if from_numbers is not None:
+            if not isinstance(from_numbers, list) or any(
+                not isinstance(number, str) or not number.startswith("+") for number in from_numbers
+            ):
+                raise ValueError("from_numbers must be a list of non-empty strings starting with '+'")
+        if phone_ids is not None:
+            warnings.warn(
+                "phone_ids is deprecated; use from_numbers instead. "
+                "See https://docs.smallest.ai/voice-agents/deprecations/telephony-migration",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+        if from_numbers is None and phone_ids is None:
+            raise ValueError("Supply from_numbers or phone_ids")
         url = f"{self.base_url}/campaign"
-        payload = {
+        payload: Dict[str, Any] = {
             "name": name,
             "agentId": agent_id,
             "audienceId": audience_id,
-            "phoneNumberIds": phone_ids,
             "description": description,
             "maxRetries": max_retries,
             "retryDelay": retry_delay,
         }
+        if from_numbers is not None:
+            payload["fromNumbers"] = from_numbers
+        if phone_ids is not None:
+            payload["phoneNumberIds"] = phone_ids
         response = requests.post(url, headers=self._get_headers(), json=payload, timeout=self.request_timeout)  # type: ignore[arg-type]
         response.raise_for_status()
         return response.json()  # type: ignore[no-any-return]
